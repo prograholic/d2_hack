@@ -187,7 +187,7 @@ bool readResFile(const std::string & resFile, const ParserDispatcher & disp, Fil
 
 
 
-
+#if 0
 
 
 
@@ -226,3 +226,5 @@ int main()
 
   return 0;
 }
+
+#endif //0
