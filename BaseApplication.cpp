@@ -28,6 +28,10 @@ BaseApplication::~BaseApplication(void)
     //Remove ourself as a Window listener
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
+
+    Ogre::Codec::unRegisterCodec(mTxrImageCodec.get());
+    mTxrImageCodec.reset();
+
     delete mRoot;
 }
 
@@ -195,6 +199,15 @@ void BaseApplication::go(void)
 bool BaseApplication::setup(void)
 {
     mRoot = new Ogre::Root(mPluginsCfg);
+
+    mD2ResArchiveFactory.reset(new D2ResArchiveFactory);
+    Ogre::ArchiveManager::getSingleton().addArchiveFactory(mD2ResArchiveFactory.get());
+
+    mTxrImageCodec.reset(new TxrImageCodec);
+    Ogre::Codec::registerCodec(mTxrImageCodec.get());
+
+
+    //Ogre::ArchiveFactory::
 
     setupResources();
 

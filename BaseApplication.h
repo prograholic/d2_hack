@@ -19,6 +19,11 @@
 #include <SdkTrays.h>
 #include <SdkCameraMan.h>
 
+#include <boost/smart_ptr/scoped_ptr.hpp>
+
+#include "D2ResArchive.h"
+#include "TxrImageCodec.h"
+
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
 public:
@@ -75,6 +80,11 @@ protected:
     OIS::InputManager* mInputManager;
     OIS::Mouse*    mMouse;
     OIS::Keyboard* mKeyboard;
+
+    /// Custom resource IO
+    boost::scoped_ptr<D2ResArchiveFactory> mD2ResArchiveFactory;
+
+    boost::scoped_ptr<TxrImageCodec> mTxrImageCodec;
 };
 
 #endif // D2_HACK_BASE_APPLICATION_H

@@ -1,0 +1,8 @@
+#ifndef D2_HACK_RESOURCE_PLUGIN_RESOURCE_LOADER_H
+#define D2_HACK_RESOURCE_PLUGIN_RESOURCE_LOADER_H
+
+#include <OgreResource.h>
+
+//class D2ResourceLoader : public
+
+#endif /* D2_HACK_RESOURCE_PLUGIN_RESOURCE_LOADER_H */

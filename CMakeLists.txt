@@ -20,6 +20,11 @@ configure_file(data/resources_d.cfg.in resources_d.cfg)
 configure_file(data/plugins.cfg.in plugins.cfg)
 configure_file(data/plugins_d.cfg.in plugins_d.cfg)
 
+include_directories(ResourcePlugin)
+
+
+add_subdirectory(ResourcePlugin)
+
 
 set(D2HackSources
   main.cpp
@@ -37,4 +42,5 @@ target_link_libraries(d2_hack
   ${OGRE_LIBRARIES}
   ${OIS_LIBRARIES}
   ${Boost_LIBRARIES}
+  d2_hack_resource_loader
 )

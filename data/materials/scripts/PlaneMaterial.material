@@ -9,10 +9,10 @@ material PlaneMaterial
 
 			texture_unit
 			{
-				texture RustyBarrel.png
-				colour_op_ex add src_texture src_current
-				colour_op_multipass_fallback one one
-				env_map spherical
+				texture tree000.txr
+				#colour_op_ex add src_texture src_current
+				#colour_op_multipass_fallback one one
+				#env_map spherical
 			}
 		}
 	}
