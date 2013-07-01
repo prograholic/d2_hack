@@ -29,15 +29,17 @@ void TutorialApplication::createScene(void)
 }
 
 
-
 int main(int argc, char *argv[])
 {
   // Create application object
   TutorialApplication app;
 
-  try {
+  try
+  {
     app.go();
-  } catch( Ogre::Exception& e ) {
+  }
+  catch(const Ogre::Exception & e)
+  {
     std::cerr << "An exception has occured: " <<
                  e.getFullDescription().c_str() << std::endl;
   }

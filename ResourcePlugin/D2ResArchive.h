@@ -4,6 +4,8 @@
 #include <OgreArchive.h>
 #include <OgreArchiveFactory.h>
 
+#include "D2ResFileInfo.h"
+
 class D2ResArchive : public Ogre::Archive
 {
 public:
@@ -28,6 +30,14 @@ public:
   virtual time_t getModifiedTime(const Ogre::String& filename);
 
   virtual Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
+
+private:
+
+  D2ResFileInfo mArchiveInfo;
+  Ogre::FileInfoList mFileInfoList;
+
+  bool findEntry(const Ogre::String & filename, D2ResEntry & entry) const;
+
 };
 
 

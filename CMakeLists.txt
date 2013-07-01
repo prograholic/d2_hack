@@ -27,8 +27,6 @@ add_subdirectory(ResourcePlugin)
 
 
 set(D2HackSources
-  main.cpp
-
   BaseApplication.cpp
   BaseApplication.h
 

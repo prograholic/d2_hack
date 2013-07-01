@@ -179,13 +179,13 @@ void BaseApplication::loadResources(void)
 //-------------------------------------------------------------------------------------
 void BaseApplication::go(void)
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
     mResourcesCfg = "resources_d.cfg";
     mPluginsCfg = "plugins_d.cfg";
-#else
-    mResourcesCfg = "resources.cfg";
-    mPluginsCfg = "plugins.cfg";
-#endif
+//#else
+  //  mResourcesCfg = "resources.cfg";
+//    mPluginsCfg = "plugins.cfg";
+//#endif
 
     if (!setup())
         return;
@@ -205,9 +205,6 @@ bool BaseApplication::setup(void)
 
     mTxrImageCodec.reset(new TxrImageCodec);
     Ogre::Codec::registerCodec(mTxrImageCodec.get());
-
-
-    //Ogre::ArchiveFactory::
 
     setupResources();
 

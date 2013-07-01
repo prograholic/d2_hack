@@ -31,8 +31,9 @@ OffsetDataStream::OffsetDataStream(Ogre::DataStreamPtr stream, size_t offset, si
   }
 
   mSize = size;
-}
 
+  mStream->seek(mOffset);
+}
 
 size_t OffsetDataStream::read(void* buf, size_t count)
 {
@@ -43,10 +44,7 @@ size_t OffsetDataStream::read(void* buf, size_t count)
 
 void OffsetDataStream::skip(long count)
 {
-  size_t pos = tell();
-  pos += count;
-
-  assert(pos <= size());
+  assert((tell() + count) <= size());
 
   mStream->skip(count);
 }

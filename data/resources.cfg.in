@@ -42,3 +42,4 @@ FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data
 FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data/materials
 FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data/materials/scripts
 FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data/materials/textures
+#D2Res=${CMAKE_CURRENT_SOURCE_DIR}/data/materials/packs/aa.res

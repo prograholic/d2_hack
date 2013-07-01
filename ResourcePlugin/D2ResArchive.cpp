@@ -1,12 +1,18 @@
 #include "D2ResArchive.h"
 
-#include <memory>
 #include <fstream>
+
+#include <OgreException.h>
+#include <OgreString.h>
 
 #include "OffsetDataStream.h"
 
+
+
+
 D2ResArchive::D2ResArchive(const Ogre::String& name, const Ogre::String& archType)
   : Ogre::Archive(name, archType)
+  , mArchiveInfo()
 {
 }
 
@@ -18,57 +24,171 @@ bool D2ResArchive::isCaseSensitive(void) const
 
 void D2ResArchive::load()
 {
+  std::ifstream archiveFile(mName.c_str(), std::ios_base::binary);
+  if (!archiveFile)
+  {
+    OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS,
+                "Failed to open file [" + mName + "]",
+                "D2ResArchive::load");
+  }
 
+  readFileInfo(archiveFile, mArchiveInfo);
+
+
+
+  for (D2ResFileInfo::const_iterator it = mArchiveInfo.begin(); it != mArchiveInfo.end(); ++it)
+  {
+    Ogre::FileInfo info;
+
+    info.archive = this;
+    Ogre::StringUtil::splitFilename(it->first, info.basename, info.path);
+    info.compressedSize = it->second.size;
+    info.uncompressedSize = it->second.size;
+
+    mFileInfoList.push_back(info);
+  }
 }
 
 void D2ResArchive::unload()
 {
-
+  mArchiveInfo.clear();
+  mFileInfoList.clear();
 }
 
 
 Ogre::DataStreamPtr D2ResArchive::open(const Ogre::String& filename, bool /* readOnly */) const
 {
-  std::auto_ptr<std::ifstream> stdStream(new std::ifstream(filename.c_str(), std::ios_base::binary));
+  std::auto_ptr<std::ifstream> stdStream(new std::ifstream(mName.c_str(), std::ios_base::binary));
 
+  D2ResEntry entry;
   if (*stdStream)
   {
     Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream.get()));
     stdStream.release();
 
-    return Ogre::DataStreamPtr(new OffsetDataStream(fileStream, 0, 0));
+    if (findEntry(filename, entry))
+    {
+      Ogre::DataStreamPtr result(new OffsetDataStream(fileStream, entry.offset, entry.size));
+      fileStream.setNull();
+
+      return result;
+    }
+    OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS,
+                "file [" + filename + "] canot be found in archive [" + mName + "]",
+                "D2ResArchive::open");
   }
-  return Ogre::DataStreamPtr();
+  OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS,
+              "Failed to open stream [" + mName + "]",
+              "D2ResArchive::open");
 }
 
 Ogre::StringVectorPtr D2ResArchive::list(bool recursive, bool dirs)
 {
+  Ogre::StringVectorPtr ret = Ogre::StringVectorPtr(
+                                OGRE_NEW_T(Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
 
+  Ogre::FileInfoList::iterator i, iend;
+  iend = mFileInfoList.end();
+  for (i = mFileInfoList.begin(); i != iend; ++i)
+  {
+    if ((dirs == (i->compressedSize == size_t (-1))) && (recursive || i->path.empty()))
+    {
+      ret->push_back(i->filename);
+    }
+  }
+
+  return ret;
 }
 
 Ogre::FileInfoListPtr D2ResArchive::listFileInfo(bool recursive, bool dirs)
 {
+  Ogre::FileInfoList* fil = OGRE_NEW_T(Ogre::FileInfoList, Ogre::MEMCATEGORY_GENERAL)();
+  Ogre::FileInfoList::const_iterator i, iend;
+  iend = mFileInfoList.end();
+  for (i = mFileInfoList.begin(); i != iend; ++i)
+      if ((dirs == (i->compressedSize == size_t (-1))) &&
+          (recursive || i->path.empty()))
+          fil->push_back(*i);
 
+  return Ogre::FileInfoListPtr(fil, Ogre::SPFM_DELETE_T);
 }
 
 Ogre::StringVectorPtr D2ResArchive::find(const Ogre::String& pattern, bool recursive, bool dirs)
 {
+  Ogre::StringVectorPtr ret =
+      Ogre::StringVectorPtr(OGRE_NEW_T(
+                              Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
+  // If pattern contains a directory name, do a full match
+  bool full_match = (pattern.find ('/') != Ogre::String::npos) ||
+                    (pattern.find ('\\') != Ogre::String::npos);
 
+  Ogre::FileInfoList::iterator i, iend;
+  iend = mFileInfoList.end();
+  for (i = mFileInfoList.begin(); i != iend; ++i)
+      if ((dirs == (i->compressedSize == size_t (-1))) &&
+          (recursive || full_match || i->path.empty()))
+          // Check basename matches pattern (zip is case insensitive)
+          if (Ogre::StringUtil::match(full_match ? i->filename : i->basename, pattern, false))
+              ret->push_back(i->filename);
+
+  return ret;
 }
 
 bool D2ResArchive::exists(const Ogre::String& filename)
 {
+  D2ResEntry entry;
 
+  return findEntry(filename, entry);
 }
 
-time_t D2ResArchive::getModifiedTime(const Ogre::String& filename)
+time_t D2ResArchive::getModifiedTime(const Ogre::String& /* filename */)
 {
+  struct stat tagStat;
+  bool ret = (stat(mName.c_str(), &tagStat) == 0);
 
+  if (ret)
+  {
+    return tagStat.st_mtime;
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 Ogre::FileInfoListPtr D2ResArchive::findFileInfo(const Ogre::String& pattern, bool recursive, bool dirs) const
 {
+  Ogre::FileInfoListPtr ret =
+      Ogre::FileInfoListPtr(OGRE_NEW_T(
+                              Ogre::FileInfoList, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
+  // If pattern contains a directory name, do a full match
+  bool full_match = (pattern.find ('/') != Ogre::String::npos) ||
+                    (pattern.find ('\\') != Ogre::String::npos);
 
+  Ogre::FileInfoList::const_iterator i, iend;
+  iend = mFileInfoList.end();
+  for (i = mFileInfoList.begin(); i != iend; ++i)
+      if ((dirs == (i->compressedSize == size_t (-1))) &&
+          (recursive || full_match || i->path.empty()))
+          // Check name matches pattern (zip is case insensitive)
+          if (Ogre::StringUtil::match(full_match ? i->filename : i->basename, pattern, false))
+              ret->push_back(*i);
+
+  return ret;
+}
+
+
+
+bool D2ResArchive::findEntry(const Ogre::String & filename, D2ResEntry & entry) const
+{
+  D2ResFileInfo::const_iterator pos = mArchiveInfo.find(filename);
+  if (pos != mArchiveInfo.end())
+  {
+    entry = pos->second;
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -76,7 +196,7 @@ Ogre::FileInfoListPtr D2ResArchive::findFileInfo(const Ogre::String& pattern, bo
 
 namespace
 {
-  Ogre::String d2ResFactoryType = "res";
+  Ogre::String d2ResFactoryType = "D2Res";
 }
 
 const Ogre::String& D2ResArchiveFactory::getType() const
@@ -86,7 +206,7 @@ const Ogre::String& D2ResArchiveFactory::getType() const
 
 Ogre::Archive* D2ResArchiveFactory::createInstance(const Ogre::String& name)
 {
-  return new D2ResArchive(name, "D2Res");
+  return new D2ResArchive(name, d2ResFactoryType);
 }
 
 void D2ResArchiveFactory::destroyInstance(Ogre::Archive* archive)
