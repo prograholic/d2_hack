@@ -1,0 +1,15 @@
+# TODO: Написать поиск 32-х байтных строк и выводить их оффсеты
+
+
+
+0x00000000: "b3d\0"
+
+0x00000018: <res_name_count: Len: 4, type: uint_le, value: 424>
+0x0000001C: <res_name: Len: 32, type: c_str> * res_name_count
+
+0x0000351C: ???
+
+
+0x00003580: <sub_res_name: Len: 32, type: c_str>
+0x000035E0: <sub_res_name: Len: 32, type: c_str>
+0x00003650: <sub_res_name: Len: 32, type: c_str>

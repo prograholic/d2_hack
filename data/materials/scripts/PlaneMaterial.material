@@ -1,20 +1,13 @@
 material PlaneMaterial
 {
-	technique
-	{
-		pass
-		{
-			ambient 0.7 0.7 0
-			diffuse 0.7 0.7 0
-
-			texture_unit
-			{
-				texture txr\aa2.txr
-				#texture tree000.txr
-				#colour_op_ex add src_texture src_current
-				#colour_op_multipass_fallback one one
-				#env_map spherical
-			}
-		}
-	}
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+	texture txr\aa2.txr
+      }
+    }
+  }
 }
