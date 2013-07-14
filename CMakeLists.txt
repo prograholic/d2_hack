@@ -21,9 +21,11 @@ configure_file(data/plugins.cfg.in plugins.cfg)
 configure_file(data/plugins_d.cfg.in plugins_d.cfg)
 
 include_directories(ResourcePlugin)
+include_directories(common)
 
 
 add_subdirectory(ResourcePlugin)
+add_subdirectory(common)
 
 
 set(D2HackSources

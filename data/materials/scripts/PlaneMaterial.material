@@ -9,8 +9,8 @@ material PlaneMaterial
 
 			texture_unit
 			{
-				#texture txr\aa2.txr
-				texture tree000.txr
+				texture txr\aa2.txr
+				#texture tree000.txr
 				#colour_op_ex add src_texture src_current
 				#colour_op_multipass_fallback one one
 				#env_map spherical

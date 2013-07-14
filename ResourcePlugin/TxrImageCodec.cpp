@@ -5,6 +5,8 @@
 #include <OgreLogManager.h>
 #include <OgreImage.h>
 
+#include "D2HackCommon.h"
+
 namespace
 {
   const Ogre::String txrCodecType = "txr";
@@ -13,6 +15,8 @@ namespace
   size_t txrMagicNumberOffset = 16;
   size_t txrMagicNumberSize = 5;
 }
+
+
 
 
 namespace detail
@@ -41,10 +45,6 @@ namespace detail
 
 
 
-TxrImageCodec::TxrImageCodec()
-{
-}
-
 Ogre::DataStreamPtr TxrImageCodec::code(Ogre::MemoryDataStreamPtr& input, Ogre::Codec::CodecDataPtr& pData) const
 {
   OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "code is not implemented", "TxrImageCodec::code");
@@ -67,9 +67,9 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(Ogre::DataStreamPtr& input) cons
                 "TxrImageCodec::decode");
   }
 
-  Ogre::LogManager::getSingleton().stream() << "length of image id data: " << static_cast<int>(tgaHeader.idlength);
+  OGRE_LOG(TxrImageCodec) << "length of image id data: " << static_cast<int>(tgaHeader.idlength);
 
-  Ogre::LogManager::getSingleton().stream() << "color map type: " << static_cast<int>(tgaHeader.colourmaptype);
+  OGRE_LOG(TxrImageCodec) << "color map type: " << static_cast<int>(tgaHeader.colourmaptype);
   if (tgaHeader.colourmaptype != 0)
   {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED,
@@ -77,14 +77,14 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(Ogre::DataStreamPtr& input) cons
                 "TxrImageCodec::decode");
   }
 
-  Ogre::LogManager::getSingleton().stream() << "data type: " << static_cast<int>(tgaHeader.datatypecode);
+  OGRE_LOG(TxrImageCodec) << "data type: " << static_cast<int>(tgaHeader.datatypecode);
   if (tgaHeader.datatypecode != 2)
   {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED,
                 "can`t decode other then uncompressed RGB",
                 "TxrImageCodec::decode");
   }
-  Ogre::LogManager::getSingleton().stream() << "data type is uncompressed RGB image";
+  OGRE_LOG(TxrImageCodec) << "data type is uncompressed RGB image";
 
 
   /// @todo endian issue
@@ -93,13 +93,13 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(Ogre::DataStreamPtr& input) cons
   boost::uint16_t width = *reinterpret_cast<const boost::uint16_t*>(tgaHeader.width);
   boost::uint16_t height = *reinterpret_cast<const boost::uint16_t*>(tgaHeader.height);
 
-  Ogre::LogManager::getSingleton().stream() << "image size " << width << " x " << height;
-  Ogre::LogManager::getSingleton().stream() << "image offset " << xOrigin << " x " << yOrigin;
+  OGRE_LOG(TxrImageCodec) << "image size " << width << " x " << height;
+  OGRE_LOG(TxrImageCodec) << "image offset " << xOrigin << " x " << yOrigin;
 
 
-  Ogre::LogManager::getSingleton().stream() << "bits per pixel: " << static_cast<int>(tgaHeader.bitsperpixel);
+  OGRE_LOG(TxrImageCodec) << "bits per pixel: " << static_cast<int>(tgaHeader.bitsperpixel);
 
-  Ogre::LogManager::getSingleton().stream() << "image descriptor: " << static_cast<int>(tgaHeader.imagedescriptor);
+  OGRE_LOG(TxrImageCodec) << "image descriptor: " << static_cast<int>(tgaHeader.imagedescriptor);
 
   input->skip(tgaHeader.idlength);
 

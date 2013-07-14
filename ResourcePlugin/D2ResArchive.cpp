@@ -2,10 +2,9 @@
 
 #include <fstream>
 
-#include <OgreException.h>
-#include <OgreString.h>
-
 #include "OffsetDataStream.h"
+
+#include "D2HackCommon.h"
 
 
 
@@ -58,18 +57,16 @@ void D2ResArchive::unload()
 
 Ogre::DataStreamPtr D2ResArchive::open(const Ogre::String& filename, bool /* readOnly */) const
 {
-  std::auto_ptr<std::ifstream> stdStream(new std::ifstream(mName.c_str(), std::ios_base::binary));
-
   D2ResEntry entry;
+
+  std::ifstream* stdStream = OGRE_NEW_T(std::ifstream, Ogre::MEMCATEGORY_GENERAL)(mName.c_str(), std::ios_base::binary);
   if (*stdStream)
   {
-    Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream.get()));
-    stdStream.release();
+    Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream));
 
     if (findEntry(filename, entry))
     {
       Ogre::DataStreamPtr result(new OffsetDataStream(fileStream, entry.offset, entry.size));
-      fileStream.setNull();
 
       return result;
     }
