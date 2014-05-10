@@ -31,11 +31,9 @@ void TutorialApplication::createScene(void)
 
 int main(int argc, char *argv[])
 {
-  // Create application object
-  TutorialApplication app;
-
   try
   {
+    TutorialApplication app;
     app.go();
   }
   catch(const Ogre::Exception & e)

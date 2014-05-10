@@ -1,7 +1,7 @@
 #include "BaseApplication.h"
 
 //-------------------------------------------------------------------------------------
-BaseApplication::BaseApplication(void)
+BaseApplication::BaseApplication()
     : mRoot(0),
     mCamera(0),
     mSceneMgr(0),
@@ -20,7 +20,7 @@ BaseApplication::BaseApplication(void)
 }
 
 //-------------------------------------------------------------------------------------
-BaseApplication::~BaseApplication(void)
+BaseApplication::~BaseApplication()
 {
     //if (mTrayMgr) delete mTrayMgr;
     //if (mCameraMan) delete mCameraMan;
@@ -36,7 +36,7 @@ BaseApplication::~BaseApplication(void)
 }
 
 //-------------------------------------------------------------------------------------
-bool BaseApplication::configure(void)
+bool BaseApplication::configure()
 {
     // Show the configuration dialog and initialise the system
     // You can skip this and use root.restoreConfig() to load configuration

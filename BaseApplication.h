@@ -27,8 +27,8 @@
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
 public:
-    BaseApplication(void);
-    virtual ~BaseApplication(void);
+    BaseApplication();
+    virtual ~BaseApplication();
 
     virtual void go(void);
 
@@ -37,7 +37,7 @@ public:
 
 protected:
     virtual bool setup();
-    virtual bool configure(void);
+    virtual bool configure();
     virtual void chooseSceneManager(void);
     virtual void createCamera(void);
     virtual void createFrameListener(void);

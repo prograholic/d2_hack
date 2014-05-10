@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 project(d2_hack)
 
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/utils)
+
+
 find_package(Boost REQUIRED COMPONENTS thread date_time system)
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -27,6 +31,8 @@ include_directories(common)
 add_subdirectory(ResourcePlugin)
 add_subdirectory(common)
 
+add_subdirectory(tools)
+
 
 set(D2HackSources
   BaseApplication.cpp
@@ -43,4 +49,5 @@ target_link_libraries(d2_hack
   ${OIS_LIBRARIES}
   ${Boost_LIBRARIES}
   d2_hack_resource_loader
+  d2_hack_common
 )
