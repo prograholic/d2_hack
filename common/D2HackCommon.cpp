@@ -20,17 +20,13 @@ namespace file_io
 
   namespace helpers
   {
-    bool isSameSymbol(const char symbol, const char testingSymbol)
-    {
-      return symbol == testingSymbol;
-    }
 
     ReadCount::ReadCount(size_t count)
         : mCount(count)
     {
     }
 
-    bool ReadCount::operator ()(char /* symbol */)
+    bool ReadCount::isSeparator(char /* symbol */)
     {
       return (mCount--) == 0;
     }

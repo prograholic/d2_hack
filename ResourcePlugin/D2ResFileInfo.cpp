@@ -87,10 +87,13 @@ namespace
     {
       size_t count = 0;
 
-      count += readUntil(std::back_inserter(header.name), boost::bind(file_io::helpers::isSameSymbol, ' ', _1), true);
+      file_io::helpers::SymbolSeparatorBase<' ', true> spaceSep;
+
+      count += readUntil(std::back_inserter(header.name), spaceSep);
 
       std::string entitiesCount;
-      count += readUntil(std::back_inserter(entitiesCount), boost::bind(file_io::helpers::isSameSymbol, '\0', _1), true);
+      file_io::helpers::SymbolSeparatorBase<'\0', true> zeroSep;
+      count += readUntil(std::back_inserter(entitiesCount), zeroSep);
 
       header.count = boost::lexical_cast<size_t>(entitiesCount);
       return count;
@@ -100,10 +103,12 @@ namespace
     size_t skipFilesData(const std::string & /* sectionName */, std::string & name, D2ResEntry & entry)
     {
       size_t count = 0;
-      count += readUntil(std::back_inserter(name), boost::bind(file_io::helpers::isSameSymbol, '\0', _1), true);
+      file_io::helpers::SymbolSeparatorBase<'\0', true> zeroSep;
+      count += readUntil(std::back_inserter(name), zeroSep);
 
       boost::uint8_t countBuff[sizeof(boost::uint32_t)];
-      count += readUntil(countBuff, file_io::helpers::ReadCount(sizeof(boost::uint32_t)), false);
+      file_io::helpers::ReadCount uint32Sep(sizeof(boost::uint32_t));
+      count += readUntil(countBuff, uint32Sep);
 
       /// @warning little endian issue
       boost::uint32_t size = *reinterpret_cast<boost::uint32_t *>(countBuff);
@@ -111,7 +116,8 @@ namespace
       file_io::helpers::empty_container<boost::uint8_t> skipData;
 
       entry.offset = mOffset;
-      entry.size = readUntil(std::back_inserter(skipData), file_io::helpers::ReadCount(size), false);
+      file_io::helpers::ReadCount sizeSep(size);
+      entry.size = readUntil(std::back_inserter(skipData), sizeSep);
 
       count += entry.size;
       return count;
@@ -123,7 +129,8 @@ namespace
       file_io::helpers::empty_container<char> skipData;
 
       entry.offset = mOffset;
-      entry.size = readUntil(std::back_inserter(skipData), boost::bind(file_io::helpers::isSameSymbol, '\0', _1), true);
+      file_io::helpers::SymbolSeparatorBase<'\0', true> zeroSep;
+      entry.size = readUntil(std::back_inserter(skipData), zeroSep);
 
       /**
        * When we read non-files data, section name is actual filename

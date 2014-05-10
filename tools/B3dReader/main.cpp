@@ -24,7 +24,7 @@ int main(int argc, char* argv [])
   }
 
   B3dReader reader(inputFile);
-  reader.dump(std::cout);
+  reader.read();
 
   return 0;
 }
