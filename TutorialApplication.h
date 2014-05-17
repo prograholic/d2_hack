@@ -35,6 +35,13 @@ protected:
 
     Ogre::TerrainGlobalOptions* m_terrainGlobalOptions;
     Ogre::TerrainGroup* m_terrainGroup;
+
+
+private:
+    void configureTerrainDefaults(Ogre::Light* light);
+    void initBlendMaps(Ogre::Terrain* terrain);
+    void createTerrain();
+    void defineTerrain(long x, long y);
 };
 
 #endif // #ifndef __TutorialApplication_h_
