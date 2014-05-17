@@ -13,6 +13,7 @@ BaseApplication::BaseApplication()
     mTrayMgr(0),
     mCameraMan(0),
     mDetailsPanel(0),
+    mOverlaySystem(0),
     mCursorWasVisible(false),
     mShutDown(false),
     mInputManager(0),
@@ -36,6 +37,8 @@ BaseApplication::~BaseApplication()
       Ogre::Codec::unregisterCodec(mTxrImageCodec.get());
       mTxrImageCodec.reset();
     }
+
+    delete mOverlaySystem;
 
     delete mRoot;
 }
@@ -208,6 +211,8 @@ void BaseApplication::go(void)
 bool BaseApplication::setup(void)
 {
     mRoot = new Ogre::Root(mPluginsCfg);
+
+    mOverlaySystem = OGRE_NEW Ogre::OverlaySystem();
 
     mD2ResArchiveFactory.reset(new D2ResArchiveFactory);
     Ogre::ArchiveManager::getSingleton().addArchiveFactory(mD2ResArchiveFactory.get());
