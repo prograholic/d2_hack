@@ -18,7 +18,9 @@ BaseApplication::BaseApplication()
     mShutDown(false),
     mInputManager(0),
     mMouse(0),
-    mKeyboard(0)
+    mKeyboard(0),
+    mD2ResArchiveFactory(),
+    mTxrImageCodec()
 {
 }
 
@@ -38,9 +40,8 @@ BaseApplication::~BaseApplication()
       mTxrImageCodec.reset();
     }
 
-    delete mOverlaySystem;
-
-    delete mRoot;
+    OGRE_DELETE mOverlaySystem;
+    OGRE_DELETE mRoot;
 }
 
 //-------------------------------------------------------------------------------------
@@ -210,7 +211,7 @@ void BaseApplication::go(void)
 //-------------------------------------------------------------------------------------
 bool BaseApplication::setup(void)
 {
-    mRoot = new Ogre::Root(mPluginsCfg);
+    mRoot = OGRE_NEW Ogre::Root(mPluginsCfg);
 
     mOverlaySystem = OGRE_NEW Ogre::OverlaySystem();
 

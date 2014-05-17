@@ -1,0 +1,11 @@
+#ifndef D2_HACK_RESOURCE_PLUGIN_D2_RAW_LOADER_H
+#define D2_HACK_RESOURCE_PLUGIN_D2_RAW_LOADER_H
+
+class D2RawLoader
+{
+public:
+  D2RawLoader();
+};
+
+#endif /* D2_HACK_RESOURCE_PLUGIN_D2_RAW_LOADER_H */
+

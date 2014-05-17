@@ -4,12 +4,12 @@ Filename:    TutorialApplication.h
 -----------------------------------------------------------------------------
 
 This source file is part of the
-   ___                 __    __ _ _    _ 
+   ___                 __    __ _ _    _
   /___\__ _ _ __ ___  / / /\ \ (_) | _(_)
  //  // _` | '__/ _ \ \ \/  \/ / | |/ / |
 / \_// (_| | | |  __/  \  /\  /| |   <| |
 \___/ \__, |_|  \___|   \/  \/ |_|_|\_\_|
-      |___/                              
+      |___/
       Tutorial Framework
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
@@ -22,8 +22,8 @@ This source file is part of the
 class TutorialApplication : public BaseApplication
 {
 public:
-    TutorialApplication(void);
-    virtual ~TutorialApplication(void);
+    TutorialApplication();
+    virtual ~TutorialApplication();
 
     Ogre::RenderWindow * getWindow(void) { return mWindow; }
     Ogre::Timer * getTimer(void) { return mTimer; }
@@ -32,6 +32,9 @@ public:
 protected:
     virtual void createScene(void);
     Ogre::Timer *mTimer;
+
+    Ogre::TerrainGlobalOptions* m_terrainGlobalOptions;
+    Ogre::TerrainGroup* m_terrainGroup;
 };
 
 #endif // #ifndef __TutorialApplication_h_
