@@ -49,7 +49,7 @@ public:
 
   virtual const Ogre::String& getType() const;
 
-  virtual Ogre::Archive* createInstance(const Ogre::String& name);
+  virtual Ogre::Archive* createInstance(const Ogre::String& name, bool bReadOnly);
 
   virtual void destroyInstance(Ogre::Archive* archive);
 

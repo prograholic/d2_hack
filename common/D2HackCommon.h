@@ -3,6 +3,7 @@
 
 #include <iterator>
 #include <vector>
+#include <iomanip>
 
 #include <boost/cstdint.hpp>
 #include <boost/range.hpp>

@@ -10,7 +10,7 @@ using namespace file_io::helpers;
 
 
 #if defined B3D_TRACING
-#  define TRACE_ARG(impl) impl, std::cout
+#  define TRACE_ARG(impl) impl, m_output
 #  define TRACE_DATA(data, op, dumpType) \
   do \
   { \
@@ -26,8 +26,9 @@ using namespace file_io::helpers;
 #endif /* B3D_TRACING */
 
 
-B3dReader::B3dReader(std::istream &input)
+B3dReader::B3dReader(std::istream &input, std::ostream &output)
   : file_io::Reader(input)
+  , m_output(output)
 {
 }
 

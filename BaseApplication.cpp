@@ -1,5 +1,7 @@
 #include "BaseApplication.h"
 
+#include <OgreTextureManager.h>
+
 //-------------------------------------------------------------------------------------
 BaseApplication::BaseApplication()
     : mRoot(0),
@@ -29,8 +31,11 @@ BaseApplication::~BaseApplication()
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
 
-    Ogre::Codec::unRegisterCodec(mTxrImageCodec.get());
-    mTxrImageCodec.reset();
+    if (mTxrImageCodec)
+    {
+      Ogre::Codec::unregisterCodec(mTxrImageCodec.get());
+      mTxrImageCodec.reset();
+    }
 
     delete mRoot;
 }
@@ -100,7 +105,11 @@ void BaseApplication::createFrameListener(void)
     //Register as a Window listener
     Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
 
-    mTrayMgr = new OgreBites::SdkTrayManager("InterfaceName", mWindow, mMouse, this);
+    OgreBites::InputContext inputContext;
+    inputContext.mMouse = mMouse;
+    inputContext.mKeyboard = mKeyboard;
+
+    mTrayMgr = new OgreBites::SdkTrayManager("InterfaceName", mWindow, inputContext, this);
     mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     mTrayMgr->hideCursor();
@@ -179,7 +188,7 @@ void BaseApplication::loadResources(void)
 //-------------------------------------------------------------------------------------
 void BaseApplication::go(void)
 {
-#ifdef _DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
     mResourcesCfg = "resources_d.cfg";
     mPluginsCfg = "plugins_d.cfg";
 #else

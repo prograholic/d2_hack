@@ -201,7 +201,7 @@ const Ogre::String& D2ResArchiveFactory::getType() const
   return d2ResFactoryType;
 }
 
-Ogre::Archive* D2ResArchiveFactory::createInstance(const Ogre::String& name)
+Ogre::Archive* D2ResArchiveFactory::createInstance(const Ogre::String& name, bool /* bReadOnly */)
 {
   return new D2ResArchive(name, d2ResFactoryType);
 }

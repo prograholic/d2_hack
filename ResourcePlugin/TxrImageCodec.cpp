@@ -4,6 +4,8 @@
 
 #include <OgreLogManager.h>
 #include <OgreImage.h>
+#include <OgreDataStream.h>
+#include <OgreString.h>
 
 #include "D2HackCommon.h"
 
@@ -45,16 +47,16 @@ namespace detail
 
 
 
-Ogre::DataStreamPtr TxrImageCodec::code(Ogre::MemoryDataStreamPtr& input, Ogre::Codec::CodecDataPtr& pData) const
+Ogre::DataStreamPtr TxrImageCodec::encode(Ogre::MemoryDataStreamPtr& input, Ogre::Codec::CodecDataPtr& pData) const
 {
-  OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "code is not implemented", "TxrImageCodec::code");
+  OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "encode is not implemented", "TxrImageCodec::encode");
 }
 
-void TxrImageCodec::codeToFile(Ogre::MemoryDataStreamPtr& input,
-                               const Ogre::String& outFileName,
-                               Ogre::Codec::CodecDataPtr& pData) const
+void TxrImageCodec::encodeToFile(Ogre::MemoryDataStreamPtr& input,
+                                 const Ogre::String& outFileName,
+                                 Ogre::Codec::CodecDataPtr& pData) const
 {
-  OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "codeToFile is not implemented", "TxrImageCodec::codeToFile");
+  OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "encodeToFile is not implemented", "TxrImageCodec::encodeToFile");
 }
 
 Ogre::Codec::DecodeResult TxrImageCodec::decode(Ogre::DataStreamPtr& input) const
@@ -155,5 +157,5 @@ Ogre::String TxrImageCodec::magicNumberToFileExt(const char *magicNumberPtr, siz
     }
   }
 
-  return Ogre::StringUtil::BLANK;
+  return "";
 }

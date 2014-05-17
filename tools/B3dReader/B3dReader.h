@@ -26,11 +26,13 @@ namespace detail
 class B3dReader : public file_io::Reader
 {
 public:
-  explicit B3dReader(std::istream& input);
+  B3dReader(std::istream& input, std::ostream& output);
 
   void read();
 
 private:
+
+  std::ostream& m_output;
 
   void read(detail::b3d_file& b3d
 #if defined(B3D_TRACING)

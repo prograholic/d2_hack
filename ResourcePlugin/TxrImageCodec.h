@@ -6,9 +6,9 @@
 class TxrImageCodec : public Ogre::ImageCodec
 {
 public:
-  virtual Ogre::DataStreamPtr code(Ogre::MemoryDataStreamPtr& input, CodecDataPtr& pData) const;
+  virtual Ogre::DataStreamPtr encode(Ogre::MemoryDataStreamPtr& input, CodecDataPtr& pData) const;
 
-  virtual void codeToFile(Ogre::MemoryDataStreamPtr& input, const Ogre::String& outFileName, CodecDataPtr& pData) const;
+  virtual void encodeToFile(Ogre::MemoryDataStreamPtr& input, const Ogre::String& outFileName, CodecDataPtr& pData) const;
 
   virtual Ogre::Codec::DecodeResult decode(Ogre::DataStreamPtr& input) const;
 

@@ -23,7 +23,19 @@ int main(int argc, char* argv [])
     return 2;
   }
 
-  B3dReader reader(inputFile);
+  fileName += ".dump";
+
+  std::ofstream outputFile(fileName.c_str());
+  if (!outputFile)
+  {
+    std::cerr << "failed to open file [" << fileName << "]" << std::endl;
+    return 3;
+  }
+
+  outputFile << "processing file [" << fileName << "]" << std::endl;
+  std::cout  << "processing file [" << fileName << "]" << std::endl;
+
+  B3dReader reader(inputFile, outputFile);
   reader.read();
 
   return 0;
