@@ -3,6 +3,9 @@
 
 //-------------------------------------------------------------------------------------
 TutorialApplication::TutorialApplication()
+  : mTimer(0)
+  , m_terrainGlobalOptions(0)
+  , m_terrainGroup(0)
 {
   mTimer = OGRE_NEW Ogre::Timer();
   mTimer->reset();
@@ -137,8 +140,8 @@ void TutorialApplication::configureTerrainDefaults(Ogre::Light* light)
     defaultimp.terrainSize = 513;
     defaultimp.worldSize = 1200.0f;
     defaultimp.inputScale = 60;
-    defaultimp.minBatchSize = 33;
-    defaultimp.maxBatchSize = 65;
+    defaultimp.minBatchSize = 65;
+    defaultimp.maxBatchSize = 129;
     // textures
     defaultimp.layerList.resize(3);
     defaultimp.layerList[0].worldSize = 100;
@@ -162,7 +165,7 @@ void TutorialApplication::defineTerrain(long x, long y)
   else
   {
     Ogre::Image img;
-    img.load("terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    img.load("terrain0.raw2", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     m_terrainGroup->defineTerrain(x, y, &img);
   }
 }

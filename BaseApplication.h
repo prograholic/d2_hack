@@ -26,6 +26,7 @@
 
 #include "D2ResArchive.h"
 #include "TxrImageCodec.h"
+#include "RawImageCodec.h"
 
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
@@ -89,6 +90,7 @@ protected:
     boost::scoped_ptr<D2ResArchiveFactory> mD2ResArchiveFactory;
 
     boost::scoped_ptr<TxrImageCodec> mTxrImageCodec;
+    boost::scoped_ptr<RawImageCodec> m_rawImageCodec;
 };
 
 #endif // D2_HACK_BASE_APPLICATION_H

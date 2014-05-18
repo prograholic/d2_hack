@@ -37,7 +37,11 @@ BaseApplication::~BaseApplication()
     if (mTxrImageCodec)
     {
       Ogre::Codec::unregisterCodec(mTxrImageCodec.get());
-      mTxrImageCodec.reset();
+    }
+
+    if (m_rawImageCodec)
+    {
+      Ogre::Codec::unregisterCodec(m_rawImageCodec.get());
     }
 
     OGRE_DELETE mOverlaySystem;
@@ -220,6 +224,9 @@ bool BaseApplication::setup(void)
 
     mTxrImageCodec.reset(new TxrImageCodec);
     Ogre::Codec::registerCodec(mTxrImageCodec.get());
+
+    m_rawImageCodec.reset(new RawImageCodec);
+    Ogre::Codec::registerCodec(m_rawImageCodec.get());
 
     setupResources();
 
