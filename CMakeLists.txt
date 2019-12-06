@@ -6,8 +6,8 @@ find_package(OGRE 1.11 REQUIRED PATHS ${OGRE_DIR})
 include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
 
 
-find_package(Boost REQUIRED)# COMPONENTS thread date_time system)
-include_directories(${Boost_INCLUDE_DIRS})
+#find_package(Boost REQUIRED)# COMPONENTS thread date_time system)
+#include_directories(${Boost_INCLUDE_DIRS})
 
 #set(OGRE_ROOT ${OGRE_MEDIA_DIR})
 
@@ -70,7 +70,7 @@ copy_3rd_party_runtime(zlib)
 copy_3rd_party_runtime(sdl2)
 
 
-add_subdirectory(ResourcePlugin)
+add_subdirectory(resource_plugin)
 add_subdirectory(common)
 add_subdirectory(tools)
 add_subdirectory(d2_hack)

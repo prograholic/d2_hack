@@ -1,4 +1,4 @@
-#include "TutorialApplication.h"
+#include "tutorial_application.h"
 
 #include <iostream>
 

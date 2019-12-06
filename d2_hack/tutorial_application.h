@@ -17,7 +17,7 @@ This source file is part of the
 #ifndef __TutorialApplication_h_
 #define __TutorialApplication_h_
 
-#include "BaseApplication.h"
+#include "base_application.h"
 
 
 class TutorialApplication :public BaseApplication

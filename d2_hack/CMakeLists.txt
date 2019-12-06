@@ -1,15 +1,16 @@
-set(D2HackSources
-  BaseApplication.cpp
-  BaseApplication.h
+set(d2_hack_sources
+  base_application.cpp
+  base_application.h
 
-  TutorialApplication.cpp
-  TutorialApplication.h
+  tutorial_application.cpp
+  tutorial_application.h
 )
 
-add_executable(d2_hack ${D2HackSources})
+add_executable(d2_hack ${d2_hack_sources})
 
 target_link_libraries(d2_hack
-  OgreBites
-  d2_hack_resource_loader
-  d2_hack_common
+    PRIVATE
+        OgreBites
+        d2_hack_resource_loader
+        d2_hack_common
 )

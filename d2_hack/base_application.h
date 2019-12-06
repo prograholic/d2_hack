@@ -5,11 +5,9 @@
 #include <Bites/OgreTrays.h>
 #include <Bites/OgreCameraMan.h>
 
-#include <boost/smart_ptr/scoped_ptr.hpp>
-
-#include "D2ResArchive.h"
-#include "TxrImageCodec.h"
-#include "RawImageCodec.h"
+#include "d2_res_archive.h"
+#include "txr_image_codec.h"
+#include "raw_image_codec.h"
 
 class BaseApplication : public OgreBites::ApplicationContext, public OgreBites::InputListener
 {

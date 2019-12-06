@@ -1,4 +1,4 @@
-#include "BaseApplication.h"
+#include "base_application.h"
 
 #include <OgreTextureManager.h>
 

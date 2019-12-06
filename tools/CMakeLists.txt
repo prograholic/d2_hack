@@ -1,1 +1,1 @@
-add_subdirectory(B3dReader)
+add_subdirectory(b3d_reader)

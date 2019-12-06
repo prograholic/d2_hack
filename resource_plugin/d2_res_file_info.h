@@ -7,8 +7,8 @@
 
 struct D2ResEntry
 {
-  size_t offset;
-  size_t size;
+    size_t offset;
+    size_t size;
 };
 
 typedef std::map<Ogre::String, D2ResEntry> D2ResFileInfo;

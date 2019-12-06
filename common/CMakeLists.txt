@@ -1,9 +1,9 @@
-set(D2HackCommonFiles
-  D2HackCommon.h
-  D2HackCommon.cpp
+set(d2_hack_common_files
+  d2_hack_common.h
+  d2_hack_common.cpp
 )
 
-add_library(d2_hack_common ${D2HackCommonFiles})
+add_library(d2_hack_common ${d2_hack_common_files})
 target_link_libraries(d2_hack_common OgreMain)
 
 target_include_directories(d2_hack_common
