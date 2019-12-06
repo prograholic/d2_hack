@@ -2,58 +2,41 @@ cmake_minimum_required(VERSION 2.8)
 
 project(d2_hack)
 
+find_package(OGRE 1.11 REQUIRED PATHS ${OGRE_DIR})
+include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/utils)
 
-
-find_package(Boost REQUIRED COMPONENTS thread date_time system)
+find_package(Boost REQUIRED)# COMPONENTS thread date_time system)
 include_directories(${Boost_INCLUDE_DIRS})
 
-find_package(OIS REQUIRED)
-include_directories(${OIS_INCLUDE_DIRS})
+#set(OGRE_ROOT ${OGRE_MEDIA_DIR})
 
-find_package(OGRE REQUIRED)
-include_directories(${OGRE_INCLUDE_DIRS})
-include_directories(${OGRE_Overlay_INCLUDE_DIRS})
-include_directories(${OGRE_Terrain_INCLUDE_DIRS})
+set(APP_ROOT_DIRECTORY ${CMAKE_BINARY_DIR}/app_root)
+set(APP_BIN_DIRECTORY ${APP_ROOT_DIRECTORY}/bin)
+set(APP_CONFIG_DIRECTORY ${APP_ROOT_DIRECTORY}/config)
+set(APP_DATA_DIRECTORY ${APP_ROOT_DIRECTORY}/data)
+
+#add_definitions(
+#    -DAPP_ROOT_DIRECTORY=${APP_ROOT_DIRECTORY}
+#    -DAPP_BIN_DIRECTORY=${APP_BIN_DIRECTORY}
+#    -DAPP_CONFIG_DIRECTORY=${APP_CONFIG_DIRECTORY}
+#    -DAPP_DATA_DIRECTORY=${APP_DATA_DIRECTORY}
+#)
 
 
-set(OGRE_ROOT ${OGRE_MEDIA_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${APP_BIN_DIRECTORY})
 
-configure_file(data/resources.cfg.in resources.cfg)
-configure_file(data/resources_d.cfg.in resources_d.cfg)
-configure_file(data/plugins.cfg.in plugins.cfg)
-configure_file(data/plugins_d.cfg.in plugins_d.cfg)
 
-include_directories(ResourcePlugin)
-include_directories(common)
 
+configure_file(config/resources.cfg.in ${APP_CONFIG_DIRECTORY}/resources.cfg)
+configure_file(config/resources_d.cfg.in ${APP_CONFIG_DIRECTORY}/resources_d.cfg)
+configure_file(config/plugins.cfg.in ${APP_CONFIG_DIRECTORY}/plugins.cfg)
+configure_file(config/plugins_d.cfg.in ${APP_CONFIG_DIRECTORY}/plugins_d.cfg)
+
+function (copy_ogre)
+configure_file()
 
 add_subdirectory(ResourcePlugin)
 add_subdirectory(common)
-
 add_subdirectory(tools)
-
-
-add_definitions(-DDEBUG)
-
-set(D2HackSources
-  BaseApplication.cpp
-  BaseApplication.h
-
-  TutorialApplication.cpp
-  TutorialApplication.h
-)
-
-add_executable(d2_hack ${D2HackSources})
-
-target_link_libraries(d2_hack
-  ${OGRE_LIBRARIES}
-  ${OGRE_Overlay_LIBRARIES}
-  ${OGRE_Terrain_LIBRARIES}
-  ${OIS_LIBRARIES}
-  ${Boost_LIBRARIES}
-  d2_hack_resource_loader
-  d2_hack_common
-)
+add_subdirectory(d2_hack)

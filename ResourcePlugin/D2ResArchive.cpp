@@ -79,12 +79,12 @@ Ogre::DataStreamPtr D2ResArchive::open(const Ogre::String& filename, bool /* rea
               "D2ResArchive::open");
 }
 
-Ogre::StringVectorPtr D2ResArchive::list(bool recursive, bool dirs)
+Ogre::StringVectorPtr D2ResArchive::list(bool recursive, bool dirs) const
 {
   Ogre::StringVectorPtr ret = Ogre::StringVectorPtr(
                                 OGRE_NEW_T(Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
 
-  Ogre::FileInfoList::iterator i, iend;
+  Ogre::FileInfoList::const_iterator i, iend;
   iend = mFileInfoList.end();
   for (i = mFileInfoList.begin(); i != iend; ++i)
   {
@@ -97,7 +97,7 @@ Ogre::StringVectorPtr D2ResArchive::list(bool recursive, bool dirs)
   return ret;
 }
 
-Ogre::FileInfoListPtr D2ResArchive::listFileInfo(bool recursive, bool dirs)
+Ogre::FileInfoListPtr D2ResArchive::listFileInfo(bool recursive, bool dirs) const
 {
   Ogre::FileInfoList* fil = OGRE_NEW_T(Ogre::FileInfoList, Ogre::MEMCATEGORY_GENERAL)();
   Ogre::FileInfoList::const_iterator i, iend;
@@ -110,7 +110,7 @@ Ogre::FileInfoListPtr D2ResArchive::listFileInfo(bool recursive, bool dirs)
   return Ogre::FileInfoListPtr(fil, Ogre::SPFM_DELETE_T);
 }
 
-Ogre::StringVectorPtr D2ResArchive::find(const Ogre::String& pattern, bool recursive, bool dirs)
+Ogre::StringVectorPtr D2ResArchive::find(const Ogre::String& pattern, bool recursive, bool dirs) const
 {
   Ogre::StringVectorPtr ret =
       Ogre::StringVectorPtr(OGRE_NEW_T(
@@ -119,7 +119,7 @@ Ogre::StringVectorPtr D2ResArchive::find(const Ogre::String& pattern, bool recur
   bool full_match = (pattern.find ('/') != Ogre::String::npos) ||
                     (pattern.find ('\\') != Ogre::String::npos);
 
-  Ogre::FileInfoList::iterator i, iend;
+  Ogre::FileInfoList::const_iterator i, iend;
   iend = mFileInfoList.end();
   for (i = mFileInfoList.begin(); i != iend; ++i)
       if ((dirs == (i->compressedSize == size_t (-1))) &&
@@ -131,14 +131,14 @@ Ogre::StringVectorPtr D2ResArchive::find(const Ogre::String& pattern, bool recur
   return ret;
 }
 
-bool D2ResArchive::exists(const Ogre::String& filename)
+bool D2ResArchive::exists(const Ogre::String& filename) const
 {
   D2ResEntry entry;
 
   return findEntry(filename, entry);
 }
 
-time_t D2ResArchive::getModifiedTime(const Ogre::String& /* filename */)
+time_t D2ResArchive::getModifiedTime(const Ogre::String& /* filename */) const
 {
   struct stat tagStat;
   bool ret = (stat(mName.c_str(), &tagStat) == 0);

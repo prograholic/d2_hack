@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <OgreImage.h>
+#include <OgreDataStream.h>
 
 
 namespace

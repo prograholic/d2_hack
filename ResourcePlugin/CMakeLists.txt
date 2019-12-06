@@ -1,5 +1,3 @@
-
-
 set(D2HackResourcePluginSources
   D2ResArchive.cpp
   D2ResArchive.h
@@ -21,3 +19,11 @@ set(D2HackResourcePluginSources
 )
 
 add_library(d2_hack_resource_loader STATIC ${D2HackResourcePluginSources})
+target_link_libraries(d2_hack_resource_loader
+    d2_hack_common
+)
+
+target_include_directories(d2_hack_resource_loader
+    INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)

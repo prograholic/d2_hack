@@ -1,26 +1,9 @@
 #ifndef D2_HACK_BASE_APPLICATION_H
 #define D2_HACK_BASE_APPLICATION_H
 
-#include <OgreCamera.h>
-#include <OgreEntity.h>
-#include <OgreLogManager.h>
-#include <OgreRoot.h>
-#include <OgreViewport.h>
-#include <OgreSceneManager.h>
-#include <OgreRenderWindow.h>
-#include <OgreConfigFile.h>
-#include <OgreWindowEventUtilities.h>
-
-#include <OgreTerrain.h>
-#include <OgreTerrainGroup.h>
-
-#include <OISEvents.h>
-#include <OISInputManager.h>
-#include <OISKeyboard.h>
-#include <OISMouse.h>
-
-#include <SdkTrays.h>
-#include <SdkCameraMan.h>
+#include <Bites/OgreApplicationContext.h>
+#include <Bites/OgreTrays.h>
+#include <Bites/OgreCameraMan.h>
 
 #include <boost/smart_ptr/scoped_ptr.hpp>
 
@@ -28,13 +11,19 @@
 #include "TxrImageCodec.h"
 #include "RawImageCodec.h"
 
-class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
+class BaseApplication : public OgreBites::ApplicationContext, public OgreBites::InputListener
 {
 public:
     BaseApplication();
+
+
+protected:
+    void setup();
+#if 0    
+    
     virtual ~BaseApplication();
 
-    virtual void go(void);
+    virtual void go();
 
     // Ogre::FrameListener
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
@@ -66,6 +55,7 @@ protected:
     //Unattach OIS before window shutdown (very important under Linux)
     virtual void windowClosed(Ogre::RenderWindow* rw);
 
+
     Ogre::Root *mRoot;
     Ogre::Camera* mCamera;
     Ogre::SceneManager* mSceneMgr;
@@ -74,23 +64,20 @@ protected:
     Ogre::String mPluginsCfg;
 
     // OgreBites
-    OgreBites::SdkTrayManager* mTrayMgr;
-    OgreBites::SdkCameraMan* mCameraMan;       // basic camera controller
+    OgreBites::TrayManager* mTrayMgr;
+    OgreBites::CameraMan* mCameraMan;       // basic camera controller
     OgreBites::ParamsPanel* mDetailsPanel;     // sample details panel
     Ogre::OverlaySystem* mOverlaySystem;
     bool mCursorWasVisible;                    // was cursor visible before dialog appeared
     bool mShutDown;
-
-    //OIS Input devices
-    OIS::InputManager* mInputManager;
-    OIS::Mouse*    mMouse;
-    OIS::Keyboard* mKeyboard;
 
     /// Custom resource IO
     boost::scoped_ptr<D2ResArchiveFactory> mD2ResArchiveFactory;
 
     boost::scoped_ptr<TxrImageCodec> mTxrImageCodec;
     boost::scoped_ptr<RawImageCodec> m_rawImageCodec;
+    
+#endif//0
 };
 
 #endif // D2_HACK_BASE_APPLICATION_H

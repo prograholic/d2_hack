@@ -127,6 +127,7 @@ namespace file_io
     struct empty_container
     {
       typedef const T& const_reference;
+      typedef T value_type;
 
       void push_back(const T& /* unused */)
       {

@@ -2,9 +2,26 @@
 
 #include <OgreTextureManager.h>
 
+
+BaseApplication::BaseApplication()
+    : OgreBites::ApplicationContext("d2_hack")
+{
+}
+
+void BaseApplication::setup()
+{
+    ApplicationContext::setup();
+    addInputListener(this);
+
+
+}
+
+#if 0
+
 //-------------------------------------------------------------------------------------
 BaseApplication::BaseApplication()
-    : mRoot(0),
+    : OgreBites::ApplicationContext("afafa")
+    , mRoot(0),
     mCamera(0),
     mSceneMgr(0),
     mWindow(0),
@@ -16,9 +33,6 @@ BaseApplication::BaseApplication()
     mOverlaySystem(0),
     mCursorWasVisible(false),
     mShutDown(false),
-    mInputManager(0),
-    mMouse(0),
-    mKeyboard(0),
     mD2ResArchiveFactory(),
     mTxrImageCodec()
 {
@@ -434,3 +448,5 @@ void BaseApplication::windowClosed(Ogre::RenderWindow* rw)
         }
     }
 }
+
+#endif //0

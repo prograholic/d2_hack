@@ -2,6 +2,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/function.hpp>
+#include <boost/bind.hpp>
 
 #include "D2HackCommon.h"
 

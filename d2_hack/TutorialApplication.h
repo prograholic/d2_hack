@@ -19,6 +19,14 @@ This source file is part of the
 
 #include "BaseApplication.h"
 
+
+class TutorialApplication :public BaseApplication
+{
+    
+};
+
+#if 0
+
 class TutorialApplication : public BaseApplication
 {
 public:
@@ -43,5 +51,7 @@ private:
     void createTerrain();
     void defineTerrain(long x, long y);
 };
+
+#endif //0
 
 #endif // #ifndef __TutorialApplication_h_

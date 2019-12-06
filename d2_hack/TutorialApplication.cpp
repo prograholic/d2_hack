@@ -1,5 +1,8 @@
 #include "TutorialApplication.h"
 
+#include <iostream>
+
+#if 0
 
 //-------------------------------------------------------------------------------------
 TutorialApplication::TutorialApplication()
@@ -170,13 +173,17 @@ void TutorialApplication::defineTerrain(long x, long y)
   }
 }
 
+#endif //0
 
 int main(int argc, char *argv[])
 {
   try
   {
     TutorialApplication app;
-    app.go();
+    
+    app.initApp();
+    app.getRoot()->startRendering();
+    app.closeApp();
   }
   catch(const Ogre::Exception & e)
   {
@@ -185,3 +192,5 @@ int main(int argc, char *argv[])
   }
   return 0;
 }
+
+

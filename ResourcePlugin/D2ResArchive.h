@@ -19,15 +19,15 @@ public:
 
   virtual Ogre::DataStreamPtr open(const Ogre::String& filename, bool readOnly = true) const;
 
-  virtual Ogre::StringVectorPtr list(bool recursive = true, bool dirs = false);
+  virtual Ogre::StringVectorPtr list(bool recursive = true, bool dirs = false) const;
 
-  virtual Ogre::FileInfoListPtr listFileInfo(bool recursive = true, bool dirs = false);
+  virtual Ogre::FileInfoListPtr listFileInfo(bool recursive = true, bool dirs = false) const;
 
-  virtual Ogre::StringVectorPtr find(const Ogre::String& pattern, bool recursive = true, bool dirs = false);
+  virtual Ogre::StringVectorPtr find(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
 
-  virtual bool exists(const Ogre::String& filename);
+  virtual bool exists(const Ogre::String& filename) const;
 
-  virtual time_t getModifiedTime(const Ogre::String& filename);
+  virtual time_t getModifiedTime(const Ogre::String& filename) const;
 
   virtual Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
 
