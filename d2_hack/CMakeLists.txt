@@ -13,6 +13,7 @@ add_executable(d2_hack ${d2_hack_sources})
 target_link_libraries(d2_hack
     PRIVATE
         OgreBites
+        OgreTerrain
         d2_hack_resource_loader
         d2_hack_common
 )

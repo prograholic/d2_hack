@@ -18,13 +18,7 @@ FileSystem=${OGRE_MEDIA_DIR}/models
 [General]
 FileSystem=${OGRE_MEDIA_DIR}
 
-# Materials for visual tests
-[Tests]
-#FileSystem=${OGRE_MEDIA_DIR}/../../Tests/Media
-
-[Generated]
-FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data
-FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data/materials
+[D2]
 FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data/materials/scripts
-FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/data/materials/textures
-D2Res=${CMAKE_CURRENT_SOURCE_DIR}/data/materials/packs/aa.res
+FileSystem=${D2_ROOT_DIR}/ENV
+D2Res=${D2_ROOT_DIR}/ENV/aa.res

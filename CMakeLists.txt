@@ -7,6 +7,9 @@ find_package(Boost REQUIRED)
 find_package(OGRE 1.11 REQUIRED PATHS ${OGRE_DIR})
 include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
 
+if(NOT DEFINED D2_ROOT_DIR)
+    message(FATAL_ERROR "D2_ROOT_DIR is not set. Should point to root directory of D2 installation")
+endif()
 
 set(APP_ROOT_DIRECTORY ${CMAKE_BINARY_DIR}/app_root)
 set(APP_BIN_DIRECTORY ${APP_ROOT_DIRECTORY})
@@ -88,6 +91,8 @@ copy_ogre_target_runtime(OgreBites)
 copy_ogre_target_runtime(OgreMain)
 copy_ogre_target_runtime(OgreOverlay)
 copy_ogre_target_runtime(OgreRTShaderSystem)
+copy_ogre_target_runtime(OgreTerrain)
+copy_ogre_target_runtime(OgrePaging)
 
 copy_ogre_runtime(RenderSystem_GL)
 
