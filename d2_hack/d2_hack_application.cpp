@@ -1,6 +1,30 @@
-#include "tutorial_application.h"
+#include "d2_hack_application.h"
 
-#include <iostream>
+#include <OgreEntity.h>
+
+D2HackApplication::D2HackApplication()
+    : BaseApplication()
+{
+}
+
+void D2HackApplication::CreateScene()
+{
+    m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
+
+    Ogre::Entity* plane = m_sceneManager->createEntity("Plane", Ogre::SceneManager::PT_PLANE);
+
+    plane->setMaterialName("PlaneMaterial", "Generated");
+
+    Ogre::SceneNode* headNode = m_sceneManager->getRootSceneNode()->createChildSceneNode("HeadNode");
+    headNode->attachObject(plane);
+
+    Ogre::Light* light = m_sceneManager->createLight("MainLight");
+    Ogre::SceneNode* lightSceneNode = m_sceneManager->getRootSceneNode()->createChildSceneNode();
+    lightSceneNode->attachObject(light);
+    lightSceneNode->setPosition(20.0f, 80.0f, 50.0f);
+
+    //createTerrain();
+}
 
 #if 0
 
@@ -174,27 +198,3 @@ void TutorialApplication::defineTerrain(long x, long y)
 }
 
 #endif //0
-
-int main(int /* argc */, char * /* argv */ [])
-{
-    try
-    {
-        TutorialApplication app;
-        
-        app.initApp();
-        app.getRoot()->startRendering();
-        app.closeApp();
-    }
-    catch(const Ogre::Exception& e)
-    {
-        std::cerr << "An OGRE exception has occured: " << e.getFullDescription().c_str() << std::endl;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "An exception has occured: " << e.what() << std::endl;
-    }
-    
-    return 0;
-}
-
-

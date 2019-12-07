@@ -12,6 +12,7 @@ D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <Bites/OgreApplicationContext.h>
 #include <Bites/OgreTrays.h>
 #include <Bites/OgreCameraMan.h>
+#include <OgreSceneManager.h>
 
 D2_HACK_DISABLE_WARNING_END() // 4251
 D2_HACK_DISABLE_WARNING_END() // 4275
@@ -26,14 +27,38 @@ class BaseApplication : public OgreBites::ApplicationContext, public OgreBites::
 public:
     BaseApplication();
 
-private:
+protected:
     /// Custom resource IO
     std::unique_ptr<D2ResArchiveFactory> m_d2ResArchiveFactory;
 
     std::unique_ptr<TxrImageCodec> m_txrImageCodec;
     std::unique_ptr<RawImageCodec> m_rawImageCodec;
+    Ogre::SceneManager* m_sceneManager;
+    Ogre::SceneNode* m_cameraSceneNode;
+    Ogre::Camera* m_camera;
+    std::unique_ptr<OgreBites::CameraMan> m_cameraManager;
+
+    bool m_shutdown;
 
     virtual void setup() override;
+
+    virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
+    virtual bool keyReleased(const OgreBites::KeyboardEvent& evt) override;
+    
+    virtual bool mouseMoved(const OgreBites::MouseMotionEvent& evt) override;
+    virtual bool mousePressed(const OgreBites::MouseButtonEvent& evt) override;
+    virtual bool mouseReleased(const OgreBites::MouseButtonEvent& evt) override;
+    virtual bool mouseWheelRolled(const OgreBites::MouseWheelEvent& evt) override;
+
+    virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt) override;
+
+    
+    void CreateCamera();
+    void CreateViewports();
+    void CreateResourceListener();
+
+    virtual void CreateScene() = 0;
+
 #if 0    
     
     virtual ~BaseApplication();
@@ -41,7 +66,7 @@ private:
     virtual void go();
 
     // Ogre::FrameListener
-    virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+    
 
 protected:
     virtual bool setup();

@@ -1,12 +1,15 @@
-#ifndef D2_HACK_TUTORIAL_APPLICATION_H
-#define D2_HACK_TUTORIAL_APPLICATION_H
+#ifndef D2_HACK_APPLICATION_H
+#define D2_HACK_APPLICATION_H
 
 #include "base_application.h"
 
 
-class TutorialApplication :public BaseApplication
+class D2HackApplication :public BaseApplication
 {
-    
+public:
+    D2HackApplication();
+
+    virtual void CreateScene() override;
 };
 
 #if 0
@@ -38,4 +41,4 @@ private:
 
 #endif //0
 
-#endif /* D2_HACK_TUTORIAL_APPLICATION_H */
+#endif /* D2_HACK_APPLICATION_H */

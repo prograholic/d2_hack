@@ -7,8 +7,15 @@ D2_HACK_DISABLE_WARNING_BEGIN(4251)
 
 D2_HACK_DISABLE_WARNING_END() //4251
 
+#include "d2_hack_common.h"
+
 BaseApplication::BaseApplication()
     : OgreBites::ApplicationContext("d2_hack")
+    , m_sceneManager(nullptr)
+    , m_cameraSceneNode(nullptr)
+    , m_camera(nullptr)
+    , m_cameraManager(nullptr)
+    , m_shutdown(false)
 {
 }
 
@@ -23,8 +30,109 @@ void BaseApplication::setup()
     m_rawImageCodec.reset(new RawImageCodec);
     Ogre::Codec::registerCodec(m_rawImageCodec.get());
 
-    ApplicationContext::setup();
+    OgreBites::ApplicationContext::setup();
     addInputListener(this);
+
+    m_sceneManager = mRoot->createSceneManager();
+
+    CreateCamera();
+
+    CreateViewports();
+
+    // Set default mipmap level (NB some APIs ignore this)
+    Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
+
+    // Create any resource listeners (for loading screens)
+    CreateResourceListener();
+
+    // Create the scene
+    CreateScene();
+
+    //CreateFrameListener();
+}
+
+bool BaseApplication::keyPressed(const OgreBites::KeyboardEvent& evt)
+{
+    if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
+    {
+        m_shutdown = true;
+    }
+
+    m_cameraManager->keyPressed(evt);
+
+    return true;
+}
+
+bool BaseApplication::keyReleased(const OgreBites::KeyboardEvent& evt)
+{
+    m_cameraManager->keyReleased(evt);
+
+    return true;
+}
+
+bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+    if (m_shutdown)
+    {
+        return false;
+    }
+
+    m_cameraManager->frameRendered(evt);
+
+    return OgreBites::ApplicationContext::frameRenderingQueued(evt);
+}
+
+bool BaseApplication::mouseMoved(const OgreBites::MouseMotionEvent& evt)
+{
+    m_cameraManager->mouseMoved(evt);
+    return true;
+}
+
+bool BaseApplication::mousePressed(const OgreBites::MouseButtonEvent& evt)
+{
+    m_cameraManager->mousePressed(evt);
+    return true;
+}
+
+bool BaseApplication::mouseReleased(const OgreBites::MouseButtonEvent& evt)
+{
+    m_cameraManager->mouseReleased(evt);
+    return true;
+}
+
+bool BaseApplication::mouseWheelRolled(const OgreBites::MouseWheelEvent& evt)
+{
+    m_cameraManager->mouseWheelRolled(evt);
+    return true;
+}
+
+void BaseApplication::CreateCamera()
+{
+    m_camera = m_sceneManager->createCamera("PlayerCam");
+    m_camera->setNearClipDistance(5);
+    
+    m_cameraSceneNode = m_sceneManager->getRootSceneNode()->createChildSceneNode();
+    m_cameraSceneNode->attachObject(m_camera);
+
+    m_cameraSceneNode->setPosition(Ogre::Vector3(0, 0, 80));
+    m_cameraSceneNode->lookAt(Ogre::Vector3(0, 0, -300), Ogre::Node::TS_LOCAL);
+
+    m_cameraManager.reset(new OgreBites::CameraMan(m_cameraSceneNode));
+}
+
+void BaseApplication::CreateViewports()
+{
+    // Create one viewport, entire window
+    Ogre::Viewport* vp = mWindows[0].render->addViewport(m_camera);
+    vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0));
+
+    // Alter the camera aspect ratio to match the viewport
+    m_camera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
+}
+
+void BaseApplication::CreateResourceListener()
+{
+    //
 }
 
 #if 0
@@ -34,7 +142,6 @@ BaseApplication::BaseApplication()
     : OgreBites::ApplicationContext("afafa")
     , mRoot(0),
     mCamera(0),
-    mSceneMgr(0),
     mWindow(0),
     mResourcesCfg(Ogre::StringUtil::BLANK),
     mPluginsCfg(Ogre::StringUtil::BLANK),
@@ -43,7 +150,6 @@ BaseApplication::BaseApplication()
     mDetailsPanel(0),
     mOverlaySystem(0),
     mCursorWasVisible(false),
-    mShutDown(false),
     mD2ResArchiveFactory(),
     mTxrImageCodec()
 {
@@ -91,26 +197,6 @@ bool BaseApplication::configure()
     {
         return false;
     }
-}
-//-------------------------------------------------------------------------------------
-void BaseApplication::chooseSceneManager(void)
-{
-    // Get the SceneManager, in this case a generic one
-    mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-}
-//-------------------------------------------------------------------------------------
-void BaseApplication::createCamera(void)
-{
-    // Create the camera
-    mCamera = mSceneMgr->createCamera("PlayerCam");
-
-    // Position it at 500 in Z direction
-    mCamera->setPosition(Ogre::Vector3(0,0,80));
-    // Look back along -Z
-    mCamera->lookAt(Ogre::Vector3(0,0,-300));
-    mCamera->setNearClipDistance(5);
-
-    mCameraMan = new OgreBites::SdkCameraMan(mCamera);   // create a default camera controller
 }
 //-------------------------------------------------------------------------------------
 void BaseApplication::createFrameListener(void)
@@ -184,31 +270,6 @@ void BaseApplication::createViewports(void)
         Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
 }
 //-------------------------------------------------------------------------------------
-void BaseApplication::setupResources(void)
-{
-    // Load resource paths from config file
-    Ogre::ConfigFile cf;
-    cf.load(mResourcesCfg);
-
-    // Go through all sections & settings in the file
-    Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
-
-    Ogre::String secName, typeName, archName;
-    while (seci.hasMoreElements())
-    {
-        secName = seci.peekNextKey();
-        Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
-        Ogre::ConfigFile::SettingsMultiMap::iterator i;
-        for (i = settings->begin(); i != settings->end(); ++i)
-        {
-            typeName = i->first;
-            archName = i->second;
-            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-                archName, typeName, secName);
-        }
-    }
-}
-//-------------------------------------------------------------------------------------
 void BaseApplication::createResourceListener(void)
 {
 
@@ -217,25 +278,6 @@ void BaseApplication::createResourceListener(void)
 void BaseApplication::loadResources(void)
 {
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-}
-//-------------------------------------------------------------------------------------
-void BaseApplication::go(void)
-{
-#if defined(DEBUG) || defined(_DEBUG)
-    mResourcesCfg = "resources_d.cfg";
-    mPluginsCfg = "plugins_d.cfg";
-#else
-    mResourcesCfg = "resources.cfg";
-    mPluginsCfg = "plugins.cfg";
-#endif
-
-    if (!setup())
-        return;
-
-    mRoot->startRendering();
-
-    // clean up
-    destroyScene();
 }
 //-------------------------------------------------------------------------------------
 bool BaseApplication::setup(void)
@@ -281,9 +323,6 @@ bool BaseApplication::setup(void)
 bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
     if(mWindow->isClosed())
-        return false;
-
-    if(mShutDown)
         return false;
 
     //Need to capture/update each device
@@ -395,41 +434,11 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
     {
         mWindow->writeContentsToTimestampedFile("screenshot", ".jpg");
     }
-    else if (arg.key == OIS::KC_ESCAPE)
-    {
-        mShutDown = true;
-    }
 
     mCameraMan->injectKeyDown(arg);
     return true;
 }
 
-bool BaseApplication::keyReleased( const OIS::KeyEvent &arg )
-{
-    mCameraMan->injectKeyUp(arg);
-    return true;
-}
-
-bool BaseApplication::mouseMoved( const OIS::MouseEvent &arg )
-{
-    if (mTrayMgr->injectMouseMove(arg)) return true;
-    mCameraMan->injectMouseMove(arg);
-    return true;
-}
-
-bool BaseApplication::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
-{
-    if (mTrayMgr->injectMouseDown(arg, id)) return true;
-    mCameraMan->injectMouseDown(arg, id);
-    return true;
-}
-
-bool BaseApplication::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
-{
-    if (mTrayMgr->injectMouseUp(arg, id)) return true;
-    mCameraMan->injectMouseUp(arg, id);
-    return true;
-}
 
 //Adjust mouse clipping area
 void BaseApplication::windowResized(Ogre::RenderWindow* rw)

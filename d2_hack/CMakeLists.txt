@@ -2,8 +2,10 @@ set(d2_hack_sources
   base_application.cpp
   base_application.h
 
-  tutorial_application.cpp
-  tutorial_application.h
+  d2_hack_application.cpp
+  d2_hack_application.h
+  
+  main.cpp
 )
 
 add_executable(d2_hack ${d2_hack_sources})

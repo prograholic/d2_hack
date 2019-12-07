@@ -39,6 +39,7 @@ void D2ResArchive::load()
         Ogre::FileInfo info;
 
         info.archive = this;
+        info.filename = it->first;
         Ogre::StringUtil::splitFilename(it->first, info.basename, info.path);
         info.compressedSize = it->second.size;
         info.uncompressedSize = it->second.size;
@@ -118,13 +119,14 @@ Ogre::StringVectorPtr D2ResArchive::find(const Ogre::String& pattern, bool recur
         Ogre::StringVectorPtr(OGRE_NEW_T(Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
     // If pattern contains a directory name, do a full match
     bool full_match = (pattern.find ('/') != Ogre::String::npos) || (pattern.find ('\\') != Ogre::String::npos);
+    bool wildCard = pattern.find('*') != Ogre::String::npos;
 
     Ogre::FileInfoList::const_iterator i, iend;
     iend = m_fileInfoList.end();
     for (i = m_fileInfoList.begin(); i != iend; ++i)
     {
         if ((dirs == (i->compressedSize == size_t(-1))) &&
-            (recursive || full_match || i->path.empty()))
+            (recursive || full_match || wildCard))
             // Check basename matches pattern (zip is case insensitive)
         {
             if (Ogre::StringUtil::match(full_match ? i->filename : i->basename, pattern, false))
@@ -164,12 +166,13 @@ Ogre::FileInfoListPtr D2ResArchive::findFileInfo(const Ogre::String& pattern, bo
     Ogre::FileInfoListPtr ret = Ogre::FileInfoListPtr(OGRE_NEW_T(Ogre::FileInfoList, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
     // If pattern contains a directory name, do a full match
     bool full_match = (pattern.find ('/') != Ogre::String::npos) || (pattern.find ('\\') != Ogre::String::npos);
+    bool wildCard = pattern.find('*') != Ogre::String::npos;
 
     Ogre::FileInfoList::const_iterator i, iend;
     iend = m_fileInfoList.end();
     for (i = m_fileInfoList.begin(); i != iend; ++i)
     {
-        if ((dirs == (i->compressedSize == size_t(-1))) && (recursive || full_match || i->path.empty()))
+        if ((dirs == (i->compressedSize == size_t(-1))) && (recursive || full_match || wildCard))
         {
             // Check name matches pattern (zip is case insensitive)
             if (Ogre::StringUtil::match(full_match ? i->filename : i->basename, pattern, false))
