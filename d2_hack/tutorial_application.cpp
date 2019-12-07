@@ -175,7 +175,7 @@ void TutorialApplication::defineTerrain(long x, long y)
 
 #endif //0
 
-int main(int argc, char *argv[])
+int main(int /* argc */, char * /* argv */ [])
 {
     try
     {

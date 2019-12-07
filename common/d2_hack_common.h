@@ -5,17 +5,15 @@
 #include <vector>
 #include <iomanip>
 #include <cstdint>
+#include <limits>
 
 #include <OgreException.h>
 #include <OgreString.h>
 #include <OgreLogManager.h>
 
-
 #ifndef OGRE_LOG
 #define OGRE_LOG(x) Ogre::LogManager::getSingleton().stream() << #x << ": "
 #endif /* OGRE_LOG */
-
-
 
 
 namespace file_io

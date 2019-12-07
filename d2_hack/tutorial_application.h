@@ -1,21 +1,5 @@
-/*
------------------------------------------------------------------------------
-Filename:    TutorialApplication.h
------------------------------------------------------------------------------
-
-This source file is part of the
-   ___                 __    __ _ _    _
-  /___\__ _ _ __ ___  / / /\ \ (_) | _(_)
- //  // _` | '__/ _ \ \ \/  \/ / | |/ / |
-/ \_// (_| | | |  __/  \  /\  /| |   <| |
-\___/ \__, |_|  \___|   \/  \/ |_|_|\_\_|
-      |___/
-      Tutorial Framework
-      http://www.ogre3d.org/tikiwiki/
------------------------------------------------------------------------------
-*/
-#ifndef __TutorialApplication_h_
-#define __TutorialApplication_h_
+#ifndef D2_HACK_TUTORIAL_APPLICATION_H
+#define D2_HACK_TUTORIAL_APPLICATION_H
 
 #include "base_application.h"
 
@@ -54,4 +38,4 @@ private:
 
 #endif //0
 
-#endif // #ifndef __TutorialApplication_h_
+#endif /* D2_HACK_TUTORIAL_APPLICATION_H */

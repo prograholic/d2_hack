@@ -1,6 +1,7 @@
 set(d2_hack_common_files
-  d2_hack_common.h
-  d2_hack_common.cpp
+    d2_hack_common.h
+    d2_hack_common.cpp
+    d2_hack_platform_support.h
 )
 
 add_library(d2_hack_common ${d2_hack_common_files})

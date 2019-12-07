@@ -16,7 +16,7 @@ FileSystem=${OGRE_MEDIA_DIR}/models
 
 
 [General]
-#FileSystem=${OGRE_MEDIA_DIR}
+FileSystem=${OGRE_MEDIA_DIR}
 
 # Materials for visual tests
 [Tests]

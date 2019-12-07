@@ -1,9 +1,21 @@
 #ifndef D2_HACK_BASE_APPLICATION_H
 #define D2_HACK_BASE_APPLICATION_H
 
+#include <memory>
+
+#include "d2_hack_platform_support.h"
+
+D2_HACK_DISABLE_WARNING_BEGIN(4100)
+D2_HACK_DISABLE_WARNING_BEGIN(4275)
+D2_HACK_DISABLE_WARNING_BEGIN(4251)
+
 #include <Bites/OgreApplicationContext.h>
 #include <Bites/OgreTrays.h>
 #include <Bites/OgreCameraMan.h>
+
+D2_HACK_DISABLE_WARNING_END() // 4251
+D2_HACK_DISABLE_WARNING_END() // 4275
+D2_HACK_DISABLE_WARNING_END() // 4100
 
 #include "d2_res_archive.h"
 #include "txr_image_codec.h"
@@ -14,9 +26,14 @@ class BaseApplication : public OgreBites::ApplicationContext, public OgreBites::
 public:
     BaseApplication();
 
+private:
+    /// Custom resource IO
+    std::unique_ptr<D2ResArchiveFactory> m_d2ResArchiveFactory;
 
-protected:
-    void setup();
+    std::unique_ptr<TxrImageCodec> m_txrImageCodec;
+    std::unique_ptr<RawImageCodec> m_rawImageCodec;
+
+    virtual void setup() override;
 #if 0    
     
     virtual ~BaseApplication();
@@ -69,11 +86,7 @@ protected:
     bool mCursorWasVisible;                    // was cursor visible before dialog appeared
     bool mShutDown;
 
-    /// Custom resource IO
-    boost::scoped_ptr<D2ResArchiveFactory> mD2ResArchiveFactory;
 
-    boost::scoped_ptr<TxrImageCodec> mTxrImageCodec;
-    boost::scoped_ptr<RawImageCodec> m_rawImageCodec;
     
 #endif//0
 };

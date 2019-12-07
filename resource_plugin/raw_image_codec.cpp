@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <boost/numeric/conversion/cast.hpp>
+
 #include <OgreImage.h>
 #include <OgreDataStream.h>
 
@@ -11,23 +13,23 @@ namespace
 const Ogre::String rawCodecType = "raw2";
 }
 
-Ogre::DataStreamPtr RawImageCodec::encode(Ogre::MemoryDataStreamPtr& input, CodecDataPtr& pData) const
+Ogre::DataStreamPtr RawImageCodec::encode(const Ogre::MemoryDataStreamPtr& /* input */, const CodecDataPtr& /* pData */) const
 {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED,
                 "encode is not implemented",
                 "RawImageCodec::encode");
 }
 
-void RawImageCodec::encodeToFile(Ogre::MemoryDataStreamPtr& input,
-                                 const Ogre::String& outFileName,
-                                 CodecDataPtr& pData) const
+void RawImageCodec::encodeToFile(const Ogre::MemoryDataStreamPtr& /* input */,
+                                 const Ogre::String& /* outFileName */,
+                                 const CodecDataPtr& /* pData */) const
 {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED,
                 "encodeToFile is not implemented",
                 "RawImageCodec::encodeToFile");
 }
 
-Ogre::Codec::DecodeResult RawImageCodec::decode(Ogre::DataStreamPtr& input) const
+Ogre::Codec::DecodeResult RawImageCodec::decode(const Ogre::DataStreamPtr& input) const
 {
     size_t dataSize = input->size();
 
@@ -65,11 +67,11 @@ Ogre::Codec::DecodeResult RawImageCodec::decode(Ogre::DataStreamPtr& input) cons
     }
 
 
-    std::auto_ptr<ImageData> imgData(new ImageData());
+    std::unique_ptr<ImageData> imgData(new ImageData());
 
     imgData->depth = 1;
-    imgData->width = height;
-    imgData->height = height;
+    imgData->width = boost::numeric_cast<Ogre::uint32>(height);
+    imgData->height = imgData->width;
     imgData->num_mipmaps = 0;
     imgData->flags = 0;
     imgData->format = Ogre::PF_L16;
@@ -97,7 +99,7 @@ Ogre::String RawImageCodec::getType() const
     return rawCodecType;
 }
 
-Ogre::String RawImageCodec::magicNumberToFileExt(const char *magicNumberPtr, size_t maxbytes) const
+Ogre::String RawImageCodec::magicNumberToFileExt(const char* /* magicNumberPtr */, size_t /* maxbytes */) const
 {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED,
                 "magicNumberToFileExt is not implemented",

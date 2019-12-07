@@ -48,19 +48,20 @@ namespace detail
 
 
 
-Ogre::DataStreamPtr TxrImageCodec::encode(Ogre::MemoryDataStreamPtr& input, Ogre::Codec::CodecDataPtr& pData) const
+Ogre::DataStreamPtr TxrImageCodec::encode(const Ogre::MemoryDataStreamPtr& /* input */,
+                                          const Ogre::Codec::CodecDataPtr& /* pData */) const
 {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "encode is not implemented", "TxrImageCodec::encode");
 }
 
-void TxrImageCodec::encodeToFile(Ogre::MemoryDataStreamPtr& input,
-                                 const Ogre::String& outFileName,
-                                 Ogre::Codec::CodecDataPtr& pData) const
+void TxrImageCodec::encodeToFile(const Ogre::MemoryDataStreamPtr& /* input */,
+                                 const Ogre::String& /* outFileName */,
+                                 const Ogre::Codec::CodecDataPtr& /* pData */) const
 {
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "encodeToFile is not implemented", "TxrImageCodec::encodeToFile");
 }
 
-Ogre::Codec::DecodeResult TxrImageCodec::decode(Ogre::DataStreamPtr& input) const
+Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input) const
 {
     detail::TgaHeader tgaHeader;
     if (input->read(&tgaHeader, sizeof(tgaHeader)) != sizeof(tgaHeader))

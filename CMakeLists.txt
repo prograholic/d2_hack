@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(d2_hack)
+project(d2_hack CXX)
+
+find_package(Boost REQUIRED)
 
 find_package(OGRE 1.11 REQUIRED PATHS ${OGRE_DIR})
 include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
@@ -29,8 +31,6 @@ file(MAKE_DIRECTORY
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${APP_BIN_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${APP_BIN_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${APP_BIN_DIRECTORY})
-
-
 
 configure_file(config/resources.cfg.in ${APP_CONFIG_DIRECTORY}/resources.cfg)
 configure_file(config/resources_d.cfg.in ${APP_CONFIG_DIRECTORY}/resources_d.cfg)
@@ -94,6 +94,14 @@ copy_ogre_runtime(RenderSystem_GL)
 
 copy_3rd_party_runtime(zlib)
 copy_3rd_party_runtime(sdl2)
+
+
+
+if (CMAKE_CXX_COMPILER MATCHES "MSVC")
+    add_definitions(/W4 /WX)
+else()
+    message(FATAL_ERROR "Unsupported compiler, please enable highest warning level and enable warning as error")
+endif()
 
 
 add_subdirectory(resource_plugin)

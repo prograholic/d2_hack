@@ -22,6 +22,7 @@ add_library(d2_hack_resource_loader STATIC ${d2_hack_resource_plugin_sources})
 target_link_libraries(d2_hack_resource_loader
     PRIVATE
         d2_hack_common
+        Boost::boost
 )
 
 target_include_directories(d2_hack_resource_loader

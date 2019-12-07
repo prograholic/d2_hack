@@ -1,7 +1,11 @@
 #include "base_application.h"
 
-#include <OgreTextureManager.h>
+D2_HACK_DISABLE_WARNING_BEGIN(4251)
 
+#include <OgreTextureManager.h>
+#include <OgreArchiveManager.h>
+
+D2_HACK_DISABLE_WARNING_END() //4251
 
 BaseApplication::BaseApplication()
     : OgreBites::ApplicationContext("d2_hack")
@@ -10,10 +14,17 @@ BaseApplication::BaseApplication()
 
 void BaseApplication::setup()
 {
+    m_d2ResArchiveFactory.reset(new D2ResArchiveFactory);
+    Ogre::ArchiveManager::getSingleton().addArchiveFactory(m_d2ResArchiveFactory.get());
+
+    m_txrImageCodec.reset(new TxrImageCodec);
+    Ogre::Codec::registerCodec(m_txrImageCodec.get());
+
+    m_rawImageCodec.reset(new RawImageCodec);
+    Ogre::Codec::registerCodec(m_rawImageCodec.get());
+
     ApplicationContext::setup();
     addInputListener(this);
-
-
 }
 
 #if 0
