@@ -1,7 +1,7 @@
 # Defines plugins to load
 
 # Define plugin folder
-PluginFolder=${OGRE_PLUGIN_DIR}
+PluginFolder=${APP_BIN_DIRECTORY}
 
 # Define plugins
 # Plugin=RenderSystem_Direct3D9
@@ -9,9 +9,9 @@ PluginFolder=${OGRE_PLUGIN_DIR}
  Plugin=RenderSystem_GL
 # Plugin=RenderSystem_GLES
 # Plugin=RenderSystem_GLES2
- Plugin=Plugin_ParticleFX
- Plugin=Plugin_BSPSceneManager
- Plugin=Plugin_CgProgramManager
- Plugin=Plugin_PCZSceneManager
- Plugin=Plugin_OctreeZone
- Plugin=Plugin_OctreeSceneManager
+# Plugin=Plugin_ParticleFX
+# Plugin=Plugin_BSPSceneManager
+# Plugin=Plugin_CgProgramManager
+# Plugin=Plugin_PCZSceneManager
+# Plugin=Plugin_OctreeZone
+# Plugin=Plugin_OctreeSceneManager

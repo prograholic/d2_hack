@@ -1,8 +1,6 @@
 #include "d2_res_file_info.h"
 
-#include <boost/lexical_cast.hpp>
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 
 #include "d2_hack_common.h"
 
@@ -28,7 +26,7 @@ namespace
 
     typedef std::map<std::string, file_io::blob_t> DataDictionary;
     typedef std::map<Header, DataDictionary> FileSystem;
-    typedef boost::function<bool (const std::string & sectionName, std::string & name, D2ResEntry & entry)> ResourceWatcher;
+    typedef std::function<bool (const std::string & sectionName, std::string & name, D2ResEntry & entry)> ResourceWatcher;
     typedef std::map<std::string, ResourceWatcher> ParserDispatcher;
 
 
@@ -41,14 +39,16 @@ namespace
             : file_io::Reader(stream)
             , m_dispatcher()
         {
-            m_dispatcher["COLORS"] = boost::bind(&D2ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
-            m_dispatcher["MATERIALS"] = boost::bind(&D2ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
+            using namespace std::placeholders;
+            
+            m_dispatcher["COLORS"] = std::bind(&D2ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
+            m_dispatcher["MATERIALS"] = std::bind(&D2ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
 
-            m_dispatcher["TEXTUREFILES"] = boost::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-            m_dispatcher["PALETTEFILES"] = boost::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-            m_dispatcher["BACKFILES"] = boost::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-            m_dispatcher["MASKFILES"] = boost::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-            m_dispatcher["SOUNDFILES"] = boost::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+            m_dispatcher["TEXTUREFILES"] = std::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+            m_dispatcher["PALETTEFILES"] = std::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+            m_dispatcher["BACKFILES"] = std::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+            m_dispatcher["MASKFILES"] = std::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+            m_dispatcher["SOUNDFILES"] = std::bind(&D2ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
 
         }
 
@@ -96,7 +96,7 @@ namespace
             file_io::helpers::SymbolSeparatorBase<'\0', true> zeroSep;
             count += ReadUntil(std::back_inserter(entitiesCount), zeroSep);
 
-            header.count = boost::lexical_cast<size_t>(entitiesCount);
+            header.count = std::stoul(entitiesCount);
             return count;
         }
 
@@ -107,14 +107,14 @@ namespace
             file_io::helpers::SymbolSeparatorBase<'\0', true> zeroSep;
             count += ReadUntil(std::back_inserter(name), zeroSep);
 
-            boost::uint8_t countBuff[sizeof(boost::uint32_t)];
-            file_io::helpers::ReadCount uint32Sep(sizeof(boost::uint32_t));
+            std::uint8_t countBuff[sizeof(std::uint32_t)];
+            file_io::helpers::ReadCount uint32Sep(sizeof(std::uint32_t));
             count += ReadUntil(countBuff, uint32Sep);
 
             /// @warning little endian issue
-            boost::uint32_t size = *reinterpret_cast<boost::uint32_t *>(countBuff);
+            std::uint32_t size = *reinterpret_cast<std::uint32_t *>(countBuff);
 
-            file_io::helpers::empty_container<boost::uint8_t> skipData;
+            file_io::helpers::empty_container<std::uint8_t> skipData;
 
             entry.offset = m_offset;
             file_io::helpers::ReadCount sizeSep(size);
