@@ -11,9 +11,6 @@ set(d2_hack_resource_plugin_sources
     txr_image_codec.cpp
     txr_image_codec.h
     
-    resource_loader.cpp
-    resource_loader.h
-    
     raw_image_codec.cpp
     raw_image_codec.h
 )

@@ -127,8 +127,8 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input
     }
 
     imgData->size = Ogre::Image::calculateSize(imgData->num_mipmaps, 1,
-                                                                                         imgData->width, imgData->height,
-                                                                                         imgData->depth, imgData->format);
+                                               imgData->width, imgData->height,
+                                               imgData->depth, imgData->format);
 
     Ogre::MemoryDataStreamPtr output(new Ogre::MemoryDataStream(imgData->size));
     if (input->read(output->getPtr(), imgData->size) != imgData->size)

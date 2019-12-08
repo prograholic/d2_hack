@@ -113,3 +113,7 @@ add_subdirectory(resource_plugin)
 add_subdirectory(common)
 add_subdirectory(tools)
 add_subdirectory(d2_hack)
+
+
+enable_testing()
+add_subdirectory(tests)
