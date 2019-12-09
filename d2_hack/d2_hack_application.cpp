@@ -13,7 +13,7 @@ void D2HackApplication::CreateScene()
 
     Ogre::Entity* plane = m_sceneManager->createEntity("Plane", Ogre::SceneManager::PT_PLANE);
 
-    plane->setMaterialName("PlaneMaterial", "D2");
+    plane->setMaterialName("PlaneMaterial");
 
     Ogre::SceneNode* headNode = m_sceneManager->getRootSceneNode()->createChildSceneNode("HeadNode");
     headNode->attachObject(plane);
@@ -95,6 +95,21 @@ void D2HackApplication::ConfigureTerrainDefaults(Ogre::Light* light)
     defaultimp.minBatchSize = 65;
     defaultimp.maxBatchSize = 129;
     // textures
+
+    defaultimp.layerList.resize(1);
+    defaultimp.layerList[0].worldSize = 1200.0f;
+    defaultimp.layerList[0].textureNames.push_back("terrain0.raw2");
+    defaultimp.layerList[0].textureNames.push_back("terrain0.raw2");
+
+    //defaultimp.layerList[1].worldSize = 1200.0f;
+    //defaultimp.layerList[1].textureNames.push_back("terrain1.raw2");
+    //defaultimp.layerList[1].textureNames.push_back("terrain1.raw2");
+
+    //defaultimp.layerList[2].worldSize = 1200.0f;
+    //defaultimp.layerList[2].textureNames.push_back("terrain2.raw2");
+    //defaultimp.layerList[2].textureNames.push_back("terrain2.raw2");
+
+    #if 0
     defaultimp.layerList.resize(3);
     defaultimp.layerList[0].worldSize = 100;
     defaultimp.layerList[0].textureNames.push_back("dirt_grayrocky_diffusespecular.dds");
@@ -105,6 +120,7 @@ void D2HackApplication::ConfigureTerrainDefaults(Ogre::Light* light)
     defaultimp.layerList[2].worldSize = 200;
     defaultimp.layerList[2].textureNames.push_back("growth_weirdfungus-03_diffusespecular.dds");
     defaultimp.layerList[2].textureNames.push_back("growth_weirdfungus-03_normalheight.dds");
+#endif //0
 }
 
 void D2HackApplication::InitBlendMaps(Ogre::Terrain* /* terrain */)
