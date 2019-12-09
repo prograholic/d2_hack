@@ -18,178 +18,256 @@
 
 namespace file_io
 {
-    typedef std::istreambuf_iterator<char> data_iterator;
-    typedef std::iterator_traits<data_iterator> data_iter_traits;
 
-    typedef std::vector<std::uint8_t> blob_t;
+typedef std::istreambuf_iterator<char> data_iterator;
+typedef std::iterator_traits<data_iterator> data_iter_traits;
+
+typedef std::vector<std::uint8_t> blob_t;
+
+void ThrowError(const Ogre::String & msg, const Ogre::String & where);
 
 
-    class SeparatorBase
+namespace details
+{
+template <typename ResultT>
+ResultT ToNumericUnsafe(const std::uint8_t* data)
+{
+    return *reinterpret_cast<const ResultT*>(data);
+}
+
+} //namespace details
+
+
+template <typename ResultT, size_t ArraySize>
+ResultT ToNumeric(const std::uint8_t(&data)[ArraySize])
+{
+    static_assert(ArraySize >= sizeof(ResultT), "Incorrect range for converting range to numeric value");
+    return details::ToNumericUnsafe<ResultT>(data);
+}
+
+template <typename ResultT>
+ResultT ToNumeric(const std::uint8_t* first, const std::uint8_t* last)
+{
+    if (std::distance(first, last) < sizeof(ResultT))
+    {
+        ThrowError("Incorrect range for converting range to numeric value", "ToNumeric");
+    }
+    return details::ToNumericUnsafe<ResultT>(first);
+}
+
+class SeparatorBase
+{
+public:
+    SeparatorBase() = default;
+    virtual ~SeparatorBase() = default;
+
+    virtual bool IsSeparator(char symbol) = 0;
+
+    virtual bool Skip() = 0;
+    
+private:
+    SeparatorBase(const SeparatorBase&) = delete;
+    SeparatorBase& operator=(const SeparatorBase& ) = delete;
+};
+
+class Reader
+{
+public:
+    explicit Reader(std::istream& input);
+
+    void ThrowError(const Ogre::String & msg, const Ogre::String & where);
+
+    template <typename OutputIteratorT>
+    size_t ReadUntil(OutputIteratorT res, SeparatorBase& separator)
+    {
+        size_t count = 0;
+        for ( ; ; )
+        {
+            if (m_begin == m_end)
+            {
+                ThrowError("unexpected end of file", "Reader::readUntil");
+            }
+            const char data = *m_begin;
+            if (separator.IsSeparator(data))
+            {
+                if (separator.Skip())
+                {
+                    ++m_begin;
+                    ++m_offset;
+                    ++count;
+                }
+                break;
+            }
+
+            *res = data;
+            ++res;
+            ++m_begin;
+            ++m_offset;
+            ++count;
+        }
+
+        return count;
+    }
+
+    data_iterator Begin() const
+    {
+        return m_begin;
+    }
+
+    data_iterator End() const
+    {
+        return m_end;
+    }
+
+    size_t GetOffset() const
+    {
+        return m_offset;
+    }
+
+private:
+
+    size_t m_offset;
+    data_iterator m_begin;
+    data_iterator m_end;
+};
+
+namespace helpers
+{
+    template <typename InnerSeparatorT, bool skipSeparator>
+    class SkipAdapter : public SeparatorBase
     {
     public:
-        SeparatorBase() = default;
-        virtual ~SeparatorBase() = default;
+        virtual bool Skip()
+        {
+            return skipSeparator;
+        }
 
-        virtual bool IsSeparator(char symbol) = 0;
+        virtual bool IsSeparator(char symbol)
+        {
+            return static_cast<InnerSeparatorT *>(this)->IsSeparator(symbol);
+        }
+    };
 
-        virtual bool Skip() = 0;
-        
+    template <char sepSymbol, bool skip>
+    class SymbolSeparatorBase : public SkipAdapter<SymbolSeparatorBase<sepSymbol, skip>, skip>
+    {
+    public:
+        bool IsSeparator(char symbol)
+        {
+            return symbol == sepSymbol;
+        }
+    };
+
+    class ReadCountSeparator : public SkipAdapter<ReadCountSeparator, false>
+    {
+    public:
+        explicit ReadCountSeparator(size_t count);
+
+        bool IsSeparator(char symbol);
+
     private:
-        SeparatorBase(const SeparatorBase&) = delete;
-        SeparatorBase& operator=(const SeparatorBase& ) = delete;
+        size_t m_count;
     };
 
-    class Reader
+
+    template <typename T>
+    struct empty_container
     {
-    public:
-        explicit Reader(std::istream& input);
+        typedef const T& const_reference;
+        typedef T value_type;
 
-    protected:
-
-        template <typename OutputIteratorT>
-        size_t ReadUntil(OutputIteratorT res, SeparatorBase& separator)
+        void push_back(const T& /* unused */)
         {
-            size_t count = 0;
-            for ( ; ; )
-            {
-                if (m_begin == m_end)
-                {
-                    ThrowError("unexpected end of file", "Reader::readUntil");
-                }
-                const char data = *m_begin;
-                if (separator.IsSeparator(data))
-                {
-                    if (separator.Skip())
-                    {
-                        ++m_begin;
-                        ++m_offset;
-                        ++count;
-                    }
-                    break;
-                }
 
-                *res = data;
-                ++res;
-                ++m_begin;
-                ++m_offset;
-                ++count;
-            }
-
-            return count;
         }
-
-        void ThrowError(const Ogre::String & msg, const Ogre::String & where);
-
-        size_t m_offset;
-        data_iterator m_begin;
-        data_iterator m_end;
     };
 
-    namespace helpers
+    namespace dump_type
     {
-        template <typename InnerSeparatorT, bool skipSeparator>
-        class SkipAdapter : public SeparatorBase
+        enum Value
         {
-        public:
-            virtual bool Skip()
-            {
-                return skipSeparator;
-            }
-
-            virtual bool IsSeparator(char symbol)
-            {
-                return static_cast<InnerSeparatorT *>(this)->IsSeparator(symbol);
-            }
+            String,
+            Data
         };
+    }
 
-        template <char sepSymbol, bool skip>
-        class SymbolSeparatorBase : public SkipAdapter<SymbolSeparatorBase<sepSymbol, skip>, skip>
+    template <typename RangeT>
+    std::ostream& Dump(std::ostream &outStream, const RangeT& range, dump_type::Value dumpType, size_t* size = 0)
+    {
+        auto begin = std::begin(range);
+        auto end = std::end(range);
+
+        size_t tmpSize = 0;
+
+        while (begin != end)
         {
-        public:
-            bool IsSeparator(char symbol)
+            unsigned char symbol = *begin;
+            if (dumpType == dump_type::String)
             {
-                return symbol == sepSymbol;
-            }
-        };
-
-        class ReadCount : public SkipAdapter<ReadCount, false>
-        {
-        public:
-            explicit ReadCount(size_t count);
-
-            bool IsSeparator(char symbol);
-
-        private:
-            size_t m_count;
-        };
-
-
-        template <typename T>
-        struct empty_container
-        {
-            typedef const T& const_reference;
-            typedef T value_type;
-
-            void push_back(const T& /* unused */)
-            {
-
-            }
-        };
-
-
-        namespace dump_type
-        {
-            enum Value
-            {
-                String,
-                Data
-            };
-        }
-
-        template <typename RangeT>
-        std::ostream& Dump(std::ostream &outStream, const RangeT& range, dump_type::Value dumpType, size_t* size = 0)
-        {
-            auto begin = std::begin(range);
-            auto end = std::end(range);
-
-            size_t tmpSize = 0;
-
-            while (begin != end)
-            {
-                unsigned char symbol = *begin;
-                if (dumpType == dump_type::String)
+                if (std::isprint(symbol))
                 {
-                    if (std::isprint(symbol))
-                    {
-                        outStream << symbol;
-                    }
-                    else
-                    {
-                        if (symbol != 0)
-                        {
-                            outStream << "\\x";
-                            outStream << std::hex << std::setw(2) << std::setfill('0') << (static_cast<unsigned int>(symbol) & 0xFF);
-                        }
-                    }
+                    outStream << symbol;
                 }
                 else
                 {
-                    outStream << std::hex << std::setw(2) << std::setfill('0') << (static_cast<unsigned int>(symbol) & 0xFF);
+                    if (symbol != 0)
+                    {
+                        outStream << "\\x";
+                        outStream << std::hex << std::setw(2) << std::setfill('0') << (static_cast<unsigned int>(symbol) & 0xFF);
+                    }
                 }
-
-                ++begin;
-                ++tmpSize;
             }
-
-            if (size)
+            else
             {
-                *size = tmpSize;
+                outStream << std::hex << std::setw(2) << std::setfill('0') << (static_cast<unsigned int>(symbol) & 0xFF);
             }
 
-            return outStream;
+            ++begin;
+            ++tmpSize;
         }
+
+        if (size)
+        {
+            *size = tmpSize;
+        }
+
+        return outStream;
     }
-}
+
+    template <typename OutputIteratorT>
+    size_t ReadUntil(Reader& reader, OutputIteratorT res, size_t count)
+    {
+        ReadCountSeparator separator{count};
+        return reader.ReadUntil(res, separator);
+    }
+
+    template <typename IntegralT>
+    size_t ReadInt(Reader& reader, IntegralT& value)
+    {
+        static_assert(std::is_integral<IntegralT>::value, "Incorrect type");
+
+        std::uint8_t buffer[sizeof(IntegralT)];
+
+        size_t res = ReadUntil(reader, buffer, sizeof(IntegralT));
+        value = ToNumeric<IntegralT>(buffer);
+
+        return res;
+    }
+
+    inline size_t ReadFloat(Reader& reader, float& value)
+    {
+        static_assert(sizeof(float) == 4, "Incorrect float type, shoult be 4 for D2");
+
+        std::uint8_t buffer[sizeof(float)];
+
+        size_t res = ReadUntil(reader, buffer, sizeof(float));
+        value = ToNumeric<float>(buffer);
+
+        return res;
+    }
+
+} // namespace helpers
+} // namespace file_io
 
 
 #endif /* D2_HACK_COMMON_D2_HACK_COMMON_H */

@@ -90,12 +90,10 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input
     }
     OGRE_LOG(TxrImageCodec) << "data type is uncompressed RGB image";
 
-
-    /// @todo endian issue
-    std::uint16_t xOrigin = *reinterpret_cast<const std::uint16_t*>(tgaHeader.x_origin);
-    std::uint16_t yOrigin = *reinterpret_cast<const std::uint16_t*>(tgaHeader.y_origin);
-    std::uint16_t width = *reinterpret_cast<const std::uint16_t*>(tgaHeader.width);
-    std::uint16_t height = *reinterpret_cast<const std::uint16_t*>(tgaHeader.height);
+    std::uint16_t xOrigin = file_io::ToNumeric<std::uint16_t>(tgaHeader.x_origin);
+    std::uint16_t yOrigin = file_io::ToNumeric<std::uint16_t>(tgaHeader.y_origin);
+    std::uint16_t width = file_io::ToNumeric<std::uint16_t>(tgaHeader.width);
+    std::uint16_t height = file_io::ToNumeric<std::uint16_t>(tgaHeader.height);
 
     OGRE_LOG(TxrImageCodec) << "image size " << width << " x " << height;
     OGRE_LOG(TxrImageCodec) << "image offset " << xOrigin << " x " << yOrigin;

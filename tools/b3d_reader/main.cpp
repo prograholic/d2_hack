@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 
-#include "b3d_reader.h"
+#include "d2_b3d_reader.h"
 
 
 
@@ -13,7 +14,6 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-
     std::string fileName = argv[1];
 
     std::ifstream inputFile(fileName.c_str());
@@ -23,20 +23,9 @@ int main(int argc, char* argv[])
         return 2;
     }
 
-    fileName += ".dump";
-
-    std::ofstream outputFile(fileName.c_str());
-    if (!outputFile)
-    {
-        std::cerr << "failed to open file [" << fileName << "]" << std::endl;
-        return 3;
-    }
-
-    outputFile << "processing file [" << fileName << "]" << std::endl;
-    std::cout    << "processing file [" << fileName << "]" << std::endl;
-
-    B3dReader reader(inputFile, outputFile);
-    reader.Read();
+    b3d::B3dReader reader;
+    b3d::B3d data;
+    reader.Read(inputFile, data);
 
     return 0;
 }

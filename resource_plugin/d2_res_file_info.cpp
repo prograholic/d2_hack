@@ -56,7 +56,7 @@ namespace
         size_t ReadResFile(D2ResFileInfo& fileInfo)
         {
             size_t count = 0;
-            while (m_begin != m_end)
+            while (Begin() != End())
             {
                 Header header;
                 count += ReadHeader(header);
@@ -108,17 +108,15 @@ namespace
             count += ReadUntil(std::back_inserter(name), zeroSep);
 
             std::uint8_t countBuff[sizeof(std::uint32_t)];
-            file_io::helpers::ReadCount uint32Sep(sizeof(std::uint32_t));
-            count += ReadUntil(countBuff, uint32Sep);
+            count += file_io::helpers::ReadUntil(*this, countBuff, sizeof(countBuff));
 
             /// @warning little endian issue
-            std::uint32_t size = *reinterpret_cast<std::uint32_t *>(countBuff);
+            std::uint32_t size = file_io::ToNumeric<std::uint32_t>(countBuff);
 
             file_io::helpers::empty_container<std::uint8_t> skipData;
 
-            entry.offset = m_offset;
-            file_io::helpers::ReadCount sizeSep(size);
-            entry.size = ReadUntil(std::back_inserter(skipData), sizeSep);
+            entry.offset = GetOffset();
+            entry.size = file_io::helpers::ReadUntil(*this, std::back_inserter(skipData), size);
 
             count += entry.size;
             return count;
@@ -129,7 +127,7 @@ namespace
         {
             file_io::helpers::empty_container<char> skipData;
 
-            entry.offset = m_offset;
+            entry.offset = GetOffset();
             file_io::helpers::SymbolSeparatorBase<'\0', true> zeroSep;
             entry.size = ReadUntil(std::back_inserter(skipData), zeroSep);
 

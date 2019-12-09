@@ -1,4 +1,8 @@
 set(d2_hack_resource_plugin_sources
+    d2_b3d_block_data_decl.h
+    d2_b3d_reader.cpp
+    d2_b3d_reader.h
+
     d2_res_archive.cpp
     d2_res_archive.h
 
