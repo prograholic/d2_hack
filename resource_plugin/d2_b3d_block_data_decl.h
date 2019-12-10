@@ -68,6 +68,46 @@ struct GroupVertex7
     NestedBlockList nestedBlocks;
 };
 
+struct Face8
+{
+    static const std::uint32_t FaceIndexType129 = 129;
+    static const std::uint32_t UnknownType144 = 144;
+
+    struct FaceIndex
+    {
+        std::uint32_t faceIndex;
+    };
+
+    struct Unknown144
+    {
+        std::uint32_t unknown;
+    };
+
+    typedef boost::variant<
+        FaceIndex,
+        Unknown144
+    > FaceData;
+    typedef std::vector<FaceData> FaceDataList;
+
+
+    std::uint32_t type;
+    Ogre::Real unknown0;
+    std::uint32_t unknown1;
+    std::uint32_t unknown2;
+
+    FaceDataList faceDataList;
+};
+
+typedef std::vector<Face8> Face8List;
+
+struct SimpleFaces8
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    Face8List faces;
+};
+
 struct GroupLodParameters10
 {
     Ogre::Vector3 center;
@@ -186,6 +226,7 @@ typedef boost::variant<
     Empty0,
     GroupObjects5,
     GroupVertex7,
+    SimpleFaces8,
     GroupLodParameters10,
     GroupTransformMatrix24,
     SimpleFaceData35,
