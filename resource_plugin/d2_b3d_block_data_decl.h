@@ -49,6 +49,18 @@ struct GroupObjects5
     NestedBlockList nestedBlocks;
 };
 
+struct GroupLodParameters10
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    Ogre::Vector3 unknown;
+
+    Ogre::Real distanceToPlayer;
+
+    NestedBlockList nestedBlocks;
+};
+
 struct GroupTransformMatrix24
 {
     Ogre::Vector3 x;
@@ -62,10 +74,33 @@ struct GroupTransformMatrix24
     NestedBlockList nestedBlocks;
 };
 
+
+struct MayBePositionAndNormal
+{
+    Ogre::Vector3 position;
+    Ogre::Vector3 normal;
+};
+
+typedef std::vector< MayBePositionAndNormal> MayBePositionAndNormalList;
+
+struct GroupIndexAndTextures37
+{
+    Ogre::Vector3 mayBeCenter;
+    Ogre::Real mayBeBoundingSphereRadius;
+    ResourceName mayBeName;
+    std::uint32_t unknown;
+
+    MayBePositionAndNormalList mayBePositionAndNormalList;
+
+    NestedBlockList nestedBlocks;
+};
+
 typedef boost::variant<
     Empty0,
     GroupObjects5,
-    GroupTransformMatrix24
+    GroupLodParameters10,
+    GroupTransformMatrix24,
+    GroupIndexAndTextures37
 > Data;
 
 

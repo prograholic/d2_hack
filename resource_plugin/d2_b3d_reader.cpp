@@ -1,3 +1,5 @@
+// Implementation based on https://github.com/AlexKimov/HardTruck-RignRoll-file-formats
+
 #include "d2_b3d_reader.h"
 
 #include <cstring>
@@ -29,7 +31,10 @@ static const std::uint32_t BlockEndMagic = 555;
 
 static const std::uint32_t EmptyBlock0 = 0;
 static const std::uint32_t GroupObjectsBlock5 = 5;
+static const std::uint32_t GroupLodParametersBlock10 = 10;
 static const std::uint32_t GroupTransformMatrixBlock24 = 24;
+static const std::uint32_t SimpleIndexAndTexturesBlock35 = 35;
+static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
 
 static const std::uint32_t MaxBlockId = 40;
 
@@ -84,7 +89,7 @@ private:
         // file size
         file_io::helpers::ReadInt(*this, fileHeader.fileSize);
         fileHeader.fileSize *= 4;
-        
+
         // material section
         file_io::helpers::ReadInt(*this, fileHeader.materials.offset);
         fileHeader.materials.offset *= 4;
@@ -113,7 +118,7 @@ private:
         size_t count = file_io::helpers::ReadInt(*this, materialsCount);
 
         res.resize(materialsCount);
-        for (auto& material: res)
+        for (auto& material : res)
         {
             count += file_io::helpers::ReadUntil(*this, material.begin(), material.size());
         }
@@ -134,16 +139,16 @@ private:
         }
 
         Data res;
-        
+
         std::uint32_t blockSeparator = 0;
         size_t count = file_io::helpers::ReadInt(*this, blockSeparator);
         if (blockSeparator != DataBeginMagic)
         {
             ThrowError("Incorrect data begin magic", "B3dReaderImpl::ReadData");
         }
-        
+
         bool gotEndOfData = false;
-        for ( ; ; )
+        for (; ; )
         {
             Block block;
             count += ReadBlock(block, gotEndOfData);
@@ -163,6 +168,36 @@ private:
         }
 
         data = std::move(res);
+    }
+
+    size_t DispatchBlock(Block& block)
+    {
+        if (block.header.type == EmptyBlock0)
+        {
+            return ReadBlockData0(block);
+        }
+        else if (block.header.type == GroupObjectsBlock5)
+        {
+            return ReadBlockData5(block);
+        }
+        else if (block.header.type == GroupLodParametersBlock10)
+        {
+            return ReadBlockData10(block);
+        }
+        else if (block.header.type == GroupTransformMatrixBlock24)
+        {
+            return ReadBlockData24(block);
+        }
+        else if (block.header.type == SimpleIndexAndTexturesBlock35)
+        {
+            return ReadBlockData35(block);
+        }
+        else if (block.header.type == GroupIndexAndTexturesBlock37)
+        {
+            return ReadBlockData37(block);
+        }
+
+        ThrowError("Unknown block id", "B3dReaderImpl::ReadBlock");
     }
 
     size_t ReadBlock(Block& block, bool& gotEndOfData)
@@ -188,7 +223,7 @@ private:
         }
 
 #ifdef ENABLE_TRACE_B3D
-        m_trace_offset  += 1;
+        m_trace_offset += 1;
 #endif //ENABLE_TRACE_B3D
 
         count += file_io::helpers::ReadUntil(*this, block.header.name.begin(), StringSize);
@@ -202,22 +237,7 @@ private:
         B3D_LOG("name: [" << block.header.name.data() << "]");
         B3D_LOG("type: " << block.header.type);
 
-        if (block.header.type == EmptyBlock0)
-        {
-            count += ReadBlockData0(block);
-        }
-        else if (block.header.type == GroupObjectsBlock5)
-        {
-            count += ReadBlockData5(block);
-        }
-        else if (block.header.type == GroupTransformMatrixBlock24)
-        {
-            count += ReadBlockData24(block);
-        }
-        else
-        {
-            ThrowError("Unknown block id", "B3dReaderImpl::ReadBlock");
-        }
+        count += DispatchBlock(block);
 
 #ifdef ENABLE_TRACE_B3D
         m_trace_offset -= 1;
@@ -233,22 +253,9 @@ private:
         return count;
     }
 
-    size_t ReadBlockData0(Block& block)
-    {
-        block_data::Empty0 blockData;
-
-        size_t count = file_io::helpers::ReadUntil(*this, blockData.emptyData0, sizeof(blockData.emptyData0));
-        count += file_io::helpers::ReadFloat(*this, blockData.unknown);
-        count += file_io::helpers::ReadUntil(*this, blockData.emptyData1, sizeof(blockData.emptyData1));
-
-        block.data = std::move(blockData);
-
-        return count;
-    }
-
     size_t ReadNestedBlocks(NestedBlockList& nestedBlocks)
     {
-        uint32_t nestedBlocksCount = 0;
+        std::uint32_t nestedBlocksCount = 0;
         size_t count = file_io::helpers::ReadInt(*this, nestedBlocksCount);
 
         B3D_LOG("nested: " << nestedBlocksCount);
@@ -271,6 +278,18 @@ private:
         return count;
     }
 
+    size_t ReadBlockData0(Block& block)
+    {
+        block_data::Empty0 blockData;
+
+        size_t count = file_io::helpers::ReadUntil(*this, blockData.emptyData0, sizeof(blockData.emptyData0));
+        count += file_io::helpers::ReadFloat(*this, blockData.unknown);
+        count += file_io::helpers::ReadUntil(*this, blockData.emptyData1, sizeof(blockData.emptyData1));
+
+        block.data = std::move(blockData);
+        return count;
+    }
+
     size_t ReadBlockData5(Block& block)
     {
         block_data::GroupObjects5 blockData;
@@ -282,7 +301,22 @@ private:
         count += ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
+        return count;
+    }
 
+    size_t ReadBlockData10(Block& block)
+    {
+        block_data::GroupLodParameters10 blockData;
+
+        size_t count = helpers::ReadVector(*this, blockData.center);
+        count += file_io::helpers::ReadFloat(*this, blockData.boundingSphereRadius);
+
+        count += helpers::ReadVector(*this, blockData.unknown);
+        count += file_io::helpers::ReadFloat(*this, blockData.distanceToPlayer);
+
+        count += ReadNestedBlocks(blockData.nestedBlocks);
+
+        block.data = std::move(blockData);
         return count;
     }
 
@@ -301,7 +335,100 @@ private:
         count += ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
+        return count;
+    }
 
+    size_t __DebugB3d()
+    {
+        std::string data;
+        size_t count = 0;
+        for (; ; )
+        {
+            char c;
+            count += file_io::helpers::ReadUntil(*this, &c, 1);
+            data.push_back(c);
+            if (data.size() >= 8)
+            {
+                char buff1[8];
+                memcpy(buff1, &BlockNextMagic, 4);
+                memcpy(&buff1[4], &BlockBeginMagic, 4);
+
+                size_t pos1 = data.find(buff1, 0, 8);
+                if (pos1 == std::string::npos)
+                {
+                    char buff2[8];
+                    memcpy(buff2, &BlockEndMagic, 4);
+                    memcpy(&buff2[4], &BlockBeginMagic, 4);
+
+                    size_t pos2 = data.find(buff2, 0, 8);
+                    if (pos2 == std::string::npos)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        //__debugbreak();
+                    }
+                }
+
+                //__debugbreak();
+                std::string hexed;
+                size_t cnt = 0;
+                for (unsigned char d : data)
+                {
+                    char buff2[] = "0123456789ABCDEF";
+                    hexed.push_back(buff2[d >> 4]);
+                    hexed.push_back(buff2[d & 0x0F]);
+                    hexed.push_back(' ');
+                    cnt += 1;
+                    if ((cnt % 4) == 0)
+                    {
+                        const std::uint8_t* p = (const std::uint8_t*)(data.data() + (cnt - 4));
+                        hexed += std::to_string(file_io::details::ToNumericUnsafe<float>(p));
+                        hexed += " ";
+                        hexed += std::to_string(file_io::details::ToNumericUnsafe<std::uint32_t>(p));
+                        hexed.push_back('\n');
+                    }
+                }
+                B3D_LOG("unknown: [" << hexed << "], cnt: " << cnt << ", size: " << data.size())
+                    break;
+            }
+        }
+
+        return count;
+    }
+
+    size_t ReadBlockData35(Block& /* block */)
+    {
+        return __DebugB3d();
+    }
+
+    size_t ReadBlockData37(Block& block)
+    {
+        block_data::GroupIndexAndTextures37 blockData;
+
+        size_t count = helpers::ReadVector(*this, blockData.mayBeCenter);
+        count += file_io::helpers::ReadFloat(*this, blockData.mayBeBoundingSphereRadius);
+        count += file_io::helpers::ReadUntil(*this, blockData.mayBeName.begin(), blockData.mayBeName.size());
+        count += file_io::helpers::ReadInt(*this, blockData.unknown);
+
+        std::uint32_t dataSize = 0;
+        count += file_io::helpers::ReadInt(*this, dataSize);
+        blockData.mayBePositionAndNormalList.reserve(dataSize);
+        while (dataSize > 0)
+        {
+            dataSize -= 1;
+
+            block_data::MayBePositionAndNormal item;
+            count += helpers::ReadVector(*this, item.position);
+            count += helpers::ReadVector(*this, item.normal);
+
+            blockData.mayBePositionAndNormalList.push_back(std::move(item));
+        }
+
+        count += ReadNestedBlocks(blockData.nestedBlocks);
+
+        block.data = std::move(blockData);
         return count;
     }
 };
