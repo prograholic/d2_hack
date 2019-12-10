@@ -49,6 +49,12 @@ struct GroupObjects5
     NestedBlockList nestedBlocks;
 };
 
+struct GroupVertex7
+{
+
+    NestedBlockList nestedBlocks;
+};
+
 struct GroupLodParameters10
 {
     Ogre::Vector3 center;
@@ -74,21 +80,43 @@ struct GroupTransformMatrix24
     NestedBlockList nestedBlocks;
 };
 
+struct MayBeTextureIndex
+{
+    std::uint32_t unknown0;
+    Ogre::Real unknown1;
+    std::array<std::uint32_t, 6> mayBeIndices;
+};
+
+typedef std::vector<MayBeTextureIndex> MayBeTextureIndexList;
+
+struct GroupIndexAndTextures35
+{
+    Ogre::Vector3 mayBeCenter;
+    Ogre::Real mayBeBoundingSphereRadius;
+    std::uint32_t unknown0;
+    std::uint32_t unknown1;
+
+    MayBeTextureIndexList mayBeTextureIndexList;
+};
 
 struct MayBePositionAndNormal
 {
-    Ogre::Vector3 position;
-    Ogre::Vector3 normal;
+    Ogre::Vector3 mayBePosition;
+    Ogre::Vector3 mayBeNormal;
+    Ogre::Real unknown0;
+    Ogre::Real unknown1;
 };
 
 typedef std::vector< MayBePositionAndNormal> MayBePositionAndNormalList;
 
 struct GroupIndexAndTextures37
 {
+    static const std::uint32_t Unknown2 = 2;
+
     Ogre::Vector3 mayBeCenter;
     Ogre::Real mayBeBoundingSphereRadius;
     ResourceName mayBeName;
-    std::uint32_t unknown;
+    std::uint32_t unknownIf2ThenUseUnknown0And1;
 
     MayBePositionAndNormalList mayBePositionAndNormalList;
 
@@ -98,8 +126,10 @@ struct GroupIndexAndTextures37
 typedef boost::variant<
     Empty0,
     GroupObjects5,
+    GroupVertex7,
     GroupLodParameters10,
     GroupTransformMatrix24,
+    GroupIndexAndTextures35,
     GroupIndexAndTextures37
 > Data;
 

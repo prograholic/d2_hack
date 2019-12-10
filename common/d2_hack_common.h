@@ -24,7 +24,7 @@ typedef std::iterator_traits<data_iterator> data_iter_traits;
 
 typedef std::vector<std::uint8_t> blob_t;
 
-void ThrowError(const Ogre::String & msg, const Ogre::String & where);
+__declspec(noreturn) void ThrowError(const Ogre::String & msg, const Ogre::String & where);
 
 
 namespace details
@@ -75,12 +75,11 @@ class Reader
 public:
     explicit Reader(std::istream& input);
 
-    void ThrowError(const Ogre::String & msg, const Ogre::String & where);
+    __declspec(noreturn) void ThrowError(const Ogre::String & msg, const Ogre::String & where);
 
     template <typename OutputIteratorT>
-    size_t ReadUntil(OutputIteratorT res, SeparatorBase& separator)
+    void ReadUntil(OutputIteratorT res, SeparatorBase& separator)
     {
-        size_t count = 0;
         for ( ; ; )
         {
             if (m_begin == m_end)
@@ -94,7 +93,6 @@ public:
                 {
                     ++m_begin;
                     ++m_offset;
-                    ++count;
                 }
                 break;
             }
@@ -103,10 +101,7 @@ public:
             ++res;
             ++m_begin;
             ++m_offset;
-            ++count;
         }
-
-        return count;
     }
 
     data_iterator Begin() const
@@ -235,35 +230,36 @@ namespace helpers
     }
 
     template <typename OutputIteratorT>
-    size_t ReadUntil(Reader& reader, OutputIteratorT res, size_t count)
+    void ReadUntil(Reader& reader, OutputIteratorT res, size_t count)
     {
         ReadCountSeparator separator{count};
-        return reader.ReadUntil(res, separator);
+        reader.ReadUntil(res, separator);
     }
 
     template <typename IntegralT>
-    size_t ReadInt(Reader& reader, IntegralT& value)
+    IntegralT ReadInt2(Reader& reader)
     {
         static_assert(std::is_integral<IntegralT>::value, "Incorrect type");
 
         std::uint8_t buffer[sizeof(IntegralT)];
 
-        size_t res = ReadUntil(reader, buffer, sizeof(IntegralT));
-        value = ToNumeric<IntegralT>(buffer);
-
-        return res;
+        ReadUntil(reader, buffer, sizeof(IntegralT));
+        return ToNumeric<IntegralT>(buffer);
     }
 
-    inline size_t ReadFloat(Reader& reader, float& value)
+    inline std::uint32_t ReadUint32(Reader& reader)
+    {
+        return ReadInt2<std::uint32_t>(reader);
+    }
+
+    inline float ReadFloat(Reader& reader)
     {
         static_assert(sizeof(float) == 4, "Incorrect float type, shoult be 4 for D2");
 
         std::uint8_t buffer[sizeof(float)];
 
-        size_t res = ReadUntil(reader, buffer, sizeof(float));
-        value = ToNumeric<float>(buffer);
-
-        return res;
+        ReadUntil(reader, buffer, sizeof(float));
+        return ToNumeric<float>(buffer);
     }
 
 } // namespace helpers
