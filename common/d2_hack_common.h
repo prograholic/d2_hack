@@ -237,7 +237,7 @@ namespace helpers
     }
 
     template <typename IntegralT>
-    IntegralT ReadInt2(Reader& reader)
+    IntegralT ReadInt(Reader& reader)
     {
         static_assert(std::is_integral<IntegralT>::value, "Incorrect type");
 
@@ -249,7 +249,7 @@ namespace helpers
 
     inline std::uint32_t ReadUint32(Reader& reader)
     {
-        return ReadInt2<std::uint32_t>(reader);
+        return ReadInt<std::uint32_t>(reader);
     }
 
     inline float ReadFloat(Reader& reader)

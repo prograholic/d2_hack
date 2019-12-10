@@ -49,8 +49,21 @@ struct GroupObjects5
     NestedBlockList nestedBlocks;
 };
 
+struct VertexEntry
+{
+    Ogre::Vector3 point;
+    Ogre::Vector2 textureCoord;
+};
+
+typedef std::vector<VertexEntry> Vertices;
+
 struct GroupVertex7
 {
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+    ResourceName name;
+
+    Vertices vertices;
 
     NestedBlockList nestedBlocks;
 };
@@ -80,23 +93,69 @@ struct GroupTransformMatrix24
     NestedBlockList nestedBlocks;
 };
 
-struct MayBeTextureIndex
+struct Mesh35
 {
-    std::uint32_t unknown0;
-    Ogre::Real unknown1;
-    std::array<std::uint32_t, 6> mayBeIndices;
+    static const std::uint32_t Indices1 = 1;
+    static const std::uint32_t Indices16 = 16;
+    static const std::uint32_t UnknownType48 = 48;
+    static const std::uint32_t UnknownType49 = 49;
+    static const std::uint32_t UnknownType50 = 50;
+
+    struct Indices
+    {
+        std::uint32_t index;
+    };
+
+    struct Unknown48
+    {
+        std::uint32_t faceIndex;
+        Ogre::Vector3 position;
+    };
+
+    struct Unknown49
+    {
+        std::uint32_t unknown0;
+        Ogre::Real unknown1;
+    };
+
+    struct Unknown50
+    {
+        std::uint32_t faceIndex;
+        Ogre::Vector3 position;
+        Ogre::Vector2 texCoord;
+    };
+
+    typedef boost::variant<
+        Indices,
+        Unknown48,
+        Unknown49,
+        Unknown50
+    > MeshData;
+    typedef std::vector<MeshData> MeshDataList;
+
+    std::uint32_t type;
+    Ogre::Real unknown0;
+    std::uint32_t unknown1;
+    std::uint32_t materialIndex;
+
+    MeshDataList meshDataList;
 };
 
-typedef std::vector<MayBeTextureIndex> MayBeTextureIndexList;
+typedef std::vector<Mesh35> Mesh35List;
 
-struct GroupIndexAndTextures35
+struct SimpleFaceData35
 {
-    Ogre::Vector3 mayBeCenter;
-    Ogre::Real mayBeBoundingSphereRadius;
-    std::uint32_t unknown0;
-    std::uint32_t unknown1;
+    static const std::uint32_t Unknown1 = 1;
+    static const std::uint32_t Unknown2 = 2;
+    static const std::uint32_t IndicesOnly3 = 3;
+    
 
-    MayBeTextureIndexList mayBeTextureIndexList;
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+    std::uint32_t type;
+    std::uint32_t meshIndex;
+
+    Mesh35List meshList;
 };
 
 struct MayBePositionAndNormal
@@ -129,7 +188,7 @@ typedef boost::variant<
     GroupVertex7,
     GroupLodParameters10,
     GroupTransformMatrix24,
-    GroupIndexAndTextures35,
+    SimpleFaceData35,
     GroupIndexAndTextures37
 > Data;
 

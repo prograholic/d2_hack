@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::ifstream inputFile{ D2_AA_B3D_FILENAME };
+    std::ifstream inputFile{ D2_AA_B3D_FILENAME, std::ios_base::binary};
     if (!inputFile)
     {
         std::cerr << "failed to open file [" << D2_AA_B3D_FILENAME << "]" << std::endl;
