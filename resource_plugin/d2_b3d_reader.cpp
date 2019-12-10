@@ -45,7 +45,9 @@ static const std::uint32_t GroupLodParametersBlock10 = 10;
 static const std::uint32_t SimpleTriggerBlock13 = 13;
 static const std::uint32_t SimpleFlatCollisionBlock20 = 20;
 static const std::uint32_t GroupObjectsBlock21 = 21;
+static const std::uint32_t SimpleVolumeCollisionBlock23 = 23;
 static const std::uint32_t GroupTransformMatrixBlock24 = 24;
+static const std::uint32_t SimpleFacesBlock28 = 28;
 static const std::uint32_t GroupLightingObjectBlock33 = 33;
 static const std::uint32_t SimpleFaceDataBlock35 = 35;
 static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
@@ -238,9 +240,17 @@ private:
         {
             return ReadBlockData21(block);
         }
+        else if (block.header.type == SimpleVolumeCollisionBlock23)
+        {
+            return ReadBlockData23(block);
+        }
         else if (block.header.type == GroupTransformMatrixBlock24)
         {
             return ReadBlockData24(block);
+        }
+        else if (block.header.type == SimpleFacesBlock28)
+        {
+            return ReadBlockData28(block);
         }
         else if (block.header.type == GroupLightingObjectBlock33)
         {
@@ -449,17 +459,42 @@ private:
 
     void DispatchReadFaceData8(const std::uint32_t faceType, block_data::Face8::FaceData& faceData)
     {
-        if (faceType == block_data::Face8::FaceIndexType129)
+        if ((faceType == block_data::Face8::UnknownType1) || (faceType == block_data::Face8::UnknownType144))
         {
-            block_data::Face8::FaceIndex faceDataValue;
+            block_data::Face8::Unknown faceDataValue;
+            faceDataValue.unknown = ReadUint32();
+
+            faceData = std::move(faceDataValue);
+        }
+        else if (faceType == block_data::Face8::FaceIndexType3)
+        {
+            block_data::Face8::FaceIndex3 faceDataValue;
+            faceDataValue.faceIndex = ReadUint32();
+            faceDataValue.texCoord = ReadVector2();
+
+            faceData = std::move(faceDataValue);
+        }
+        else if (faceType == block_data::Face8::FaceIndexType129)
+        {
+            block_data::Face8::FaceIndex129 faceDataValue;
             faceDataValue.faceIndex = ReadUint32();
 
             faceData = std::move(faceDataValue);
         }
-        else if (faceType == block_data::Face8::UnknownType144)
+        else if (faceType == block_data::Face8::FaceIndexType176)
         {
-            block_data::Face8::Unknown144 faceDataValue;
-            faceDataValue.unknown = ReadUint32();
+            block_data::Face8::FaceIndex176 faceDataValue;
+            faceDataValue.faceIndex = ReadUint32();
+            faceDataValue.position = ReadVector3();
+
+            faceData = std::move(faceDataValue);
+        }
+        else if (faceType == block_data::Face8::FaceIndexType178)
+        {
+            block_data::Face8::FaceIndex178 faceDataValue;
+            faceDataValue.faceIndex = ReadUint32();
+            faceDataValue.position = ReadVector3();
+            faceDataValue.texCoord = ReadVector2();
 
             faceData = std::move(faceDataValue);
         }
@@ -590,6 +625,54 @@ private:
         block.data = std::move(blockData);
     }
 
+    void DispatchCollisionEntry23(const std::uint32_t type, block_data::SimpleVolumeCollision23::CollisionEntry& collisionEntry)
+    {
+        if (type == block_data::SimpleVolumeCollision23::UnknownType0)
+        {
+            block_data::SimpleVolumeCollision23::Unknown0 collisionEntryData;
+
+            const std::uint32_t count = ReadUint32();
+            collisionEntryData.unknown.resize(count);
+            for (auto& pos : collisionEntryData.unknown)
+            {
+                pos = ReadVector3();
+            }
+            
+            collisionEntry = std::move(collisionEntryData);
+        }
+        else
+        {
+            ThrowError("Unknown type", "B3dReaderImpl::DispatchCollisionEntry23");
+        }
+    }
+
+    void ReadBlockData23(Block& block)
+    {
+        block_data::SimpleVolumeCollision23 blockData;
+
+        blockData.unknown0 = ReadUint32();
+        blockData.unknown1 = ReadUint32();
+        blockData.type = ReadUint32();
+
+        if (blockData.type == block_data::SimpleVolumeCollision23::UnknownType0)
+        {
+            // does nothing
+        }
+        else
+        {
+            ThrowError("Unknown type", "B3dReaderImpl::ReadBlockData23");
+        }
+
+        const std::uint32_t collisionCount = ReadUint32();
+        blockData.collisionEntries.resize(collisionCount);
+        for (auto& collisionEntry : blockData.collisionEntries)
+        {
+            DispatchCollisionEntry23(blockData.type, collisionEntry);
+        }
+
+        block.data = std::move(blockData);
+    }
+
     void ReadBlockData24(Block& block)
     {
         block_data::GroupTransformMatrix24 blockData;
@@ -601,6 +684,76 @@ private:
         blockData.position = ReadVector3();
 
         blockData.unknown = ReadUint32();
+
+        ReadNestedBlocks(blockData.nestedBlocks);
+
+        block.data = std::move(blockData);
+    }
+
+    void DispatchFaceEntry28(const std::uint32_t type, block_data::Face28Entry::FaceData &faceData)
+    {
+        if (type == block_data::Face28Entry::Unknown2)
+        {
+            block_data::Face28Entry::Unknown faceDataValue;
+
+            faceDataValue.unknown0 = ReadFloat();
+            faceDataValue.unknown1 = ReadFloat();
+            faceDataValue.unknown2 = ReadFloat();
+            faceDataValue.unknown3 = ReadFloat();
+
+            faceData = std::move(faceDataValue);
+        }
+        else
+        {
+            ThrowError("Unknown type", "B3dReaderImpl::DispatchFaceEntry28");
+        }
+    }
+
+    void ReadBlockData28(Block& block)
+    {
+        block_data::SimpleFaces28 blockData;
+
+        blockData.center = ReadVector3();
+        blockData.boundingSphereRadius = ReadFloat();
+
+        blockData.unknown = ReadVector3();
+
+        const std::uint32_t facesCount = ReadUint32();
+        blockData.facesEntries.resize(facesCount);
+        for (auto& faceEntry : blockData.facesEntries)
+        {
+            faceEntry.type = ReadUint32();
+            faceEntry.unknown0 = ReadFloat();
+            faceEntry.unknown1 = ReadUint32();
+            faceEntry.unknown2 = ReadUint32();
+
+            const std::uint32_t count = ReadUint32();
+            faceEntry.faceData.resize(count);
+            for (auto& d : faceEntry.faceData)
+            {
+                DispatchFaceEntry28(faceEntry.type, d);
+            }
+        }
+
+        block.data = std::move(blockData);
+    }
+
+    void ReadBlockData33(Block& block)
+    {
+        block_data::GroupLightingObjects33 blockData;
+
+        blockData.center = ReadVector3();
+        blockData.boundingSphereRadius = ReadFloat();
+
+        blockData.unknown0 = ReadUint32();
+        blockData.unknown1 = ReadUint32();
+        blockData.unknown2 = ReadUint32();
+
+        blockData.position = ReadVector3();
+        for (auto& colorEntry : blockData.color)
+        {
+            colorEntry = ReadFloat();
+        }
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
@@ -660,44 +813,28 @@ private:
         }
         else if (blockType == block_data::SimpleFaceData35::IndicesOnly3)
         {
-            if ((meshType == block_data::Mesh35::Indices1) || (meshType == block_data::Mesh35::Indices16))
+            switch (meshType)
+            {
+            case block_data::Mesh35::Indices0:
+            case block_data::Mesh35::Indices1:
+            case block_data::Mesh35::Indices3:
+            case block_data::Mesh35::Indices16:
             {
                 block_data::Mesh35::Indices meshDataValue;
                 meshDataValue.index = ReadUint32();
 
                 meshData = meshDataValue;
             }
-            else
-            {
+            break;
+
+            default:
                 ThrowError("Unknown mesh type for block type 3", "B3dReaderImpl::DispatchReadMesh35");
-            }
+            };
         }
         else
         {
             ThrowError("Unknown block type", "B3dReaderImpl::DispatchReadMesh35");
         }
-    }
-
-    void ReadBlockData33(Block& block)
-    {
-        block_data::GroupLightingObjects33 blockData;
-
-        blockData.center = ReadVector3();
-        blockData.boundingSphereRadius = ReadFloat();
-
-        blockData.unknown0 = ReadUint32();
-        blockData.unknown1 = ReadUint32();
-        blockData.unknown2 = ReadUint32();
-
-        blockData.position = ReadVector3();
-        for (auto& colorEntry : blockData.color)
-        {
-            colorEntry = ReadFloat();
-        }
-
-        ReadNestedBlocks(blockData.nestedBlocks);
-
-        block.data = std::move(blockData);
     }
 
     void ReadBlockData35(Block& block)
@@ -764,11 +901,6 @@ private:
         blockData.boundingSphereRadius = ReadFloat();
         ReadUntil(blockData.name.begin(), blockData.name.size());
         blockData.type = ReadUint32();
-
-        if (blockData.type == 2)
-        {
-        //    return __DebugB3d();
-        }
 
         const std::uint32_t dataSize = ReadUint32();
         blockData.vertexDataList.resize(dataSize);

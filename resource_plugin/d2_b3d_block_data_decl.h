@@ -70,22 +70,48 @@ struct GroupVertex7
 
 struct Face8
 {
+    static const std::uint32_t UnknownType1 = 1;
+    static const std::uint32_t FaceIndexType3 = 3;
     static const std::uint32_t FaceIndexType129 = 129;
     static const std::uint32_t UnknownType144 = 144;
+    static const std::uint32_t FaceIndexType176 = 176;
+    static const std::uint32_t FaceIndexType178 = 178;
 
-    struct FaceIndex
+    struct FaceIndex3
+    {
+        std::uint32_t faceIndex;
+        Ogre::Vector2 texCoord;
+    };
+
+    struct FaceIndex129
     {
         std::uint32_t faceIndex;
     };
 
-    struct Unknown144
+    struct Unknown
     {
         std::uint32_t unknown;
     };
 
+    struct FaceIndex176
+    {
+        std::uint32_t faceIndex;
+        Ogre::Vector3 position;
+    };
+
+    struct FaceIndex178
+    {
+        std::uint32_t faceIndex;
+        Ogre::Vector3 position;
+        Ogre::Vector2 texCoord;
+    };
+
     typedef boost::variant<
-        FaceIndex,
-        Unknown144
+        Unknown,
+        FaceIndex3,
+        FaceIndex129,
+        FaceIndex176,
+        FaceIndex178
     > FaceData;
     typedef std::vector<FaceData> FaceDataList;
 
@@ -165,6 +191,34 @@ struct GroupObjects21
     NestedBlockList nestedBlocks;
 };
 
+struct SimpleVolumeCollision23
+{
+    static const std::uint32_t UnknownType0 = 0;
+
+
+    struct Unknown0
+    {
+        std::vector<Ogre::Vector3> unknown;
+    };
+
+    typedef boost::variant <
+        Unknown0
+    > CollisionEntry;
+
+    typedef std::vector<CollisionEntry> CollisionEntries;
+
+    std::uint32_t unknown0;
+    std::uint32_t unknown1;
+
+    std::uint32_t type;
+
+    Ogre::Real unknown2;
+    Ogre::Real unknown3;
+    Ogre::Real unknown4;
+    
+    CollisionEntries collisionEntries;
+};
+
 struct GroupTransformMatrix24
 {
     Ogre::Vector3 x;
@@ -176,6 +230,43 @@ struct GroupTransformMatrix24
     std::uint32_t unknown;
 
     NestedBlockList nestedBlocks;
+};
+
+struct Face28Entry
+{
+    static const std::uint32_t Unknown2 = 2;
+
+    std::uint32_t type;
+
+    Ogre::Real unknown0;
+    std::uint32_t unknown1;
+    std::uint32_t unknown2;
+
+    struct Unknown
+    {
+        Ogre::Real unknown0;
+        Ogre::Real unknown1;
+        Ogre::Real unknown2;
+        Ogre::Real unknown3;
+    };
+
+    typedef boost::variant<
+        Unknown
+    > FaceData;
+
+    std::vector<FaceData> faceData;
+};
+
+typedef std::vector<Face28Entry> Faces28Entries;
+
+struct SimpleFaces28
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    Ogre::Vector3 unknown;
+
+    Faces28Entries facesEntries;
 };
 
 struct GroupLightingObjects33
@@ -196,7 +287,9 @@ struct GroupLightingObjects33
 
 struct Mesh35
 {
+    static const std::uint32_t Indices0 = 0;
     static const std::uint32_t Indices1 = 1;
+    static const std::uint32_t Indices3 = 3;
     static const std::uint32_t Indices16 = 16;
     static const std::uint32_t UnknownType48 = 48;
     static const std::uint32_t UnknownType49 = 49;
@@ -307,7 +400,9 @@ typedef boost::variant<
     SimpleTrigger13,
     SimpleFlatCollision20,
     GroupObjects21,
+    SimpleVolumeCollision23,
     GroupTransformMatrix24,
+    SimpleFaces28,
     GroupLightingObjects33,
     SimpleFaceData35,
     GroupVertexData37
