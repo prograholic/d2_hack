@@ -108,6 +108,17 @@ struct SimpleFaces8
     Face8List faces;
 };
 
+struct GroupTrigger9
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    Ogre::Vector3 unknown;
+    Ogre::Real distanceToPlayer;
+
+    NestedBlockList nestedBlocks;
+};
+
 struct GroupLodParameters10
 {
     Ogre::Vector3 center;
@@ -116,6 +127,40 @@ struct GroupLodParameters10
     Ogre::Vector3 unknown;
 
     Ogre::Real distanceToPlayer;
+
+    NestedBlockList nestedBlocks;
+};
+
+struct SimpleTrigger13
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    std::uint32_t unknown0;
+    std::uint32_t unknown1;
+
+    std::vector<Ogre::Real> unknown2;
+};
+
+struct SimpleFlatCollision20
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    std::uint32_t unknown0;
+    std::uint32_t unknown1;
+
+    std::vector<Ogre::Vector3> a;
+    std::vector<Ogre::Real> b;
+};
+
+struct GroupObjects21
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    std::uint32_t count;
+    std::uint32_t unknown;
 
     NestedBlockList nestedBlocks;
 };
@@ -129,6 +174,22 @@ struct GroupTransformMatrix24
     Ogre::Vector3 position;
     
     std::uint32_t unknown;
+
+    NestedBlockList nestedBlocks;
+};
+
+struct GroupLightingObjects33
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    std::uint32_t unknown0;
+    std::uint32_t unknown1;
+    std::uint32_t unknown2;
+
+    Ogre::Vector3 position;
+
+    std::array<Ogre::Real, 12> color;
 
     NestedBlockList nestedBlocks;
 };
@@ -198,26 +259,40 @@ struct SimpleFaceData35
     Mesh35List meshList;
 };
 
-struct MayBePositionAndNormal
+struct GroupVertexData37
 {
-    Ogre::Vector3 mayBePosition;
-    Ogre::Vector3 mayBeNormal;
-    Ogre::Real unknown0;
-    Ogre::Real unknown1;
-};
+    static const std::uint32_t Vertex2 = 2;
+    static const std::uint32_t UnknownType3 = 3;
 
-typedef std::vector< MayBePositionAndNormal> MayBePositionAndNormalList;
 
-struct GroupIndexAndTextures37
-{
-    static const std::uint32_t Unknown2 = 2;
+    struct Vertex
+    {
+        Ogre::Vector3 position;
+        Ogre::Vector2 texCoord;
+        Ogre::Vector3 normal;
+    };
 
-    Ogre::Vector3 mayBeCenter;
-    Ogre::Real mayBeBoundingSphereRadius;
-    ResourceName mayBeName;
-    std::uint32_t unknownIf2ThenUseUnknown0And1;
+    struct Unknown3
+    {
+        Ogre::Vector3 unknown0;
+        Ogre::Vector3 unknown1;
+    };
 
-    MayBePositionAndNormalList mayBePositionAndNormalList;
+    typedef boost::variant<
+        Vertex,
+        Unknown3
+    > VertexData;
+
+    typedef std::vector<VertexData> VertexDataList;
+
+
+
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+    ResourceName name;
+    std::uint32_t type;
+
+    VertexDataList vertexDataList;
 
     NestedBlockList nestedBlocks;
 };
@@ -227,10 +302,15 @@ typedef boost::variant<
     GroupObjects5,
     GroupVertex7,
     SimpleFaces8,
+    GroupTrigger9,
     GroupLodParameters10,
+    SimpleTrigger13,
+    SimpleFlatCollision20,
+    GroupObjects21,
     GroupTransformMatrix24,
+    GroupLightingObjects33,
     SimpleFaceData35,
-    GroupIndexAndTextures37
+    GroupVertexData37
 > Data;
 
 
