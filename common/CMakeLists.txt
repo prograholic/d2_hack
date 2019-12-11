@@ -1,13 +1,21 @@
-set(d2_hack_common_files
-    d2_hack_common.h
-    d2_hack_common.cpp
-    d2_hack_platform_support.h
+d2_hack_add_library(d2_hack.common
+    offset_data_stream.cpp
+    reader.cpp
+    
+    include/d2_hack/common/log.h
+    include/d2_hack/common/memory_mgmt.h
+    include/d2_hack/common/numeric_conversion.h
+    include/d2_hack/common/offset_data_stream.h
+    include/d2_hack/common/platform.h
+    include/d2_hack/common/reader.h
+    include/d2_hack/common/types.h
 )
 
-add_library(d2_hack_common ${d2_hack_common_files})
-target_link_libraries(d2_hack_common OgreMain)
-
-target_include_directories(d2_hack_common
-    INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}
+target_link_libraries(d2_hack.common
+    PRIVATE
+        OgreMain
+    PUBLIC
+        Boost::boost
 )
+
+cotire(d2_hack.common)
