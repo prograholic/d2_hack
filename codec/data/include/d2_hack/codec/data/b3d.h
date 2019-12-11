@@ -6,6 +6,7 @@
 #include <ostream>
 
 #include <d2_hack/common/types.h>
+#include <d2_hack/common/reader.h>
 
 namespace d2_hack
 {
@@ -14,10 +15,19 @@ namespace codec
 namespace data
 {
 
+
 class B3dVisitorInterface
 {
 public:
     virtual ~B3dVisitorInterface() = default;
+
+    virtual void VisitVector3(const Ogre::Vector3& /* vector */)
+    {
+    }
+
+    virtual void VisitBoundingSphere(const common::BoundingSphere& /* boundingSphere */)
+    {
+    }
     
     virtual void VisitBlockSeparator(std::uint32_t /* blockSeparator */)
     {
@@ -35,7 +45,10 @@ public:
     {
     }
 
-    virtual std::ostream& VisitUnknown() = 0;
+    virtual std::ostream* GetDebugOutStream()
+    {
+        return nullptr;
+    }
 };
 
 

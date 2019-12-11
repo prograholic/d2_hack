@@ -1,9 +1,8 @@
 // Implementation based on https://github.com/AlexKimov/HardTruck-RignRoll-file-formats
 
-#include "b3d_reader.h"
+#include <d2_hack/codec/data/b3d_reader.h>
 
 #include <cstring>
-#include <cctype>
 
 #include <d2_hack/common/reader.h>
 
@@ -244,6 +243,12 @@ private:
 
     void __DebugB3d()
     {
+        std::ostream* out = nullptr;
+        if (m_visitor)
+        {
+            out = m_visitor->GetDebugOutStream();
+        }
+
         std::string data;
         bool eof = false;
         for (; ; )
@@ -306,10 +311,17 @@ private:
                 hexed.push_back('\n');
             }
         }
-        B3D_VISIT()->VisitUnknown() << "unknown: [\n" << hexed << "], cnt: " << cnt << ", size: " << data.size() << std::endl;
+        
+        if (out)
+        {
+            *out << "unknown: [\n" << hexed << "], cnt: " << cnt << ", size: " << data.size() << std::endl;
+        }
         if (eof)
         {
-            B3D_VISIT()->VisitUnknown() << "\nunknown: EOF: " << GetOffset() << std::endl;
+            if (out)
+            {
+                *out << "\nunknown: EOF: " << GetOffset() << std::endl;
+            }
         }
     }
 
@@ -400,6 +412,8 @@ private:
         block_data::GroupObjects5 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+        
         ReadUntil(blockData.name.begin(), blockData.name.size());
 
         ReadNestedBlocks(blockData.nestedBlocks);
@@ -412,6 +426,8 @@ private:
         block_data::GroupVertex7 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+        
         ReadUntil(blockData.name.begin(), blockData.name.size());
 
         const std::uint32_t vertexAmount = ReadUint32();
@@ -420,6 +436,8 @@ private:
         {
             vertexEntry.point = ReadVector3();
             vertexEntry.textureCoord = ReadVector2();
+
+            B3D_VISIT()->VisitVector3(vertexEntry.point);
         }
 
         ReadNestedBlocks(blockData.nestedBlocks);
@@ -481,6 +499,8 @@ private:
             faceDataValue.position = ReadVector3();
             faceDataValue.texCoord = ReadVector2();
 
+            B3D_VISIT()->VisitVector3(faceDataValue.position);
+
             faceData = std::move(faceDataValue);
         }
         break;
@@ -495,6 +515,7 @@ private:
         block_data::SimpleFaces8 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         const std::uint32_t facesCount = ReadUint32();
         blockData.faces.resize(facesCount);
@@ -522,6 +543,7 @@ private:
         block_data::GroupTrigger9 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         blockData.unknown = ReadVector3();
         blockData.distanceToPlayer = ReadFloat();
@@ -536,6 +558,7 @@ private:
         block_data::GroupLodParameters10 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         blockData.unknown = ReadVector3();
         blockData.distanceToPlayer = ReadFloat();
@@ -550,6 +573,7 @@ private:
         block_data::SimpleTrigger13 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         blockData.unknown0 = ReadUint32();
         blockData.unknown1 = ReadUint32();
@@ -569,6 +593,7 @@ private:
         block_data::SimpleObjectConnector18 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         ReadUntil(blockData.space.begin(), blockData.space.size());
         ReadUntil(blockData.object.begin(), blockData.object.size());
@@ -590,6 +615,7 @@ private:
         block_data::SimpleFlatCollision20 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         const std::uint32_t countA = ReadUint32();
 
@@ -618,6 +644,8 @@ private:
         block_data::GroupObjects21 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+        
         blockData.count = ReadUint32();
         blockData.unknown = ReadUint32();
 
@@ -715,6 +743,7 @@ private:
         block_data::SimpleFaces28 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         blockData.unknown = ReadVector3();
 
@@ -743,6 +772,7 @@ private:
         block_data::SimplePortal30 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         ReadUntil(blockData.connectedRoom.begin(), blockData.connectedRoom.size());
 
@@ -757,6 +787,7 @@ private:
         block_data::GroupLightingObjects33 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
 
         blockData.unknown0 = ReadUint32();
         blockData.unknown1 = ReadUint32();
@@ -855,6 +886,8 @@ private:
         block_data::SimpleFaceData35 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+        
         blockData.type = ReadUint32();
         blockData.meshIndex = ReadUint32();
 
@@ -887,6 +920,8 @@ private:
             vertexDataValue.position = ReadVector3();
             vertexDataValue.texCoord = ReadVector2();
             vertexDataValue.normal = ReadVector3();
+
+            B3D_VISIT()->VisitVector3(vertexDataValue.position);
 
             vertexData = std::move(vertexDataValue);
         }
@@ -921,6 +956,8 @@ private:
         block_data::GroupVertexData37 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+        
         ReadUntil(blockData.name.begin(), blockData.name.size());
         blockData.type = ReadUint32();
 
@@ -941,6 +978,7 @@ private:
         block_data::SimpleGeneratedObjects40 blockData;
 
         blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
         
         ReadUntil(blockData.empty.begin(), blockData.empty.size());
         ReadUntil(blockData.name.begin(), blockData.name.size());

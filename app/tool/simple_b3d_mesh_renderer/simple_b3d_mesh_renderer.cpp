@@ -6,6 +6,9 @@
 #include <OgreHardwareBufferManager.h>
 #include <OgreEntity.h>
 
+
+#include <d2_hack/codec/data/b3d_reader.h>
+
 namespace d2_hack
 {
 namespace app
@@ -29,6 +32,73 @@ void SimpleB3dMeshRenderer::CreateScene()
 }
 
 
+struct BSVisitor : public codec::data::B3dVisitorInterface
+{
+    Ogre::SceneManager* m_sceneManager = nullptr;
+    size_t m_cnt = 0;
+
+    virtual void VisitVector3(const Ogre::Vector3& vector) override
+    {
+        m_cnt += 1;
+
+        const std::string unique_id = std::to_string(m_cnt);
+
+        Ogre::Entity* plane = m_sceneManager->createEntity("Cube_V" + unique_id, Ogre::SceneManager::PT_CUBE);
+
+        plane->setMaterialName("PlaneMaterialForVector", "D2");
+
+        Ogre::SceneNode* headNode = m_sceneManager->getRootSceneNode()->createChildSceneNode("CubeNode_V" + unique_id);
+        headNode->attachObject(plane);
+
+        headNode->setPosition(vector);
+
+        float newScale = 0.1f / plane->getBoundingRadius();
+        headNode->setScale(newScale, newScale, newScale);
+    }
+
+    virtual void VisitBoundingSphere(const common::BoundingSphere& boundingSphere) override
+    {
+        m_cnt += 1;
+
+        const std::string unique_id = std::to_string(m_cnt);
+
+        Ogre::Entity* plane = m_sceneManager->createEntity("Cube_BS" + unique_id, Ogre::SceneManager::PT_CUBE);
+        
+        plane->setMaterialName("PlaneMaterialWithBlending", "D2");
+
+        Ogre::SceneNode* headNode = m_sceneManager->getRootSceneNode()->createChildSceneNode("CubeNode_BS" + unique_id);
+        headNode->attachObject(plane);
+
+        headNode->setPosition(boundingSphere.center);
+
+        float newScale = 1 / plane->getBoundingRadius();
+        headNode->setScale(newScale, newScale, newScale);
+    }
+};
+
+void SimpleB3dMeshRenderer::LoadB3d()
+{
+    BSVisitor visitor;
+    visitor.m_sceneManager = m_sceneManager;
+
+
+    std::ifstream inputFile{D2_AA_B3D_FILENAME, std::ios_base::binary};
+    if (!inputFile)
+    {
+        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
+    }
+
+
+    codec::data::b3d::B3d b3d;
+    codec::data::b3d::B3dReader reader;
+
+    reader.Read(inputFile, b3d, &visitor);
+}
+
+
+
+
+#if 0
 
 struct MyMeshLoader : public Ogre::ManualResourceLoader
 {
@@ -101,21 +171,17 @@ struct MyMeshLoader : public Ogre::ManualResourceLoader
         mesh->_setBounds(Ogre::AxisAlignedBox(-100, -100, -100, 100, 100, -100), true);
     }
 
-    void LoadVertexDataDeclaration(Ogre::Mesh* mesh)
-    {
-        mesh->sharedVertexData->vertexDeclaration->addElement(0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-    }
-
     virtual void loadResource(Ogre::Resource* resource) override
     {
         Ogre::Mesh* mesh = static_cast<Ogre::Mesh*>(resource);
 
         mesh->sharedVertexData = OGRE_NEW Ogre::VertexData;
 
-        LoadVertexDataDeclaration(mesh);
         LoadVertexData(mesh);
     }
 };
+
+
 
 void SimpleB3dMeshRenderer::LoadB3d()
 {
@@ -137,6 +203,8 @@ void SimpleB3dMeshRenderer::FillMeshWithB3d(Ogre::Mesh* /* mesh */)
 
 
 }
+
+#endif //0
 
 
 } // namespace app

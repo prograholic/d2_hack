@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <b3d_reader.h>
+#include <d2_hack/codec/data/b3d_reader.h>
 
 int main()
 {

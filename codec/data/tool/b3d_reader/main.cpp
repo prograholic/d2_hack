@@ -3,7 +3,7 @@
 #include <string>
 
 #include <d2_hack/codec/data/b3d.h>
-#include <b3d_reader.h>
+#include <d2_hack/codec/data/b3d_reader.h>
 
 
 
@@ -40,9 +40,9 @@ public:
         std::cout << GetOffsetString() << "nested: " << nestedBlockCount << std::endl;
     }
 
-    virtual std::ostream& VisitUnknown()  override
+    virtual std::ostream* GetDebugOutStream()  override
     {
-        return std::cout;
+        return &std::cout;
     }
 
 private:
