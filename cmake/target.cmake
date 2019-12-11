@@ -9,6 +9,11 @@ endfunction()
 
 function(d2_hack_add_executable target_name)
     add_executable(${target_name} ${ARGN})
+    
+    set_target_properties(${target_name}
+        PROPERTIES
+            VS_DEBUGGER_WORKING_DIRECTORY "${APP_BIN_DIRECTORY}"
+    )
 
     d2_hack_set_common_target_props(${target_name} ${ARGN})
 endfunction()

@@ -1,5 +1,5 @@
-#ifndef D2_HACK_BASE_APPLICATION_H
-#define D2_HACK_BASE_APPLICATION_H
+#ifndef D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_APPLICATION_H
+#define D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_APPLICATION_H
 
 #include <d2_hack/common/platform.h>
 
@@ -23,6 +23,8 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 #include <d2_hack/codec/image/txr.h>
 
 namespace d2_hack
+{
+namespace app
 {
 
 class BaseApplication : public OgreBites::ApplicationContext, public OgreBites::InputListener
@@ -119,6 +121,7 @@ protected:
 #endif//0
 };
 
+} // namespace app
 } // namespace d2_hack
 
-#endif // D2_HACK_BASE_APPLICATION_H
+#endif // D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_APPLICATION_H

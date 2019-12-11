@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "application.h"
+#include "simple_txr_renderer.h"
 
 int main(int /* argc */, char * /* argv */ [])
 {
     try
     {
-        d2_hack::Application app;
+        d2_hack::app::SimpleTxrRenderer app;
         
         app.initApp();
         app.getRoot()->startRendering();

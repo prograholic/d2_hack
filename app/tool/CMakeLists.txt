@@ -1,0 +1,3 @@
+add_subdirectory(terrain_viewer)
+add_subdirectory(simple_txr_renderer)
+add_subdirectory(simple_b3d_mesh_renderer)

@@ -1,18 +1,16 @@
-d2_hack_add_executable(d2_hack.app
-  base_application.cpp
-  base_application.h
-
-  application.cpp
-  application.h
+d2_hack_add_library(d2_hack.app
+    base_application.cpp
   
-  main.cpp
+  include/d2_hack/app/base_application.h
 )
 
 target_link_libraries(d2_hack.app
-    PRIVATE
+    PUBLIC
         OgreBites
         OgreTerrain
         d2_hack.codec
 )
 
 cotire(d2_hack.app)
+
+add_subdirectory(tool)

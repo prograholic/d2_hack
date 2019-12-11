@@ -1,4 +1,4 @@
-#include "base_application.h"
+#include <d2_hack/app/base_application.h>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 
@@ -9,6 +9,8 @@ D2_HACK_DISABLE_WARNING_END() //4251
 
 
 namespace d2_hack
+{
+namespace app
 {
 
 BaseApplication::BaseApplication()
@@ -137,4 +139,5 @@ void BaseApplication::CreateResourceListener()
     //
 }
 
+} // namespace app
 } // namespace d2_hack
