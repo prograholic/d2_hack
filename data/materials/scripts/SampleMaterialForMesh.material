@@ -1,0 +1,13 @@
+material SampleMaterialForMesh
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\aa3.txr
+            }
+        }
+    }
+}

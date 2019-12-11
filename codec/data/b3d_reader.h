@@ -9,6 +9,8 @@
 #include <array>
 
 #include <d2_hack/common/types.h>
+#include <d2_hack/codec/data/b3d.h>
+
 
 #include "b3d_block_data_decl.h"
 
@@ -57,8 +59,6 @@ struct Block
 
 typedef std::vector<Block> Data;
 
-
-
 struct B3d
 {
     FileHeader header;
@@ -70,7 +70,7 @@ struct B3d
 class B3dReader
 {
 public:
-    void Read(std::istream& input, B3d& data);
+    void Read(std::istream& input, B3d& data, B3dVisitorInterface* visior = nullptr);
 };
 
 } // namespace b3d

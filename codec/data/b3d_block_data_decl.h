@@ -10,10 +10,10 @@
 
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
-
 #include <OgreVector3.h>
-
 D2_HACK_DISABLE_WARNING_END() // 4251
+
+#include <d2_hack/common/types.h>
 
 namespace d2_hack
 {
@@ -23,9 +23,6 @@ namespace data
 {
 namespace b3d
 {
-
-const size_t StringSize = 32;
-typedef std::array<char, StringSize> ResourceName;
 
 struct Block;
 typedef std::shared_ptr<Block> NestedBlock;
@@ -48,10 +45,8 @@ struct Empty0
 
 struct GroupObjects5
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
-
-    ResourceName name;
+    common::BoundingSphere boundingSphere;
+    common::ResourceName name;
 
     NestedBlockList nestedBlocks;
 };
@@ -66,9 +61,8 @@ typedef std::vector<VertexEntry> Vertices;
 
 struct GroupVertex7
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
-    ResourceName name;
+    common::BoundingSphere boundingSphere;
+    common::ResourceName name;
 
     Vertices vertices;
 
@@ -139,16 +133,14 @@ typedef std::vector<Face8> Face8List;
 
 struct SimpleFaces8
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     Face8List faces;
 };
 
 struct GroupTrigger9
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     Ogre::Vector3 unknown;
     Ogre::Real distanceToPlayer;
@@ -158,8 +150,7 @@ struct GroupTrigger9
 
 struct GroupLodParameters10
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     Ogre::Vector3 unknown;
 
@@ -170,8 +161,7 @@ struct GroupLodParameters10
 
 struct SimpleTrigger13
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
     std::uint32_t unknown1;
@@ -181,11 +171,10 @@ struct SimpleTrigger13
 
 struct SimpleObjectConnector18
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
-    ResourceName space;
-    ResourceName object;
+    common::ResourceName space;
+    common::ResourceName object;
 };
 
 struct GroupObjects19
@@ -195,8 +184,7 @@ struct GroupObjects19
 
 struct SimpleFlatCollision20
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
     std::uint32_t unknown1;
@@ -207,8 +195,7 @@ struct SimpleFlatCollision20
 
 struct GroupObjects21
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     std::uint32_t count;
     std::uint32_t unknown;
@@ -286,8 +273,7 @@ typedef std::vector<Face28Entry> Faces28Entries;
 
 struct SimpleFaces28
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     Ogre::Vector3 unknown;
 
@@ -296,10 +282,9 @@ struct SimpleFaces28
 
 struct SimplePortal30
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
-    ResourceName connectedRoom;
+    common::ResourceName connectedRoom;
 
     Ogre::Vector3 leftDown;
     Ogre::Vector3 upRight;
@@ -307,8 +292,7 @@ struct SimplePortal30
 
 struct GroupLightingObjects33
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
     std::uint32_t unknown1;
@@ -380,8 +364,7 @@ struct SimpleFaceData35
     static const std::uint32_t IndicesOnly3 = 3;
     
 
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
     std::uint32_t type;
     std::uint32_t meshIndex;
 
@@ -426,9 +409,8 @@ struct GroupVertexData37
 
 
 
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
-    ResourceName name;
+    common::BoundingSphere boundingSphere;
+    common::ResourceName name;
     std::uint32_t type;
 
     VertexDataList vertexDataList;
@@ -438,11 +420,10 @@ struct GroupVertexData37
 
 struct SimpleGeneratedObjects40
 {
-    Ogre::Vector3 center;
-    Ogre::Real boundingSphereRadius;
+    common::BoundingSphere boundingSphere;
 
-    ResourceName empty;
-    ResourceName name;
+    common::ResourceName empty;
+    common::ResourceName name;
 
     std::uint32_t type;
     Ogre::Real unknown0;

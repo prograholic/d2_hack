@@ -41,6 +41,9 @@ private:
     void ConfigureTerrainDefaults(Ogre::Light* light);
     void InitBlendMaps(Ogre::Terrain* terrain);
     void DefineTerrain(long x, long y);
+
+    void LoadB3d();
+    void FillMeshWithB3d(Ogre::Mesh* mesh);
 };
 
 #if 0

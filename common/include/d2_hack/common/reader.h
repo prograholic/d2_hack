@@ -16,6 +16,7 @@ D2_HACK_DISABLE_WARNING_BEGIN(4251)
 D2_HACK_DISABLE_WARNING_END() //4251
 
 #include <d2_hack/common/numeric_conversion.h>
+#include <d2_hack/common/types.h>
 
 namespace d2_hack
 {
@@ -190,6 +191,16 @@ public:
 
         res.x = ReadFloat();
         res.y = ReadFloat();
+
+        return res;
+    }
+
+    BoundingSphere ReadBoundingSphere()
+    {
+        BoundingSphere res;
+
+        res.center = ReadVector3();
+        res.radius = ReadFloat();
 
         return res;
     }

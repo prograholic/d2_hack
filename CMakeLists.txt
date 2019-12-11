@@ -24,6 +24,7 @@ include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
 if(NOT DEFINED D2_ROOT_DIR)
     message(FATAL_ERROR "D2_ROOT_DIR is not set. Should point to root directory of D2 installation")
 endif()
+file(TO_CMAKE_PATH ${D2_ROOT_DIR} D2_ROOT_DIR_CMAKE_DIR)
 
 set(APP_ROOT_DIRECTORY ${CMAKE_BINARY_DIR}/app_root)
 set(APP_BIN_DIRECTORY ${APP_ROOT_DIRECTORY})
