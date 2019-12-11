@@ -77,6 +77,7 @@ struct GroupVertex7
 
 struct Face8
 {
+    static const std::uint32_t UnknownType0 = 0;
     static const std::uint32_t UnknownType1 = 1;
     static const std::uint32_t FaceIndexType3 = 3;
     static const std::uint32_t UnknownType16 = 16;
@@ -176,6 +177,15 @@ struct SimpleTrigger13
     std::uint32_t unknown1;
 
     std::vector<Ogre::Real> unknown2;
+};
+
+struct SimpleObjectConnector18
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    ResourceName space;
+    ResourceName object;
 };
 
 struct GroupObjects19
@@ -284,6 +294,17 @@ struct SimpleFaces28
     Faces28Entries facesEntries;
 };
 
+struct SimplePortal30
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    ResourceName connectedRoom;
+
+    Ogre::Vector3 leftDown;
+    Ogre::Vector3 upRight;
+};
+
 struct GroupLightingObjects33
 {
     Ogre::Vector3 center;
@@ -371,6 +392,7 @@ struct GroupVertexData37
 {
     static const std::uint32_t Vertex2 = 2;
     static const std::uint32_t UnknownType3 = 3;
+    static const std::uint32_t UnknownType514 = 514;
 
 
     struct Vertex
@@ -386,9 +408,18 @@ struct GroupVertexData37
         Ogre::Vector3 unknown1;
     };
 
+    struct Unknown514
+    {
+        Ogre::Vector3 unknown0;
+        Ogre::Vector3 unknown1;
+        Ogre::Vector3 unknown2;
+        Ogre::Vector3 unknown3;
+    };
+
     typedef boost::variant<
         Vertex,
-        Unknown3
+        Unknown3,
+        Unknown514
     > VertexData;
 
     typedef std::vector<VertexData> VertexDataList;
@@ -405,6 +436,20 @@ struct GroupVertexData37
     NestedBlockList nestedBlocks;
 };
 
+struct SimpleGeneratedObjects40
+{
+    Ogre::Vector3 center;
+    Ogre::Real boundingSphereRadius;
+
+    ResourceName empty;
+    ResourceName name;
+
+    std::uint32_t type;
+    Ogre::Real unknown0;
+
+    std::vector<Ogre::Real> unknown1;
+};
+
 typedef boost::variant<
     Empty0,
     GroupObjects5,
@@ -414,14 +459,17 @@ typedef boost::variant<
     GroupLodParameters10,
     SimpleTrigger13,
     GroupObjects19,
+    SimpleObjectConnector18,
     SimpleFlatCollision20,
     GroupObjects21,
     SimpleVolumeCollision23,
     GroupTransformMatrix24,
     SimpleFaces28,
+    SimplePortal30,
     GroupLightingObjects33,
     SimpleFaceData35,
-    GroupVertexData37
+    GroupVertexData37,
+    SimpleGeneratedObjects40
 > Data;
 
 

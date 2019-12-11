@@ -32,6 +32,11 @@ public:
     virtual bool IsSeparator(char symbol) = 0;
 
     virtual bool Skip() = 0;
+
+    virtual bool MoreDataNeeded()
+    {
+        return true;
+    }
     
 private:
     SeparatorBase(const SeparatorBase&) = delete;
@@ -81,7 +86,9 @@ class ReadCountSeparator : public SkipAdapter<ReadCountSeparator, false>
 public:
     explicit ReadCountSeparator(size_t count);
 
-    bool IsSeparator(char symbol);
+    virtual bool IsSeparator(char symbol) override;
+
+    virtual bool MoreDataNeeded() override;
 
 private:
     size_t m_count;
@@ -107,6 +114,10 @@ public:
     {
         for ( ; ; )
         {
+            if (!separator.MoreDataNeeded())
+            {
+                break;
+            }
             if (m_begin == m_end)
             {
                 ThrowError("unexpected end of file", "Reader::readUntil");

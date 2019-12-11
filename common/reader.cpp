@@ -46,6 +46,11 @@ bool ReadCountSeparator::IsSeparator(char /* symbol */)
     return (m_count--) == 0;
 }
 
+bool ReadCountSeparator::MoreDataNeeded()
+{
+    return m_count > 0;
+}
+
 } // namespace reader_helper
 
 } // namespace common
