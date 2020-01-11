@@ -109,6 +109,12 @@ public:
         common::reader_helper::SymbolSeparatorBase<'\0', true> zeroSep;
         ReadUntil(std::back_inserter(name), zeroSep);
 
+        auto sep = name.find(' ');
+        if (sep != name.npos)
+        {
+            name = name.substr(0, sep);
+        }
+
         const std::uint32_t size = ReadUint32();
 
         common::reader_helper::EmptyContainer<std::uint8_t> skipData;

@@ -25,11 +25,13 @@ static const std::uint32_t BlockNextMagic = 444;
 static const std::uint32_t BlockEndMagic = 555;
 
 static const std::uint32_t EmptyBlock0 = 0;
+static const std::uint32_t GroupRoadInfraObjectsBlock4 = 4;
 static const std::uint32_t GroupObjectsBlock5 = 5;
 static const std::uint32_t GroupVertexBlock7 = 7;
 static const std::uint32_t SimpleFacesBlock8 = 8;
 static const std::uint32_t GroupTriggerBlock9 = 9;
 static const std::uint32_t GroupLodParametersBlock10 = 10;
+static const std::uint32_t GroupUnknownBlock12 = 12;
 static const std::uint32_t SimpleTriggerBlock13 = 13;
 static const std::uint32_t SimpleObjectConnectorBlock18 = 18;
 static const std::uint32_t GroupObjectsBlock19 = 19;
@@ -116,6 +118,8 @@ private:
         }
 
         materials = std::move(res);
+
+        B3D_VISIT()->VisitMaterials(materials);
     }
 
     void ReadData(const FileHeader::Section& sectionInfo, Data& data)
@@ -165,6 +169,10 @@ private:
         {
             return ReadBlockData0(block);
         }
+        else if (block.header.type == GroupRoadInfraObjectsBlock4)
+        {
+            return ReadBlockData4(block);
+        }
         else if (block.header.type == GroupObjectsBlock5)
         {
             return ReadBlockData5(block);
@@ -184,6 +192,10 @@ private:
         else if (block.header.type == GroupLodParametersBlock10)
         {
             return ReadBlockData10(block);
+        }
+        else if (block.header.type == GroupUnknownBlock12)
+        {
+            return ReadBlockData12(block);
         }
         else if (block.header.type == SimpleTriggerBlock13)
         {
@@ -407,6 +419,21 @@ private:
         block.data = std::move(blockData);
     }
 
+    void ReadBlockData4(Block& /* block */)
+    {
+        block_data::GroupRoadInfraObjects4 blockData;
+
+        blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+
+        ReadUntil(blockData.name.begin(), blockData.name.size());
+        ReadUntil(blockData.data.begin(), blockData.data.size());
+
+        ReadNestedBlocks(blockData.nestedBlocks);
+
+        //block.data = std::move(blockData);
+    }
+
     void ReadBlockData5(Block& block)
     {
         block_data::GroupObjects5 blockData;
@@ -434,13 +461,15 @@ private:
         blockData.vertices.resize(vertexAmount);
         for (auto& vertexEntry : blockData.vertices)
         {
-            vertexEntry.point = ReadVector3();
+            vertexEntry.position = ReadVector3();
             vertexEntry.textureCoord = ReadVector2();
 
-            B3D_VISIT()->VisitVector3(vertexEntry.point);
+            B3D_VISIT()->VisitVector3(vertexEntry.position);
         }
 
         ReadNestedBlocks(blockData.nestedBlocks);
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -487,6 +516,8 @@ private:
             faceDataValue.faceIndex = ReadUint32();
             faceDataValue.position = ReadVector3();
 
+            //B3D_VISIT()->VisitVector3(faceDataValue.position);
+
             faceData = std::move(faceDataValue);
         }
         break;
@@ -499,7 +530,7 @@ private:
             faceDataValue.position = ReadVector3();
             faceDataValue.texCoord = ReadVector2();
 
-            B3D_VISIT()->VisitVector3(faceDataValue.position);
+            //B3D_VISIT()->VisitVector3(faceDataValue.position);
 
             faceData = std::move(faceDataValue);
         }
@@ -535,6 +566,8 @@ private:
             }
         }
 
+        //B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -562,6 +595,26 @@ private:
 
         blockData.unknown = ReadVector3();
         blockData.distanceToPlayer = ReadFloat();
+
+        ReadNestedBlocks(blockData.nestedBlocks);
+
+        block.data = std::move(blockData);
+    }
+
+    void ReadBlockData12(Block& block)
+    {
+        block_data::GroupUnknown12 blockData;
+
+        blockData.boundingSphere = ReadBoundingSphere();
+        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
+
+        blockData.unknown0 = ReadFloat();
+        blockData.unknown1 = ReadFloat();
+        blockData.unknown2 = ReadFloat();
+        blockData.unknown3 = ReadFloat();
+
+        blockData.unknown4 = ReadUint32();
+        blockData.unknown5 = ReadUint32();
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
@@ -628,6 +681,7 @@ private:
         for (auto& a : blockData.a)
         {
             a = ReadVector3();
+            //B3D_VISIT()->VisitVector3(a);
         }
 
         blockData.b.resize(countB);
@@ -665,6 +719,7 @@ private:
             for (auto& pos : collisionEntryData.unknown)
             {
                 pos = ReadVector3();
+                //B3D_VISIT()->VisitVector3(pos);
             }
             
             collisionEntry = std::move(collisionEntryData);
@@ -814,6 +869,8 @@ private:
 
                 meshDataValue.faceIndex = ReadUint32();
                 meshDataValue.position = ReadVector3();
+                
+                //B3D_VISIT()->VisitVector3(meshDataValue.position);
 
                 meshData = meshDataValue;
             }
@@ -824,6 +881,8 @@ private:
                 meshDataValue.faceIndex = ReadUint32();
                 meshDataValue.position = ReadVector3();
                 meshDataValue.texCoord = ReadVector2();
+
+                //B3D_VISIT()->VisitVector3(meshDataValue.position);
 
                 meshData = meshDataValue;
             }
@@ -921,7 +980,7 @@ private:
             vertexDataValue.texCoord = ReadVector2();
             vertexDataValue.normal = ReadVector3();
 
-            B3D_VISIT()->VisitVector3(vertexDataValue.position);
+            //B3D_VISIT()->VisitVector3(vertexDataValue.position);
 
             vertexData = std::move(vertexDataValue);
         }

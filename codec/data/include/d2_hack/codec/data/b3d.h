@@ -8,53 +8,14 @@
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/reader.h>
 
+#include <d2_hack/codec/data/b3d_block_data_decl.h>
+
 namespace d2_hack
 {
 namespace codec
 {
 namespace data
 {
-
-
-class B3dVisitorInterface
-{
-public:
-    virtual ~B3dVisitorInterface() = default;
-
-    virtual void VisitVector3(const Ogre::Vector3& /* vector */)
-    {
-    }
-
-    virtual void VisitBoundingSphere(const common::BoundingSphere& /* boundingSphere */)
-    {
-    }
-    
-    virtual void VisitBlockSeparator(std::uint32_t /* blockSeparator */)
-    {
-    }
-
-    virtual void VisitBlockHeader(const common::ResourceName& /* name */, std::uint32_t /* type */)
-    {
-    }
-
-    virtual void VisitBlock(const common::ResourceName& /* name */, std::uint32_t /* type */)
-    {
-    }
-
-    virtual void VisitNestedBlockHeader(std::uint32_t /* nestedBlockCount */)
-    {
-    }
-
-    virtual std::ostream* GetDebugOutStream()
-    {
-        return nullptr;
-    }
-};
-
-
-
-
-
 
 
 

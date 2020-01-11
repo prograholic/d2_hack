@@ -10,7 +10,7 @@ target_link_libraries(d2_hack.codec.data.test.b3d_reader
 
 target_compile_definitions(d2_hack.codec.data.test.b3d_reader
     PRIVATE
-        -DD2_AA_B3D_FILENAME="${D2_ROOT_DIR_CMAKE_DIR}/ENV/aa.b3d"
+        -DD2_ROOT_DIR="${D2_ROOT_DIR_CMAKE_DIR}"
 )
 
 cotire(d2_hack.codec.data.test.b3d_reader)

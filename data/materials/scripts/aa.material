@@ -1,0 +1,41 @@
+material combinat_BigSide
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\combinat_BigSide.txr
+            }
+        }
+    }
+}
+
+material combinat_Windows
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\combinat_Windows.txr
+            }
+        }
+    }
+}
+
+material stos_doorl
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\stos_doorl.txr
+            }
+        }
+    }
+}

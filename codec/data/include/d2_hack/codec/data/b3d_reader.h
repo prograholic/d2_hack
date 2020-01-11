@@ -67,6 +67,62 @@ struct B3d
     Data data;
 };
 
+
+
+class B3dVisitorInterface
+{
+public:
+    virtual ~B3dVisitorInterface() = default;
+
+    virtual void VisitVector3(const Ogre::Vector3& /* vector */)
+    {
+    }
+
+    virtual void VisitBoundingSphere(const common::BoundingSphere& /* boundingSphere */)
+    {
+    }
+
+    virtual void VisitBlockSeparator(std::uint32_t /* blockSeparator */)
+    {
+    }
+
+    virtual void VisitBlockHeader(const common::ResourceName& /* name */, std::uint32_t /* type */)
+    {
+    }
+
+    virtual void VisitBlock(const common::ResourceName& /* name */, std::uint32_t /* type */)
+    {
+    }
+
+    virtual void VisitNestedBlockHeader(std::uint32_t /* nestedBlockCount */)
+    {
+    }
+
+    virtual std::ostream* GetDebugOutStream()
+    {
+        return nullptr;
+    }
+
+    virtual void VisitMaterials(const b3d::Materials& /* materials */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleFaces8& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupVertex7& /* blockData */)
+    {
+    }
+};
+
+
+
+
+
+
+
+
 class B3dReader
 {
 public:

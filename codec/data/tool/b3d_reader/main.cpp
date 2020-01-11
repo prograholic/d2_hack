@@ -7,7 +7,7 @@
 
 
 
-class TracingVisitor : public d2_hack::codec::data::B3dVisitorInterface
+class TracingVisitor : public d2_hack::codec::data::b3d::B3dVisitorInterface
 {
 public:
 

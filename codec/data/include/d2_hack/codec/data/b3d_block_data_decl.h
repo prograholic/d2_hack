@@ -43,6 +43,16 @@ struct Empty0
     std::uint8_t emptyData1[EmptyDataSize1];
 };
 
+struct GroupRoadInfraObjects4
+{
+    common::BoundingSphere boundingSphere;
+    common::ResourceName name;
+
+    common::ResourceName data;
+
+    NestedBlockList nestedBlocks;
+};
+
 struct GroupObjects5
 {
     common::BoundingSphere boundingSphere;
@@ -53,7 +63,7 @@ struct GroupObjects5
 
 struct VertexEntry
 {
-    Ogre::Vector3 point;
+    Ogre::Vector3 position;
     Ogre::Vector2 textureCoord;
 };
 
@@ -155,6 +165,21 @@ struct GroupLodParameters10
     Ogre::Vector3 unknown;
 
     Ogre::Real distanceToPlayer;
+
+    NestedBlockList nestedBlocks;
+};
+
+struct GroupUnknown12
+{
+    common::BoundingSphere boundingSphere;
+
+    Ogre::Real unknown0;
+    Ogre::Real unknown1;
+    Ogre::Real unknown2;
+    Ogre::Real unknown3;
+
+    std::uint32_t unknown4;
+    std::uint32_t unknown5;
 
     NestedBlockList nestedBlocks;
 };
@@ -431,13 +456,16 @@ struct SimpleGeneratedObjects40
     std::vector<Ogre::Real> unknown1;
 };
 
+
 typedef boost::variant<
     Empty0,
+    //GroupRoadInfraObjects4,
     GroupObjects5,
     GroupVertex7,
     SimpleFaces8,
     GroupTrigger9,
     GroupLodParameters10,
+    GroupUnknown12,
     SimpleTrigger13,
     GroupObjects19,
     SimpleObjectConnector18,

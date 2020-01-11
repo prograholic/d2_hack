@@ -1,4 +1,4 @@
-material PlaneMaterialForVector
+material PlaneMaterialForVector_aa.b3d
 {
     technique
     {
@@ -9,6 +9,21 @@ material PlaneMaterialForVector
             ambient 0.1 0.3 0.1 1
             diffuse 0.2 0.2 0.2 1
             emissive 0.05 0.8 0.05 1
+        }
+    }
+}
+
+material PlaneMaterialForVector_ab.b3d
+{
+    technique
+    {
+        pass
+        {
+            lighting on
+
+            ambient 0.1 0.1 0.3 1
+            diffuse 0.2 0.2 0.2 1
+            emissive 0.05 0.05 0.8 1
         }
     }
 }
