@@ -75,7 +75,7 @@ struct B3dMeshLoader : public Ogre::ManualResourceLoader
             data.reserve(m_face->faceDataList.size());
             for (const auto& faceDataEntry : m_face->faceDataList)
             {
-                const Face::FaceIndex176 fi176 = boost::get<Face::FaceIndex176>(faceDataEntry);
+                common::IndexWithPosition fi176 = boost::get<common::IndexWithPosition>(faceDataEntry);
                 const Ogre::Vector3 position = fi176.position;
                 data.push_back(position);
 
@@ -114,24 +114,15 @@ struct B3dMeshLoader : public Ogre::ManualResourceLoader
 
             Ogre::AxisAlignedBox bbox;
 
-            struct Vv
-            {
-                Ogre::Vector3 pos;
-                Ogre::Vector2 t;
-            };
-
-            std::vector<Vv> data;
+            std::vector<common::PositionWithTexCoord> data;
             data.reserve(m_face->faceDataList.size());
             for (const auto& faceDataEntry : m_face->faceDataList)
             {
-                const Face::FaceIndex178 fi178 = boost::get<Face::FaceIndex178>(faceDataEntry);
-                Vv vv;
-                vv.pos = fi178.position;
-                vv.t = fi178.texCoord;
+                const common::IndexWithPositionTexCoord fi178 = boost::get<common::IndexWithPositionTexCoord>(faceDataEntry);
+                
+                data.push_back(fi178.positionWithTexCoord);
 
-                data.push_back(vv);
-
-                bbox.merge(vv.pos);
+                bbox.merge(fi178.positionWithTexCoord.position);
             }
 
             Ogre::HardwareVertexBufferSharedPtr vbuf =
@@ -181,7 +172,7 @@ struct B3dMeshLoader : public Ogre::ManualResourceLoader
 
         using namespace codec::data::b3d::block_data;
 
-        std::vector<Mesh35::Indices> indices;
+        std::vector<common::Index> indices;
         std::uint32_t materialIndex = std::numeric_limits<std::uint32_t>::max();
 
         for (const auto& nestedBlock : m_groupVertex->nestedBlocks)
@@ -199,18 +190,48 @@ struct B3dMeshLoader : public Ogre::ManualResourceLoader
                         indices.reserve(meshData.meshDataList.size());
                         for (const auto& i : meshData.meshDataList)
                         {
-                            indices.push_back(boost::get<Mesh35::Indices>(i));
+                            indices.push_back(boost::get<common::Index>(i));
                         }
                     }
                     else
                     {
+                        if ((meshData.type != Mesh35::UnknownType50) && (meshData.type != Mesh35::UnknownType48))
+                        {
+                            __debugbreak();
+                        }
+                    }
+                }
+            }
+            else if (nestedBlock->header.type == 8)
+            {
+                const SimpleFaces8& faceData = boost::get<const SimpleFaces8&>(nestedBlock->data);
+                for (const auto& face : faceData.faces)
+                {
+                    materialIndex = face.unknown2;
+                    switch (face.type)
+                    {
+                    case Face8::UnknownType0:
+                    case Face8::UnknownType1:
+                    case Face8::UnknownType16:
+                    case Face8::FaceIndexType129:
+                    case Face8::UnknownType144:
+                    {
+                        for (const auto& fi : face.faceDataList)
+                        {
+                            indices.push_back(boost::get<common::Index>(fi));
+                        }
+                    }
+                    break;
+
+                    default:
                         //__debugbreak();
+                        break;
                     }
                 }
             }
             else
             {
-                //__debugbreak();
+                __debugbreak();
             }
         }
 
@@ -276,7 +297,7 @@ struct BSVisitor : public codec::data::b3d::B3dVisitorInterface
 
     size_t m_cnt = 0;
 
-    virtual void VisitVector3(const Ogre::Vector3& vector) override
+    virtual void VisitPosition(const common::Position& position) override
     {
         m_cnt += 1;
 
@@ -290,7 +311,7 @@ struct BSVisitor : public codec::data::b3d::B3dVisitorInterface
         Ogre::SceneNode* headNode = m_rootNode->createChildSceneNode("CubeNode_V" + unique_id);
         headNode->attachObject(cube);
 
-        headNode->setPosition(vector);
+        headNode->setPosition(position);
 
         float newScale = 0.1f / cube->getBoundingRadius();
         headNode->setScale(newScale, newScale, newScale);

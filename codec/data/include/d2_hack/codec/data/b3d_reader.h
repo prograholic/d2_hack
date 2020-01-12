@@ -74,7 +74,7 @@ class B3dVisitorInterface
 public:
     virtual ~B3dVisitorInterface() = default;
 
-    virtual void VisitVector3(const Ogre::Vector3& /* vector */)
+    virtual void VisitPosition(const common::Position& /* position */)
     {
     }
 
@@ -107,11 +107,87 @@ public:
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleFaces8& /* blockData */)
+    virtual void VisitBlockData(const b3d::block_data::Empty0& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupRoadInfraObjects4& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupObjects5& /* blockData */)
     {
     }
 
     virtual void VisitBlockData(const b3d::block_data::GroupVertex7& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleFaces8& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupTrigger9& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupLodParameters10& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupUnknown12& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleTrigger13& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleObjectConnector18& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupObjects19& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleFlatCollision20& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupObjects21& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleVolumeCollision23& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupTransformMatrix24& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleFaces28& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimplePortal30& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupLightingObjects33& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleFaceData35& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::GroupVertexData37& /* blockData */)
+    {
+    }
+
+    virtual void VisitBlockData(const b3d::block_data::SimpleGeneratedObjects40& /* blockData */)
     {
     }
 };

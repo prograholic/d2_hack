@@ -205,6 +205,87 @@ public:
         return res;
     }
 
+    Index ReadIndex()
+    {
+        return ReadUint32();
+    }
+
+    Position ReadPosition()
+    {
+        return ReadVector3();
+    }
+
+    TexCoord ReadTexCoord()
+    {
+        return ReadVector2();
+    }
+
+    Normal ReadNormal()
+    {
+        return ReadVector3();
+    }
+
+    PositionWithTexCoord ReadPositionWithTexCoord()
+    {
+        PositionWithTexCoord res;
+        
+        res.position = ReadPosition();
+        res.texCoord = ReadTexCoord();
+
+        return res;
+    }
+
+    PositionWithTexCoordNormal ReadPositionWithTexCoordNormal()
+    {
+        PositionWithTexCoordNormal res;
+
+        res.position = ReadPosition();
+        res.texCoord = ReadTexCoord();
+        res.normal = ReadNormal();
+
+        return res;
+    }
+
+    PositionWithNormal ReadPositionWithNormal()
+    {
+        PositionWithNormal res;
+
+        res.position = ReadPosition();
+        res.normal = ReadNormal();
+
+        return res;
+    }
+
+    IndexWithTexCoord ReadIndexWithTexCoord()
+    {
+        IndexWithTexCoord res;
+
+        res.index = ReadIndex();
+        res.texCoord = ReadTexCoord();
+
+        return res;
+    }
+
+    IndexWithPosition ReadIndexWithPosition()
+    {
+        IndexWithPosition res;
+
+        res.index = ReadIndex();
+        res.position = ReadPosition();
+
+        return res;
+    }
+
+    IndexWithPositionTexCoord ReadIndexWithPositionTexCoord()
+    {
+        IndexWithPositionTexCoord res;
+
+        res.index = ReadIndex();
+        res.positionWithTexCoord = ReadPositionWithTexCoord();
+
+        return res;
+    }
+
     Iterator Begin() const;
 
     Iterator End() const;

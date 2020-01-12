@@ -31,8 +31,6 @@ typedef std::vector<NestedBlock> NestedBlockList;
 namespace block_data
 {
 
-
-
 struct Empty0
 {
     static const size_t EmptyDataSize0 = 40;
@@ -61,20 +59,15 @@ struct GroupObjects5
     NestedBlockList nestedBlocks;
 };
 
-struct VertexEntry
-{
-    Ogre::Vector3 position;
-    Ogre::Vector2 textureCoord;
-};
 
-typedef std::vector<VertexEntry> Vertices;
+typedef std::vector<common::PositionWithTexCoord> PositionWithTexCoordList;
 
 struct GroupVertex7
 {
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 
-    Vertices vertices;
+    PositionWithTexCoordList vertices;
 
     NestedBlockList nestedBlocks;
 };
@@ -92,41 +85,11 @@ struct Face8
     static const std::uint32_t FaceIndexType176 = 176;
     static const std::uint32_t FaceIndexType178 = 178;
 
-    struct FaceIndex3
-    {
-        std::uint32_t faceIndex;
-        Ogre::Vector2 texCoord;
-    };
-
-    struct FaceIndex129
-    {
-        std::uint32_t faceIndex;
-    };
-
-    struct Unknown
-    {
-        std::uint32_t unknown;
-    };
-
-    struct FaceIndex176
-    {
-        std::uint32_t faceIndex;
-        Ogre::Vector3 position;
-    };
-
-    struct FaceIndex178
-    {
-        std::uint32_t faceIndex;
-        Ogre::Vector3 position;
-        Ogre::Vector2 texCoord;
-    };
-
     typedef boost::variant<
-        Unknown,
-        FaceIndex3,
-        FaceIndex129,
-        FaceIndex176,
-        FaceIndex178
+        common::Index,
+        common::IndexWithTexCoord,
+        common::IndexWithPosition,
+        common::IndexWithPositionTexCoord
     > FaceData;
     typedef std::vector<FaceData> FaceDataList;
 
@@ -340,35 +303,17 @@ struct Mesh35
     static const std::uint32_t UnknownType49 = 49;
     static const std::uint32_t UnknownType50 = 50;
 
-    struct Indices
-    {
-        std::uint32_t index;
-    };
-
-    struct Unknown48
-    {
-        std::uint32_t faceIndex;
-        Ogre::Vector3 position;
-    };
-
     struct Unknown49
     {
         std::uint32_t unknown0;
         Ogre::Real unknown1;
     };
 
-    struct Unknown50
-    {
-        std::uint32_t faceIndex;
-        Ogre::Vector3 position;
-        Ogre::Vector2 texCoord;
-    };
-
     typedef boost::variant<
-        Indices,
-        Unknown48,
+        common::Index,
+        common::IndexWithPosition,
         Unknown49,
-        Unknown50
+        common::IndexWithPositionTexCoord
     > MeshData;
     typedef std::vector<MeshData> MeshDataList;
 
@@ -399,22 +344,8 @@ struct SimpleFaceData35
 struct GroupVertexData37
 {
     static const std::uint32_t Vertex2 = 2;
-    static const std::uint32_t UnknownType3 = 3;
+    static const std::uint32_t Vertex3 = 3;
     static const std::uint32_t UnknownType514 = 514;
-
-
-    struct Vertex
-    {
-        Ogre::Vector3 position;
-        Ogre::Vector2 texCoord;
-        Ogre::Vector3 normal;
-    };
-
-    struct Unknown3
-    {
-        Ogre::Vector3 unknown0;
-        Ogre::Vector3 unknown1;
-    };
 
     struct Unknown514
     {
@@ -425,14 +356,12 @@ struct GroupVertexData37
     };
 
     typedef boost::variant<
-        Vertex,
-        Unknown3,
+        common::PositionWithTexCoordNormal,
+        common::PositionWithNormal,
         Unknown514
     > VertexData;
 
     typedef std::vector<VertexData> VertexDataList;
-
-
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -467,8 +396,8 @@ typedef boost::variant<
     GroupLodParameters10,
     GroupUnknown12,
     SimpleTrigger13,
-    GroupObjects19,
     SimpleObjectConnector18,
+    GroupObjects19,
     SimpleFlatCollision20,
     GroupObjects21,
     SimpleVolumeCollision23,

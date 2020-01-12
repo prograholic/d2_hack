@@ -39,3 +39,45 @@ material stos_doorl
         }
     }
 }
+
+material mat_store_b1
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\tree01.txr
+            }
+        }
+    }
+}
+
+material mat_store_h2
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\kust.txr
+            }
+        }
+    }
+}
+
+material mat_store_r0
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\aa2.txr
+            }
+        }
+    }
+}

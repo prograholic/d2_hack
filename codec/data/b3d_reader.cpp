@@ -416,6 +416,8 @@ private:
         blockData.unknown = ReadFloat();
         ReadUntil(blockData.emptyData1, sizeof(blockData.emptyData1));
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -431,6 +433,8 @@ private:
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         //block.data = std::move(blockData);
     }
 
@@ -444,6 +448,8 @@ private:
         ReadUntil(blockData.name.begin(), blockData.name.size());
 
         ReadNestedBlocks(blockData.nestedBlocks);
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -461,10 +467,9 @@ private:
         blockData.vertices.resize(vertexAmount);
         for (auto& vertexEntry : blockData.vertices)
         {
-            vertexEntry.position = ReadVector3();
-            vertexEntry.textureCoord = ReadVector2();
+            vertexEntry = ReadPositionWithTexCoord();
 
-            B3D_VISIT()->VisitVector3(vertexEntry.position);
+            B3D_VISIT()->VisitPosition(vertexEntry.position);
         }
 
         ReadNestedBlocks(blockData.nestedBlocks);
@@ -481,29 +486,18 @@ private:
         case block_data::Face8::UnknownType0:
         case block_data::Face8::UnknownType1:
         case block_data::Face8::UnknownType16:
+        case block_data::Face8::FaceIndexType129:
         case block_data::Face8::UnknownType144:
         {
-            block_data::Face8::Unknown faceDataValue;
-            faceDataValue.unknown = ReadUint32();
+            common::Index index = ReadIndex();
 
-            faceData = std::move(faceDataValue);
+            faceData = std::move(index);
         }
         break;
         
         case block_data::Face8::FaceIndexType3:
         {
-            block_data::Face8::FaceIndex3 faceDataValue;
-            faceDataValue.faceIndex = ReadUint32();
-            faceDataValue.texCoord = ReadVector2();
-
-            faceData = std::move(faceDataValue);
-        }
-        break;
-
-        case block_data::Face8::FaceIndexType129:
-        {
-            block_data::Face8::FaceIndex129 faceDataValue;
-            faceDataValue.faceIndex = ReadUint32();
+            common::IndexWithTexCoord faceDataValue = ReadIndexWithTexCoord();
 
             faceData = std::move(faceDataValue);
         }
@@ -512,9 +506,7 @@ private:
         case block_data::Face8::FaceIndexType48:
         case block_data::Face8::FaceIndexType176:
         {
-            block_data::Face8::FaceIndex176 faceDataValue;
-            faceDataValue.faceIndex = ReadUint32();
-            faceDataValue.position = ReadVector3();
+            common::IndexWithPosition faceDataValue = ReadIndexWithPosition();
 
             //B3D_VISIT()->VisitVector3(faceDataValue.position);
 
@@ -525,10 +517,7 @@ private:
         case block_data::Face8::FaceIndexType50:
         case block_data::Face8::FaceIndexType178:
         {
-            block_data::Face8::FaceIndex178 faceDataValue;
-            faceDataValue.faceIndex = ReadUint32();
-            faceDataValue.position = ReadVector3();
-            faceDataValue.texCoord = ReadVector2();
+            common::IndexWithPositionTexCoord faceDataValue = ReadIndexWithPositionTexCoord();
 
             //B3D_VISIT()->VisitVector3(faceDataValue.position);
 
@@ -566,7 +555,7 @@ private:
             }
         }
 
-        //B3D_VISIT()->VisitBlockData(blockData);
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -583,6 +572,8 @@ private:
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -597,6 +588,8 @@ private:
         blockData.distanceToPlayer = ReadFloat();
 
         ReadNestedBlocks(blockData.nestedBlocks);
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -618,6 +611,8 @@ private:
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -638,6 +633,8 @@ private:
             u = ReadFloat();
         }
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -651,6 +648,8 @@ private:
         ReadUntil(blockData.space.begin(), blockData.space.size());
         ReadUntil(blockData.object.begin(), blockData.object.size());
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -659,6 +658,8 @@ private:
         block_data::GroupObjects19 blockData;
 
         ReadNestedBlocks(blockData.nestedBlocks);
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -690,6 +691,8 @@ private:
             b = ReadFloat();
         }
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -704,6 +707,8 @@ private:
         blockData.unknown = ReadUint32();
 
         ReadNestedBlocks(blockData.nestedBlocks);
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -754,6 +759,8 @@ private:
             DispatchCollisionEntry23(blockData.type, collisionEntry);
         }
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -770,6 +777,8 @@ private:
         blockData.unknown = ReadUint32();
 
         ReadNestedBlocks(blockData.nestedBlocks);
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -819,6 +828,8 @@ private:
             }
         }
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -833,6 +844,8 @@ private:
 
         blockData.leftDown = ReadVector3();
         blockData.upRight = ReadVector3();
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }
@@ -856,6 +869,8 @@ private:
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -865,10 +880,7 @@ private:
         {
             if (meshType == block_data::Mesh35::UnknownType48)
             {
-                block_data::Mesh35::Unknown48 meshDataValue;
-
-                meshDataValue.faceIndex = ReadUint32();
-                meshDataValue.position = ReadVector3();
+                common::IndexWithPosition meshDataValue = ReadIndexWithPosition();
                 
                 //B3D_VISIT()->VisitVector3(meshDataValue.position);
 
@@ -876,11 +888,7 @@ private:
             }
             else if (meshType == block_data::Mesh35::UnknownType50)
             {
-                block_data::Mesh35::Unknown50 meshDataValue;
-
-                meshDataValue.faceIndex = ReadUint32();
-                meshDataValue.position = ReadVector3();
-                meshDataValue.texCoord = ReadVector2();
+                common::IndexWithPositionTexCoord meshDataValue = ReadIndexWithPositionTexCoord();
 
                 //B3D_VISIT()->VisitVector3(meshDataValue.position);
 
@@ -895,8 +903,7 @@ private:
         {
             if (meshType == block_data::Mesh35::Indices1)
             {
-                block_data::Mesh35::Indices meshDataValue;
-                meshDataValue.index = ReadUint32();
+                common::Index meshDataValue = ReadIndex();
 
                 meshData = meshDataValue;
             }
@@ -923,8 +930,7 @@ private:
             case block_data::Mesh35::Indices3:
             case block_data::Mesh35::Indices16:
             {
-                block_data::Mesh35::Indices meshDataValue;
-                meshDataValue.index = ReadUint32();
+                common::Index meshDataValue = ReadIndex();
 
                 meshData = meshDataValue;
             }
@@ -967,6 +973,8 @@ private:
             }
         }
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -974,24 +982,17 @@ private:
     {
         if (type == block_data::GroupVertexData37::Vertex2)
         {
-            block_data::GroupVertexData37::Vertex vertexDataValue;
-
-            vertexDataValue.position = ReadVector3();
-            vertexDataValue.texCoord = ReadVector2();
-            vertexDataValue.normal = ReadVector3();
+            common::PositionWithTexCoordNormal vertexDataValue = ReadPositionWithTexCoordNormal();
 
             //B3D_VISIT()->VisitVector3(vertexDataValue.position);
 
             vertexData = std::move(vertexDataValue);
         }
-        else if (type == block_data::GroupVertexData37::UnknownType3)
+        else if (type == block_data::GroupVertexData37::Vertex3)
         {
-            block_data::GroupVertexData37::Unknown3 vertexDataValue;
+            common::PositionWithNormal positionWithNormal = ReadPositionWithNormal();
 
-            vertexDataValue.unknown0 = ReadVector3();
-            vertexDataValue.unknown1 = ReadVector3();
-
-            vertexData = std::move(vertexDataValue);
+            vertexData = std::move(positionWithNormal);
         }
         else if (type == block_data::GroupVertexData37::UnknownType514)
         {
@@ -1029,6 +1030,8 @@ private:
 
         ReadNestedBlocks(blockData.nestedBlocks);
 
+        B3D_VISIT()->VisitBlockData(blockData);
+
         block.data = std::move(blockData);
     }
 
@@ -1051,6 +1054,8 @@ private:
         {
             item = ReadFloat();
         }
+
+        B3D_VISIT()->VisitBlockData(blockData);
 
         block.data = std::move(blockData);
     }

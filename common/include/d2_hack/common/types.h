@@ -28,6 +28,52 @@ struct BoundingSphere
     Ogre::Real radius;
 };
 
+
+typedef Ogre::Vector3 Position;
+typedef Ogre::Vector2 TexCoord;
+typedef Ogre::Vector3 Normal;
+typedef std::uint32_t Index;
+
+struct PositionWithTexCoord
+{
+    Position position;
+    TexCoord texCoord;
+};
+
+struct PositionWithTexCoordNormal
+{
+    Position position;
+    TexCoord texCoord;
+    Normal normal;
+};
+
+struct PositionWithNormal
+{
+    Position position;
+    Normal normal;
+};
+
+struct IndexWithTexCoord
+{
+    Index index;
+    TexCoord texCoord;
+};
+
+struct IndexWithPosition
+{
+    Index index;
+    Position position;
+};
+
+struct IndexWithPositionTexCoord
+{
+    Index index;
+    PositionWithTexCoord positionWithTexCoord;
+};
+
+
+
+
 } // namespace common
 } // namespace d2_hack
 
