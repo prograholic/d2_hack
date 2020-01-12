@@ -431,9 +431,9 @@ private:
         ReadUntil(blockData.name.begin(), blockData.name.size());
         ReadUntil(blockData.data.begin(), blockData.data.size());
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         //block.data = std::move(blockData);
     }
@@ -447,9 +447,9 @@ private:
         
         ReadUntil(blockData.name.begin(), blockData.name.size());
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -472,9 +472,9 @@ private:
             B3D_VISIT()->VisitPosition(vertexEntry.position);
         }
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -570,9 +570,9 @@ private:
         blockData.unknown = ReadVector3();
         blockData.distanceToPlayer = ReadFloat();
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -587,9 +587,9 @@ private:
         blockData.unknown = ReadVector3();
         blockData.distanceToPlayer = ReadFloat();
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -609,9 +609,9 @@ private:
         blockData.unknown4 = ReadUint32();
         blockData.unknown5 = ReadUint32();
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -657,9 +657,9 @@ private:
     {
         block_data::GroupObjects19 blockData;
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -706,9 +706,9 @@ private:
         blockData.count = ReadUint32();
         blockData.unknown = ReadUint32();
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -776,9 +776,9 @@ private:
 
         blockData.unknown = ReadUint32();
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -867,9 +867,9 @@ private:
             colorEntry = ReadFloat();
         }
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }
@@ -1028,9 +1028,9 @@ private:
             DispatchVertexData37(blockData.type, vertexData);
         }
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
         B3D_VISIT()->VisitBlockData(blockData);
+
+        ReadNestedBlocks(blockData.nestedBlocks);
 
         block.data = std::move(blockData);
     }

@@ -22,29 +22,40 @@ namespace b3d
 class TracingVisitor : public B3dVisitorInterface
 {
 public:
+    TracingVisitor(bool printBoundingSphere, bool newLineForMesh35, bool newLineForVertex)
+        : m_printBoundingSphere(printBoundingSphere)
+        , m_newLineForMesh35(newLineForMesh35)
+        , m_newLineForVertex(newLineForVertex)
+    {
+    }
+
+    bool m_printBoundingSphere;
+    bool m_newLineForMesh35;
+    bool m_newLineForVertex;
 
     virtual void VisitBlockSeparator(std::uint32_t blockSeparator) override
     {
         if (blockSeparator == 333)
         {
-            GetStream() << "{" << std::endl;
+            //GetStream() << "{" << std::endl;
         }
         else if (blockSeparator == 555)
         {
-            GetStream() << "}" << std::endl;
+            //GetStream() << "}" << std::endl;
         }
     }
 
     virtual void VisitBlockHeader(const common::ResourceName& name, std::uint32_t type) override
     {
         m_offset += 1;
-        GetStream() << "name: " << name.data() << std::endl;
+        GetStream() << "name: " << Print(name) << std::endl;
         GetStream() << "type: " << type << std::endl;
     }
 
     virtual void VisitBlock(const common::ResourceName& /* name */, std::uint32_t /* type */) override
     {
         m_offset -= 1;
+        GetStream() << std::endl;
     }
 
     virtual void VisitNestedBlockHeader(std::uint32_t nestedBlockCount) override
@@ -57,10 +68,10 @@ public:
         return &std::cout;
     }
 
-    std::ostream& GetStream()
+    std::ostream& GetStream(std::ostream& ostream = std::cout, int adjustOffset = 0)
     {
-        std::cout << GetOffsetString();
-        return std::cout;
+        ostream << GetOffsetString(adjustOffset);
+        return ostream;
     }
 
     std::string Print(const uint8_t* first, const uint8_t* last)
@@ -79,10 +90,7 @@ public:
     std::string Print(const Ogre::Vector3& vector)
     {
         std::ostringstream ostream;
-        ostream << "{" <<
-            "x: " << vector.x << ", "
-            "y: " << vector.y << ", "
-            "z: " << vector.z << "}";
+        ostream << vector;
 
         return ostream.str();
     }
@@ -90,9 +98,7 @@ public:
     std::string Print(const Ogre::Vector2& vector)
     {
         std::ostringstream ostream;
-        ostream << "{" <<
-            "u: " << vector.x << ", "
-            "v: " << vector.y << "}";
+        ostream << vector;
 
         return ostream.str();
     }
@@ -100,9 +106,15 @@ public:
     std::string Print(const common::BoundingSphere& boundingSphere)
     {
         std::ostringstream ostream;
-        ostream << "BoundingSphere {" <<
-            "center: " << Print(boundingSphere.center) << ", "
-            "radius: " << boundingSphere.radius << "}";
+        ostream << "BoundingSphere {";
+        
+        if (m_printBoundingSphere)
+        {
+            ostream <<
+                "center: " << Print(boundingSphere.center) << ", "
+                "radius: " << boundingSphere.radius;
+        }
+        ostream << "}";
 
         return ostream.str();
     }
@@ -168,9 +180,10 @@ public:
     std::string Print(const common::IndexWithPositionTexCoord& indexWithPositionTexCoord)
     {
         std::ostringstream ostream;
-        ostream << "IndexWithPositionTexCoord {" <<
+        ostream << "IPT{" <<
             "index: " << indexWithPositionTexCoord.index << ", "
-            "positionWithTexCoord: " << Print(indexWithPositionTexCoord.positionWithTexCoord) << "}";
+            "position: " << Print(indexWithPositionTexCoord.positionWithTexCoord.position) << ", "
+            "texCoord: " << Print(indexWithPositionTexCoord.positionWithTexCoord.texCoord) << "}";
 
         return ostream.str();
     }
@@ -193,8 +206,7 @@ public:
     {
         GetStream() << "GroupObjects5 {"
             "boundingSphere: " << Print(blockData.boundingSphere) << ", "
-            "name: " << Print(blockData.name) << ", "
-            "}" << std::endl;
+            "name: " << Print(blockData.name) << "}" << std::endl;
     }
 
     virtual void VisitBlockData(const block_data::GroupVertex7& blockData) override
@@ -206,10 +218,10 @@ public:
 
         for (const auto& vertex : blockData.vertices)
         {
-            std::cout << Print(vertex) << ", ";
+            (m_newLineForVertex ? GetStream(std::cout << std::endl, 1) : std::cout) << Print(vertex) << ", ";
         }
 
-        std::cout << "}" << std::endl;
+        (m_newLineForVertex ? GetStream(std::cout << std::endl) : std::cout) << "}" << std::endl;
     }
 
     std::string Print(const block_data::Face8::FaceData& faceData, std::uint32_t type)
@@ -343,7 +355,7 @@ public:
         
         for (const auto& a : blockData.a)
         {
-            std::cout << a << ", ";
+            std::cout << Print(a) << ", ";
         }
         
         std::cout << "}"
@@ -554,7 +566,8 @@ public:
     std::string Print(const block_data::Mesh35& mesh)
     {
         std::ostringstream ostream;
-        ostream << "Mesh35 {" <<
+
+        ostream << "Mesh35{" <<
             "type: " << mesh.type << ", "
             "unknown0: " << mesh.unknown0 << ", "
             "unknown1: " << mesh.unknown1 << ", "
@@ -567,13 +580,14 @@ public:
         }
 
         ostream << "}";
+        ostream << "}";
 
         return ostream.str();
     }
 
     virtual void VisitBlockData(const block_data::SimpleFaceData35& blockData) override
     {
-        GetStream() << "SimpleFaceData35 {"
+        GetStream() << "SimpleFaceData35{"
             "boundingSphere: " << Print(blockData.boundingSphere) << ", "
             "type: " << blockData.type << ", "
             "meshIndex: " << blockData.meshIndex << ", "
@@ -581,16 +595,15 @@ public:
             
         for (const auto& mesh : blockData.meshList)
         {
-            std::cout << Print(mesh) << ", ";
+            (m_newLineForMesh35 ? GetStream(std::cout << std::endl, 1) : std::cout) << Print(mesh) << ", ";
         }
 
-        std::cout << "}" << std::endl;
+        (m_newLineForMesh35 ? GetStream(std::cout << std::endl) : std::cout) << "}" << std::endl;
     }
 
     std::string Print(const block_data::GroupVertexData37::VertexData& vertexData, std::uint32_t type)
     {
         std::ostringstream ostream;
-        ostream << "VertexData37 {";
         switch (type)
         {
         case block_data::GroupVertexData37::Vertex2:
@@ -616,8 +629,6 @@ public:
             throw std::runtime_error("Print(GroupVertexData37::VertexData): unknown type: " + std::to_string(type));
         }
 
-        ostream << "}";
-
         return ostream.str();
     }
 
@@ -631,10 +642,10 @@ public:
 
         for (const auto& vertexData : blockData.vertexDataList)
         {
-            std::cout << Print(vertexData, blockData.type) << ", ";
+            (m_newLineForVertex ? GetStream(std::cout << std::endl, 1) : std::cout) << Print(vertexData, blockData.type) << ", ";
         }
 
-        std::cout << "}" << std::endl;
+        (m_newLineForVertex ? GetStream(std::cout << std::endl) : std::cout) << "}" << std::endl;
     }
 
     virtual void VisitBlockData(const block_data::SimpleGeneratedObjects40& blockData) override
@@ -658,10 +669,10 @@ public:
 private:
     size_t m_offset = 0;
 
-    std::string GetOffsetString() const
+    std::string GetOffsetString(int adjustOffset = 0) const
     {
         std::string res;
-        res.resize(m_offset * 4, ' ');
+        res.resize((m_offset + adjustOffset) * 4, ' ');
 
         return res;
     }
@@ -700,7 +711,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        TracingVisitor visitor;
+        TracingVisitor visitor{false, true, true};
         B3dReader reader;
         B3d data;
         reader.Read(inputFile, data, &visitor);
