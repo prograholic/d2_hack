@@ -1,8 +1,11 @@
 d2_hack_add_library(d2_hack.codec.data
     b3d_reader.cpp
+    b3d_reader2.cpp
     
     include/d2_hack/codec/data/b3d_block_data_decl.h
     include/d2_hack/codec/data/b3d_reader.h
+    include/d2_hack/codec/data/b3d_block_data_decl2.h
+    include/d2_hack/codec/data/b3d_reader2.h
     include/d2_hack/codec/data/b3d.h
 )
 

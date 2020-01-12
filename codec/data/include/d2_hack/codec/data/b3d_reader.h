@@ -8,6 +8,8 @@
 #include <vector>
 #include <array>
 
+#include <OgreDataStream.h>
+
 #include <d2_hack/common/types.h>
 #include <d2_hack/codec/data/b3d.h>
 
@@ -194,16 +196,12 @@ public:
 
 
 
-
-
-
-
-
 class B3dReader
 {
 public:
     void Read(std::istream& input, B3d& data, B3dVisitorInterface* visior = nullptr);
 };
+
 
 } // namespace b3d
 } // namespace data

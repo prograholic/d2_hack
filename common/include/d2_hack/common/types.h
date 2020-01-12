@@ -30,15 +30,27 @@ struct BoundingSphere
 
 
 typedef Ogre::Vector3 Position;
+typedef std::vector<Position> PositionList;
+
 typedef Ogre::Vector2 TexCoord;
 typedef Ogre::Vector3 Normal;
+
+
+
 typedef std::uint32_t Index;
+typedef std::vector<Index> IndexList;
+
+
 
 struct PositionWithTexCoord
 {
     Position position;
     TexCoord texCoord;
 };
+
+typedef std::vector<PositionWithTexCoord> PositionWithTexCoordList;
+
+
 
 struct PositionWithTexCoordNormal
 {
@@ -47,11 +59,19 @@ struct PositionWithTexCoordNormal
     Normal normal;
 };
 
+typedef std::vector<PositionWithTexCoordNormal> PositionWithTexCoordNormalList;
+
+
+
 struct PositionWithNormal
 {
     Position position;
     Normal normal;
 };
+
+typedef std::vector<PositionWithNormal> PositionWithNormalList;
+
+
 
 struct IndexWithTexCoord
 {
@@ -59,17 +79,28 @@ struct IndexWithTexCoord
     TexCoord texCoord;
 };
 
+typedef std::vector<IndexWithTexCoord> IndexWithTexCoordList;
+
+
+
 struct IndexWithPosition
 {
     Index index;
     Position position;
 };
 
+typedef std::vector<IndexWithPosition> IndexWithPositionList;
+
+
+
 struct IndexWithPositionTexCoord
 {
     Index index;
-    PositionWithTexCoord positionWithTexCoord;
+    Position position;
+    TexCoord texCoord;
 };
+
+typedef std::vector<IndexWithPositionTexCoord> IndexWithPositionTexCoordList;
 
 
 

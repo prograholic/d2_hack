@@ -8,7 +8,6 @@
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/reader.h>
 
-#include <d2_hack/codec/data/b3d_block_data_decl.h>
 
 namespace d2_hack
 {

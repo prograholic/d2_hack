@@ -1,13 +1,10 @@
-#ifndef D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL_H
-#define D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL_H
+#ifndef D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL2_H
+#define D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL2_H
 
 #include <d2_hack/common/platform.h>
 
 #include <cstdint>
 #include <memory>
-
-#include <boost/variant/variant.hpp>
-
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
@@ -23,13 +20,14 @@ namespace data
 {
 namespace b3d
 {
-
-struct Block;
-typedef std::shared_ptr<Block> NestedBlock;
-typedef std::vector<NestedBlock> NestedBlockList;
-
-namespace block_data
+namespace block_data2
 {
+
+struct BlockHeader
+{
+    common::ResourceName name;
+    std::uint32_t type;
+};
 
 struct Empty0
 {
@@ -48,7 +46,7 @@ struct GroupRoadInfraObjects4
 
     common::ResourceName data;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct GroupObjects5
@@ -56,20 +54,17 @@ struct GroupObjects5
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
-
-
-typedef std::vector<common::PositionWithTexCoord> PositionWithTexCoordList;
 
 struct GroupVertex7
 {
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 
-    PositionWithTexCoordList vertices;
+    //common::PositionWithTexCoordList vertices;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct Face8
@@ -85,6 +80,12 @@ struct Face8
     static const std::uint32_t FaceIndexType176 = 176;
     static const std::uint32_t FaceIndexType178 = 178;
 
+    std::uint32_t type;
+    Ogre::Real unknown0;
+    std::uint32_t unknown1;
+    std::uint32_t unknown2;
+
+#if 0
     typedef boost::variant<
         common::Index,
         common::IndexWithTexCoord,
@@ -93,22 +94,17 @@ struct Face8
     > FaceData;
     typedef std::vector<FaceData> FaceDataList;
 
-
-    std::uint32_t type;
-    Ogre::Real unknown0;
-    std::uint32_t unknown1;
-    std::uint32_t unknown2;
-
     FaceDataList faceDataList;
+#endif //0
 };
 
-typedef std::vector<Face8> Face8List;
+//typedef std::vector<Face8> Face8List;
 
 struct SimpleFaces8
 {
     common::BoundingSphere boundingSphere;
 
-    Face8List faces;
+    //Face8List faces;
 };
 
 struct GroupTrigger9
@@ -118,7 +114,7 @@ struct GroupTrigger9
     Ogre::Vector3 unknown;
     Ogre::Real distanceToPlayer;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct GroupLodParameters10
@@ -129,7 +125,7 @@ struct GroupLodParameters10
 
     Ogre::Real distanceToPlayer;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct GroupUnknown12
@@ -144,7 +140,7 @@ struct GroupUnknown12
     std::uint32_t unknown4;
     std::uint32_t unknown5;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleTrigger13
@@ -154,7 +150,7 @@ struct SimpleTrigger13
     std::uint32_t unknown0;
     std::uint32_t unknown1;
 
-    std::vector<Ogre::Real> unknown2;
+    //std::vector<Ogre::Real> unknown2;
 };
 
 struct SimpleObjectConnector18
@@ -167,7 +163,7 @@ struct SimpleObjectConnector18
 
 struct GroupObjects19
 {
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleFlatCollision20
@@ -177,8 +173,8 @@ struct SimpleFlatCollision20
     std::uint32_t unknown0;
     std::uint32_t unknown1;
 
-    std::vector<Ogre::Vector3> a;
-    std::vector<Ogre::Real> b;
+    //PositionList a;
+    //std::vector<Ogre::Real> b;
 };
 
 struct GroupObjects21
@@ -188,17 +184,17 @@ struct GroupObjects21
     std::uint32_t count;
     std::uint32_t unknown;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleVolumeCollision23
 {
     static const std::uint32_t UnknownType0 = 0;
 
-
+#if 0
     struct Unknown0
     {
-        std::vector<Ogre::Vector3> unknown;
+        common::PositionList unknown;
     };
 
     typedef boost::variant <
@@ -206,6 +202,8 @@ struct SimpleVolumeCollision23
     > CollisionEntry;
 
     typedef std::vector<CollisionEntry> CollisionEntries;
+
+#endif //0
 
     std::uint32_t unknown0;
     std::uint32_t unknown1;
@@ -215,8 +213,8 @@ struct SimpleVolumeCollision23
     Ogre::Real unknown2;
     Ogre::Real unknown3;
     Ogre::Real unknown4;
-    
-    CollisionEntries collisionEntries;
+
+    //CollisionEntries collisionEntries;
 };
 
 struct GroupTransformMatrix24
@@ -226,10 +224,10 @@ struct GroupTransformMatrix24
     Ogre::Vector3 z;
 
     Ogre::Vector3 position;
-    
+
     std::uint32_t unknown;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct Face28Entry
@@ -250,14 +248,18 @@ struct Face28Entry
         Ogre::Real unknown3;
     };
 
+#if 0
+
     typedef boost::variant<
         Unknown
     > FaceData;
 
     std::vector<FaceData> faceData;
+
+#endif //0
 };
 
-typedef std::vector<Face28Entry> Faces28Entries;
+//typedef std::vector<Face28Entry> Faces28Entries;
 
 struct SimpleFaces28
 {
@@ -265,7 +267,7 @@ struct SimpleFaces28
 
     Ogre::Vector3 unknown;
 
-    Faces28Entries facesEntries;
+    //Faces28Entries facesEntries;
 };
 
 struct SimplePortal30
@@ -290,7 +292,7 @@ struct GroupLightingObjects33
 
     std::array<Ogre::Real, 12> color;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct Mesh35
@@ -332,7 +334,7 @@ struct SimpleFaceData35
     static const std::uint32_t Unknown1 = 1;
     static const std::uint32_t Unknown2 = 2;
     static const std::uint32_t IndicesOnly3 = 3;
-    
+
 
     common::BoundingSphere boundingSphere;
     std::uint32_t type;
@@ -382,36 +384,10 @@ struct SimpleGeneratedObjects40
     std::uint32_t type;
     Ogre::Real unknown0;
 
-    std::vector<Ogre::Real> unknown1;
+    //std::vector<Ogre::Real> unknown1;
 };
 
-
-typedef boost::variant<
-    Empty0,
-    //GroupRoadInfraObjects4,
-    GroupObjects5,
-    GroupVertex7,
-    SimpleFaces8,
-    GroupTrigger9,
-    GroupLodParameters10,
-    GroupUnknown12,
-    SimpleTrigger13,
-    SimpleObjectConnector18,
-    GroupObjects19,
-    SimpleFlatCollision20,
-    GroupObjects21,
-    SimpleVolumeCollision23,
-    GroupTransformMatrix24,
-    SimpleFaces28,
-    SimplePortal30,
-    GroupLightingObjects33,
-    SimpleFaceData35,
-    GroupVertexData37,
-    SimpleGeneratedObjects40
-> Data;
-
-
-} // namespace block_data
+} // namespace block_data2
 } // namespace b3d
 } // namespace data
 } // namespace codec
@@ -420,4 +396,4 @@ typedef boost::variant<
 
 
 
-#endif /* D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL_H */
+#endif /* D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL2_H */

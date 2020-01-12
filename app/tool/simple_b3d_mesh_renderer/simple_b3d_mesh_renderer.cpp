@@ -120,9 +120,10 @@ struct B3dMeshLoader : public Ogre::ManualResourceLoader
             {
                 const common::IndexWithPositionTexCoord fi178 = boost::get<common::IndexWithPositionTexCoord>(faceDataEntry);
                 
-                data.push_back(fi178.positionWithTexCoord);
+                common::PositionWithTexCoord pt{fi178.position, fi178.texCoord};
+                data.push_back(pt);
 
-                bbox.merge(fi178.positionWithTexCoord.position);
+                bbox.merge(fi178.position);
             }
 
             Ogre::HardwareVertexBufferSharedPtr vbuf =

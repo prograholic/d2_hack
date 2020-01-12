@@ -281,7 +281,8 @@ public:
         IndexWithPositionTexCoord res;
 
         res.index = ReadIndex();
-        res.positionWithTexCoord = ReadPositionWithTexCoord();
+        res.position = ReadPosition();
+        res.texCoord = ReadTexCoord();
 
         return res;
     }

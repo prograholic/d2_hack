@@ -182,8 +182,8 @@ public:
         std::ostringstream ostream;
         ostream << "IPT{" <<
             "index: " << indexWithPositionTexCoord.index << ", "
-            "position: " << Print(indexWithPositionTexCoord.positionWithTexCoord.position) << ", "
-            "texCoord: " << Print(indexWithPositionTexCoord.positionWithTexCoord.texCoord) << "}";
+            "position: " << Print(indexWithPositionTexCoord.position) << ", "
+            "texCoord: " << Print(indexWithPositionTexCoord.texCoord) << "}";
 
         return ostream.str();
     }
@@ -307,7 +307,7 @@ public:
         GetStream() << "GroupLodParameters10 {"
             "boundingSphere: " << Print(blockData.boundingSphere) << ", "
             "unknown: " << Print(blockData.unknown) << ", "
-            "distanceToPlayer: " << blockData.distanceToPlayer << ", "
+            "distanceToPlayer: " << blockData.distanceToPlayer << 
             "}" << std::endl;
     }
 
