@@ -1,7 +1,5 @@
 #include "simple_b3d_mesh_renderer.h"
 
-#include <boost/variant/get.hpp>
-
 #include <OgreMesh.h>
 #include <OgreSubMesh.h>
 #include <OgreMeshManager.h>

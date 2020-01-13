@@ -11,10 +11,8 @@
 #include <OgreDataStream.h>
 
 #include <d2_hack/common/types.h>
-#include <d2_hack/codec/data/b3d.h>
 
-
-#include "b3d_block_data_decl.h"
+#include <d2_hack/codec/data/b3d_block_data_decl.h>
 
 namespace d2_hack
 {
@@ -25,183 +23,185 @@ namespace data
 namespace b3d
 {
 
-struct FileHeader
-{
-    static const size_t SignatureSize = 4;
-
-    std::uint8_t signature[SignatureSize];
-    std::uint32_t fileSize;
-
-    struct Section
-    {
-        std::uint32_t offset;
-        std::uint32_t size;
-    };
-
-    Section materials;
-
-    Section data;
-};
-
-
 typedef std::vector<common::ResourceName> Materials;
 
-struct BlockHeader
-{
-    common::ResourceName name;
-    std::uint32_t type;
-};
 
-struct Block
-{
-    BlockHeader header;
-
-    block_data::Data data;
-};
-
-typedef std::vector<Block> Data;
-
-struct B3d
-{
-    FileHeader header;
-
-    Materials materials;
-    Data data;
-};
-
-
-
-class B3dVisitorInterface
+class B3dListenerInterface
 {
 public:
-    virtual ~B3dVisitorInterface() = default;
+    virtual ~B3dListenerInterface() = default;
 
-    virtual void VisitPosition(const common::Position& /* position */)
+    virtual void OnBlockBegin(const block_data::BlockHeader& /* blockHeader */)
     {
     }
 
-    virtual void VisitBoundingSphere(const common::BoundingSphere& /* boundingSphere */)
+    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */)
     {
     }
 
-    virtual void VisitBlockSeparator(std::uint32_t /* blockSeparator */)
+    virtual void OnNestedBlockBegin(std::uint32_t /* nestedBlockNumber */)
     {
     }
 
-    virtual void VisitBlockHeader(const common::ResourceName& /* name */, std::uint32_t /* type */)
+    virtual void OnNestedBlockEnd(std::uint32_t /* nestedBlockNumber */)
     {
     }
 
-    virtual void VisitBlock(const common::ResourceName& /* name */, std::uint32_t /* type */)
+    virtual void OnMaterials(Materials&& /* materials */)
     {
     }
 
-    virtual void VisitNestedBlockHeader(std::uint32_t /* nestedBlockCount */)
+    virtual void OnBlock(block_data::Empty0&& /* block */)
     {
     }
 
-    virtual std::ostream* GetDebugOutStream()
-    {
-        return nullptr;
-    }
-
-    virtual void VisitMaterials(const b3d::Materials& /* materials */)
+    virtual void OnBlock(block_data::GroupRoadInfraObjects4&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::Empty0& /* blockData */)
+    virtual void OnBlock(block_data::GroupObjects5&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupRoadInfraObjects4& /* blockData */)
+    virtual void OnBlock(block_data::GroupVertex7&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupObjects5& /* blockData */)
+    virtual void OnBlock(block_data::SimpleFaces8&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupVertex7& /* blockData */)
+    virtual void OnBlock(block_data::GroupTrigger9&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleFaces8& /* blockData */)
+    virtual void OnBlock(block_data::GroupLodParameters10&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupTrigger9& /* blockData */)
+    virtual void OnBlock(block_data::GroupUnknown12&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupLodParameters10& /* blockData */)
+    virtual void OnBlock(block_data::SimpleTrigger13&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupUnknown12& /* blockData */)
+    virtual void OnBlock(block_data::SimpleObjectConnector18&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleTrigger13& /* blockData */)
+    virtual void OnBlock(block_data::GroupObjects19&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleObjectConnector18& /* blockData */)
+    virtual void OnBlock(block_data::SimpleFlatCollision20&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupObjects19& /* blockData */)
+    virtual void OnBlock(block_data::GroupObjects21&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleFlatCollision20& /* blockData */)
+    virtual void OnBlock(const block_data::SimpleVolumeCollision23& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupObjects21& /* blockData */)
+    virtual void OnBlock(block_data::GroupTransformMatrix24&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleVolumeCollision23& /* blockData */)
+    virtual void OnBlock(block_data::SimpleFaces28&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupTransformMatrix24& /* blockData */)
+    virtual void OnBlock(block_data::SimplePortal30&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleFaces28& /* blockData */)
+    virtual void OnBlock(block_data::GroupLightingObjects33&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimplePortal30& /* blockData */)
+    virtual void OnBlock(const block_data::SimpleFaceData35& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupLightingObjects33& /* blockData */)
+    virtual void OnBlock(const block_data::GroupVertexData37& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleFaceData35& /* blockData */)
+    virtual void OnBlock(block_data::SimpleGeneratedObjects40&& /* block */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::GroupVertexData37& /* blockData */)
+    virtual void OnData(common::PositionWithTexCoordList&& /* data */)
     {
     }
 
-    virtual void VisitBlockData(const b3d::block_data::SimpleGeneratedObjects40& /* blockData */)
+    virtual void OnData(const block_data::Face8& /* data */)
+    {
+    }
+
+    virtual void OnData(common::IndexList&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::IndexWithPositionList&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::IndexWithPositionTexCoordList&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::IndexWithTexCoordList&& /* data */)
+    {
+    }
+
+    virtual void OnData(std::vector<Ogre::Real>&& /* data*/)
+    {
+    }
+
+    virtual void OnData(common::PositionList&& /* data*/)
+    {
+    }
+
+    virtual void OnData(const block_data::Face28Entry& /* data */)
+    {
+    }
+
+    virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& /* data */)
+    {
+    }
+
+    virtual void OnData(const block_data::Mesh35& /* data */)
+    {
+    }
+
+    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& /* data */)
+    {
+    }
+
+    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::PositionWithNormalList&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::PositionWithTexCoordNormalList&& /* data */)
     {
     }
 };
-
 
 
 class B3dReader
 {
 public:
-    void Read(std::istream& input, B3d& data, B3dVisitorInterface* visior = nullptr);
+    void Read(Ogre::DataStream& input, B3dListenerInterface& listener);
 };
-
 
 } // namespace b3d
 } // namespace data
