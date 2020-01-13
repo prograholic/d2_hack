@@ -340,7 +340,7 @@ struct SimpleFaceData35
     std::uint32_t type;
     std::uint32_t meshIndex;
 
-    Mesh35List meshList;
+    //Mesh35List meshList;
 };
 
 struct GroupVertexData37
@@ -357,6 +357,7 @@ struct GroupVertexData37
         Ogre::Vector3 unknown3;
     };
 
+#if 0
     typedef boost::variant<
         common::PositionWithTexCoordNormal,
         common::PositionWithNormal,
@@ -364,14 +365,15 @@ struct GroupVertexData37
     > VertexData;
 
     typedef std::vector<VertexData> VertexDataList;
+#endif //0
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
     std::uint32_t type;
 
-    VertexDataList vertexDataList;
+    //VertexDataList vertexDataList;
 
-    NestedBlockList nestedBlocks;
+    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleGeneratedObjects40

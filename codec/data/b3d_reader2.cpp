@@ -802,65 +802,65 @@ private:
         ReadNestedBlocks();
     }
 
-    void DispatchReadMeshData35(const std::uint32_t blockType, const std::uint32_t meshType, block_data::Mesh35::MeshData& meshData)
+    void DispatchReadMeshData35(const std::uint32_t blockType, const std::uint32_t meshType)
     {
-        if (blockType == block_data::SimpleFaceData35::Unknown1)
+        const std::uint32_t dataCount = ReadUint32();
+
+        if (blockType == block_data2::SimpleFaceData35::Unknown1)
         {
-            if (meshType == block_data::Mesh35::UnknownType48)
+            if (meshType == block_data2::Mesh35::UnknownType48)
             {
-                common::IndexWithPosition meshDataValue = ReadIndexWithPosition();
-                
-                //B3D_VISIT()->VisitVector3(meshDataValue.position);
+                common::IndexWithPositionList data;
+                ReadCount(data, dataCount);
 
-                meshData = meshDataValue;
+                m_listener.OnData(std::move(data));
             }
-            else if (meshType == block_data::Mesh35::UnknownType50)
+            else if (meshType == block_data2::Mesh35::UnknownType50)
             {
-                common::IndexWithPositionTexCoord meshDataValue = ReadIndexWithPositionTexCoord();
+                common::IndexWithPositionTexCoordList data;
+                ReadCount(data, dataCount);
 
-                //B3D_VISIT()->VisitVector3(meshDataValue.position);
-
-                meshData = meshDataValue;
+                m_listener.OnData(std::move(data));
             }
             else
             {
                 ThrowError("Unknown mesh type for block type 1", "B3dReaderImpl::DispatchReadMesh35");
             }
         }
-        else if (blockType == block_data::SimpleFaceData35::Unknown2)
+        else if (blockType == block_data2::SimpleFaceData35::Unknown2)
         {
-            if (meshType == block_data::Mesh35::Indices1)
+            if (meshType == block_data2::Mesh35::Indices1)
             {
-                common::Index meshDataValue = ReadIndex();
+                common::IndexList data;
+                ReadCount(data, dataCount);
 
-                meshData = meshDataValue;
+                m_listener.OnData(std::move(data));
             }
-            else if (meshType == block_data::Mesh35::UnknownType49)
+            else if (meshType == block_data2::Mesh35::UnknownType49)
             {
-                block_data::Mesh35::Unknown49 meshDataValue;
+                std::vector<block_data2::Mesh35::Unknown49> data;
+                ReadCount(data, dataCount);
 
-                meshDataValue.unknown0 = ReadUint32();
-                meshDataValue.unknown1 = ReadFloat();
-
-                meshData = meshDataValue;
+                m_listener.OnData(std::move(data));
             }
             else
             {
                 ThrowError("Unknown mesh type for block type 2", "B3dReaderImpl::DispatchReadMesh35");
             }
         }
-        else if (blockType == block_data::SimpleFaceData35::IndicesOnly3)
+        else if (blockType == block_data2::SimpleFaceData35::IndicesOnly3)
         {
             switch (meshType)
             {
-            case block_data::Mesh35::Indices0:
-            case block_data::Mesh35::Indices1:
-            case block_data::Mesh35::Indices3:
-            case block_data::Mesh35::Indices16:
+            case block_data2::Mesh35::Indices0:
+            case block_data2::Mesh35::Indices1:
+            case block_data2::Mesh35::Indices3:
+            case block_data2::Mesh35::Indices16:
             {
-                common::Index meshDataValue = ReadIndex();
+                common::IndexList data;
+                ReadCount(data, dataCount);
 
-                meshData = meshDataValue;
+                m_listener.OnData(std::move(data));
             }
             break;
 
@@ -874,64 +874,61 @@ private:
         }
     }
 
-    void ReadBlockData35(Block& block)
+    void ReadBlockData35()
     {
-        block_data::SimpleFaceData35 blockData;
+        block_data2::SimpleFaceData35 block;
 
-        blockData.boundingSphere = ReadBoundingSphere();
-        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
-        
-        blockData.type = ReadUint32();
-        blockData.meshIndex = ReadUint32();
+        block.boundingSphere = ReadBoundingSphere();
+        block.type = ReadUint32();
+        block.meshIndex = ReadUint32();
 
-        const std::uint32_t meshListSize = ReadUint32();
-        blockData.meshList.resize(meshListSize);
-        for (auto& mesh : blockData.meshList)
+        m_listener.OnBlock(block);
+
+        const std::uint32_t meshCount = ReadUint32();
+        for (std::uint32_t meshNumber = 0; meshNumber != meshCount; ++meshNumber)
         {
-            mesh.type = ReadUint32();
-            mesh.unknown0 = ReadFloat();
-            mesh.unknown1 = ReadUint32();
-            mesh.materialIndex = ReadUint32();
+            block_data2::Mesh35 data;
+            data.type = ReadUint32();
+            data.unknown0 = ReadFloat();
+            data.unknown1 = ReadUint32();
+            data.materialIndex = ReadUint32();
+
+            m_listener.OnData(data);
+
+            DispatchReadMeshData35(block.type, data.type);
 
             const std::uint32_t itemsInMesh = ReadUint32();
-            mesh.meshDataList.resize(itemsInMesh);
-            for (auto& meshData : mesh.meshDataList)
+            for (std::uint32_t meshDataNumber = 0; meshDataNumber != itemsInMesh; ++meshDataNumber)
             {
-                DispatchReadMeshData35(blockData.type, mesh.type, meshData);
+                
             }
         }
-
-        B3D_VISIT()->VisitBlockData(blockData);
-
-        block.data = std::move(blockData);
     }
 
-    void DispatchVertexData37(const std::uint32_t type, block_data::GroupVertexData37::VertexData& vertexData)
+    void DispatchVertexData37(const std::uint32_t type)
     {
-        if (type == block_data::GroupVertexData37::Vertex2)
+        const std::uint32_t dataSize = ReadUint32();
+
+        if (type == block_data2::GroupVertexData37::Vertex2)
         {
-            common::PositionWithTexCoordNormal vertexDataValue = ReadPositionWithTexCoordNormal();
+            common::PositionWithTexCoordNormalList data;
+            ReadCount(data, dataSize);
 
-            //B3D_VISIT()->VisitVector3(vertexDataValue.position);
-
-            vertexData = std::move(vertexDataValue);
+            m_listener.OnData(std::move(data));
         }
-        else if (type == block_data::GroupVertexData37::Vertex3)
+        else if (type == block_data2::GroupVertexData37::Vertex3)
         {
-            common::PositionWithNormal positionWithNormal = ReadPositionWithNormal();
+            common::PositionWithNormalList data;
+            ReadCount(data, dataSize);
 
-            vertexData = std::move(positionWithNormal);
+            m_listener.OnData(std::move(data));
         }
-        else if (type == block_data::GroupVertexData37::UnknownType514)
+        else if (type == block_data2::GroupVertexData37::UnknownType514)
         {
-            block_data::GroupVertexData37::Unknown514 vertexDataValue;
+            std::vector<block_data2::GroupVertexData37::Unknown514> data;
+            ReadCount(data, dataSize);
 
-            vertexDataValue.unknown0 = ReadVector3();
-            vertexDataValue.unknown1 = ReadVector3();
-            vertexDataValue.unknown2 = ReadVector3();
-            vertexDataValue.unknown3 = ReadVector3();
-
-            vertexData = std::move(vertexDataValue);
+            m_listener.OnData(std::move(data));
         }
         else
         {
@@ -939,28 +936,19 @@ private:
         }
     }
 
-    void ReadBlockData37(Block& block)
+    void ReadBlockData37()
     {
-        block_data::GroupVertexData37 blockData;
+        block_data2::GroupVertexData37 block;
 
-        blockData.boundingSphere = ReadBoundingSphere();
-        B3D_VISIT()->VisitBoundingSphere(blockData.boundingSphere);
-        
-        ReadUntil(blockData.name.begin(), blockData.name.size());
-        blockData.type = ReadUint32();
+        block.boundingSphere = ReadBoundingSphere();
+        ReadBytes(block.name.data(), block.name.size());
+        block.type = ReadUint32();
 
-        const std::uint32_t dataSize = ReadUint32();
-        blockData.vertexDataList.resize(dataSize);
-        for (auto& vertexData : blockData.vertexDataList)
-        {
-            DispatchVertexData37(blockData.type, vertexData);
-        }
+        m_listener.OnBlock(block);
 
-        B3D_VISIT()->VisitBlockData(blockData);
+        DispatchVertexData37(block.type);
 
-        ReadNestedBlocks(blockData.nestedBlocks);
-
-        block.data = std::move(blockData);
+        ReadNestedBlocks();
     }
 
     void ReadBlockData40()

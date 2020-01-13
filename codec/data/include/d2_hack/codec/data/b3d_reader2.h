@@ -123,11 +123,11 @@ public:
     {
     }
 
-    virtual void OnBlock(block_data2::SimpleFaceData35&& /* block */)
+    virtual void OnBlock(const block_data2::SimpleFaceData35& /* block */)
     {
     }
 
-    virtual void OnBlock(block_data2::GroupVertexData37&& /* block */)
+    virtual void OnBlock(const block_data2::GroupVertexData37& /* block */)
     {
     }
 
@@ -135,7 +135,7 @@ public:
     {
     }
 
-    virtual void OnData(common::PositionWithTexCoordList& /* data */)
+    virtual void OnData(common::PositionWithTexCoordList&& /* data */)
     {
     }
 
@@ -172,6 +172,26 @@ public:
     }
 
     virtual void OnData(std::vector<block_data2::Face28Entry::Unknown>&& /* data */)
+    {
+    }
+
+    virtual void OnData(const block_data2::Mesh35& /* data */)
+    {
+    }
+
+    virtual void OnData(std::vector<block_data2::Mesh35::Unknown49>&& /* data */)
+    {
+    }
+
+    virtual void OnData(std::vector<block_data2::GroupVertexData37::Unknown514>&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::PositionWithNormalList&& /* data */)
+    {
+    }
+
+    virtual void OnData(common::PositionWithTexCoordNormalList&& /* data */)
     {
     }
 };
