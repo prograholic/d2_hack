@@ -40,7 +40,7 @@ material stos_doorl
     }
 }
 
-material mat_store_b1
+material combinat_depSIDE
 {
     technique
     {
@@ -48,13 +48,13 @@ material mat_store_b1
         {
             texture_unit
             {
-                texture txr\tree01.txr
+                texture txr\combinat_depSIDE.txr
             }
         }
     }
 }
 
-material mat_store_h2
+material combinat_depBUTT
 {
     technique
     {
@@ -62,13 +62,13 @@ material mat_store_h2
         {
             texture_unit
             {
-                texture txr\kust.txr
+                texture txr\combinat_depBUTT.txr
             }
         }
     }
 }
 
-material mat_store_r0
+material combinat_HardRoof
 {
     technique
     {
@@ -76,7 +76,35 @@ material mat_store_r0
         {
             texture_unit
             {
-                texture txr\aa2.txr
+                texture txr\combinat_HardRoof.txr
+            }
+        }
+    }
+}
+
+material combinat_chimneySIDE
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture txr\combinat_chimneySIDE.txr
+            }
+        }
+    }
+}
+
+material mat_water
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                txr\water.txr
             }
         }
     }

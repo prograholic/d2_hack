@@ -42,29 +42,7 @@ static const std::uint32_t BlockBeginMagic = 333;
 static const std::uint32_t BlockNextMagic = 444;
 static const std::uint32_t BlockEndMagic = 555;
 
-static const std::uint32_t EmptyBlock0 = 0;
-static const std::uint32_t GroupRoadInfraObjectsBlock4 = 4;
-static const std::uint32_t GroupObjectsBlock5 = 5;
-static const std::uint32_t GroupVertexBlock7 = 7;
-static const std::uint32_t SimpleFacesBlock8 = 8;
-static const std::uint32_t GroupTriggerBlock9 = 9;
-static const std::uint32_t GroupLodParametersBlock10 = 10;
-static const std::uint32_t GroupUnknownBlock12 = 12;
-static const std::uint32_t SimpleTriggerBlock13 = 13;
-static const std::uint32_t SimpleObjectConnectorBlock18 = 18;
-static const std::uint32_t GroupObjectsBlock19 = 19;
-static const std::uint32_t SimpleFlatCollisionBlock20 = 20;
-static const std::uint32_t GroupObjectsBlock21 = 21;
-static const std::uint32_t SimpleVolumeCollisionBlock23 = 23;
-static const std::uint32_t GroupTransformMatrixBlock24 = 24;
-static const std::uint32_t SimpleFacesBlock28 = 28;
-static const std::uint32_t SimplePortalBlock30 = 30;
-static const std::uint32_t GroupLightingObjectBlock33 = 33;
-static const std::uint32_t SimpleFaceDataBlock35 = 35;
-static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
-static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
-static const std::uint32_t MaxBlockId = 40;
 
 
 class ReaderBase
@@ -265,87 +243,91 @@ private:
 
     void DispatchBlock(std::uint32_t blockType)
     {
-        if (blockType == EmptyBlock0)
+        if (blockType == block_data::EmptyBlock0)
         {
             return ReadBlockData0();
         }
-        else if (blockType == GroupRoadInfraObjectsBlock4)
+        else if (blockType == block_data::GroupRoadInfraObjectsBlock4)
         {
             return ReadBlockData4();
         }
-        else if (blockType == GroupObjectsBlock5)
+        else if (blockType == block_data::GroupObjectsBlock5)
         {
             return ReadBlockData5();
         }
-        else if (blockType == GroupVertexBlock7)
+        else if (blockType == block_data::GroupVertexBlock7)
         {
             return ReadBlockData7();
         }
-        else if (blockType == SimpleFacesBlock8)
+        else if (blockType == block_data::SimpleFacesBlock8)
         {
             return ReadBlockData8();
         }
-        else if (blockType == GroupTriggerBlock9)
+        else if (blockType == block_data::GroupTriggerBlock9)
         {
             return ReadBlockData9();
         }
-        else if (blockType == GroupLodParametersBlock10)
+        else if (blockType == block_data::GroupLodParametersBlock10)
         {
             return ReadBlockData10();
         }
-        else if (blockType == GroupUnknownBlock12)
+        else if (blockType == block_data::GroupUnknownBlock12)
         {
             return ReadBlockData12();
         }
-        else if (blockType == SimpleTriggerBlock13)
+        else if (blockType == block_data::SimpleTriggerBlock13)
         {
             return ReadBlockData13();
         }
-        else if (blockType == SimpleObjectConnectorBlock18)
+        else if (blockType == block_data::SimpleUnknownBlock14)
+        {
+            return ReadBlockData14();
+        }
+        else if (blockType == block_data::SimpleObjectConnectorBlock18)
         {
             return ReadBlockData18();
         }
-        else if (blockType == GroupObjectsBlock19)
+        else if (blockType == block_data::GroupObjectsBlock19)
         {
             return ReadBlockData19();
         }
-        else if (blockType == SimpleFlatCollisionBlock20)
+        else if (blockType == block_data::SimpleFlatCollisionBlock20)
         {
             return ReadBlockData20();
         }
-        else if (blockType == GroupObjectsBlock21)
+        else if (blockType == block_data::GroupObjectsBlock21)
         {
             return ReadBlockData21();
         }
-        else if (blockType == SimpleVolumeCollisionBlock23)
+        else if (blockType == block_data::SimpleVolumeCollisionBlock23)
         {
             return ReadBlockData23();
         }
-        else if (blockType == GroupTransformMatrixBlock24)
+        else if (blockType == block_data::GroupTransformMatrixBlock24)
         {
             return ReadBlockData24();
         }
-        else if (blockType == SimpleFacesBlock28)
+        else if (blockType == block_data::SimpleFacesBlock28)
         {
             return ReadBlockData28();
         }
-        else if (blockType == SimplePortalBlock30)
+        else if (blockType == block_data::SimplePortalBlock30)
         {
             return ReadBlockData30();
         }
-        else if (blockType == GroupLightingObjectBlock33)
+        else if (blockType == block_data::GroupLightingObjectBlock33)
         {
             return ReadBlockData33();
         }
-        else if (blockType == SimpleFaceDataBlock35)
+        else if (blockType == block_data::SimpleFaceDataBlock35)
         {
             return ReadBlockData35();
         }
-        else if (blockType == GroupIndexAndTexturesBlock37)
+        else if (blockType == block_data::GroupIndexAndTexturesBlock37)
         {
             return ReadBlockData37();
         }
-        else if (blockType == SimpleGeneratedObjectsBlock40)
+        else if (blockType == block_data::SimpleGeneratedObjectsBlock40)
         {
             return ReadBlockData40();
         }
@@ -377,7 +359,7 @@ private:
         ReadBytes(blockHeader.name.data(), blockHeader.name.size());
         blockHeader.type = ReadUint32();
 
-        if (blockHeader.type > MaxBlockId)
+        if (blockHeader.type > block_data::MaxBlockId)
         {
             ThrowError("Incorrect block id, possible b3d corruption?", "B3dReaderImpl::ReadBlock");
         }
@@ -612,6 +594,23 @@ private:
         m_listener.OnData(std::move(data));
     }
 
+    void ReadBlockData14()
+    {
+        block_data::SimpleUnknown14 block;
+        
+        block.boundingSphere = ReadBoundingSphere();
+        block.unknown0 = ReadUint32();
+        block.unknown1 = ReadUint32();
+
+        block.unknown2 = ReadFloat();
+        block.unknown3 = ReadFloat();
+        block.unknown4 = ReadFloat();
+        block.unknown5 = ReadFloat();
+        block.unknown6 = ReadFloat();
+        
+        m_listener.OnBlock(std::move(block));
+    }
+
     void ReadBlockData18()
     {
         block_data::SimpleObjectConnector18 block;
@@ -843,6 +842,13 @@ private:
 
                 m_listener.OnData(std::move(data));
             }
+            else if (meshType == block_data::Mesh35::UnknownType51)
+            {
+                common::IndexWithPositionList data;
+                ReadCount(data, dataCount);
+
+                m_listener.OnData(std::move(data));
+            }
             else
             {
                 ThrowError("Unknown mesh type for block type 2", "B3dReaderImpl::DispatchReadMesh35");
@@ -880,7 +886,7 @@ private:
 
         block.boundingSphere = ReadBoundingSphere();
         block.type = ReadUint32();
-        block.meshIndex = ReadUint32();
+        block.materialIndex = ReadUint32();
 
         m_listener.OnBlock(block);
 
@@ -929,6 +935,13 @@ private:
         else if (type == block_data::GroupVertexData37::UnknownType514)
         {
             std::vector<block_data::GroupVertexData37::Unknown514> data;
+            ReadCount(data, dataSize);
+
+            m_listener.OnData(std::move(data));
+        }
+        else if (type == block_data::GroupVertexData37::UnknownType258)
+        {
+            std::vector<block_data::GroupVertexData37::Unknown258> data;
             ReadCount(data, dataSize);
 
             m_listener.OnData(std::move(data));

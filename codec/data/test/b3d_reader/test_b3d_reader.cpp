@@ -13,7 +13,7 @@ namespace data
 namespace b3d
 {
 
-class TestB3dListener : public B3dListenerInterface
+class TestB3dListener : public VoidB3dListener
 {
 public:
     TestB3dListener(const size_t materialsCount)
@@ -80,7 +80,7 @@ int main()
     {
         TEST_B3D_READER("/ENV/aa.b3d", 114);
         TEST_B3D_READER("/ENV/ab.b3d", 53);
-        //TEST_B3D_READER("/ENV/ac.b3d", 53);
+        TEST_B3D_READER("/ENV/ac.b3d", 85);
     }
     catch (const std::exception& e)
     {

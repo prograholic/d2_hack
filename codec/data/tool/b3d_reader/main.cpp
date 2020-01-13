@@ -63,9 +63,12 @@ public:
             "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupRoadInfraObjects4&& /* block */) override
+    virtual void OnBlock(block_data::GroupRoadInfraObjects4&& block) override
     {
-        throw std::runtime_error("GroupRoadInfraObjects4");
+        GetStream() << "GroupRoadInfraObjects4 {"
+            "boundingSphere: " << Print(block.boundingSphere) << ", "
+            "boundingSphere: " << Print(block.name) << ", "
+            "name: " << Print(block.data) << "}" << std::endl;
     }
 
     virtual void OnBlock(block_data::GroupObjects5&& block) override
@@ -105,9 +108,16 @@ public:
             "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupUnknown12&& /* block */) override
+    virtual void OnBlock(block_data::GroupUnknown12&& block) override
     {
-        throw std::runtime_error("GroupUnknown12");
+        GetStream() << "GroupUnknown12 {"
+            "boundingSphere: " << Print(block.boundingSphere) << ", "
+            "unknown: " << Print(block.unknown0) << ", "
+            "unknown: " << Print(block.unknown1) << ", "
+            "unknown: " << Print(block.unknown2) << ", "
+            "unknown: " << Print(block.unknown3) << ", "
+            "unknown: " << Print(block.unknown4) << ", "
+            "unknown: " << Print(block.unknown5) << "}" << std::endl;
     }
 
     virtual void OnBlock(block_data::SimpleTrigger13&& block) override
@@ -116,6 +126,19 @@ public:
             "boundingSphere: " << Print(block.boundingSphere) << ", "
             "unknown0: " << block.unknown0 << ", "
             "unknown1: " << block.unknown1 << "}" << std::endl;
+    }
+
+    virtual void OnBlock(block_data::SimpleUnknown14&& block) override
+    {
+        GetStream() << "SimpleUnknown14 {"
+            "boundingSphere: " << Print(block.boundingSphere) << ", "
+            "unknown0: " << block.unknown0 << ", "
+            "unknown0: " << block.unknown1 << ", "
+            "unknown0: " << block.unknown2 << ", "
+            "unknown0: " << block.unknown3 << ", "
+            "unknown0: " << block.unknown4 << ", "
+            "unknown0: " << block.unknown5 << ", "
+            "unknown1: " << block.unknown6 << "}" << std::endl;
     }
 
     virtual void OnBlock(block_data::SimpleObjectConnector18&& block) override
@@ -218,7 +241,7 @@ public:
         GetStream() << "SimpleFaceData35{"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
             "type: " << block.type << ", "
-            "meshIndex: " << block.meshIndex << "}" << std::endl;
+            "materialIndex: " << block.materialIndex << "}" << std::endl;
     }
 
     virtual void OnBlock(const block_data::GroupVertexData37& block) override
@@ -308,14 +331,19 @@ public:
             "materialIndex: " << data.materialIndex << "}" << std::endl;
     }
 
-    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& /* data */) override
+    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& data) override
     {
-        throw std::runtime_error("std::vector<block_data::Mesh35::Unknown49>");
+        PrintVectorData(data, "std::vector<block_data::Mesh35::Unknown49>");
     }
 
     virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& data) override
     {
         PrintVectorData(data, "std::vector<block_data::GroupVertexData37::Unknown514>");
+    }
+
+    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& data)
+    {
+        PrintVectorData(data, "std::vector<block_data::GroupVertexData37::Unknown258>");
     }
 
     virtual void OnData(common::PositionWithNormalList&& data) override
@@ -485,7 +513,29 @@ private:
             return ostream.str();
         }
 
+        std::string Print(const block_data::Mesh35::Unknown49& data)
+        {
+            std::ostringstream ostream;
+            ostream << "Unknown {"
+                "index:" << Print(data.index) << ", "
+                "unknown:" << Print(data.unknown) << "}";
+
+            return ostream.str();
+        }
+
         std::string Print(const block_data::GroupVertexData37::Unknown514& data)
+        {
+            std::ostringstream ostream;
+            ostream << "Unknown {"
+                "unknown0:" << Print(data.unknown0) << ", "
+                "unknown1:" << Print(data.unknown1) << ", "
+                "unknown2:" << Print(data.unknown2) << ", "
+                "unknown3:" << Print(data.unknown3) << "}";
+
+            return ostream.str();
+        }
+
+        std::string Print(const block_data::GroupVertexData37::Unknown258& data)
         {
             std::ostringstream ostream;
             ostream << "Unknown {"

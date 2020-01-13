@@ -23,6 +23,31 @@ namespace b3d
 namespace block_data
 {
 
+static const std::uint32_t EmptyBlock0 = 0;
+static const std::uint32_t GroupRoadInfraObjectsBlock4 = 4;
+static const std::uint32_t GroupObjectsBlock5 = 5;
+static const std::uint32_t GroupVertexBlock7 = 7;
+static const std::uint32_t SimpleFacesBlock8 = 8;
+static const std::uint32_t GroupTriggerBlock9 = 9;
+static const std::uint32_t GroupLodParametersBlock10 = 10;
+static const std::uint32_t GroupUnknownBlock12 = 12;
+static const std::uint32_t SimpleTriggerBlock13 = 13;
+static const std::uint32_t SimpleUnknownBlock14 = 14;
+static const std::uint32_t SimpleObjectConnectorBlock18 = 18;
+static const std::uint32_t GroupObjectsBlock19 = 19;
+static const std::uint32_t SimpleFlatCollisionBlock20 = 20;
+static const std::uint32_t GroupObjectsBlock21 = 21;
+static const std::uint32_t SimpleVolumeCollisionBlock23 = 23;
+static const std::uint32_t GroupTransformMatrixBlock24 = 24;
+static const std::uint32_t SimpleFacesBlock28 = 28;
+static const std::uint32_t SimplePortalBlock30 = 30;
+static const std::uint32_t GroupLightingObjectBlock33 = 33;
+static const std::uint32_t SimpleFaceDataBlock35 = 35;
+static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
+static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
+
+static const std::uint32_t MaxBlockId = 40;
+
 struct BlockHeader
 {
     common::ResourceName name;
@@ -151,6 +176,20 @@ struct SimpleTrigger13
     std::uint32_t unknown1;
 
     //std::vector<Ogre::Real> unknown2;
+};
+
+struct SimpleUnknown14
+{
+    common::BoundingSphere boundingSphere;
+
+    std::uint32_t unknown0;
+    std::uint32_t unknown1;
+
+    Ogre::Real unknown2;
+    Ogre::Real unknown3;
+    Ogre::Real unknown4;
+    Ogre::Real unknown5;
+    Ogre::Real unknown6;
 };
 
 struct SimpleObjectConnector18
@@ -301,11 +340,12 @@ struct Mesh35
     static const std::uint32_t UnknownType48 = 48;
     static const std::uint32_t UnknownType49 = 49;
     static const std::uint32_t UnknownType50 = 50;
+    static const std::uint32_t UnknownType51 = 51;
 
     struct Unknown49
     {
-        std::uint32_t unknown0;
-        Ogre::Real unknown1;
+        common::Index index;
+        Ogre::Real unknown;
     };
 
 #if 0
@@ -338,7 +378,7 @@ struct SimpleFaceData35
 
     common::BoundingSphere boundingSphere;
     std::uint32_t type;
-    std::uint32_t meshIndex;
+    std::uint32_t materialIndex;
 
     //Mesh35List meshList;
 };
@@ -347,7 +387,16 @@ struct GroupVertexData37
 {
     static const std::uint32_t Vertex2 = 2;
     static const std::uint32_t Vertex3 = 3;
+    static const std::uint32_t UnknownType258 = 258;
     static const std::uint32_t UnknownType514 = 514;
+
+    struct Unknown258
+    {
+        Ogre::Vector3 unknown0;
+        Ogre::Vector3 unknown1;
+        Ogre::Vector3 unknown2;
+        Ogre::Real unknown3;
+    };
 
     struct Unknown514
     {

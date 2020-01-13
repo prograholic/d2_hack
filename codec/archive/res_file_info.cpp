@@ -58,7 +58,6 @@ public:
         m_dispatcher["BACKFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
         m_dispatcher["MASKFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
         m_dispatcher["SOUNDFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-
     }
 
 
