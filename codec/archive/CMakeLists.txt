@@ -15,3 +15,4 @@ target_link_libraries(d2_hack.codec.archive
 cotire(d2_hack.codec.archive)
 
 add_subdirectory(test)
+add_subdirectory(tool)

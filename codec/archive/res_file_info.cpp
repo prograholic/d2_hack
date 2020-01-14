@@ -52,6 +52,7 @@ public:
         
         m_dispatcher["COLORS"] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
         m_dispatcher["MATERIALS"] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
+        m_dispatcher["SOUNDS"] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
 
         m_dispatcher["TEXTUREFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
         m_dispatcher["PALETTEFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
@@ -82,7 +83,7 @@ public:
             }
             else
             {
-                ThrowError("cannot find readed for entry [" + header.name + "]", "D2ResInfoWatcher::readResFile");
+                ThrowError("cannot find reader for entry [" + header.name + "]", "D2ResInfoWatcher::readResFile");
             }
         }
     }

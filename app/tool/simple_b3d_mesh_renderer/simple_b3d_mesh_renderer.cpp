@@ -42,9 +42,9 @@ void SimpleB3dMeshRenderer::CreateScene()
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d");
     
 
-    LoadB3d(D2_ROOT_DIR "/ENV/aa.b3d", b3dSceneNode);
-    LoadB3d(D2_ROOT_DIR "/ENV/ab.b3d", b3dSceneNode);
-    LoadB3d(D2_ROOT_DIR "/ENV/ac.b3d", b3dSceneNode);
+    LoadB3d("aa", b3dSceneNode);
+    LoadB3d("ab", b3dSceneNode);
+    LoadB3d("ac", b3dSceneNode);
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -52,11 +52,13 @@ void SimpleB3dMeshRenderer::CreateScene()
 
 struct B3dMeshListener : public VoidB3dListener
 {
-    explicit B3dMeshListener(const char* b3dName)
-        : m_b3dName(b3dName)
+    explicit B3dMeshListener(const char* b3dId, const std::string& b3dName)
+        : m_b3dId(b3dId)
+        , m_b3dName(b3dName)
     {
     }
 
+    std::string m_b3dId;
     std::string m_b3dName;
     Ogre::SceneManager* m_sceneManager = nullptr;
     Ogre::SceneNode* m_rootNode = nullptr;
@@ -78,7 +80,7 @@ struct B3dMeshListener : public VoidB3dListener
         
         if ((blockHeader.type == block_data::GroupIndexAndTexturesBlock37) || (blockHeader.type == block_data::GroupVertexBlock7))
         {
-            std::string name = GetResourceName(blockHeader.name) + GetUniqueId();
+            std::string name = GetB3dResourceId(GetResourceName(blockHeader.name));
             if (!m_meshManager->getByName(name, "D2"))
             {
                 m_currentMesh = m_meshManager->createManual(name, "D2");
@@ -92,9 +94,9 @@ struct B3dMeshListener : public VoidB3dListener
         {
             if (m_currentMesh)
             {
-                Ogre::Entity* meshEntity = m_sceneManager->createEntity(m_currentMesh->getName() + "::entity", m_currentMesh);
+                Ogre::Entity* meshEntity = m_sceneManager->createEntity(m_currentMesh->getName() + ".entity", m_currentMesh);
 
-                Ogre::SceneNode* meshSceneNode = m_rootNode->createChildSceneNode(m_currentMesh->getName() + "::scene_node");
+                Ogre::SceneNode* meshSceneNode = m_rootNode->createChildSceneNode(m_currentMesh->getName() + ".scene_node");
                 meshSceneNode->attachObject(meshEntity);
 
                 m_currentMesh.reset();
@@ -110,7 +112,7 @@ struct B3dMeshListener : public VoidB3dListener
                 if (m_currentIndices.empty())
                 {
                     sub->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-                    __debugbreak();
+                    //__debugbreak();
                 }
                 else
                 {
@@ -125,7 +127,7 @@ struct B3dMeshListener : public VoidB3dListener
                     sub->indexData->indexCount = m_currentIndices.size();
                     sub->indexData->indexStart = 0;
 
-                    const std::string materialName = GetMaterialName(m_currentMaterialIndex);
+                    const std::string materialName = GetB3dResourceId(GetMaterialName(m_currentMaterialIndex));
 
                     sub->setMaterialName(materialName, "D2");
                 }
@@ -271,21 +273,22 @@ struct B3dMeshListener : public VoidB3dListener
     }
 
 
-    std::string GetUniqueId() const
+    std::string GetB3dResourceId(const std::string& name) const
     {
-        return "::" + m_b3dName + "::";
+        return m_b3dId + "." + name;
     }
 };
 
-void SimpleB3dMeshRenderer::LoadB3d(const char* b3dName, Ogre::SceneNode* b3dSceneNode)
+void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dSceneNode)
 {
-    B3dMeshListener listener{b3dName};
+    std::string fullB3dName = D2_ROOT_DIR "/ENV/" + std::string(b3dId) + ".b3d";
+    B3dMeshListener listener{b3dId, fullB3dName};
     listener.m_sceneManager = m_sceneManager;
     listener.m_rootNode = b3dSceneNode;
     listener.m_meshManager = mRoot->getMeshManager();
 
 
-    std::ifstream inputFile{b3dName, std::ios_base::binary};
+    std::ifstream inputFile{fullB3dName, std::ios_base::binary};
     if (!inputFile)
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
