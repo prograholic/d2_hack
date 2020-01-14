@@ -34,7 +34,7 @@ public:
 
 protected:
     /// Custom resource IO
-    std::unique_ptr<codec::archive::ResArchive::Factory> m_d2ResArchiveFactory;
+    std::unique_ptr<codec::archive::res::ResArchive::Factory> m_d2ResArchiveFactory;
 
     std::unique_ptr<codec::image::TxrImageCodec> m_txrImageCodec;
     std::unique_ptr<codec::image::RawImageCodec> m_rawImageCodec;

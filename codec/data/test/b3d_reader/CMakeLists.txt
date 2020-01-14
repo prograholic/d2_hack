@@ -8,9 +8,4 @@ target_link_libraries(d2_hack.codec.data.test.b3d_reader
         d2_hack.codec.data.private
 )
 
-target_compile_definitions(d2_hack.codec.data.test.b3d_reader
-    PRIVATE
-        -DD2_ROOT_DIR="${D2_ROOT_DIR_CMAKE_DIR}"
-)
-
 cotire(d2_hack.codec.data.test.b3d_reader)

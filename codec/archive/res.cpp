@@ -6,8 +6,10 @@
 #include <OgreException.h>
 
 #include <d2_hack/common/offset_data_stream.h>
+#include <d2_hack/common/resource_mgmt.h>
 
 #include "res_file_info.h"
+#include "material_parser.h"
 
 namespace d2_hack
 {
@@ -15,10 +17,23 @@ namespace codec
 {
 namespace archive
 {
+namespace res
+{
+
+static std::string GetResId(const std::string& fileName)
+{
+    std::string baseName;
+    std::string extension;
+    std::string path;
+    Ogre::StringUtil::splitFullFilename(fileName, baseName, extension, path);
+
+    return baseName;
+}
 
 ResArchive::ResArchive(const Ogre::String& name, const Ogre::String& archType)
     : Ogre::Archive(name, archType)
     , m_archiveInfo(std::make_unique<ResFileInfo>())
+    , m_resId(GetResId(name))
 {
 }
 
@@ -37,17 +52,19 @@ void ResArchive::load()
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Failed to open file [" + mName + "]");
     }
 
-    ReadFileInfo(archiveFile, *m_archiveInfo);
+    Ogre::FileStreamDataStream dataStream(&archiveFile, false);
 
-    for (auto it = m_archiveInfo->info.begin(); it != m_archiveInfo->info.end(); ++it)
+    ReadFileInfo(m_resId, dataStream, *m_archiveInfo);
+
+    for (const auto& resEntry : m_archiveInfo->info)
     {
         Ogre::FileInfo info;
 
         info.archive = this;
-        info.filename = it->first;
-        Ogre::StringUtil::splitFilename(it->first, info.basename, info.path);
-        info.compressedSize = it->second.size;
-        info.uncompressedSize = it->second.size;
+        info.filename = resEntry.name;
+        Ogre::StringUtil::splitFilename(resEntry.name, info.basename, info.path);
+        info.compressedSize = resEntry.size;
+        info.uncompressedSize = resEntry.size;
 
         m_fileInfoList.push_back(info);
     }
@@ -69,13 +86,26 @@ Ogre::DataStreamPtr ResArchive::open(const Ogre::String& filename, bool /* readO
     {
         Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream));
 
-        if (findEntry(filename, entry))
+        if (FindEntry(filename, entry))
         {
-            Ogre::DataStreamPtr result(new common::OffsetDataStream(fileStream, entry.offset, entry.size));
+            Ogre::DataStreamPtr streamForFile(new common::OffsetDataStream(fileStream, entry.offset, entry.size));
+            if (entry.type == EntryType::File)
+            {
+                return streamForFile;
+            }
+            else if (entry.type == EntryType::Material)
+            {
+                return OpenMaterial(filename, streamForFile);
+            }
+            else if (entry.type == EntryType::Color)
+            {
+                return streamForFile;
+            }
 
-            return result;
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS,
+                        "file [" + filename + "] cannot be opened for type: " + std::to_string(static_cast<int>(entry.type)));
         }
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "file [" + filename + "] canot be found in archive [" + mName + "]");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "file [" + filename + "] cannot be found in archive [" + mName + "]");
     }
     OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Failed to open stream [" + mName + "]");
 }
@@ -88,7 +118,7 @@ Ogre::StringVectorPtr ResArchive::list(bool recursive, bool dirs) const
     iend = m_fileInfoList.end();
     for (i = m_fileInfoList.begin(); i != iend; ++i)
     {
-        if ((dirs == (i->compressedSize == size_t (-1))) && (recursive || i->path.empty()))
+        if ((dirs == (i->compressedSize == size_t(-1))) && (recursive || i->path.empty()))
         {
             ret->push_back(i->filename);
         }
@@ -119,7 +149,7 @@ Ogre::StringVectorPtr ResArchive::find(const Ogre::String& pattern, bool recursi
     Ogre::StringVectorPtr ret =
         Ogre::StringVectorPtr(OGRE_NEW_T(Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
     // If pattern contains a directory name, do a full match
-    bool full_match = (pattern.find ('/') != Ogre::String::npos) || (pattern.find ('\\') != Ogre::String::npos);
+    bool full_match = (pattern.find('/') != Ogre::String::npos) || (pattern.find('\\') != Ogre::String::npos);
     bool wildCard = pattern.find('*') != Ogre::String::npos;
 
     Ogre::FileInfoList::const_iterator i, iend;
@@ -144,7 +174,7 @@ bool ResArchive::exists(const Ogre::String& filename) const
 {
     ResEntry entry;
 
-    return findEntry(filename, entry);
+    return FindEntry(filename, entry);
 }
 
 time_t ResArchive::getModifiedTime(const Ogre::String& /* filename */) const
@@ -166,7 +196,7 @@ Ogre::FileInfoListPtr ResArchive::findFileInfo(const Ogre::String& pattern, bool
 {
     Ogre::FileInfoListPtr ret = Ogre::FileInfoListPtr(OGRE_NEW_T(Ogre::FileInfoList, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
     // If pattern contains a directory name, do a full match
-    bool full_match = (pattern.find ('/') != Ogre::String::npos) || (pattern.find ('\\') != Ogre::String::npos);
+    bool full_match = (pattern.find('/') != Ogre::String::npos) || (pattern.find('\\') != Ogre::String::npos);
     bool wildCard = pattern.find('*') != Ogre::String::npos;
 
     Ogre::FileInfoList::const_iterator i, iend;
@@ -188,24 +218,30 @@ Ogre::FileInfoListPtr ResArchive::findFileInfo(const Ogre::String& pattern, bool
 
 
 
-bool ResArchive::findEntry(const Ogre::String & filename, ResEntry & entry) const
+bool ResArchive::FindEntry(const Ogre::String& filename, ResEntry& entry) const
 {
-    auto pos = m_archiveInfo->info.find(filename);
-    if (pos != m_archiveInfo->info.end())
+    for (const auto& e : m_archiveInfo->info)
     {
-        entry = pos->second;
-        return true;
+        if (e.name == filename)
+        {
+            entry = e;
+            return true;
+        }
     }
 
     return false;
 }
 
+Ogre::DataStreamPtr ResArchive::OpenMaterial(const Ogre::String& filename, const Ogre::DataStreamPtr& stream) const
+{
+    return ParseMaterial(m_resId, filename, stream);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
 namespace
 {
-    Ogre::String ResourceType = "D2Res";
+Ogre::String ResourceType = "D2Res";
 }
 
 const Ogre::String& ResArchive::Factory::getType() const
@@ -223,6 +259,7 @@ void ResArchive::Factory::destroyInstance(Ogre::Archive* archive)
     delete archive;
 }
 
+} // namespace res
 } //namespace archive
 } // namespace codec
 } // namespace d2_hack  

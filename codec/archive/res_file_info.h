@@ -2,8 +2,8 @@
 #define D2_HACK_CODEC_ARCHIVE_RES_FILE_INFO_H
 
 #include <map>
-#include <istream>
 
+#include <OgreDataStream.h>
 #include <OgreString.h>
 
 namespace d2_hack
@@ -12,22 +12,49 @@ namespace codec
 {
 namespace archive
 {
+namespace res
+{
+
+enum class EntryType
+{
+    File,
+    Color,
+    Material
+};
 
 struct ResEntry
 {
+    EntryType type;
+
     size_t offset;
     size_t size;
+    std::string name;
 };
+
+namespace entries
+{
+extern const char Colors[];
+extern const char Materials[];
+extern const char Sounds[];
+extern const char TextureFiles[];
+extern const char PaletteFiles[];
+extern const char BackFiles[];
+extern const char MaskFiles[];
+extern const char SoundFiles[];
+} // namespace entries
 
 struct ResFileInfo
 {
-    std::map<Ogre::String, ResEntry> info;
+    std::vector<ResEntry> info;
 };
 
-void ReadFileInfo(std::istream& stream, ResFileInfo& fileInfo);
+void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo);
 
 
-} //namespace archive
+std::string GetColorFileName(const std::string& resId, const std::string& colorId);
+
+} // namespace res
+} // namespace archive
 } // namespace codec
 } // namespace d2_hack  
 

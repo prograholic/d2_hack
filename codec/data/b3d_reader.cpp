@@ -4,7 +4,7 @@
 
 #include <cstring>
 
-#include <d2_hack/common/numeric_conversion.h>
+#include <d2_hack/common/reader.h>
 
 namespace d2_hack
 {
@@ -45,108 +45,14 @@ static const std::uint32_t BlockEndMagic = 555;
 
 
 
-class ReaderBase
-{
-public:
-    explicit ReaderBase(Ogre::DataStream& input)
-        : m_input(input)
-    {
-    }
-
-    void ThrowError(const Ogre::String & msg, const Ogre::String & where)
-    {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, msg + ", offset: " + std::to_string(m_input.tell()), where);
-    }
-
-    void ReadBytes(void* buffer, size_t size)
-    {
-        size_t actualSize = m_input.read(buffer, size);
-        if (actualSize != size)
-        {
-            ThrowError("Failed to read, expected " + std::to_string(size) + ", got " + std::to_string(actualSize),
-                       "B3dReaderImpl::ReadCount");
-        }
-    }
-
-    template <typename T, typename A>
-    void ReadCount(std::vector<T, A>& data, size_t count)
-    {
-        data.resize(count);
-        ReadBytes(data.data(), count * sizeof(T));
-    }
-
-    size_t GetOffset() const
-    {
-        return m_input.tell();
-    }
-
-    template <typename IntegralT>
-    IntegralT ReadInt()
-    {
-        static_assert(std::is_integral<IntegralT>::value, "Incorrect type");
-
-        std::uint8_t buffer[sizeof(IntegralT)];
-
-        ReadBytes(buffer, sizeof(IntegralT));
-        return common::ToNumeric<IntegralT>(buffer);
-    }
-
-    std::uint32_t ReadUint32()
-    {
-        return ReadInt<std::uint32_t>();
-    }
-
-    float ReadFloat()
-    {
-        static_assert(sizeof(float) == 4, "Incorrect float type, shoult be 4 for D2");
-
-        std::uint8_t buffer[sizeof(float)];
-
-        ReadBytes(buffer, sizeof(float));
-        return common::ToNumeric<float>(buffer);
-    }
-
-    Ogre::Vector3 ReadVector3()
-    {
-        Ogre::Vector3 res;
-
-        res.x = ReadFloat();
-        res.y = ReadFloat();
-        res.z = ReadFloat();
-
-        return res;
-    }
-
-    Ogre::Vector2 ReadVector2()
-    {
-        Ogre::Vector2 res;
-
-        res.x = ReadFloat();
-        res.y = ReadFloat();
-
-        return res;
-    }
-
-    common::BoundingSphere ReadBoundingSphere()
-    {
-        common::BoundingSphere res;
-
-        res.center = ReadVector3();
-        res.radius = ReadFloat();
-
-        return res;
-    }
-
-private:
-    Ogre::DataStream& m_input;
-};
 
 
-class B3dReaderImpl : private ReaderBase
+
+class B3dReaderImpl : private common::Reader
 {
 public:
     explicit B3dReaderImpl(Ogre::DataStream& input, B3dListenerInterface& listener)
-        : ReaderBase(input)
+        : common::Reader(input)
         , m_listener(listener)
     {
     }
@@ -186,7 +92,7 @@ private:
 
     void ReadMaterials(const FileHeader::Section& sectionInfo)
     {
-        const size_t materialsStartOffset = GetOffset();
+        const size_t materialsStartOffset = GetStream().tell();
         if (materialsStartOffset != sectionInfo.offset)
         {
             ThrowError("Incorrect materials offset", "B3dReaderImpl::ReadMaterials");
@@ -196,7 +102,7 @@ private:
         const std::uint32_t materialsCount = ReadUint32();
         ReadCount(materials, materialsCount);
 
-        const size_t materialsEndOffset = GetOffset();
+        const size_t materialsEndOffset = GetStream().tell();
         assert(materialsEndOffset > materialsStartOffset);
 
         if ((materialsEndOffset - materialsStartOffset) != sectionInfo.size)
@@ -209,7 +115,7 @@ private:
 
     void ReadData(const FileHeader::Section& sectionInfo)
     {
-        const size_t dataStartOffset = GetOffset();
+        const size_t dataStartOffset = GetStream().tell();
         if (dataStartOffset != sectionInfo.offset)
         {
             ThrowError("Incorrect data offset", "B3dReaderImpl::ReadData");
@@ -232,7 +138,7 @@ private:
             }
         }
 
-        const size_t dataEndOffset = GetOffset();
+        const size_t dataEndOffset = GetStream().tell();
         assert(dataEndOffset > dataStartOffset);
         // check postconditions
         if ((dataEndOffset - dataStartOffset) != sectionInfo.size)

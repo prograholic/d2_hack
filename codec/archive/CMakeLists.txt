@@ -2,6 +2,8 @@ d2_hack_add_library(d2_hack.codec.archive
     res.cpp
     res_file_info.cpp
     res_file_info.h
+    material_parser.cpp
+    material_parser.h
     
     include/d2_hack/codec/archive/res.h
 )

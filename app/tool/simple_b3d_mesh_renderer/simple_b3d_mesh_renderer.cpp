@@ -8,6 +8,7 @@
 
 
 #include <d2_hack/codec/data/b3d_reader.h>
+#include <d2_hack/common/resource_mgmt.h>
 
 namespace d2_hack
 {
@@ -275,7 +276,7 @@ struct B3dMeshListener : public VoidB3dListener
 
     std::string GetB3dResourceId(const std::string& name) const
     {
-        return m_b3dId + "." + name;
+        return common::GetResourceName(m_b3dId, name);
     }
 };
 

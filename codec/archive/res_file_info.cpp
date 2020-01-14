@@ -5,6 +5,7 @@
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/reader.h>
 #include <d2_hack/common/numeric_conversion.h>
+#include <d2_hack/common/resource_mgmt.h>
 
 namespace d2_hack
 {
@@ -12,6 +13,21 @@ namespace codec
 {
 namespace archive
 {
+namespace res
+{
+namespace entries
+{
+
+const char Colors[] = "COLORS";
+const char Materials[] = "MATERIALS";
+const char Sounds[] = "SOUNDS";
+const char TextureFiles[] = "TEXTUREFILES";
+const char PaletteFiles[] = "PALETTEFILES";
+const char BackFiles[] = "BACKFILES";
+const char MaskFiles[] = "MASKFILES";
+const char SoundFiles[] = "SOUNDFILES";
+
+} // namespace entries
 
 namespace
 {
@@ -35,7 +51,7 @@ inline bool operator < (const Header& lhs, const Header& rhs)
 
 typedef std::map<std::string, common::Blob> DataDictionary;
 typedef std::map<Header, DataDictionary> FileSystem;
-typedef std::function<void (const std::string & sectionName, std::string & name, ResEntry & entry)> ResourceWatcher;
+typedef std::function<void(const std::string & sectionName, ResEntry& entry, size_t index)> ResourceWatcher;
 typedef std::map<std::string, ResourceWatcher> ParserDispatcher;
 
 
@@ -44,27 +60,28 @@ class ResInfoWatcher : public common::Reader
 {
 public:
 
-    explicit ResInfoWatcher(std::istream& stream)
+    ResInfoWatcher(const std::string& resId, Ogre::DataStream& stream)
         : common::Reader(stream)
         , m_dispatcher()
+        , m_resId(resId)
     {
         using namespace std::placeholders;
-        
-        m_dispatcher["COLORS"] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
-        m_dispatcher["MATERIALS"] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
-        m_dispatcher["SOUNDS"] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
 
-        m_dispatcher["TEXTUREFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher["PALETTEFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher["BACKFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher["MASKFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher["SOUNDFILES"] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::Colors] = std::bind(&ResInfoWatcher::ParseColorsData, this, _1, _2, _3);
+        m_dispatcher[entries::Materials] = std::bind(&ResInfoWatcher::ParseMaterialsData, this, _1, _2, _3);
+        m_dispatcher[entries::Sounds] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
+
+        m_dispatcher[entries::TextureFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::PaletteFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::BackFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::MaskFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::SoundFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
     }
 
 
     void ReadResFile(ResFileInfo& fileInfo)
     {
-        while (Begin() != End())
+        while (GetStream().tell() < GetStream().size())
         {
             Header header;
             ReadHeader(header);
@@ -75,10 +92,8 @@ public:
                 for (size_t i = 0; i != header.count; ++i)
                 {
                     ResEntry entry;
-                    std::string dataName;
-
-                    parser->second(header.name, dataName, entry);
-                    fileInfo.info[dataName] = entry;
+                    parser->second(header.name, entry, i);
+                    fileInfo.info.push_back(entry);
                 }
             }
             else
@@ -90,57 +105,68 @@ public:
 
 
 
-    void ReadHeader(Header & header)
+    void ReadHeader(Header& header)
     {
-        common::reader_helper::SymbolSeparatorBase<' ', true> spaceSep;
+        header.name = ReadString(' ');
 
-        ReadUntil(std::back_inserter(header.name), spaceSep);
-
-        std::string entitiesCount;
-        common::reader_helper::SymbolSeparatorBase<'\0', true> zeroSep;
-        ReadUntil(std::back_inserter(entitiesCount), zeroSep);
-
+        std::string entitiesCount = ReadString('\0');
         header.count = std::stoul(entitiesCount);
     }
 
 
-    void SkipFilesData(const std::string & /* sectionName */, std::string & name, ResEntry & entry)
+    void SkipFilesData(const std::string & /* sectionName */, ResEntry & entry, size_t /* index */)
     {
-        common::reader_helper::SymbolSeparatorBase<'\0', true> zeroSep;
-        ReadUntil(std::back_inserter(name), zeroSep);
+        entry.type = EntryType::File;
+        entry.name = ReadString('\0');
 
-        auto sep = name.find(' ');
-        if (sep != name.npos)
+        auto sep = entry.name.find(' ');
+        if (sep != entry.name.npos)
         {
-            name = name.substr(0, sep);
+            entry.name = entry.name.substr(0, sep);
         }
 
-        const std::uint32_t size = ReadUint32();
+        entry.size = ReadUint32();
+        entry.offset = GetStream().tell();
 
-        common::reader_helper::EmptyContainer<std::uint8_t> skipData;
-
-        entry.offset = GetOffset();
-        ReadUntil(std::back_inserter(skipData), size);
-        entry.size = size;
+        GetStream().seek(entry.offset + entry.size);
     }
 
 
-    void SkipNonFilesData(const std::string& sectionName, std::string& name, ResEntry& entry)
+    void SkipNonFilesData(const std::string& sectionName, ResEntry& entry, size_t index)
     {
-        common::reader_helper::EmptyContainer<char> skipData;
+        entry.offset = GetStream().tell();
+        entry.size = SkipLine('\0');
 
-        entry.offset = GetOffset();
-        common::reader_helper::SymbolSeparatorBase<'\0', true> zeroSep;
-        ReadUntil(std::back_inserter(skipData), zeroSep);
-        entry.size = GetOffset() - entry.offset;
+        entry.name = sectionName + "_" + std::to_string(index) + ".d2resinfo";
+    }
 
-        /**
-         * When we read non-files data, section name is actual filename
-         */
-        name = sectionName;
+    void ParseColorsData(const std::string& /* sectionName */, ResEntry& entry, size_t index)
+    {
+        entry.type = EntryType::Color;
+        entry.offset = GetStream().tell();
+        entry.size = SkipLine('\0');
+
+        entry.name = GetColorFileName(m_resId, std::to_string(index));
+    }
+
+    void ParseMaterialsData(const std::string& /* sectionName */, ResEntry& entry, size_t /* index */)
+    {
+        entry.type = EntryType::Material;
+        entry.offset = GetStream().tell();
+        entry.name = ReadString('\0');
+        entry.size = entry.name.size();
+
+        auto sep = entry.name.find(' ');
+        if (sep != entry.name.npos)
+        {
+            entry.name = entry.name.substr(0, sep);
+        }
+
+        entry.name = common::GetResourceName(m_resId, entry.name) + ".material";
     }
 
     ParserDispatcher m_dispatcher;
+    const std::string m_resId;
 };
 
 
@@ -148,13 +174,19 @@ public:
 
 
 
-void ReadFileInfo(std::istream& stream, ResFileInfo& fileInfo)
+void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo)
 {
-    ResInfoWatcher watcher(stream);
+    ResInfoWatcher watcher(resId, stream);
 
     watcher.ReadResFile(fileInfo);
 }
 
-} //namespace archive
+std::string GetColorFileName(const std::string& resId, const std::string& colorId)
+{
+    return common::GetResourceName(resId, entries::Colors + colorId) + ".d2colorinfo";
+}
+
+} // namespace res
+} // namespace archive
 } // namespace codec
 } // namespace d2_hack  

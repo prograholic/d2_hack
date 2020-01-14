@@ -3,10 +3,18 @@
 
 #include <d2_hack/codec/archive/res.h>
 
+namespace d2_hack
+{
+namespace codec
+{
+namespace archive
+{
+namespace res
+{
 
 void ReadTxrFromAa()
 {
-    d2_hack::codec::archive::ResArchive archive{D2_ROOT_DIR "/ENV/aa.res", "test"};
+    ResArchive archive{D2_ROOT_DIR "/ENV/aa.res", "test"};
 
     archive.load();
     Ogre::StringVectorPtr res = archive.find("*.txr");
@@ -23,7 +31,7 @@ void ReadTxrFromAa()
 
 void ReadPalleteFromCommon()
 {
-    d2_hack::codec::archive::ResArchive archive{D2_ROOT_DIR "/COMMON/common.res", "test"};
+    ResArchive archive{D2_ROOT_DIR "/COMMON/common.res", "test"};
 
     archive.load();
     Ogre::StringVectorPtr res = archive.find("*.plm");
@@ -38,10 +46,16 @@ void ReadPalleteFromCommon()
     }
 }
 
+} // namespace res
+} // namespace archive
+} // namespace codec
+} // namespace d2_hack  
+
 int main()
 {
     try
     {
+        using namespace d2_hack::codec::archive::res;
         ReadTxrFromAa();
         ReadPalleteFromCommon();
     }

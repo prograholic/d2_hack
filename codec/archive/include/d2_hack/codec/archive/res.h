@@ -14,59 +14,63 @@ namespace codec
 {
 namespace archive
 {
+namespace res
+{
 
 struct ResEntry;
 struct ResFileInfo;
 
-class ResArchive: public Ogre::Archive
+class ResArchive : public Ogre::Archive
 {
 public:
     ResArchive(const Ogre::String& name, const Ogre::String& archType);
     ~ResArchive();
 
-    virtual bool isCaseSensitive(void) const;
+    virtual bool isCaseSensitive(void) const override;
 
-    virtual void load();
+    virtual void load() override;
 
-    virtual void unload();
+    virtual void unload() override;
 
-    virtual Ogre::DataStreamPtr open(const Ogre::String& filename, bool readOnly = true) const;
+    virtual Ogre::DataStreamPtr open(const Ogre::String& filename, bool readOnly = true) const override;
 
-    virtual Ogre::StringVectorPtr list(bool recursive = true, bool dirs = false) const;
+    virtual Ogre::StringVectorPtr list(bool recursive = true, bool dirs = false) const override;
 
-    virtual Ogre::FileInfoListPtr listFileInfo(bool recursive = true, bool dirs = false) const;
+    virtual Ogre::FileInfoListPtr listFileInfo(bool recursive = true, bool dirs = false) const override;
 
-    virtual Ogre::StringVectorPtr find(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
+    virtual Ogre::StringVectorPtr find(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const override;
 
-    virtual bool exists(const Ogre::String& filename) const;
+    virtual bool exists(const Ogre::String& filename) const override;
 
-    virtual time_t getModifiedTime(const Ogre::String& filename) const;
+    virtual time_t getModifiedTime(const Ogre::String& filename) const override;
 
-    virtual Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const;
-    
-    class Factory: public Ogre::ArchiveFactory
+    virtual Ogre::FileInfoListPtr findFileInfo(const Ogre::String& pattern, bool recursive = true, bool dirs = false) const override;
+
+    class Factory : public Ogre::ArchiveFactory
     {
     public:
-        virtual const Ogre::String& getType() const;
+        virtual const Ogre::String& getType() const override;
 
-        virtual Ogre::Archive* createInstance(const Ogre::String& name, bool bReadOnly);
+        virtual Ogre::Archive* createInstance(const Ogre::String& name, bool bReadOnly) override;
 
-        virtual void destroyInstance(Ogre::Archive* archive);
+        virtual void destroyInstance(Ogre::Archive* archive) override;
 
     };
 
 private:
     std::unique_ptr<ResFileInfo> m_archiveInfo;
     Ogre::FileInfoList m_fileInfoList;
+    const std::string m_resId;
 
-    bool findEntry(const Ogre::String & filename, ResEntry& entry) const;
+    bool FindEntry(const Ogre::String & filename, ResEntry& entry) const;
 
+    Ogre::DataStreamPtr OpenMaterial(const Ogre::String& filename, const Ogre::DataStreamPtr& stream) const;
 };
 
 
 
-
-} //namespace archive
+} // namespace res
+} // namespace archive
 } // namespace codec
 } // namespace d2_hack  
 

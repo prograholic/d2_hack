@@ -5,6 +5,17 @@ function(d2_hack_set_common_target_props target_name)
         PROPERTIES
             COTIRE_PREFIX_HEADER_INCLUDE_PATH "${Boost_INCLUDE_DIR};${OGRE_DIR}../include/OGRE"
     )
+    
+    if(NOT DEFINED D2_ROOT_DIR)
+        message(FATAL_ERROR "D2_ROOT_DIR is not set. Should point to root directory of D2 installation")
+    endif()
+    file(TO_CMAKE_PATH ${D2_ROOT_DIR} D2_ROOT_DIR_CMAKE_DIR)
+    
+    target_compile_definitions(${target_name}
+        PRIVATE
+            -DD2_ROOT_DIR="${D2_ROOT_DIR_CMAKE_DIR}"
+    )
+    
 endfunction()
 
 function(d2_hack_add_executable target_name)
