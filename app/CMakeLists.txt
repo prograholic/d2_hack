@@ -8,7 +8,7 @@ target_link_libraries(d2_hack.app
     PUBLIC
         OgreBites
         OgreTerrain
-        d2_hack.codec
+        d2_hack.resource
 )
 
 cotire(d2_hack.app)

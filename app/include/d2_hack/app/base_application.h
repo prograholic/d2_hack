@@ -18,9 +18,9 @@ D2_HACK_DISABLE_WARNING_END() // 4251
 D2_HACK_DISABLE_WARNING_END() // 4275
 D2_HACK_DISABLE_WARNING_END() // 4100
 
-#include <d2_hack/codec/archive/res.h>
-#include <d2_hack/codec/image/raw.h>
-#include <d2_hack/codec/image/txr.h>
+#include <d2_hack/resource/archive/res.h>
+#include <d2_hack/resource/image/raw.h>
+#include <d2_hack/resource/image/txr.h>
 
 namespace d2_hack
 {
@@ -34,10 +34,10 @@ public:
 
 protected:
     /// Custom resource IO
-    std::unique_ptr<codec::archive::res::ResArchive::Factory> m_d2ResArchiveFactory;
+    std::unique_ptr<resource::archive::res::ResArchive::Factory> m_d2ResArchiveFactory;
 
-    std::unique_ptr<codec::image::TxrImageCodec> m_txrImageCodec;
-    std::unique_ptr<codec::image::RawImageCodec> m_rawImageCodec;
+    std::unique_ptr<resource::image::TxrImageCodec> m_txrImageCodec;
+    std::unique_ptr<resource::image::RawImageCodec> m_rawImageCodec;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_cameraSceneNode;
     Ogre::Camera* m_camera;

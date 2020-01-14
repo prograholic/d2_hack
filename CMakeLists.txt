@@ -54,7 +54,7 @@ enable_testing()
 
 add_subdirectory(data)
 add_subdirectory(common)
-add_subdirectory(codec)
+add_subdirectory(resource)
 add_subdirectory(app)
 
 

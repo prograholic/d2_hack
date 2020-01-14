@@ -25,13 +25,13 @@ BaseApplication::BaseApplication()
 
 void BaseApplication::setup()
 {
-    m_d2ResArchiveFactory.reset(new codec::archive::res::ResArchive::Factory);
+    m_d2ResArchiveFactory.reset(new resource::archive::res::ResArchive::Factory);
     Ogre::ArchiveManager::getSingleton().addArchiveFactory(m_d2ResArchiveFactory.get());
 
-    m_txrImageCodec.reset(new codec::image::TxrImageCodec);
+    m_txrImageCodec.reset(new resource::image::TxrImageCodec);
     Ogre::Codec::registerCodec(m_txrImageCodec.get());
 
-    m_rawImageCodec.reset(new codec::image::RawImageCodec);
+    m_rawImageCodec.reset(new resource::image::RawImageCodec);
     Ogre::Codec::registerCodec(m_rawImageCodec.get());
 
     OgreBites::ApplicationContext::setup();

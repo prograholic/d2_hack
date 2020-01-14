@@ -7,7 +7,7 @@
 #include <OgreEntity.h>
 
 
-#include <d2_hack/codec/data/b3d_reader.h>
+#include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/common/resource_mgmt.h>
 
 namespace d2_hack
@@ -15,7 +15,7 @@ namespace d2_hack
 namespace app
 {
 
-using namespace codec::data::b3d;
+using namespace resource::data::b3d;
 
 std::string GetResourceName(const common::ResourceName& resName)
 {
