@@ -48,17 +48,20 @@ function(d2_hack_add_library target_name)
         INTERFACE
             ${CMAKE_CURRENT_SOURCE_DIR}
     )
+    
+    add_library(${target_name}.public_headers INTERFACE)
+    target_include_directories(${target_name}.public_headers
+        INTERFACE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
 
     add_library(${target_name} ${ARGN})
     
     target_link_libraries(${target_name}
         PRIVATE
             ${target_name}.private
-    )
-    
-    target_include_directories(${target_name}
         PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${target_name}.public_headers
     )
     
     d2_hack_set_common_target_props(${target_name} ${ARGN})

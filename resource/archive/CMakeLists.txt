@@ -10,6 +10,7 @@ d2_hack_add_library(d2_hack.resource.archive
 target_link_libraries(d2_hack.resource.archive
     PRIVATE
         OgreMain
+        d2_hack.resource.manager.public_headers
     PUBLIC
         d2_hack.common
 )

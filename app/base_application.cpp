@@ -25,6 +25,7 @@ BaseApplication::BaseApplication()
 
 void BaseApplication::setup()
 {
+    m_manager.reset(new resource::manager::Manager);
     m_d2ResArchiveFactory.reset(new resource::archive::res::ResArchive::Factory);
     Ogre::ArchiveManager::getSingleton().addArchiveFactory(m_d2ResArchiveFactory.get());
 

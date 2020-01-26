@@ -19,6 +19,16 @@ struct Deleter
     }
 };
 
+template<Ogre::MemoryCategory category>
+struct ArrayDeleter
+{
+    template <typename T>
+    void operator()(T* ptr)
+    {
+        OGRE_FREE(ptr, category);
+    }
+};
+
 } // namespace common
 } // namespace d2_hack
 

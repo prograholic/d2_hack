@@ -56,6 +56,7 @@ int main()
     try
     {
         using namespace d2_hack::resource::archive::res;
+
         ReadTxrFromAa();
         ReadPalleteFromCommon();
     }

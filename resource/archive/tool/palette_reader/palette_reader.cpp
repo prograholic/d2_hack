@@ -86,7 +86,7 @@ private:
 
 void ReadPalleteFromCommon()
 {
-    ResArchive archive{ D2_ROOT_DIR "/COMMON/common.res", "test" };
+    ResArchive archive{D2_ROOT_DIR "/COMMON/common.res", "test"};
 
     archive.load();
     Ogre::DataStreamPtr stream = archive.open("common.plm");
@@ -104,7 +104,7 @@ void ReadPalleteFromCommon()
 
 void ReadMaterialsFromAa()
 {
-    ResArchive archive{ D2_ROOT_DIR "/ENV/aa.res", "test" };
+    ResArchive archive{D2_ROOT_DIR "/ENV/aa.res", "test"};
 
     archive.load();
     Ogre::StringVectorPtr materials = archive.find("*.material");

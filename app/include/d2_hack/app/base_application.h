@@ -21,6 +21,7 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 #include <d2_hack/resource/archive/res.h>
 #include <d2_hack/resource/image/raw.h>
 #include <d2_hack/resource/image/txr.h>
+#include <d2_hack/resource/manager/manager.h>
 
 namespace d2_hack
 {
@@ -33,6 +34,7 @@ public:
     BaseApplication();
 
 protected:
+    std::unique_ptr<resource::manager::Manager> m_manager;
     /// Custom resource IO
     std::unique_ptr<resource::archive::res::ResArchive::Factory> m_d2ResArchiveFactory;
 

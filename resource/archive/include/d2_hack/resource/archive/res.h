@@ -54,7 +54,6 @@ public:
         virtual Ogre::Archive* createInstance(const Ogre::String& name, bool bReadOnly) override;
 
         virtual void destroyInstance(Ogre::Archive* archive) override;
-
     };
 
 private:
