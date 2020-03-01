@@ -2,7 +2,7 @@ add_subdirectory(image)
 add_subdirectory(archive)
 add_subdirectory(data)
 add_subdirectory(manager)
-add_subdirectory(color)
+add_subdirectory(palette)
 
 add_library(d2_hack.resource INTERFACE)
 
@@ -12,5 +12,5 @@ target_link_libraries(d2_hack.resource
         d2_hack.resource.archive
         d2_hack.resource.data
         d2_hack.resource.manager
-        d2_hack.resource.color
+        d2_hack.resource.palette
 )

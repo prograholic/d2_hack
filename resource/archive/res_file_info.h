@@ -1,5 +1,5 @@
-#ifndef D2_HACK_CODEC_ARCHIVE_RES_FILE_INFO_H
-#define D2_HACK_CODEC_ARCHIVE_RES_FILE_INFO_H
+#ifndef D2_HACK_RESOURCE_ARCHIVE_RES_FILE_INFO_H
+#define D2_HACK_RESOURCE_ARCHIVE_RES_FILE_INFO_H
 
 #include <map>
 
@@ -61,5 +61,5 @@ std::string GetColorFileName(const std::string& resId, const std::string& colorI
 
 
 
-#endif // D2_HACK_CODEC_ARCHIVE_RES_FILE_INFO_H
+#endif // D2_HACK_RESOURCE_ARCHIVE_RES_FILE_INFO_H
 

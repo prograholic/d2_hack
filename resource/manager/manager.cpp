@@ -23,29 +23,29 @@ Manager::~Manager()
     Ogre::ResourceGroupManager::getSingleton()._unregisterResourceManager(ResourceType);
 }
 
-color::ColorResourcePtr Manager::Create(const Ogre::String& name,
-                                        const Ogre::String& group,
-                                        bool isManual,
-                                        Ogre::ManualResourceLoader* loader,
-                                        const Ogre::NameValuePairList* createParams)
+palette::PalettePtr Manager::Load(const Ogre::String& name,
+                                  const Ogre::String& group,
+                                  bool isManual,
+                                  Ogre::ManualResourceLoader* loader,
+                                  const Ogre::NameValuePairList* createParams)
 {
-    return std::static_pointer_cast<color::ColorResource>(createResource(name, group, isManual, loader, createParams));
+    auto res = createOrRetrieve(name, group, isManual, loader, createParams);
+    if (res.second)
+    {
+        res.first->load();
+    }
+
+    return std::static_pointer_cast<palette::Palette>(res.first);
 }
 
-
-color::ColorResourcePtr Manager::GetColorByName(const Ogre::String& name, const Ogre::String& groupName)
-{
-    return std::static_pointer_cast<color::ColorResource>(getResourceByName(name, groupName));
-}
-
-Ogre::Resource* Manager::createImpl(const Ogre::String& /* name */,
-                                    Ogre::ResourceHandle /* handle */,
-                                    const Ogre::String& /* group */,
-                                    bool /* isManual */,
-                                    Ogre::ManualResourceLoader* /* loader */,
+Ogre::Resource* Manager::createImpl(const Ogre::String& name,
+                                    Ogre::ResourceHandle handle,
+                                    const Ogre::String& group,
+                                    bool isManual,
+                                    Ogre::ManualResourceLoader* loader,
                                     const Ogre::NameValuePairList* /* createParams */)
 {
-    return nullptr;
+    return OGRE_NEW palette::Palette{this, name, handle, group, isManual, loader};
 }
 
 } // namespace manager

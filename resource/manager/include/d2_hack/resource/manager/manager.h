@@ -8,7 +8,7 @@ D2_HACK_DISABLE_WARNING_BEGIN(4100)
 D2_HACK_DISABLE_WARNING_END() //4100
 #include <OgreSingleton.h>
 
-#include <d2_hack/resource/color/color.h>
+#include <d2_hack/resource/palette/palette.h>
 
 namespace d2_hack
 {
@@ -23,16 +23,11 @@ public:
     Manager();
     ~Manager();
 
-    color::ColorResourcePtr Create(const Ogre::String& name,
-                                   const Ogre::String& group,
-                                   bool isManual = false,
-                                   Ogre::ManualResourceLoader* loader = nullptr,
-                                   const Ogre::NameValuePairList* createParams = nullptr);
-
-
-    color::ColorResourcePtr GetColorByName(const Ogre::String& name,
-                                           const Ogre::String& groupName = Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME);
-
+    palette::PalettePtr Load(const Ogre::String& name,
+                             const Ogre::String& group,
+                             bool isManual = false,
+                             Ogre::ManualResourceLoader* loader = nullptr,
+                             const Ogre::NameValuePairList* createParams = nullptr);
 private:
 
     virtual Ogre::Resource* createImpl(const Ogre::String& name,

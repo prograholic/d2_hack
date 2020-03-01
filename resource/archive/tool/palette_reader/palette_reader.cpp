@@ -1,7 +1,10 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <OgreLogManager.h>
+
 #include <d2_hack/resource/archive/res.h>
+#include <d2_hack/resource/manager/manager.h>
 #include <d2_hack/common/reader.h>
 
 namespace d2_hack
@@ -102,32 +105,38 @@ void ReadPalleteFromCommon()
 }
 
 
-void ReadMaterialsFromAa()
+void ReadResourceFromArchive(ResArchive& archive, const std::string& mask)
+{
+    Ogre::StringVectorPtr resources = archive.find(mask);
+    if (!resources)
+    {
+        throw std::runtime_error("aa: resources is NULL");
+    }
+    if (resources->empty())
+    {
+        throw std::runtime_error("aa: resources is empty");
+    }
+
+    for (const auto& resourceFileName : *resources)
+    {
+        Ogre::DataStreamPtr stream = archive.open(resourceFileName);
+        if (!stream)
+        {
+            throw std::runtime_error("stream is NULL for " + resourceFileName);
+        }
+
+        std::cout << resourceFileName << std::endl;
+        std::cout << "    " << stream->getAsString() << std::endl;
+    }
+}
+
+void ReadMaterialsAndColorsFromAa()
 {
     ResArchive archive{D2_ROOT_DIR "/ENV/aa.res", "test"};
 
     archive.load();
-    Ogre::StringVectorPtr materials = archive.find("*.material");
-    if (!materials)
-    {
-        throw std::runtime_error("aa: materials is NULL");
-    }
-    if (materials->empty())
-    {
-        throw std::runtime_error("aa: materials is empty");
-    }
-
-    for (const auto& materialFileName : *materials)
-    {
-        Ogre::DataStreamPtr stream = archive.open(materialFileName);
-        if (!stream)
-        {
-            throw std::runtime_error("stream is NULL for " + materialFileName);
-        }
-
-        std::cout << materialFileName << std::endl;
-        std::cout << "    " << stream->getAsString() << std::endl;
-    }
+    ReadResourceFromArchive(archive, "*.d2colorinfo");
+    ReadResourceFromArchive(archive, "*.material");
 }
 
 } // namespace res
@@ -141,10 +150,17 @@ int main()
 {
     try
     {
+        using namespace d2_hack::resource;
         using namespace d2_hack::resource::archive::res;
 
+        Ogre::LogManager logMgr;
+        Ogre::ResourceGroupManager rgMgr;
+        rgMgr.createResourceGroup("D2");
+
+        manager::Manager mgr;
+
         ReadPalleteFromCommon();
-        ReadMaterialsFromAa();
+        ReadMaterialsAndColorsFromAa();
     }
     catch (const std::exception& e)
     {

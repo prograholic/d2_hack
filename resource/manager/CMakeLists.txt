@@ -13,7 +13,7 @@ target_link_libraries(d2_hack.resource.manager
 
 target_link_libraries(d2_hack.resource.manager.public_headers
     INTERFACE
-        d2_hack.resource.color.public_headers
+        d2_hack.resource.palette.public_headers
 )
 
 cotire(d2_hack.resource.manager)
