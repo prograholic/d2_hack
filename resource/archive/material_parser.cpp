@@ -193,6 +193,11 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
             tokens.pop_front();
             //TODO: process `"wave"` option
         }
+        else if (tokens.front() == "usecol")
+        {
+            tokens.pop_front();
+            //TODO: process `usecol` option
+        }
         else
         {
             OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Got unprocessed token: " + tokens.front() + ", " + filename);
