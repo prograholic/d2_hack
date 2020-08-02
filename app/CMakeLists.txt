@@ -11,6 +11,4 @@ target_link_libraries(d2_hack.app
         d2_hack.resource
 )
 
-cotire(d2_hack.app)
-
 add_subdirectory(tool)

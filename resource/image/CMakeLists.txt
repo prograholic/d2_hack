@@ -12,5 +12,3 @@ target_link_libraries(d2_hack.resource.image
     PUBLIC
         d2_hack.common
 )
-
-cotire(d2_hack.resource.image)

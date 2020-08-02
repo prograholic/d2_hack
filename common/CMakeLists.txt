@@ -19,5 +19,3 @@ target_link_libraries(d2_hack.common
     PUBLIC
         Boost::boost
 )
-
-cotire(d2_hack.common)

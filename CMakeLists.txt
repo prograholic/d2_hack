@@ -1,19 +1,12 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.16)
 
 project(d2_hack CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-include(cotire)
 include(copy_runtime)
 include(setup_toolchain)
 include(target)
-
-
-set_directory_properties(
-    PROPERTIES
-        COTIRE_ADD_UNITY_BUILD OFF
-)
 
 
 find_package(Boost REQUIRED)
@@ -56,6 +49,3 @@ add_subdirectory(data)
 add_subdirectory(common)
 add_subdirectory(resource)
 add_subdirectory(app)
-
-
-
