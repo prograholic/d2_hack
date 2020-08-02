@@ -13,7 +13,5 @@ target_link_libraries(d2_hack.resource.data
         d2_hack.common
 )
 
-cotire(d2_hack.resource.data)
-
 add_subdirectory(test)
 add_subdirectory(tool)

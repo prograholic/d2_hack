@@ -11,9 +11,8 @@ D2_HACK_DISABLE_WARNING_BEGIN(4100)
 D2_HACK_DISABLE_WARNING_END() // 4100
 
 #include <d2_hack/common/memory_mgmt.h>
+//#include <d2_hack/common/log.h>
 #include <d2_hack/resource/manager/manager.h>
-
-#include "res_file_info.h"
 
 namespace d2_hack
 {
@@ -34,11 +33,27 @@ static const char ColorMaterialTemplate [] =
     "            ambient 0.1 0.3 0.1 1\n"
     "            diffuse 0.2 0.2 0.2 1\n"
     "            emissive %2% %3% %4% %5%\n"
-    "            depth_check %6%"
+    "            depth_check %6%\n"
     "        }\n"
     "    }\n"
     "}\n";
 
+
+static const char TextureMaterialTemplate[] =
+    "material %1%\n"
+    "{\n"
+    "    technique\n"
+    "    {\n"
+    "        pass\n"
+    "        {\n"
+    "            texture_unit\n"
+    "            {\n"
+    "                texture %2%\n"
+    "            }\n"
+    "            depth_check %3%\n"
+    "        }\n"
+    "    }\n"
+    "}\n";
 
 static std::list<std::string> ParseTokens(const std::string& filename, Ogre::DataStream& stream)
 {
@@ -87,7 +102,9 @@ Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string
     palette::PalettePtr plm = manager::Manager::getSingleton().Load("common.plm", "D2");
 
     Ogre::ColourValue cv = plm->GetColor(colorIndex);
-    std::string materialContent = str(boost::format(ColorMaterialTemplate) % filename % cv.r % cv.g % cv.b % alpha % depthCheck);
+    std::string materialContent = str(boost::format(ColorMaterialTemplate) % filename.substr(0, filename.size() - 9) % cv.r % cv.g % cv.b % alpha % depthCheck);
+    //D2_HACK_LOG(MaterialParser) << "content: " << materialContent;
+
     const std::size_t dataSize = materialContent.size();
 
     std::unique_ptr<char, common::ArrayDeleter<Ogre::MEMCATEGORY_GENERAL>> buffer{ OGRE_ALLOC_T(char, dataSize, Ogre::MEMCATEGORY_GENERAL) };
@@ -99,13 +116,108 @@ Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string
     return res;
 }
 
-Ogre::DataStreamPtr ParseTexture(std::list<std::string>& /* tokens */, const std::string& /* filename */)
+std::string LookupTextureByIndex(const ResFileInfo& fileInfo, std::uint32_t textureIndex)
 {
-    return Ogre::DataStreamPtr();
+    for (const auto& resEntry : fileInfo.info)
+    {
+        if (resEntry.name.find("txr\\") == 0)
+        {
+            if (textureIndex == resEntry.index)
+            {
+                return resEntry.name;
+            }
+        }
+    }
+
+    OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Cannot find texture for index: " + std::to_string(textureIndex));
+}
+
+Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::string>& tokens, const std::string& filename)
+{
+    const std::uint32_t textureIndex = std::stoul(tokens.front()) - 1;
+    tokens.pop_front();
+    
+    std::string depthCheck = "on";
+
+    while (!tokens.empty())
+    {
+        if (tokens.front() == "noz")
+        {
+            tokens.pop_front();
+            depthCheck = "off";
+        }
+        else if (tokens.front() == "notile")
+        {
+            tokens.pop_front();
+            //TODO: process `notile` option
+        }
+        else if (tokens.front() == "move")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            tokens.pop_front();
+            //TODO: process `move` option
+        }
+        else if (tokens.front() == "nof")
+        {
+            tokens.pop_front();
+            //TODO: process `nof` option
+        }
+        else if (tokens.front() == "col")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //TODO: process `col` option
+        }
+        else if (tokens.front() == "env")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            tokens.pop_front();
+            //TODO: process `env` option
+        }
+        else if (tokens.front() == "coord")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //TODO: process `coord` option
+        }
+        else if (tokens.front() == "att")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //TODO: process `att` option
+        }
+        else if (tokens.front() == "\"wave\"")
+        {
+            tokens.pop_front();
+            //TODO: process `"wave"` option
+        }
+        else
+        {
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Got unprocessed token: " + tokens.front() + ", " + filename);
+        }
+    }
+
+    
+    const std::string textureFilename = LookupTextureByIndex(fileInfo, textureIndex);
+
+    std::string materialContent = str(boost::format(TextureMaterialTemplate) % filename.substr(0, filename.size() - 9) % textureFilename % depthCheck);
+    //D2_HACK_LOG(MaterialParser) << "content: \n" << materialContent;
+    
+    const std::size_t dataSize = materialContent.size();
+
+    std::unique_ptr<char, common::ArrayDeleter<Ogre::MEMCATEGORY_GENERAL>> buffer{ OGRE_ALLOC_T(char, dataSize, Ogre::MEMCATEGORY_GENERAL) };
+    std::memcpy(buffer.get(), materialContent.c_str(), dataSize);
+
+    Ogre::DataStreamPtr res = std::make_shared<Ogre::MemoryDataStream>(buffer.get(), dataSize, true, true);
+    buffer.release();
+
+    return res;
 }
 
 
-Ogre::DataStreamPtr ParseMaterial(const std::string& /* resId */, const std::string& filename, const Ogre::DataStreamPtr& stream)
+Ogre::DataStreamPtr ParseMaterial(const ResFileInfo& fileInfo, const std::string& filename, const Ogre::DataStreamPtr& stream)
 {
     std::list<std::string> tokens = ParseTokens(filename, *stream);
 
@@ -118,7 +230,7 @@ Ogre::DataStreamPtr ParseMaterial(const std::string& /* resId */, const std::str
     }
     else if ((materialType == "ttx") || (materialType == "tex") || (materialType == "itx"))
     {
-        return ParseTexture(tokens, filename);
+        return ParseTexture(fileInfo, tokens, filename);
     }
     else
     {

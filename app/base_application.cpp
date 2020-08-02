@@ -56,6 +56,11 @@ void BaseApplication::setup()
     //CreateFrameListener();
 }
 
+void BaseApplication::shutdown()
+{
+    m_manager.reset();
+}
+
 bool BaseApplication::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)

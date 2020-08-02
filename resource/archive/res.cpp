@@ -234,7 +234,7 @@ bool ResArchive::FindEntry(const Ogre::String& filename, ResEntry& entry) const
 
 Ogre::DataStreamPtr ResArchive::OpenMaterial(const Ogre::String& filename, const Ogre::DataStreamPtr& stream) const
 {
-    return ParseMaterial(m_resId, filename, stream);
+    return ParseMaterial(*m_archiveInfo, filename, stream);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

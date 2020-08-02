@@ -92,6 +92,7 @@ public:
                 for (size_t i = 0; i != header.count; ++i)
                 {
                     ResEntry entry;
+                    entry.index = i;
                     parser->second(header.name, entry, i);
                     fileInfo.info.push_back(entry);
                 }
