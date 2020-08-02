@@ -14,8 +14,7 @@ d2_hack_add_library(d2_hack.common
 )
 
 target_link_libraries(d2_hack.common
-    PRIVATE
-        OgreMain
     PUBLIC
         Boost::boost
+        OgreMain
 )

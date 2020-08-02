@@ -48,6 +48,7 @@ protected:
     bool m_shutdown;
 
     virtual void setup() override;
+    virtual void shutdown() override;
 
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
     virtual bool keyReleased(const OgreBites::KeyboardEvent& evt) override;
