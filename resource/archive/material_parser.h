@@ -3,6 +3,8 @@
 
 #include <OgreDataStream.h>
 
+#include "res_file_info.h"
+
 namespace d2_hack
 {
 namespace resource
@@ -12,7 +14,7 @@ namespace archive
 namespace res
 {
 
-Ogre::DataStreamPtr ParseMaterial(const std::string& resId, const std::string& filename, const Ogre::DataStreamPtr& stream);
+Ogre::DataStreamPtr ParseMaterial(const ResFileInfo& fileInfo, const std::string& filename, const Ogre::DataStreamPtr& stream);
 
 } // namespace res
 } // namespace archive

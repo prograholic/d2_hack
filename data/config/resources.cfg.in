@@ -6,3 +6,4 @@ FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/materials/scripts
 FileSystem=${D2_ROOT_DIR}/ENV
 D2Res=${D2_ROOT_DIR}/COMMON/common.res
 D2Res=${D2_ROOT_DIR}/ENV/aa.res
+D2Res=${D2_ROOT_DIR}/ENV/ab.res

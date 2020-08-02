@@ -26,6 +26,7 @@ struct ResEntry
 {
     EntryType type;
 
+    size_t index;
     size_t offset;
     size_t size;
     std::string name;
