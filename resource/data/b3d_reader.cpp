@@ -431,10 +431,11 @@ private:
             face.unknown1 = ReadUint32();
             face.unknown2 = ReadUint32();
 
-            m_listener.OnData(face);
+            auto faceType = face.type;
+            m_listener.OnData(std::forward<block_data::Face8>(face));
 
             const std::uint32_t itemsInFace = ReadUint32();
-            DispatchReadFaceData8(face.type, itemsInFace);
+            DispatchReadFaceData8(faceType, itemsInFace);
         }
     }
 
@@ -669,9 +670,10 @@ private:
             data.unknown1 = ReadUint32();
             data.unknown2 = ReadUint32();
 
-            m_listener.OnData(data);
+            auto dataType = data.type;
+            m_listener.OnData(std::forward<block_data::Face28Entry>(data));
 
-            DispatchFaceEntry28(data.type);
+            DispatchFaceEntry28(dataType);
         }
     }
 
@@ -805,9 +807,10 @@ private:
             data.unknown1 = ReadUint32();
             data.materialIndex = ReadUint32();
 
-            m_listener.OnData(data);
+            auto dataType = data.type;
+            m_listener.OnData(std::forward<block_data::Mesh35>(data));
 
-            DispatchReadMeshData35(block.type, data.type);
+            DispatchReadMeshData35(block.type, dataType);
         }
     }
 

@@ -18,7 +18,8 @@ private:
     virtual void CreateScene() override;
 
     void LoadB3d(const char* b3dName, Ogre::SceneNode* b3dSceneNode);
-    void FillMeshWithB3d(Ogre::Mesh* mesh);
+
+    bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 };
 
 } // namespace app

@@ -9,6 +9,7 @@
 
 #include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/common/resource_mgmt.h>
+#include <d2_hack/common/log.h>
 
 namespace d2_hack
 {
@@ -35,12 +36,12 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::Light* light = m_sceneManager->createLight("MainLight");
     Ogre::SceneNode* rootNode = m_sceneManager->getRootSceneNode();
-    Ogre::SceneNode* lightSceneNode = rootNode->createChildSceneNode();
+    Ogre::SceneNode* lightSceneNode = rootNode->createChildSceneNode("light.scene_node");
     lightSceneNode->attachObject(light);
     lightSceneNode->setPosition(20.0f, 80.0f, 150.0f);
 
 
-    Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d");
+    Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
     
 
     LoadB3d("aa", b3dSceneNode);
@@ -78,7 +79,6 @@ struct B3dMeshListener : public VoidB3dListener
 
     virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
     {
-        
         if ((blockHeader.type == block_data::GroupIndexAndTexturesBlock37) || (blockHeader.type == block_data::GroupVertexBlock7))
         {
             std::string name = GetB3dResourceId(GetResourceName(blockHeader.name));
@@ -91,15 +91,18 @@ struct B3dMeshListener : public VoidB3dListener
 
     virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader) override
     {
-        if (blockHeader.type == block_data::GroupIndexAndTexturesBlock37)
+        if ((blockHeader.type == block_data::GroupIndexAndTexturesBlock37) ||
+            (blockHeader.type == block_data::GroupVertexBlock7))
         {
             if (m_currentMesh)
             {
-                Ogre::Entity* meshEntity = m_sceneManager->createEntity(m_currentMesh->getName() + ".entity", m_currentMesh);
+                if (m_currentMesh->getName().find("Building") != std::string::npos)
+                {
+                    Ogre::Entity* meshEntity = m_sceneManager->createEntity(m_currentMesh->getName() + ".entity", m_currentMesh);
 
-                Ogre::SceneNode* meshSceneNode = m_rootNode->createChildSceneNode(m_currentMesh->getName() + ".scene_node");
-                meshSceneNode->attachObject(meshEntity);
-
+                    Ogre::SceneNode* meshSceneNode = m_rootNode->createChildSceneNode(m_currentMesh->getName() + ".scene_node");
+                    meshSceneNode->attachObject(meshEntity);
+                }
                 m_currentMesh.reset();
             }
         }
@@ -137,6 +140,11 @@ struct B3dMeshListener : public VoidB3dListener
             m_currentIndices.clear();
             m_currentMaterialIndex = std::numeric_limits<std::uint32_t>::max();
         }
+    }
+
+    virtual void OnBlock(const block_data::GroupVertex7& /* block */) override
+    {
+        //
     }
 
     virtual void OnBlock(const block_data::GroupVertexData37& /* block */) override
@@ -298,6 +306,35 @@ void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dScene
     Ogre::FileStreamDataStream dataStream(&inputFile, false);
     B3dReader reader;
     reader.Read(dataStream, listener);
+}
+
+bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
+{
+    static int visible_count = 0;
+    //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
+    if (evt.keysym.sym == 'l')
+    {
+        auto rootNode = m_sceneManager->getRootSceneNode();
+
+        Ogre::Node* b3dSceneNode = rootNode->getChild("b3d.scene_node");
+
+        const auto& children = b3dSceneNode->getChildren();
+        //Ogre::SceneNode* curNode = static_cast<Ogre::SceneNode*>(children[visible_count % children.size()]);
+
+        //curNode->flipVisibility();
+        //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << "flipped: [" << curNode->getName() << "]";
+
+        //visible_count += 1;
+
+        for (Ogre::Node* child : children)
+        {
+            D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << "[" << child->getName() << "]";
+        }
+    }
+
+
+
+    return BaseApplication::keyPressed(evt);
 }
 
 } // namespace app

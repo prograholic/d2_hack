@@ -41,53 +41,53 @@ public:
 
     virtual void OnMaterials(Materials&& /* materials */) = 0;
 
-    virtual void OnBlock(block_data::Empty0&& /* block */) = 0;
+    virtual void OnBlock(const block_data::Empty0& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupRoadInfraObjects4&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupObjects5&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupObjects5& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupVertex7&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupVertex7& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleFaces8&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleFaces8& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupTrigger9&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupTrigger9& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupLodParameters10&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupLodParameters10& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupUnknown12&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupUnknown12& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleTrigger13&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleTrigger13& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleUnknown14&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleUnknown14& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleObjectConnector18&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleObjectConnector18& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupObjects19&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupObjects19& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleFlatCollision20&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleFlatCollision20& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupObjects21&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupObjects21& /* block */) = 0;
 
     virtual void OnBlock(const block_data::SimpleVolumeCollision23& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupTransformMatrix24&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupTransformMatrix24& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleFaces28&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleFaces28& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimplePortal30&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimplePortal30& /* block */) = 0;
 
-    virtual void OnBlock(block_data::GroupLightingObjects33&& /* block */) = 0;
+    virtual void OnBlock(const block_data::GroupLightingObjects33& /* block */) = 0;
 
     virtual void OnBlock(const block_data::SimpleFaceData35& /* block */) = 0;
 
     virtual void OnBlock(const block_data::GroupVertexData37& /* block */) = 0;
 
-    virtual void OnBlock(block_data::SimpleGeneratedObjects40&& /* block */) = 0;
+    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& /* block */) = 0;
 
     virtual void OnData(common::PositionWithTexCoordList&& /* data */) = 0;
 
-    virtual void OnData(const block_data::Face8& /* data */) = 0;
+    virtual void OnData(block_data::Face8&& /* data */) = 0;
 
     virtual void OnData(common::IndexList&& /* data */) = 0;
 
@@ -101,11 +101,11 @@ public:
 
     virtual void OnData(common::PositionList&& /* data*/) = 0;
 
-    virtual void OnData(const block_data::Face28Entry& /* data */) = 0;
+    virtual void OnData(block_data::Face28Entry&& /* data */) = 0;
 
     virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& /* data */) = 0;
 
-    virtual void OnData(const block_data::Mesh35& /* data */) = 0;
+    virtual void OnData(block_data::Mesh35&& /* data */) = 0;
 
     virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& /* data */) = 0;
 
@@ -142,59 +142,59 @@ public:
     {
     }
 
-    virtual void OnBlock(block_data::Empty0&& /* block */) override
+    virtual void OnBlock(const block_data::Empty0& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupRoadInfraObjects4&& /* block */) override
+    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupObjects5&& /* block */) override
+    virtual void OnBlock(const block_data::GroupObjects5& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupVertex7&& /* block */) override
+    virtual void OnBlock(const block_data::GroupVertex7& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimpleFaces8&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleFaces8& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupTrigger9&& /* block */) override
+    virtual void OnBlock(const block_data::GroupTrigger9& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupLodParameters10&& /* block */) override
+    virtual void OnBlock(const block_data::GroupLodParameters10& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupUnknown12&& /* block */) override
+    virtual void OnBlock(const block_data::GroupUnknown12& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimpleTrigger13&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleTrigger13& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimpleUnknown14&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleUnknown14& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimpleObjectConnector18&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleObjectConnector18& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupObjects19&& /* block */) override
+    virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimpleFlatCollision20&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleFlatCollision20& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupObjects21&& /* block */) override
+    virtual void OnBlock(const block_data::GroupObjects21& /* block */) override
     {
     }
 
@@ -202,19 +202,19 @@ public:
     {
     }
 
-    virtual void OnBlock(block_data::GroupTransformMatrix24&& /* block */) override
+    virtual void OnBlock(const block_data::GroupTransformMatrix24& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimpleFaces28&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleFaces28& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::SimplePortal30&& /* block */) override
+    virtual void OnBlock(const block_data::SimplePortal30& /* block */) override
     {
     }
 
-    virtual void OnBlock(block_data::GroupLightingObjects33&& /* block */) override
+    virtual void OnBlock(const block_data::GroupLightingObjects33& /* block */) override
     {
     }
 
@@ -226,7 +226,7 @@ public:
     {
     }
 
-    virtual void OnBlock(block_data::SimpleGeneratedObjects40&& /* block */) override
+    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& /* block */) override
     {
     }
 
@@ -234,7 +234,7 @@ public:
     {
     }
 
-    virtual void OnData(const block_data::Face8& /* data */) override
+    virtual void OnData(block_data::Face8&& /* data */) override
     {
     }
 
@@ -262,7 +262,7 @@ public:
     {
     }
 
-    virtual void OnData(const block_data::Face28Entry& /* data */) override
+    virtual void OnData(block_data::Face28Entry&& /* data */) override
     {
     }
 
@@ -270,7 +270,7 @@ public:
     {
     }
 
-    virtual void OnData(const block_data::Mesh35& /* data */) override
+    virtual void OnData(block_data::Mesh35&& /* data */) override
     {
     }
 

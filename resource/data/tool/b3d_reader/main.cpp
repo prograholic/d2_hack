@@ -54,7 +54,7 @@ public:
         PrintVectorData(materials, "materials");
     }
 
-    virtual void OnBlock(block_data::Empty0&& block) override
+    virtual void OnBlock(const block_data::Empty0& block) override
     {
         GetStream() << "Empty0 {"
             "emptyData0: " << Print(std::begin(block.emptyData0), std::end(block.emptyData0)) << ", "
@@ -63,7 +63,7 @@ public:
             "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupRoadInfraObjects4&& block) override
+    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& block) override
     {
         GetStream() << "GroupRoadInfraObjects4 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -71,27 +71,27 @@ public:
             "name: " << Print(block.data) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupObjects5&& block) override
+    virtual void OnBlock(const block_data::GroupObjects5& block) override
     {
         GetStream() << "GroupObjects5 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
             "name: " << Print(block.name) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupVertex7&& block) override
+    virtual void OnBlock(const block_data::GroupVertex7& block) override
     {
         GetStream() << "GroupVertex7 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
             "name: " << Print(block.name) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleFaces8&& block) override
+    virtual void OnBlock(const block_data::SimpleFaces8& block) override
     {
         GetStream() << "SimpleFaces8 {"
             "boundingSphere: " << Print(block.boundingSphere) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupTrigger9&& block) override
+    virtual void OnBlock(const block_data::GroupTrigger9& block) override
     {
         GetStream() << "GroupTrigger9 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -99,7 +99,7 @@ public:
             "distanceToPlayer: " << block.distanceToPlayer << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupLodParameters10&& block) override
+    virtual void OnBlock(const block_data::GroupLodParameters10& block) override
     {
         GetStream() << "GroupLodParameters10 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -108,7 +108,7 @@ public:
             "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupUnknown12&& block) override
+    virtual void OnBlock(const block_data::GroupUnknown12& block) override
     {
         GetStream() << "GroupUnknown12 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -120,7 +120,7 @@ public:
             "unknown: " << Print(block.unknown5) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleTrigger13&& block) override
+    virtual void OnBlock(const block_data::SimpleTrigger13& block) override
     {
         GetStream() << "SimpleTrigger13 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -128,7 +128,7 @@ public:
             "unknown1: " << block.unknown1 << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleUnknown14&& block) override
+    virtual void OnBlock(const block_data::SimpleUnknown14& block) override
     {
         GetStream() << "SimpleUnknown14 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -141,7 +141,7 @@ public:
             "unknown1: " << block.unknown6 << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleObjectConnector18&& block) override
+    virtual void OnBlock(const block_data::SimpleObjectConnector18& block) override
     {
         GetStream() << "SimpleObjectConnector18 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -149,12 +149,12 @@ public:
             "object: " << Print(block.object) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupObjects19&& /* block */) override
+    virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
     {
         GetStream() << "GroupObjects19 {}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleFlatCollision20&& block) override
+    virtual void OnBlock(const block_data::SimpleFlatCollision20& block) override
     {
         GetStream() << "SimpleFlatCollision20 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -162,7 +162,7 @@ public:
             "unknown1: " << block.unknown1 << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupObjects21&& block) override
+    virtual void OnBlock(const block_data::GroupObjects21& block) override
     {
         GetStream() << "GroupObjects21 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -185,7 +185,7 @@ public:
 
     }
 
-    virtual void OnBlock(block_data::GroupTransformMatrix24&& block) override
+    virtual void OnBlock(const block_data::GroupTransformMatrix24& block) override
     {
         GetStream() << "GroupTransformMatrix24 {"
             "x: " << block.x << ", "
@@ -196,14 +196,14 @@ public:
             "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleFaces28&& block) override
+    virtual void OnBlock(const block_data::SimpleFaces28& block) override
     {
         GetStream() << "SimpleFaces28 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
             "unknown: " << Print(block.unknown) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimplePortal30&& block) override
+    virtual void OnBlock(const block_data::SimplePortal30& block) override
     {
         GetStream() << "SimplePortal30 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -212,7 +212,7 @@ public:
             "upRight: " << Print(block.upRight) << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::GroupLightingObjects33&& block) override
+    virtual void OnBlock(const block_data::GroupLightingObjects33& block) override
     {
         GetStream() << "GroupLightingObjects33 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -252,7 +252,7 @@ public:
             "type: " << block.type << "}" << std::endl;
     }
 
-    virtual void OnBlock(block_data::SimpleGeneratedObjects40&& block) override
+    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& block) override
     {
         GetStream() << "SimpleGeneratedObjects40 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
@@ -267,7 +267,7 @@ public:
         PrintVectorData(data, "PositionWithTexCoordList");
     }
 
-    virtual void OnData(const block_data::Face8& data) override
+    virtual void OnData(block_data::Face8&& data) override
     {
         GetStream() << "Face8 {" <<
             "type: " << data.type << ", "
@@ -306,7 +306,7 @@ public:
         PrintVectorData(data, "PositionList");
     }
 
-    virtual void OnData(const block_data::Face28Entry& data) override
+    virtual void OnData(block_data::Face28Entry&& data) override
     {
         GetStream() << "Face28Entry {" <<
             "type: " << data.type << ", "
@@ -320,7 +320,7 @@ public:
         PrintVectorData(data, "std::vector<block_data::Face28Entry::Unknown>");
     }
 
-    virtual void OnData(const block_data::Mesh35& data) override
+    virtual void OnData(block_data::Mesh35&& data) override
     {
         auto& stream = GetStream();
 
