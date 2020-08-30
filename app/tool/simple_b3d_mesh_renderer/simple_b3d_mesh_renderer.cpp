@@ -44,8 +44,8 @@ void SimpleB3dMeshRenderer::CreateScene()
     
 
     LoadB3d("aa", b3dSceneNode);
-    LoadB3d("ab", b3dSceneNode);
-    LoadB3d("ac", b3dSceneNode);
+    //LoadB3d("ab", b3dSceneNode);
+    //LoadB3d("ac", b3dSceneNode);
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }

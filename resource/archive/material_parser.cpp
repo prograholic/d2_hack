@@ -11,7 +11,6 @@ D2_HACK_DISABLE_WARNING_BEGIN(4100)
 D2_HACK_DISABLE_WARNING_END() // 4100
 
 #include <d2_hack/common/memory_mgmt.h>
-//#include <d2_hack/common/log.h>
 #include <d2_hack/resource/manager/manager.h>
 
 namespace d2_hack
@@ -149,54 +148,54 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
         else if (tokens.front() == "notile")
         {
             tokens.pop_front();
-            //TODO: process `notile` option
+            //assert(0 && "process `notile` option");
         }
         else if (tokens.front() == "move")
         {
             tokens.pop_front();
             tokens.pop_front();
             tokens.pop_front();
-            //TODO: process `move` option
+            //assert(0 && "process `move` option");
         }
         else if (tokens.front() == "nof")
         {
             tokens.pop_front();
-            //TODO: process `nof` option
+            //assert(0 && "process `nof` option");
         }
         else if (tokens.front() == "col")
         {
             tokens.pop_front();
             tokens.pop_front();
-            //TODO: process `col` option
+            //assert(0 && "process `col` option");
         }
         else if (tokens.front() == "env")
         {
             tokens.pop_front();
             tokens.pop_front();
             tokens.pop_front();
-            //TODO: process `env` option
+            //assert(0 && "process `env` option");
         }
         else if (tokens.front() == "coord")
         {
             tokens.pop_front();
             tokens.pop_front();
-            //TODO: process `coord` option
+            //assert(0 && "process `coord` option");
         }
         else if (tokens.front() == "att")
         {
             tokens.pop_front();
             tokens.pop_front();
-            //TODO: process `att` option
+            //assert(0 && "process `att` option");
         }
         else if (tokens.front() == "\"wave\"")
         {
             tokens.pop_front();
-            //TODO: process `"wave"` option
+            //assert(0 && "process `\"wave\"` option");
         }
         else if (tokens.front() == "usecol")
         {
             tokens.pop_front();
-            //TODO: process `usecol` option
+            //assert(0 && "process `usecol` option");
         }
         else
         {

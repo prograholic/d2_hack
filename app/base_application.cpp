@@ -37,6 +37,7 @@ void BaseApplication::setup()
 
     OgreBites::ApplicationContext::setup();
     addInputListener(this);
+    setWindowGrab();
 
     m_sceneManager = mRoot->createSceneManager();
 

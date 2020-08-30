@@ -8,6 +8,7 @@ include(copy_runtime)
 include(setup_toolchain)
 include(target)
 
+set(Boost_ADDITIONAL_VERSIONS "1.74.0" "1.74")
 
 find_package(Boost REQUIRED)
 
