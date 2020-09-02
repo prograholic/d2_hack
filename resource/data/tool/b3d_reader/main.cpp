@@ -273,7 +273,7 @@ public:
             "type: " << data.type << ", "
             "unknown0: " << data.unknown0 << ", "
             "unknown1: " << data.unknown1 << ", "
-            "unknown2: " << data.unknown2 << "}" << std::endl;
+            "materialIndex: " << data.materialIndex << "}" << std::endl;
     }
 
     virtual void OnData(common::IndexList&& data) override

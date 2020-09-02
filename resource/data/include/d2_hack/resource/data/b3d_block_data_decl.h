@@ -108,7 +108,7 @@ struct Face8
     std::uint32_t type;
     Ogre::Real unknown0;
     std::uint32_t unknown1;
-    std::uint32_t unknown2;
+    std::uint32_t materialIndex;
 
 #if 0
     typedef boost::variant<

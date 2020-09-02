@@ -339,7 +339,7 @@ private:
         block.boundingSphere = ReadBoundingSphere();
         ReadBytes(block.name.data(), block.name.size());
 
-        m_listener.OnBlock(std::move(block));
+        m_listener.OnBlock(block);
 
         ReadNestedBlocks();
     }
@@ -429,7 +429,7 @@ private:
             face.type = ReadUint32();
             face.unknown0 = ReadFloat();
             face.unknown1 = ReadUint32();
-            face.unknown2 = ReadUint32();
+            face.materialIndex = ReadUint32();
 
             auto faceType = face.type;
             m_listener.OnData(std::forward<block_data::Face8>(face));

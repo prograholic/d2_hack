@@ -26,6 +26,7 @@ namespace b3d
 typedef std::vector<common::ResourceName> Materials;
 
 
+// TODO: add const common::ResourceName& resourceName,  to OnBlock method
 class B3dListenerInterface
 {
 public:
@@ -119,181 +120,261 @@ public:
 };
 
 
-class VoidB3dListener : public B3dListenerInterface
+
+template <typename SimpleAction>
+class SimpleActionB3dListener : public B3dListenerInterface
 {
 public:
-    virtual void OnBlockBegin(const block_data::BlockHeader& /* blockHeader */) override
+    virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
+    {
+        SimpleAction::OnBlockBegin(blockHeader);
+    }
+
+    virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader) override
+    {
+        SimpleAction::OnBlockEnd(blockHeader);
+    }
+
+    virtual void OnNestedBlockBegin(std::uint32_t nestedBlockNumber) override
+    {
+        SimpleAction::OnNestedBlockBegin(nestedBlockNumber);
+    }
+
+    virtual void OnNestedBlockEnd(std::uint32_t nestedBlockNumber) override
+    {
+        SimpleAction::OnNestedBlockEnd(nestedBlockNumber);
+    }
+
+    virtual void OnMaterials(Materials&& materials) override
+    {
+        SimpleAction::OnMaterials(std::forward<Materials>(materials));
+    }
+
+    virtual void OnBlock(const block_data::Empty0& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupObjects5& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupVertex7& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleFaces8& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupTrigger9& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupLodParameters10& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupUnknown12& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleTrigger13& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleUnknown14& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleObjectConnector18& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupObjects19& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleFlatCollision20& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupObjects21& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleVolumeCollision23& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupTransformMatrix24& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleFaces28& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimplePortal30& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupLightingObjects33& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleFaceData35& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupVertexData37& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnData(common::PositionWithTexCoordList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::PositionWithTexCoordList>(data));
+    }
+
+    virtual void OnData(block_data::Face8&& data) override
+    {
+        SimpleAction::OnData(std::forward<block_data::Face8>(data));
+    }
+
+    virtual void OnData(common::IndexList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::IndexList>(data));
+    }
+
+    virtual void OnData(common::IndexWithPositionList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::IndexWithPositionList>(data));
+    }
+
+    virtual void OnData(common::IndexWithPositionTexCoordList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::IndexWithPositionTexCoordList>(data));
+    }
+
+    virtual void OnData(common::IndexWithTexCoordList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::IndexWithTexCoordList>(data));
+    }
+
+    virtual void OnData(std::vector<Ogre::Real>&& data) override
+    {
+        SimpleAction::OnData(std::forward<std::vector<Ogre::Real>>(data));
+    }
+
+    virtual void OnData(common::PositionList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::PositionList>(data));
+    }
+
+    virtual void OnData(block_data::Face28Entry&& data) override
+    {
+        SimpleAction::OnData(std::forward<block_data::Face28Entry>(data));
+    }
+
+    virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& data) override
+    {
+        SimpleAction::OnData(std::forward<std::vector<block_data::Face28Entry::Unknown>>(data));
+    }
+
+    virtual void OnData(block_data::Mesh35&& data) override
+    {
+        SimpleAction::OnData(std::forward<block_data::Mesh35>(data));
+    }
+
+    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& data) override
+    {
+        SimpleAction::OnData(std::forward<std::vector<block_data::Mesh35::Unknown49>>(data));
+    }
+
+    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& data) override
+    {
+        SimpleAction::OnData(std::forward<std::vector<block_data::GroupVertexData37::Unknown514>>(data));
+    }
+
+    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& data) override
+    {
+        SimpleAction::OnData(std::forward<std::vector<block_data::GroupVertexData37::Unknown258>>(data));
+    }
+
+    virtual void OnData(common::PositionWithNormalList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::PositionWithNormalList>(data));
+    }
+
+    virtual void OnData(common::PositionWithTexCoordNormalList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::PositionWithTexCoordNormalList>(data));
+    }
+};
+
+struct VoidAction
+{
+    static void OnBlockBegin(const block_data::BlockHeader& /* blockHeader */)
     {
     }
 
-    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */) override
+    static void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */)
     {
     }
 
-    virtual void OnNestedBlockBegin(std::uint32_t /* nestedBlockNumber */) override
+    static void OnNestedBlockBegin(std::uint32_t /* nestedBlockNumber */)
     {
     }
 
-    virtual void OnNestedBlockEnd(std::uint32_t /* nestedBlockNumber */) override
+    static void OnNestedBlockEnd(std::uint32_t /* nestedBlockNumber */)
     {
     }
 
-    virtual void OnMaterials(Materials&& /* materials */) override
+    static void OnMaterials(Materials&& /* materials */)
     {
     }
 
-    virtual void OnBlock(const block_data::Empty0& /* block */) override
+    template <typename T>
+    static void OnBlock(const T& /* block */)
     {
     }
 
-    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects5& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupVertex7& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaces8& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupTrigger9& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupLodParameters10& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupUnknown12& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleTrigger13& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleUnknown14& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleObjectConnector18& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleFlatCollision20& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects21& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleVolumeCollision23& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupTransformMatrix24& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaces28& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimplePortal30& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupLightingObjects33& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaceData35& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::GroupVertexData37& /* block */) override
-    {
-    }
-
-    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& /* block */) override
-    {
-    }
-
-    virtual void OnData(common::PositionWithTexCoordList&& /* data */) override
-    {
-    }
-
-    virtual void OnData(block_data::Face8&& /* data */) override
-    {
-    }
-
-    virtual void OnData(common::IndexList&& /* data */) override
-    {
-    }
-
-    virtual void OnData(common::IndexWithPositionList&& /* data */) override
-    {
-    }
-
-    virtual void OnData(common::IndexWithPositionTexCoordList&& /* data */) override
-    {
-    }
-
-    virtual void OnData(common::IndexWithTexCoordList&& /* data */) override
-    {
-    }
-
-    virtual void OnData(std::vector<Ogre::Real>&& /* data*/) override
-    {
-    }
-
-    virtual void OnData(common::PositionList&& /* data*/) override
-    {
-    }
-
-    virtual void OnData(block_data::Face28Entry&& /* data */) override
-    {
-    }
-
-    virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& /* data */) override
-    {
-    }
-
-    virtual void OnData(block_data::Mesh35&& /* data */) override
-    {
-    }
-
-    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& /* data */) override
-    {
-    }
-
-    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& /* data */) override
-    {
-    }
-
-    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& /* data */) override
-    {
-    }
-
-    virtual void OnData(common::PositionWithNormalList&& /* data */) override
-    {
-    }
-
-    virtual void OnData(common::PositionWithTexCoordNormalList&& /* data */) override
+    template <typename T>
+    static void OnData(T&& /* data */)
     {
     }
 };
+
+typedef SimpleActionB3dListener<VoidAction> VoidB3dListener;
 
 
 class B3dReader
