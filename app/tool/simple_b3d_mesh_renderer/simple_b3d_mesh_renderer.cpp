@@ -112,7 +112,13 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
     Ogre::SubMesh* m_currentSubMesh = nullptr;
     common::IndexList m_currentIndices;
     std::uint32_t m_currentMaterialIndex = std::numeric_limits<std::uint32_t>::max();
-    std::map<std::string, Ogre::Matrix3> m_transformMap;
+
+    struct Transform
+    {
+        Ogre::Matrix3 matrix;
+        Ogre::Vector3 position;
+    };
+    std::map<std::string, Transform> m_transformMap;
     std::queue<std::string> m_blockNames;
     std::queue<Ogre::Real> m_currentLods;
 
@@ -125,7 +131,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
 
     virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
     {
-        m_blockNames.push(GetResourceName(blockHeader.name));
+        m_blockNames.push(GetB3dResourceId(blockHeader.name));
     }
 
     virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader) override
@@ -204,9 +210,19 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         B3D_NOT_IMPLEMENTED();
     }
 
-    virtual void OnBlock(const block_data::SimpleObjectConnector18& /* block */) override
+    virtual void OnBlock(const block_data::SimpleObjectConnector18& block) override
     {
-        B3D_NOT_IMPLEMENTED();
+        auto transform = m_transformMap[GetB3dResourceId(block.space)];
+
+        const std::string nodeName = GetB3dResourceId(block.object) + ".scene_node";
+        const auto& children = m_rootNode->getChildren();
+        for (auto child : children)
+        {
+            if (child->getName() == nodeName)
+            {
+                child->translate(transform.matrix, transform.position);
+            }
+        }
     }
 
     virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
@@ -231,9 +247,11 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
 
     virtual void OnBlock(const block_data::GroupTransformMatrix24& block) override
     {
-        Ogre::Matrix3 matrix;
-        matrix.FromAxes(block.x, block.y, block.z);
-        m_transformMap[m_blockNames.back()] = matrix;
+        Transform transform;
+        
+        transform.matrix.FromAxes(block.x, block.y, block.z);
+        transform.position = block.position;
+        m_transformMap[m_blockNames.back()] = transform;
     }
 
     virtual void OnBlock(const block_data::SimpleFaces28& /* block */) override
@@ -481,6 +499,11 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         return common::GetResourceName(m_b3dId, name);
     }
 
+    std::string GetB3dResourceId(const common::ResourceName& name) const
+    {
+        return GetB3dResourceId(GetResourceName(name));
+    }
+
     void ProcessNewSubMesh()
     {
         assert(!m_currentSubMesh);
@@ -508,7 +531,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         if (m_blockNames.size() == 1)
         {
             assert(!m_currentMesh);
-            const std::string name = GetB3dResourceId(m_blockNames.back());
+            const std::string name = m_blockNames.back();
             m_currentMesh = m_meshManager->createManual(name, "D2");
 
             Ogre::Entity* meshEntity = m_sceneManager->createEntity(name + ".entity", m_currentMesh);
