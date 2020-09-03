@@ -16,7 +16,8 @@ namespace d2_hack
 namespace app
 {
 
-#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
+//#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
+#define B3D_NOT_IMPLEMENTED()
 
 using namespace resource::data::b3d;
 
@@ -47,8 +48,28 @@ void SimpleB3dMeshRenderer::CreateScene()
     
 
     LoadB3d("aa", b3dSceneNode);
-    //LoadB3d("ab", b3dSceneNode);
-    //LoadB3d("ac", b3dSceneNode);
+    LoadB3d("ab", b3dSceneNode);
+    LoadB3d("ac", b3dSceneNode);
+    LoadB3d("ad", b3dSceneNode);
+#if 0
+    LoadB3d("ae", b3dSceneNode);
+#endif //0
+    LoadB3d("af", b3dSceneNode);
+    LoadB3d("ag", b3dSceneNode);
+    LoadB3d("ah", b3dSceneNode);
+    LoadB3d("aj", b3dSceneNode);
+    LoadB3d("ak", b3dSceneNode);
+    LoadB3d("al", b3dSceneNode);
+    LoadB3d("am", b3dSceneNode);
+    LoadB3d("ap", b3dSceneNode);
+    LoadB3d("aq", b3dSceneNode);
+    LoadB3d("ar", b3dSceneNode);
+    LoadB3d("as", b3dSceneNode);
+    LoadB3d("at", b3dSceneNode);
+    LoadB3d("au", b3dSceneNode);
+    LoadB3d("av", b3dSceneNode);
+    LoadB3d("aw", b3dSceneNode);
+    LoadB3d("ax", b3dSceneNode);
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -180,6 +201,11 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         // no need to implement
     }
 
+    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& /* block */) override
+    {
+        ProcessTopLevelGroupObjects();
+    }
+
     virtual void OnBlock(const block_data::GroupObjects5& /* block */) override
     {
         ProcessTopLevelGroupObjects();
@@ -205,7 +231,17 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         m_currentLods.push(block.distanceToPlayer);
     }
 
+    virtual void OnBlock(const block_data::GroupUnknown12& /* block */) override
+    {
+        B3D_NOT_IMPLEMENTED();
+    }
+
     virtual void OnBlock(const block_data::SimpleTrigger13& /* block */) override
+    {
+        B3D_NOT_IMPLEMENTED();
+    }
+
+    virtual void OnBlock(const block_data::SimpleUnknown14& /* block */) override
     {
         B3D_NOT_IMPLEMENTED();
     }
@@ -248,7 +284,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
     virtual void OnBlock(const block_data::GroupTransformMatrix24& block) override
     {
         Transform transform;
-        
+
         transform.matrix.FromAxes(block.x, block.y, block.z);
         transform.position = block.position;
         m_transformMap[m_blockNames.back()] = transform;
@@ -484,6 +520,16 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
     }
 
     virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& /* data */) override
+    {
+        B3D_NOT_IMPLEMENTED();
+    }
+
+    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& /* data */) override
+    {
+        B3D_NOT_IMPLEMENTED();
+    }
+
+    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& /* data */) override
     {
         B3D_NOT_IMPLEMENTED();
     }

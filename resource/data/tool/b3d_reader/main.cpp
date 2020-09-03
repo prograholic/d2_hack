@@ -67,8 +67,8 @@ public:
     {
         GetStream() << "GroupRoadInfraObjects4 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "boundingSphere: " << Print(block.name) << ", "
-            "name: " << Print(block.data) << "}" << std::endl;
+            "name: " << Print(block.name) << ", "
+            "data: " << Print(block.data) << "}" << std::endl;
     }
 
     virtual void OnBlock(const block_data::GroupObjects5& block) override
