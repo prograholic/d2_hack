@@ -217,6 +217,10 @@ private:
         {
             return ReadBlockData28();
         }
+        else if (blockType == block_data::GroupUnknownBlock29)
+        {
+            return ReadBlockData29();
+        }
         else if (blockType == block_data::SimplePortalBlock30)
         {
             return ReadBlockData30();
@@ -368,6 +372,7 @@ private:
         case block_data::Face8::UnknownType0:
         case block_data::Face8::UnknownType1:
         case block_data::Face8::UnknownType16:
+        case block_data::Face8::FaceIndexType128:
         case block_data::Face8::FaceIndexType129:
         case block_data::Face8::UnknownType144:
         {
@@ -378,6 +383,7 @@ private:
         }
         break;
         
+        case block_data::Face8::FaceIndexType2:
         case block_data::Face8::FaceIndexType3:
         {
             common::IndexWithTexCoordList data;
@@ -677,6 +683,21 @@ private:
         }
     }
 
+    void ReadBlockData29()
+    {
+        block_data::GroupUnknown29 block;
+
+        block.boundingSphere = ReadBoundingSphere();
+        block.type = ReadUint32();
+        block.unknown0 = ReadUint32();
+
+        ReadBytes(block.unknown1.data(), (block.type == 3 ? 7 : 8) * sizeof(block.unknown1[0]));
+
+
+        m_listener.OnBlock(block);
+        ReadNestedBlocks();
+    }
+
     void ReadBlockData30()
     {
         block_data::SimplePortal30 block;
@@ -715,7 +736,21 @@ private:
 
         if (blockType == block_data::SimpleFaceData35::Unknown1)
         {
-            if (meshType == block_data::Mesh35::UnknownType48)
+            if (meshType == block_data::Mesh35::Indices0)
+            {
+                common::IndexList data;
+                ReadCount(data, dataCount);
+
+                m_listener.OnData(std::move(data));
+            }
+            else if (meshType == block_data::Mesh35::Unknown2)
+            {
+                common::IndexWithTexCoordList data;
+                ReadCount(data, dataCount);
+
+                m_listener.OnData(std::move(data));
+            }
+            else if (meshType == block_data::Mesh35::UnknownType48)
             {
                 common::IndexWithPositionList data;
                 ReadCount(data, dataCount);
@@ -739,6 +774,13 @@ private:
             if (meshType == block_data::Mesh35::Indices1)
             {
                 common::IndexList data;
+                ReadCount(data, dataCount);
+
+                m_listener.OnData(std::move(data));
+            }
+            else if (meshType == block_data::Mesh35::UnknownType3)
+            {
+                common::IndexWithTexCoordList data;
                 ReadCount(data, dataCount);
 
                 m_listener.OnData(std::move(data));
@@ -770,6 +812,7 @@ private:
             case block_data::Mesh35::Indices1:
             case block_data::Mesh35::Indices3:
             case block_data::Mesh35::Indices16:
+            case block_data::Mesh35::Indices17:
             {
                 common::IndexList data;
                 ReadCount(data, dataCount);

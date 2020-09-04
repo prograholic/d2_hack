@@ -40,6 +40,7 @@ static const std::uint32_t GroupObjectsBlock21 = 21;
 static const std::uint32_t SimpleVolumeCollisionBlock23 = 23;
 static const std::uint32_t GroupTransformMatrixBlock24 = 24;
 static const std::uint32_t SimpleFacesBlock28 = 28;
+static const std::uint32_t GroupUnknownBlock29 = 29;
 static const std::uint32_t SimplePortalBlock30 = 30;
 static const std::uint32_t GroupLightingObjectBlock33 = 33;
 static const std::uint32_t SimpleFaceDataBlock35 = 35;
@@ -96,10 +97,12 @@ struct Face8
 {
     static const std::uint32_t UnknownType0 = 0;
     static const std::uint32_t UnknownType1 = 1;
+    static const std::uint32_t FaceIndexType2 = 2;
     static const std::uint32_t FaceIndexType3 = 3;
     static const std::uint32_t UnknownType16 = 16;
     static const std::uint32_t FaceIndexType48 = 48;
     static const std::uint32_t FaceIndexType50 = 50;
+    static const std::uint32_t FaceIndexType128 = 128;
     static const std::uint32_t FaceIndexType129 = 129;
     static const std::uint32_t UnknownType144 = 144;
     static const std::uint32_t FaceIndexType176 = 176;
@@ -306,6 +309,15 @@ struct SimpleFaces28
     //Faces28Entries facesEntries;
 };
 
+struct GroupUnknown29
+{
+    common::BoundingSphere boundingSphere;
+    std::uint32_t type;
+    std::uint32_t unknown0;
+
+    std::array<Ogre::Real, 8> unknown1;
+};
+
 struct SimplePortal30
 {
     common::BoundingSphere boundingSphere;
@@ -335,8 +347,11 @@ struct Mesh35
 {
     static const std::uint32_t Indices0 = 0;
     static const std::uint32_t Indices1 = 1;
+    static const std::uint32_t Unknown2 = 2;
     static const std::uint32_t Indices3 = 3;
+    static const std::uint32_t UnknownType3 = 3;
     static const std::uint32_t Indices16 = 16;
+    static const std::uint32_t Indices17 = 17;
     static const std::uint32_t UnknownType48 = 48;
     static const std::uint32_t UnknownType49 = 49;
     static const std::uint32_t UnknownType50 = 50;

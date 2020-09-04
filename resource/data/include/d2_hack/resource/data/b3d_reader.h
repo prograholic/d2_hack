@@ -76,6 +76,8 @@ public:
 
     virtual void OnBlock(const block_data::SimpleFaces28& /* block */) = 0;
 
+    virtual void OnBlock(const block_data::GroupUnknown29& /* block */) = 0;
+
     virtual void OnBlock(const block_data::SimplePortal30& /* block */) = 0;
 
     virtual void OnBlock(const block_data::GroupLightingObjects33& /* block */) = 0;
@@ -231,6 +233,11 @@ public:
     }
 
     virtual void OnBlock(const block_data::SimpleFaces28& block) override
+    {
+        SimpleAction::OnBlock(block);
+    }
+
+    virtual void OnBlock(const block_data::GroupUnknown29& block) override
     {
         SimpleAction::OnBlock(block);
     }

@@ -180,9 +180,6 @@ public:
             "unknown2" << block.unknown2 << ", "
             "unknown3" << block.unknown3 << ", "
             "unknown4" << block.unknown4 << "}" << std::endl;
-
-
-
     }
 
     virtual void OnBlock(const block_data::GroupTransformMatrix24& block) override
@@ -201,6 +198,25 @@ public:
         GetStream() << "SimpleFaces28 {"
             "boundingSphere: " << Print(block.boundingSphere) << ", "
             "unknown: " << Print(block.unknown) << "}" << std::endl;
+    }
+
+    virtual void OnBlock(const block_data::GroupUnknown29& block) override
+    {
+        GetStream() << "GroupUnknown29 {"
+            "boundingSphere: " << Print(block.boundingSphere) << ", "
+            "type: " << Print(block.type) << ", "
+            "unknown0: " << Print(block.unknown0) << ", "
+            "unknown1: "
+            "{" << Print(block.unknown1[0]) << ", "
+            "" << Print(block.unknown1[1]) << ", "
+            "" << Print(block.unknown1[2]) << ", "
+            "" << Print(block.unknown1[3]) << ", "
+            "" << Print(block.unknown1[4]) << ", "
+            "" << Print(block.unknown1[5]) << ", "
+            "" << Print(block.unknown1[6]) << ", "
+            "" << Print(block.unknown1[7]) << ", "
+            "}"
+            "}" << std::endl;
     }
 
     virtual void OnBlock(const block_data::SimplePortal30& block) override

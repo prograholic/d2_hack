@@ -46,14 +46,11 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
     
-
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
     LoadB3d("ad", b3dSceneNode);
-#if 0
-    LoadB3d("ae", b3dSceneNode);
-#endif //0
+    //LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
     LoadB3d("ag", b3dSceneNode);
     LoadB3d("ah", b3dSceneNode);
@@ -62,7 +59,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("al", b3dSceneNode);
     LoadB3d("am", b3dSceneNode);
     LoadB3d("ap", b3dSceneNode);
-    LoadB3d("aq", b3dSceneNode);
+    //LoadB3d("aq", b3dSceneNode);
     LoadB3d("ar", b3dSceneNode);
     LoadB3d("as", b3dSceneNode);
     LoadB3d("at", b3dSceneNode);
@@ -293,6 +290,11 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
     virtual void OnBlock(const block_data::SimpleFaces28& /* block */) override
     {
         // no need to implement
+    }
+
+    virtual void OnBlock(const block_data::GroupUnknown29& /* block */) override
+    {
+        B3D_NOT_IMPLEMENTED();
     }
 
     virtual void OnBlock(const block_data::SimplePortal30& /* block */) override
