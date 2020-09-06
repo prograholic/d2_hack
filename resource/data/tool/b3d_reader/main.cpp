@@ -20,9 +20,10 @@ namespace b3d
 class TracingListener : public B3dListenerInterface
 {
 public:
-    TracingListener(bool printBoundingSphere, bool newLineForVectorData)
+    TracingListener(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
+        , m_printVectorData(printVectorData)
     {
     }
 
@@ -312,11 +313,6 @@ public:
         PrintVectorData(data, "IndexWithTexCoordList");
     }
 
-    virtual void OnData(std::vector<Ogre::Real>&& data) override
-    {
-        PrintVectorData(data, "std::vector<Ogre::Real>");
-    }
-
     virtual void OnData(common::PositionList&& data) override
     {
         PrintVectorData(data, "PositionList");
@@ -372,9 +368,30 @@ public:
         PrintVectorData(data, "PositionWithTexCoordNormalList");
     }
 
+    virtual void OnData(common::CollisionPositionList&& data) override
+    {
+        PrintVectorData(data.data, "CollisionPositionList");
+    }
+
+    virtual void OnData(common::CollisionUnknownList&& data) override
+    {
+        PrintVectorData(data.data, "CollisionUnknownList");
+    }
+
+    virtual void OnData(common::TriggerInfoList&& data) override
+    {
+        PrintVectorData(data.data, "TriggerInfoList");
+    }
+
+    virtual void OnData(common::GeneratedObjectInfo&& data) override
+    {
+        PrintVectorData(data.data, "GeneratedObjectInfo");
+    }
+
 private:
     bool m_printBoundingSphere;
     bool m_newLineForVectorData;
+    bool m_printVectorData;
     size_t m_offset = 0;
 
     std::string GetOffsetString(int adjustOffset = 0) const
@@ -568,14 +585,23 @@ private:
         {
             auto& stream = GetStream();
 
-            stream << name << "(" << data.size() << ") {";
+            stream << name << "(" << data.size() << ")";
 
-            for (const auto& item : data)
+            if (m_printVectorData)
             {
-                (m_newLineForVectorData ? GetStream(stream << std::endl, 1) : stream) << Print(item) << ", ";
-            }
+                stream << " {";
 
-            (m_newLineForVectorData ? GetStream(stream << std::endl) : stream) << "}" << std::endl;
+                for (const auto& item : data)
+                {
+                    (m_newLineForVectorData ? GetStream(stream << std::endl, 1) : stream) << Print(item) << ", ";
+                }
+
+                (m_newLineForVectorData ? GetStream(stream << std::endl) : stream) << "}" << std::endl;
+            }
+            else
+            {
+                stream << std::endl;
+            }
         }
 };
 
@@ -612,7 +638,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        TracingListener listener{false, true};
+        TracingListener listener{false, true, true};
         B3dReader reader;
 
         Ogre::FileStreamDataStream dataStream(&inputFile, false);

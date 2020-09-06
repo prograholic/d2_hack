@@ -453,7 +453,7 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        m_listener.OnBlock(std::move(block));
+        m_listener.OnBlock(block);
 
         ReadNestedBlocks();
     }
@@ -501,8 +501,8 @@ private:
         }
 
         const std::uint32_t unknown2Count = ReadUint32();
-        std::vector<Ogre::Real> data;
-        ReadCount(data, unknown2Count);
+        common::TriggerInfoList data;
+        ReadCount(data.data, unknown2Count);
         
         m_listener.OnData(std::move(data));
     }
@@ -557,13 +557,13 @@ private:
 
         const std::uint32_t countB = ReadUint32();
 
-        common::PositionList a;
-        ReadCount(a, countA);
+        common::CollisionPositionList a;
+        ReadCount(a.data, countA);
 
-        std::vector<Ogre::Real> b;
-        ReadCount(b, countB);
+        common::CollisionUnknownList b;
+        ReadCount(b.data, countB);
 
-        m_listener.OnBlock(std::move(block));
+        m_listener.OnBlock(block);
         m_listener.OnData(std::move(a));
         m_listener.OnData(std::move(b));
     }
@@ -586,8 +586,8 @@ private:
         if (type == block_data::SimpleVolumeCollision23::UnknownType0)
         {
             const std::uint32_t count = ReadUint32();
-            common::PositionList data;
-            ReadCount(data, count);
+            common::CollisionPositionList data;
+            ReadCount(data.data, count);
 
             m_listener.OnData(std::move(data));
         }
@@ -931,10 +931,10 @@ private:
         block.unknown0 = ReadFloat();
 
         const std::uint32_t dataSize = ReadUint32();
-        std::vector<Ogre::Real> data;
-        ReadCount(data, dataSize);
+        common::GeneratedObjectInfo data;
+        ReadCount(data.data, dataSize);
 
-        m_listener.OnBlock(std::move(block));
+        m_listener.OnBlock(block);
         m_listener.OnData(std::move(data));
     }
 };

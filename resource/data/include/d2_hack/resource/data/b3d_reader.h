@@ -100,8 +100,6 @@ public:
 
     virtual void OnData(common::IndexWithTexCoordList&& /* data */) = 0;
 
-    virtual void OnData(std::vector<Ogre::Real>&& /* data*/) = 0;
-
     virtual void OnData(common::PositionList&& /* data*/) = 0;
 
     virtual void OnData(block_data::Face28Entry&& /* data */) = 0;
@@ -119,6 +117,14 @@ public:
     virtual void OnData(common::PositionWithNormalList&& /* data */) = 0;
 
     virtual void OnData(common::PositionWithTexCoordNormalList&& /* data */) = 0;
+
+    virtual void OnData(common::CollisionPositionList&& /* data */) = 0;
+
+    virtual void OnData(common::CollisionUnknownList&& /* data */) = 0;
+
+    virtual void OnData(common::TriggerInfoList&& /* data */) = 0;
+
+    virtual void OnData(common::GeneratedObjectInfo&& /* data */) = 0;
 };
 
 
@@ -297,11 +303,6 @@ public:
         SimpleAction::OnData(std::forward<common::IndexWithTexCoordList>(data));
     }
 
-    virtual void OnData(std::vector<Ogre::Real>&& data) override
-    {
-        SimpleAction::OnData(std::forward<std::vector<Ogre::Real>>(data));
-    }
-
     virtual void OnData(common::PositionList&& data) override
     {
         SimpleAction::OnData(std::forward<common::PositionList>(data));
@@ -345,6 +346,26 @@ public:
     virtual void OnData(common::PositionWithTexCoordNormalList&& data) override
     {
         SimpleAction::OnData(std::forward<common::PositionWithTexCoordNormalList>(data));
+    }
+
+    virtual void OnData(common::CollisionPositionList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::CollisionPositionList>(data));
+    }
+
+    virtual void OnData(common::CollisionUnknownList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::CollisionUnknownList>(data));
+    }
+
+    virtual void OnData(common::TriggerInfoList&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::TriggerInfoList>(data));
+    }
+
+    virtual void OnData(common::GeneratedObjectInfo&& data) override
+    {
+        SimpleAction::OnData(std::forward<common::GeneratedObjectInfo>(data));
     }
 };
 
