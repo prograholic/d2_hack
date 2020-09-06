@@ -45,12 +45,12 @@ void SimpleB3dMeshRenderer::CreateScene()
 
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
-#if 0
+
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
     LoadB3d("ad", b3dSceneNode);
-    //LoadB3d("ae", b3dSceneNode);
+    LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
     LoadB3d("ag", b3dSceneNode);
     LoadB3d("ah", b3dSceneNode);
@@ -58,10 +58,8 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
     LoadB3d("am", b3dSceneNode);
-#endif //0s
     LoadB3d("ap", b3dSceneNode);
-    //LoadB3d("aq", b3dSceneNode);
-#if 0
+    LoadB3d("aq", b3dSceneNode);
     LoadB3d("ar", b3dSceneNode);
     LoadB3d("as", b3dSceneNode);
     LoadB3d("at", b3dSceneNode);
@@ -69,7 +67,6 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("av", b3dSceneNode);
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
-#endif //0
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -160,7 +157,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
 
     virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
     {
-        m_blockNames.push(GetResourceName(blockHeader.name));
+        m_blockNames.push(GetB3dResourceId(blockHeader.name));
     }
 
     virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader) override
@@ -310,9 +307,19 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         B3D_NOT_IMPLEMENTED();
     }
 
-    virtual void OnBlock(const block_data::SimpleObjectConnector18& /* block */) override
+    virtual void OnBlock(const block_data::SimpleObjectConnector18& block) override
     {
-        B3D_NOT_IMPLEMENTED();
+        std::string sceneName = GetNameImpl(GetB3dResourceId(block.object), "scene_node", false);
+
+        Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName, false);
+        if (sceneNode)
+        {
+            auto transformList = m_transformMap[GetB3dResourceId(block.space)];
+            //for (const auto& transform : transformList)
+            //{
+            //    sceneNode->translate(transform.matrix, transform.position);
+            //}
+        }
     }
 
     virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
@@ -818,6 +825,14 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
 
             subMesh->setMaterialName(GetMaterialName(data.materialIndex));
         }
+        else if (data.type == block_data::Face8::FaceIndexType3)
+        {
+            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            subMesh->useSharedVertices = true;
+            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
+
+            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        }
         else
         {
             assert(0 && "not implemented");
@@ -901,19 +916,29 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         return GetB3dResourceId(GetResourceName(m_materials[materialIndex]));
     }
 
-    std::string GetName(const std::string& subname) const
+    static std::string GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique)
     {
-        std::string name = m_blockNames.back();
+        std::string name = blockName;
 
         if (name.empty())
         {
-            name = "unnamed_" + subname;
+            name = "unnamed";
         }
-        static int cnt = 0;
-        name += ("_" + std::to_string(cnt));
-        ++cnt;
+        name += ("_" + subName);
 
-        return GetB3dResourceId(name);
+        if (forceUnique)
+        {
+            static int cnt = 0;
+            name += ("_" + std::to_string(cnt));
+            ++cnt;
+        }
+
+        return name;
+    }
+
+    std::string GetName(const std::string& subname, bool forceUnique) const
+    {
+        return GetNameImpl(m_blockNames.back(), subname, forceUnique);
     }
 
     void ProcessTransformQueue()
@@ -935,7 +960,13 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
 
     void CreateSceneNode()
     {
-        Ogre::SceneNode* sceneNode = m_sceneManager->createSceneNode(GetName("scene_node"));
+        std::string name = GetName("scene_node", false);
+        if (m_sceneManager->hasSceneNode(name))
+        {
+            name = GetName("scene_node", true);
+        }
+
+        Ogre::SceneNode* sceneNode = m_sceneManager->createSceneNode(name);
 
         if (m_sceneNodes.empty())
         {
@@ -951,7 +982,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
 
     void CreateMesh()
     {
-        m_meshQueue.push(m_meshManager->createManual(GetName("mesh"), "D2"));
+        m_meshQueue.push(m_meshManager->createManual(GetName("mesh", true), "D2"));
     }
 
     void ProcessMesh()
@@ -969,430 +1000,6 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
     {
         m_sceneNodes.pop();
     }
-
-#if 0
-
-
-
-
-
-    virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader) override
-    {
-        m_blockNames.pop();
-        if (m_blockNames.empty())
-        {
-            assert(m_currentSubMesh == nullptr);
-            if (m_currentMesh)
-            {
-                if (m_currentMesh->getSubMeshes().empty())
-                {
-                    m_meshManager->remove(m_currentMesh);
-                }
-            }
-            m_currentMesh.reset();
-        }
-
-        if (blockHeader.type == block_data::GroupVertexBlock7)
-        {
-            CleanupEmptySubMesh();
-        }
-        else if (blockHeader.type == block_data::SimpleFacesBlock8)
-        {
-            SetIndices();
-        }
-        else if (blockHeader.type == block_data::GroupLodParametersBlock10)
-        {
-            m_currentLods.pop();
-        }
-        else if (blockHeader.type == block_data::SimpleFacesBlock28)
-        {
-            SetIndices();
-        }
-        else if (blockHeader.type == block_data::SimpleFaceDataBlock35)
-        {
-            SetIndices();
-        }
-        else if (blockHeader.type == block_data::GroupIndexAndTexturesBlock37)
-        {
-            CleanupEmptySubMesh();
-        }
-    }
-
-
-
-
-
-    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& /* block */) override
-    {
-        ProcessTopLevelGroupObjects();
-    }
-
-
-
-    virtual void OnBlock(const block_data::GroupVertex7& /* block */) override
-    {
-        ProcessNewSubMesh();
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaces8& /* block */) override
-    {
-        // no need to implement
-    }
-
-    virtual void OnBlock(const block_data::GroupTrigger9& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::GroupLodParameters10& block) override
-    {
-        m_currentLods.push(block.distanceToPlayer);
-    }
-
-    virtual void OnBlock(const block_data::GroupUnknown12& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::SimpleTrigger13& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::SimpleUnknown14& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::SimpleObjectConnector18& block) override
-    {
-        const std::string spaceName = GetB3dResourceId(block.space);
-        const std::string objectName = GetB3dResourceId(block.object);
-        assert(m_currentMesh);
-        assert(m_currentMesh->getName() == objectName);
-
-        const auto& transformation = m_transformMap[spaceName];
-
-        const std::string entityName = spaceName + "." + objectName + ".entity";
-        if (!m_sceneManager->hasEntity(entityName))
-        {
-            Ogre::Entity* entity = m_sceneManager->createEntity(entityName, m_currentMesh);
-            Ogre::SceneNode* sceneNode = m_rootNode->createChildSceneNode(spaceName + "." + objectName + ".scene_node");
-            sceneNode->attachObject(entity);
-            sceneNode->translate(transformation.matrix, transformation.position);
-        }
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
-    {
-        ProcessTopLevelGroupObjects();
-    }
-
-    virtual void OnBlock(const block_data::SimpleFlatCollision20& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects21& /* block */) override
-    {
-        ProcessTopLevelGroupObjects();
-    }
-
-    virtual void OnBlock(const block_data::SimpleVolumeCollision23& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-
-
-    virtual void OnBlock(const block_data::SimpleFaces28& /* block */) override
-    {
-        // no need to implement
-    }
-
-    virtual void OnBlock(const block_data::GroupUnknown29& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::SimplePortal30& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::GroupLightingObjects33& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaceData35& block) override
-    {
-        ProcessMaterialIndex(block.materialIndex);
-    }
-
-    virtual void OnBlock(const block_data::GroupVertexData37& /* block */) override
-    {
-        ProcessNewSubMesh();
-    }
-
-    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& /* block */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(block_data::Face8&& data) override
-    {
-        ProcessMaterialIndex(data.materialIndex);
-    }
-
-    virtual void OnData(block_data::Mesh35&& /* data */) override
-    {
-        // no need to implement
-    }
-
-    virtual void OnData(common::PositionWithNormalList&& data) override
-    {
-        if (m_currentSubMesh)
-        {
-            assert(m_currentSubMesh->vertexData == nullptr);
-            m_currentSubMesh->vertexData = OGRE_NEW Ogre::VertexData;
-
-            m_currentSubMesh->vertexData->vertexCount = data.size();
-            Ogre::VertexDeclaration* decl = m_currentSubMesh->vertexData->vertexDeclaration;
-            Ogre::VertexBufferBinding* bind = m_currentSubMesh->vertexData->vertexBufferBinding;
-
-            size_t offset = 0;
-
-            decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-            offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-            decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_NORMAL);
-            offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-            Ogre::AxisAlignedBox bbox = m_currentMesh->getBounds();
-
-            for (const auto& vertex : data)
-            {
-                bbox.merge(vertex.position);
-            }
-
-            Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-                offset,
-                m_currentSubMesh->vertexData->vertexCount,
-                Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-            vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-            bind->setBinding(0, vbuf);
-
-            m_currentMesh->_setBounds(bbox, true);
-        }
-    }
-
-    virtual void OnData(common::PositionWithTexCoordList&& data) override
-    {
-        if (m_currentSubMesh)
-        {
-            assert(m_currentSubMesh->vertexData == nullptr);
-            m_currentSubMesh->vertexData = OGRE_NEW Ogre::VertexData;
-
-            m_currentSubMesh->vertexData->vertexCount = data.size();
-            Ogre::VertexDeclaration* decl = m_currentSubMesh->vertexData->vertexDeclaration;
-            Ogre::VertexBufferBinding* bind = m_currentSubMesh->vertexData->vertexBufferBinding;
-
-            size_t offset = 0;
-
-            decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-            offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-            decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
-            offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-
-            Ogre::AxisAlignedBox bbox = m_currentMesh->getBounds();
-
-            for (const auto& vertex : data)
-            {
-                bbox.merge(vertex.position);
-            }
-
-            Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-                offset,
-                m_currentSubMesh->vertexData->vertexCount,
-                Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-            vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-            bind->setBinding(0, vbuf);
-
-            m_currentMesh->_setBounds(bbox, true);
-        }
-    }
-
-    virtual void OnData(common::PositionList&& data) override
-    {
-        if (m_currentSubMesh)
-        {
-            assert(m_currentSubMesh->vertexData == nullptr);
-            m_currentSubMesh->vertexData = OGRE_NEW Ogre::VertexData;
-
-            m_currentSubMesh->vertexData->vertexCount = data.size();
-            Ogre::VertexDeclaration* decl = m_currentSubMesh->vertexData->vertexDeclaration;
-            Ogre::VertexBufferBinding* bind = m_currentSubMesh->vertexData->vertexBufferBinding;
-
-            size_t offset = 0;
-
-            decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-            offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-            Ogre::AxisAlignedBox bbox = m_currentMesh->getBounds();
-
-            for (const auto& position : data)
-            {
-                bbox.merge(position);
-            }
-
-            Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-                offset,
-                m_currentSubMesh->vertexData->vertexCount,
-                Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-            vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-            bind->setBinding(0, vbuf);
-
-            m_currentMesh->_setBounds(bbox, true);
-        }
-    }
-
-    virtual void OnData(common::IndexWithPositionTexCoordList&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(common::IndexWithPositionList&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(std::vector<Ogre::Real>&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(common::IndexWithTexCoordList&& data) override
-    {
-        if (m_currentSubMesh)
-        {
-            for (const auto& item : data)
-            {
-                m_currentIndices.push_back(item.index);
-            }
-        }
-    }
-
-    virtual void OnData(block_data::Face28Entry&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& /* data */) override
-    {
-        B3D_NOT_IMPLEMENTED();
-    }
-
-
-
-
-
-
-    void ProcessNewSubMesh()
-    {
-        assert(!m_currentSubMesh);
-
-        const auto& subMeshMap = m_currentMesh->getSubMeshNameMap();
-        if (subMeshMap.find(m_blockNames.back()) == subMeshMap.end())
-        {
-            m_currentSubMesh = m_currentMesh->createSubMesh(m_blockNames.back());
-            m_currentSubMesh->useSharedVertices = false;
-        }
-    }
-
-    void ProcessMaterialIndex(std::uint32_t materialIndex)
-    {
-        if (m_currentSubMesh)
-        {
-            const std::string materialName = GetB3dResourceId(GetMaterialName(materialIndex));
-
-            m_currentSubMesh->setMaterialName(materialName, "D2");
-        }
-    }
-
-    void ProcessTopLevelGroupObjects()
-    {
-        if (m_blockNames.size() == 1)
-        {
-            const std::string name = m_blockNames.back();
-
-            assert(!m_currentMesh);
-            
-            m_currentMesh = m_meshManager->createManual(name, "D2");
-        }
-    }
-
-    void CleanupEmptySubMesh()
-    {
-        if (m_currentSubMesh)
-        {
-            if (m_currentSubMesh->vertexData == nullptr)
-            {
-                const auto& subMeshes = m_currentMesh->getSubMeshes();
-
-                for (unsigned short i = 0; i != subMeshes.size(); ++i)
-                {
-                    if (subMeshes[i] == m_currentSubMesh)
-                    {
-                        m_currentMesh->destroySubMesh(i);
-                        break;
-                    }
-                }
-            }
-        }
-        m_currentSubMesh = nullptr;
-    }
-
-    void SetIndices()
-    {
-        if (m_currentSubMesh)
-        {
-            m_currentSubMesh->operationType = m_operationType;
-
-            Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-                Ogre::HardwareIndexBuffer::IT_32BIT,
-                m_currentIndices.size(),
-                Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-            ibuf->writeData(0, ibuf->getSizeInBytes(), m_currentIndices.data(), true);
-
-            m_currentSubMesh->indexData->indexBuffer = ibuf;
-            m_currentSubMesh->indexData->indexCount = m_currentIndices.size();
-            m_currentSubMesh->indexData->indexStart = 0;
-        }
-        m_currentIndices.clear();
-
-
-    }
-#endif //0
 };
 
 void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dSceneNode)
