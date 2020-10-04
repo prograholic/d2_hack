@@ -1,6 +1,8 @@
 d2_hack_add_executable(d2_hack.app.simple_b3d_mesh_renderer
     simple_b3d_mesh_renderer.cpp
     simple_b3d_mesh_renderer.h
+    b3d_listener.cpp
+    b3d_listener.h
     
     main.cpp
 )
