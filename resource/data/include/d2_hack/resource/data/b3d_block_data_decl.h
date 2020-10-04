@@ -279,23 +279,14 @@ struct Face28Entry
     {
         Ogre::Real unknown0;
         Ogre::Real unknown1;
-        Ogre::Real unknown2;
-        Ogre::Real unknown3;
+        common::TexCoord texCoord;
     };
-
-#if 0
-    typedef boost::variant<
-        Unknown
-    > FaceData;
-
-    std::vector<FaceData> faceData;
-#endif //0
 
     std::uint32_t type;
 
     Ogre::Real unknown0;
     std::uint32_t unknown1;
-    std::uint32_t unknown2;
+    std::uint32_t materialIndex;
 };
 
 //typedef std::vector<Face28Entry> Faces28Entries;
@@ -407,7 +398,7 @@ struct GroupVertexData37
 
     struct Unknown258
     {
-        Ogre::Vector3 unknown0;
+        Ogre::Vector3 position;
         Ogre::Vector3 unknown1;
         Ogre::Vector3 unknown2;
         Ogre::Real unknown3;
@@ -415,7 +406,7 @@ struct GroupVertexData37
 
     struct Unknown514
     {
-        Ogre::Vector3 unknown0;
+        Ogre::Vector3 position;
         Ogre::Vector3 unknown1;
         Ogre::Vector3 unknown2;
         Ogre::Vector3 unknown3;

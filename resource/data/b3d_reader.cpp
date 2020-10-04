@@ -674,7 +674,7 @@ private:
             data.type = ReadUint32();
             data.unknown0 = ReadFloat();
             data.unknown1 = ReadUint32();
-            data.unknown2 = ReadUint32();
+            data.materialIndex = ReadUint32();
 
             auto dataType = data.type;
             m_listener.OnData(std::forward<block_data::Face28Entry>(data));

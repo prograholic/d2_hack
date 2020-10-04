@@ -324,7 +324,7 @@ public:
             "type: " << data.type << ", "
             "unknown0: " << data.unknown0 << ", "
             "unknown1: " << data.unknown1 << ", "
-            "unknown2: " << data.unknown2 << "}" << std::endl;
+            "materialIndex: " << data.materialIndex << "}" << std::endl;
     }
 
     virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& data) override
@@ -540,8 +540,7 @@ private:
             ostream << "Unknown {"
                 "unknown0:" << data.unknown0 << ", "
                 "unknown1:" << data.unknown1 << ", "
-                "unknown2:" << data.unknown2 << ", "
-                "unknown3:" << data.unknown3 << "}";
+                "texCoord:" << Print(data.texCoord) << "}";
 
             return ostream.str();
         }
@@ -560,7 +559,7 @@ private:
         {
             std::ostringstream ostream;
             ostream << "Unknown {"
-                "unknown0:" << Print(data.unknown0) << ", "
+                "position:" << Print(data.position) << ", "
                 "unknown1:" << Print(data.unknown1) << ", "
                 "unknown2:" << Print(data.unknown2) << ", "
                 "unknown3:" << Print(data.unknown3) << "}";
@@ -572,7 +571,7 @@ private:
         {
             std::ostringstream ostream;
             ostream << "Unknown {"
-                "unknown0:" << Print(data.unknown0) << ", "
+                "position:" << Print(data.position) << ", "
                 "unknown1:" << Print(data.unknown1) << ", "
                 "unknown2:" << Print(data.unknown2) << ", "
                 "unknown3:" << Print(data.unknown3) << "}";
