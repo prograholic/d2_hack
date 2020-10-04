@@ -46,27 +46,27 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-    //LoadB3d("aa", b3dSceneNode);
-    //LoadB3d("ab", b3dSceneNode);
-    //LoadB3d("ac", b3dSceneNode);
-    //LoadB3d("ad", b3dSceneNode);
-    //LoadB3d("ae", b3dSceneNode);
-    //LoadB3d("af", b3dSceneNode);
-    //LoadB3d("ag", b3dSceneNode);
-    //LoadB3d("ah", b3dSceneNode);
-    //LoadB3d("aj", b3dSceneNode);
-    //LoadB3d("ak", b3dSceneNode);
-    //LoadB3d("al", b3dSceneNode);
-    //LoadB3d("am", b3dSceneNode);
-    //LoadB3d("ap", b3dSceneNode);
-    //LoadB3d("aq", b3dSceneNode);
+    LoadB3d("aa", b3dSceneNode);
+    LoadB3d("ab", b3dSceneNode);
+    LoadB3d("ac", b3dSceneNode);
+    LoadB3d("ad", b3dSceneNode);
+    LoadB3d("ae", b3dSceneNode);
+    LoadB3d("af", b3dSceneNode);
+    LoadB3d("ag", b3dSceneNode);
+    LoadB3d("ah", b3dSceneNode);
+    LoadB3d("aj", b3dSceneNode);
+    LoadB3d("ak", b3dSceneNode);
+    LoadB3d("al", b3dSceneNode);
+    LoadB3d("am", b3dSceneNode);
+    LoadB3d("ap", b3dSceneNode);
+    LoadB3d("aq", b3dSceneNode);
     LoadB3d("ar", b3dSceneNode);
-    //LoadB3d("as", b3dSceneNode);
-    //LoadB3d("at", b3dSceneNode);
-    //LoadB3d("au", b3dSceneNode);
-    //LoadB3d("av", b3dSceneNode);
-    //LoadB3d("aw", b3dSceneNode);
-    //LoadB3d("ax", b3dSceneNode);
+    LoadB3d("as", b3dSceneNode);
+    LoadB3d("at", b3dSceneNode);
+    LoadB3d("au", b3dSceneNode);
+    LoadB3d("av", b3dSceneNode);
+    LoadB3d("aw", b3dSceneNode);
+    LoadB3d("ax", b3dSceneNode);
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -331,11 +331,11 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName, false);
         if (sceneNode)
         {
-            auto transformList = m_transformMap[GetB3dResourceId(block.space)];
-            for (const auto& transform : transformList)
-            {
-                sceneNode->translate(transform.matrix, transform.position);
-            }
+            //auto transformList = m_transformMap[GetB3dResourceId(block.space)];
+            //for (const auto& transform : transformList)
+            //{
+            //    sceneNode->translate(transform.matrix, transform.position);
+            //}
         }
     }
 
@@ -636,7 +636,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
             else if (data.type == block_data::Mesh35::Indices0)
             {
                 Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
-                subMesh->useSharedVertices = false;
+                subMesh->useSharedVertices = true;
                 subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
                 subMesh->setMaterialName(GetMaterialName(data.materialIndex));
@@ -955,7 +955,7 @@ struct B3dMeshListener : public SimpleActionB3dListener<AssertB3dAction>
         if (data.type == block_data::Face28Entry::Unknown2)
         {
             Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
-            subMesh->useSharedVertices = false;
+            subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
             subMesh->setMaterialName(GetMaterialName(data.materialIndex));
