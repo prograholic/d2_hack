@@ -51,6 +51,14 @@ B3dMeshListener::B3dMeshListener(const char* b3dId,
 {
 }
 
+B3dMeshListener::~B3dMeshListener()
+{
+    assert(m_meshQueue.size() == 0);
+    assert(m_transformQueue.size() == 0);
+    assert(m_sceneNodes.size() == 0);
+    assert(m_data35TypeQueue.size() == 0);
+}
+
 void B3dMeshListener::OnMaterials(Materials&& materials)
 {
     m_materials = std::move(materials);
@@ -144,7 +152,7 @@ void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
         break;
 
     case block_data::GroupLightingObjectBlock33:
-        // no need to implement
+        ProcessSceneNode();
         break;
 
     case block_data::SimpleFaceDataBlock35:
@@ -194,7 +202,7 @@ void B3dMeshListener::OnBlock(const block_data::GroupObjects5& /* block */)
 
 void B3dMeshListener::OnBlock(const block_data::GroupVertex7& /* block */)
 {
-    CreateMesh();
+    CreateMesh(false);
 }
 
 void B3dMeshListener::OnBlock(const block_data::SimpleFaces8& /* block */)
@@ -303,7 +311,7 @@ void B3dMeshListener::OnBlock(const block_data::SimpleFaceData35& block)
 
 void B3dMeshListener::OnBlock(const block_data::GroupVertexData37& /* block */)
 {
-    CreateMesh();
+    CreateMesh(true);
 }
 
 void B3dMeshListener::OnBlock(const block_data::SimpleGeneratedObjects40& /* block */)
@@ -1086,8 +1094,12 @@ void B3dMeshListener::CreateSceneNode()
     m_sceneNodes.push(sceneNode);
 }
 
-void B3dMeshListener::CreateMesh()
+void B3dMeshListener::CreateMesh(bool shouldHasName)
 {
+    if (shouldHasName)
+    {
+        assert(!m_blockNames.back().empty());
+    }
     m_meshQueue.push(m_meshManager->createManual(GetName("mesh", true), "D2"));
 }
 

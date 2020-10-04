@@ -72,6 +72,8 @@ struct B3dMeshListener : public resource::data::b3d::SimpleActionB3dListener<Ass
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
                     Ogre::MeshManager* meshManager);
+
+    ~B3dMeshListener();
     
     virtual void OnMaterials(resource::data::b3d::Materials&& materials) override;
 
@@ -212,7 +214,7 @@ private:
 
     void CreateSceneNode();
 
-    void CreateMesh();
+    void CreateMesh(bool shouldHasName);
 
     void ProcessMesh();
 

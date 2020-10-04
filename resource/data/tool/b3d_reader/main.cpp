@@ -618,14 +618,23 @@ private:
 
 int main(int argc, char* argv[])
 {
-    if (argc != 2)
+    if (argc < 2)
     {
-        std::cerr << "usage: " << argv[0] << " <input_file>" << std::endl;
+        std::cerr << "usage: " << argv[0] << " <input_file> [--skip_vector_data]" << std::endl;
         return 1;
     }
 
     std::string fileName = argv[1];
 
+    bool printVectorData = true;
+    for (int i = 2; i != argc; ++i)
+    {
+        if (argv[i] == std::string("--skip_vector_data"))
+        {
+            printVectorData = false;
+        }
+    }
+    
     std::ifstream inputFile(fileName.c_str(), std::ios_base::binary);
     if (!inputFile)
     {
@@ -637,7 +646,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        TracingListener listener{false, true, true};
+        TracingListener listener{false, true, printVectorData};
         B3dReader reader;
 
         Ogre::FileStreamDataStream dataStream(&inputFile, false);
