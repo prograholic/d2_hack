@@ -1,14 +1,5 @@
 #include "simple_b3d_mesh_renderer.h"
 
-//#include <OgreMesh.h>
-//#include <OgreSubMesh.h>
-//#include <OgreMeshManager.h>
-//#include <OgreHardwareBufferManager.h>
-//#include <OgreEntity.h>
-
-
-//
-//#include <d2_hack/common/resource_mgmt.h>
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
 
@@ -38,6 +29,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
+#if 0
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
@@ -45,7 +37,9 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
     LoadB3d("ag", b3dSceneNode);
+#endif
     LoadB3d("ah", b3dSceneNode);
+#if 0
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -59,6 +53,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("av", b3dSceneNode);
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
+#endif
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -87,23 +82,36 @@ void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dScene
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
 {
-    D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << node->getName();
-    const auto& children = node->getChildren();
+    D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "NODE: " << node->getName();
+    Ogre::SceneNode* sc = static_cast<Ogre::SceneNode*>(node);
+    const auto& objs = sc->getAttachedObjects();
+    for (auto obj : objs)
     {
-        for (auto child : children)
-        {
-            PrintSceneNode(child, indent + 1);
-        }
+        D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "OBJECT: " << obj->getName();
+    }
+
+    const auto& children = node->getChildren();
+    for (auto child : children)
+    {
+        PrintSceneNode(child, indent + 2);
     }
 }
 
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
-    static int visible_count = 0;
+    static int cnt = 0;
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
-    if (evt.keysym.sym == 'l')
+    if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
+    }
+    else if (evt.keysym.sym == '2')
+    {
+        const auto& children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
+        Ogre::SceneNode* sc = static_cast<Ogre::SceneNode*>(children[cnt % children.size()]);
+        sc->flipVisibility();
+        D2_HACK_LOG(XXX) << sc->getName();
+        cnt += 1;
     }
 
     return BaseApplication::keyPressed(evt);

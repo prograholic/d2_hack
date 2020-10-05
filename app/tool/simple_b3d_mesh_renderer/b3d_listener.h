@@ -2,6 +2,7 @@
 #define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_LISTENER_H
 
 #include <cassert>
+#include <stack>
 
 #include <d2_hack/common/platform.h>
 
@@ -178,7 +179,7 @@ private:
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
 
-    std::queue<Ogre::MeshPtr> m_meshQueue;
+    std::stack<Ogre::MeshPtr> m_meshQueue;
 
     struct Transform
     {
@@ -190,11 +191,11 @@ private:
     std::map<std::string, TransformList> m_transformMap;
     std::list<resource::data::b3d::block_data::GroupTransformMatrix24> m_transformQueue;
 
-    std::queue<std::string> m_blockNames;
+    std::stack<std::string> m_blockNames;
 
-    std::queue<Ogre::Real> m_currentLods;
+    std::stack<Ogre::Real> m_currentLods;
 
-    std::queue<Ogre::SceneNode*> m_sceneNodes;
+    std::stack<Ogre::SceneNode*> m_sceneNodes;
 
     resource::data::b3d::Materials m_materials;
 
@@ -212,13 +213,13 @@ private:
 
     void ProcessTransformQueue();
 
-    void CreateSceneNode();
+    void BeginSceneNode();
+    
+    void EndSceneNode();
 
-    void CreateMesh(bool shouldHasName);
+    void BeginMesh(bool shouldHasName);
 
-    void ProcessMesh();
-
-    void ProcessSceneNode();
+    void EndMesh();
 };
     
 

@@ -18,6 +18,7 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 
 
 #include <d2_hack/common/resource_mgmt.h>
+#include <d2_hack/common/log.h>
 
 //#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
 #define B3D_NOT_IMPLEMENTED()
@@ -53,10 +54,12 @@ B3dMeshListener::B3dMeshListener(const char* b3dId,
 
 B3dMeshListener::~B3dMeshListener()
 {
-    assert(m_meshQueue.size() == 0);
-    assert(m_transformQueue.size() == 0);
-    assert(m_sceneNodes.size() == 0);
-    assert(m_data35TypeQueue.size() == 0);
+    assert(m_meshQueue.empty());
+    assert(m_transformQueue.empty());
+    assert(m_blockNames.empty());
+    assert(m_currentLods.empty());
+    assert(m_sceneNodes.empty());
+    assert(m_data35TypeQueue.empty());
 }
 
 void B3dMeshListener::OnMaterials(Materials&& materials)
@@ -80,15 +83,15 @@ void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
         break;
 
     case block_data::GroupRoadInfraObjectsBlock4:
-        ProcessSceneNode();
+        EndSceneNode();
         break;
 
     case block_data::GroupObjectsBlock5:
-        ProcessSceneNode();
+        EndSceneNode();
         break;
 
     case block_data::GroupVertexBlock7:
-        ProcessMesh();
+        EndMesh();
         break;
 
     case block_data::SimpleFacesBlock8:
@@ -120,7 +123,7 @@ void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
         break;
 
     case block_data::GroupObjectsBlock19:
-        ProcessSceneNode();
+        EndSceneNode();
         break;
 
     case block_data::SimpleFlatCollisionBlock20:
@@ -128,7 +131,7 @@ void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
         break;
 
     case block_data::GroupObjectsBlock21:
-        ProcessSceneNode();
+        EndSceneNode();
         break;
 
     case block_data::SimpleVolumeCollisionBlock23:
@@ -152,7 +155,7 @@ void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
         break;
 
     case block_data::GroupLightingObjectBlock33:
-        ProcessSceneNode();
+        EndSceneNode();
         break;
 
     case block_data::SimpleFaceDataBlock35:
@@ -160,7 +163,7 @@ void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
         break;
 
     case block_data::GroupIndexAndTexturesBlock37:
-        ProcessMesh();
+        EndMesh();
         break;
 
     case block_data::SimpleGeneratedObjectsBlock40:
@@ -191,18 +194,18 @@ void B3dMeshListener::OnBlock(const block_data::Empty0& /* block */)
 
 void B3dMeshListener::OnBlock(const block_data::GroupRoadInfraObjects4& /* block */)
 {
-    CreateSceneNode();
+    BeginSceneNode();
 }
 
 
 void B3dMeshListener::OnBlock(const block_data::GroupObjects5& /* block */)
 {
-    CreateSceneNode();
+    BeginSceneNode();
 }
 
 void B3dMeshListener::OnBlock(const block_data::GroupVertex7& /* block */)
 {
-    CreateMesh(false);
+    BeginMesh(false);
 }
 
 void B3dMeshListener::OnBlock(const block_data::SimpleFaces8& /* block */)
@@ -252,7 +255,7 @@ void B3dMeshListener::OnBlock(const block_data::SimpleObjectConnector18& block)
 
 void B3dMeshListener::OnBlock(const block_data::GroupObjects19& /* block */)
 {
-    CreateSceneNode();
+    BeginSceneNode();
 }
 
 void B3dMeshListener::OnBlock(const block_data::SimpleFlatCollision20& /* block */)
@@ -262,7 +265,7 @@ void B3dMeshListener::OnBlock(const block_data::SimpleFlatCollision20& /* block 
 
 void B3dMeshListener::OnBlock(const block_data::GroupObjects21& /* block */)
 {
-    CreateSceneNode();
+    BeginSceneNode();
 }
 
 void B3dMeshListener::OnBlock(const block_data::SimpleVolumeCollision23& /* block */)
@@ -292,13 +295,13 @@ void B3dMeshListener::OnBlock(const block_data::SimplePortal30& /* block */)
 
 void B3dMeshListener::OnBlock(const block_data::GroupLightingObjects33& block)
 {
-    CreateSceneNode();
+    BeginSceneNode();
 
-    Ogre::Light* light = m_sceneManager->createLight(m_blockNames.back() + ".light");
-    Ogre::SceneNode* lightNode = m_sceneManager->createSceneNode(m_blockNames.back() + ".light.scene_node");
+    Ogre::Light* light = m_sceneManager->createLight(m_blockNames.top() + ".light");
+    Ogre::SceneNode* lightNode = m_sceneManager->createSceneNode(m_blockNames.top() + ".light.scene_node");
     lightNode->attachObject(light);
     lightNode->setPosition(block.position);
-    m_sceneNodes.back()->addChild(lightNode);
+    m_sceneNodes.top()->addChild(lightNode);
 
     // TODO: setup light
     B3D_NOT_IMPLEMENTED();
@@ -311,7 +314,7 @@ void B3dMeshListener::OnBlock(const block_data::SimpleFaceData35& block)
 
 void B3dMeshListener::OnBlock(const block_data::GroupVertexData37& /* block */)
 {
-    CreateMesh(true);
+    BeginMesh(true);
 }
 
 void B3dMeshListener::OnBlock(const block_data::SimpleGeneratedObjects40& /* block */)
@@ -323,7 +326,7 @@ void B3dMeshListener::OnBlock(const block_data::SimpleGeneratedObjects40& /* blo
 
 void B3dMeshListener::OnData(common::PositionWithTexCoordNormalList&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.back();
+    Ogre::MeshPtr currentMesh = m_meshQueue.top();
     
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -364,7 +367,7 @@ void B3dMeshListener::OnData(common::PositionWithTexCoordNormalList&& data)
 
 void B3dMeshListener::OnData(common::PositionWithTexCoordList&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.back();
+    Ogre::MeshPtr currentMesh = m_meshQueue.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -402,7 +405,7 @@ void B3dMeshListener::OnData(common::PositionWithTexCoordList&& data)
 
 void B3dMeshListener::OnData(common::PositionWithNormalList&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.back();
+    Ogre::MeshPtr currentMesh = m_meshQueue.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -444,7 +447,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
     {
         if (data.type == block_data::Mesh35::Indices16)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -452,7 +455,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::Indices1)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -460,7 +463,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::Indices3)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -468,7 +471,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::Indices0)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -476,7 +479,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::Indices17)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -491,7 +494,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
     {
         if (data.type == block_data::Mesh35::Indices1)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -499,7 +502,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::UnknownType3)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = false;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -507,7 +510,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::UnknownType51)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = false;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -515,7 +518,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::UnknownType49)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -530,7 +533,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
     {
         if (data.type == block_data::Mesh35::UnknownType48)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = false;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -538,7 +541,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::UnknownType50)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = false;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -546,7 +549,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::Indices0)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = true;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -554,7 +557,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
         }
         else if (data.type == block_data::Mesh35::Unknown2)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
             subMesh->useSharedVertices = false;
             subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -573,7 +576,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
 
 void B3dMeshListener::OnData(common::IndexList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.back()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
 
     Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
         Ogre::HardwareIndexBuffer::IT_32BIT,
@@ -589,7 +592,7 @@ void B3dMeshListener::OnData(common::IndexList&& data)
 
 void B3dMeshListener::OnData(common::IndexWithTexCoordList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.back()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
 
     common::IndexList indices;
     common::TexCoordList texCoords;
@@ -638,7 +641,7 @@ void B3dMeshListener::OnData(common::IndexWithTexCoordList&& data)
 
 void B3dMeshListener::OnData(common::IndexWithPositionList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.back()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
 
     common::IndexList indices;
     common::PositionList positions;
@@ -687,7 +690,7 @@ void B3dMeshListener::OnData(common::IndexWithPositionList&& data)
 
 void B3dMeshListener::OnData(common::IndexWithPositionTexCoordList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.back()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
 
     common::IndexList indices;
     common::PositionWithTexCoordList positions;
@@ -741,7 +744,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
 {
     if (data.type == block_data::Face8::FaceIndexType129)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -749,7 +752,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType50)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = false;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -757,7 +760,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType178)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = false;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -765,7 +768,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::UnknownType144)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -773,7 +776,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::UnknownType16)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -781,7 +784,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::UnknownType1)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -789,7 +792,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType48)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = false;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -797,7 +800,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::UnknownType0)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -805,7 +808,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType3)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -813,7 +816,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType176)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = false;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -821,7 +824,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType2)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -829,7 +832,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::FaceIndexType128)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -865,7 +868,7 @@ void B3dMeshListener::OnData(block_data::Face28Entry&& data)
 {
     if (data.type == block_data::Face28Entry::Unknown2)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.back()->createSubMesh();
+        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
         subMesh->useSharedVertices = true;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
 
@@ -879,7 +882,7 @@ void B3dMeshListener::OnData(block_data::Face28Entry&& data)
 
 void B3dMeshListener::OnData(std::vector<block_data::Face28Entry::Unknown>&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.back()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
 
     common::TexCoordList texCoords;
     for (const auto& item : data)
@@ -913,7 +916,7 @@ void B3dMeshListener::OnData(std::vector<block_data::Face28Entry::Unknown>&& dat
 
 void B3dMeshListener::OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.back();
+    Ogre::MeshPtr currentMesh = m_meshQueue.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -953,7 +956,7 @@ void B3dMeshListener::OnData(std::vector<block_data::GroupVertexData37::Unknown2
 
 void B3dMeshListener::OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.back();
+    Ogre::MeshPtr currentMesh = m_meshQueue.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -999,7 +1002,7 @@ void B3dMeshListener::OnData(std::vector<block_data::Mesh35::Unknown49>&& data)
         indices.push_back(item.index);
     }
 
-    Ogre::SubMesh* subMesh = m_meshQueue.back()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
 
     Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
         Ogre::HardwareIndexBuffer::IT_32BIT,
@@ -1052,7 +1055,7 @@ std::string B3dMeshListener::GetNameImpl(const std::string& blockName, const std
 
 std::string B3dMeshListener::GetName(const std::string& subname, bool forceUnique) const
 {
-    return GetNameImpl(m_blockNames.back(), subname, forceUnique);
+    return GetNameImpl(m_blockNames.top(), subname, forceUnique);
 }
 
 void B3dMeshListener::ProcessTransformQueue()
@@ -1068,11 +1071,11 @@ void B3dMeshListener::ProcessTransformQueue()
         transformList.push_back(transform);
     }
 
-    m_transformMap[m_blockNames.back()] = transformList;
+    m_transformMap[m_blockNames.top()] = transformList;
     m_transformQueue.pop_back();
 }
 
-void B3dMeshListener::CreateSceneNode()
+void B3dMeshListener::BeginSceneNode()
 {
     std::string name = GetName("scene_node", false);
     if (m_sceneManager->hasSceneNode(name))
@@ -1081,20 +1084,21 @@ void B3dMeshListener::CreateSceneNode()
     }
 
     Ogre::SceneNode* sceneNode = m_sceneManager->createSceneNode(name);
-
-    if (m_sceneNodes.empty())
-    {
-        m_rootNode->addChild(sceneNode);
-    }
-    else
-    {
-        m_sceneNodes.back()->addChild(sceneNode);
-    }
+    Ogre::SceneNode* parent = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
+    parent->addChild(sceneNode);
 
     m_sceneNodes.push(sceneNode);
+
+    D2_HACK_LOG(B3dMeshListener::BeginSceneNode) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
 }
 
-void B3dMeshListener::CreateMesh(bool shouldHasName)
+void B3dMeshListener::EndSceneNode()
+{
+    D2_HACK_LOG(B3dMeshListener::EndSceneNode) << "name: " << m_sceneNodes.top()->getName() << ", scene nodes count: " << m_sceneNodes.size();
+    m_sceneNodes.pop();
+}
+
+void B3dMeshListener::BeginMesh(bool shouldHasName)
 {
     if (shouldHasName)
     {
@@ -1103,20 +1107,18 @@ void B3dMeshListener::CreateMesh(bool shouldHasName)
     m_meshQueue.push(m_meshManager->createManual(GetName("mesh", true), "D2"));
 }
 
-void B3dMeshListener::ProcessMesh()
+void B3dMeshListener::EndMesh()
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.back();
+    Ogre::MeshPtr currentMesh = m_meshQueue.top();
     m_meshQueue.pop();
 
-    const std::string entityName = currentMesh->getName() + ".entity";
-    Ogre::Entity* entity = m_sceneManager->createEntity(entityName, currentMesh);
+    if (m_currentLods.size() < 2)
+    {
+        const std::string entityName = currentMesh->getName() + ".entity";
+        Ogre::Entity* entity = m_sceneManager->createEntity(entityName, currentMesh);
 
-    m_sceneNodes.back()->attachObject(entity);
-}
-
-void B3dMeshListener::ProcessSceneNode()
-{
-    m_sceneNodes.pop();
+        m_sceneNodes.top()->attachObject(entity);
+    }
 }
 
 } // namespace app
