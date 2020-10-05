@@ -1094,6 +1094,14 @@ void B3dMeshListener::BeginSceneNode()
 
 void B3dMeshListener::EndSceneNode()
 {
+    Ogre::SceneNode* node = m_sceneNodes.top();
+
+    if (node->getChildren().empty() && node->getAttachedObjects().empty())
+    {
+        D2_HACK_LOG(B3dMeshListener::EndSceneNode) << "removing unused scene node: " << m_sceneNodes.top()->getName();
+        m_sceneManager->destroySceneNode(node);
+    }
+
     D2_HACK_LOG(B3dMeshListener::EndSceneNode) << "name: " << m_sceneNodes.top()->getName() << ", scene nodes count: " << m_sceneNodes.size();
     m_sceneNodes.pop();
 }
@@ -1102,7 +1110,7 @@ void B3dMeshListener::BeginMesh(bool shouldHasName)
 {
     if (shouldHasName)
     {
-        assert(!m_blockNames.back().empty());
+        assert(!m_blockNames.top().empty());
     }
     m_meshQueue.push(m_meshManager->createManual(GetName("mesh", true), "D2"));
 }
