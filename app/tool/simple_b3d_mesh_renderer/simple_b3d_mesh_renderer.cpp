@@ -1,6 +1,7 @@
 #include "simple_b3d_mesh_renderer.h"
 
 #include <d2_hack/common/log.h>
+#include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
 
 #include "b3d_listener.h"
@@ -29,7 +30,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 0
+#if 1
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
@@ -39,7 +40,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ag", b3dSceneNode);
 #endif
     LoadB3d("ah", b3dSceneNode);
-#if 0
+#if 1
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
