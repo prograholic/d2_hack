@@ -28,13 +28,12 @@ std::string GetResourceName(const common::ResourceName& resName);
 
 struct AssertB3dAction
 {
-    static resource::data::b3d::BlockAction OnBlockBegin(const resource::data::b3d::block_data::BlockHeader& /* blockHeader */)
+    static void OnBlockBegin(const resource::data::b3d::block_data::BlockHeader& /* blockHeader */)
     {
         assert(0 && "OnBlockBegin is not implemented");
-        return resource::data::b3d::BlockAction::Process;
     }
 
-    static void OnBlockEnd(const resource::data::b3d::block_data::BlockHeader& /* blockHeader */, resource::data::b3d::BlockAction /* blockAction */)
+    static void OnBlockEnd(const resource::data::b3d::block_data::BlockHeader& /* blockHeader */)
     {
         assert(0 && "OnBlockEnd is not implemented");
     }
@@ -81,9 +80,9 @@ struct B3dMeshListener : public resource::data::b3d::SimpleActionB3dListener<Ass
 
     ///////////////////////////////////////////////////////////////////////////
 
-    virtual resource::data::b3d::BlockAction OnBlockBegin(const resource::data::b3d::block_data::BlockHeader& blockHeader) override;
+    virtual void OnBlockBegin(const resource::data::b3d::block_data::BlockHeader& blockHeader) override;
 
-    virtual void OnBlockEnd(const resource::data::b3d::block_data::BlockHeader& blockHeader, resource::data::b3d::BlockAction blockAction) override;
+    virtual void OnBlockEnd(const resource::data::b3d::block_data::BlockHeader& blockHeader) override;
 
     virtual void OnNestedBlockBegin(std::uint32_t nestedBlockNumber) override;
 

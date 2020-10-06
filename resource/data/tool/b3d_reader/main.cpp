@@ -27,16 +27,14 @@ public:
     {
     }
 
-    virtual BlockAction OnBlockBegin(const block_data::BlockHeader& blockHeader) override
+    virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
     {
         m_offset += 1;
         GetStream() << "name: " << Print(blockHeader.name) << std::endl;
         GetStream() << "type: " << blockHeader.type << std::endl;
-
-        return BlockAction::Process;
     }
 
-    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */, BlockAction /* blockAction */) override
+    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */) override
     {
         m_offset -= 1;
         GetStream() << std::endl;

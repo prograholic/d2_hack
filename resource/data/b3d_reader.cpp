@@ -44,95 +44,16 @@ static const std::uint32_t BlockEndMagic = 555;
 
 
 
-class BlockProcessor
-{
-public:
-    explicit BlockProcessor(B3dListenerInterface& listener)
-        : m_listener(listener)
-    {
-    }
-
-    BlockAction MergeBlockActions(BlockAction parentBlockAction, BlockAction blockAction)
-    {
-        if (parentBlockAction == BlockAction::Skip)
-        {
-            return parentBlockAction;
-        }
-
-        return blockAction;
-    }
-
-    void OnMaterials(Materials&& materials)
-    {
-        m_listener.OnMaterials(std::move(materials));
-    }
-
-    BlockAction OnBlockBegin(const block_data::BlockHeader& blockHeader)
-    {
-        return m_listener.OnBlockBegin(blockHeader);
-    }
-
-    void OnBlockEnd(const block_data::BlockHeader& blockHeader, BlockAction blockAction)
-    {
-        m_listener.OnBlockEnd(blockHeader, blockAction);
-    }
-
-    void OnNestedBlockBegin(std::uint32_t nestedBlockNumber)
-    {
-        m_listener.OnNestedBlockBegin(nestedBlockNumber);
-    }
-
-    void OnNestedBlockEnd(std::uint32_t nestedBlockNumber)
-    {
-        m_listener.OnNestedBlockEnd(nestedBlockNumber);
-    }
-
-    template <typename BlockType>
-    void OnBlock(const BlockType& block, BlockAction blockAction)
-    {
-        switch (blockAction)
-        {
-        case BlockAction::Process:
-            return m_listener.OnBlock(block);
-
-        case BlockAction::Skip:
-            // does nothing
-            return;
-
-        default:
-            assert(0 && "not implemented");
-        }
-    }
-
-    template <typename DataType>
-    void OnData(DataType&& data, BlockAction blockAction)
-    {
-        switch (blockAction)
-        {
-        case BlockAction::Process:
-            return m_listener.OnData(std::forward<DataType>(data));
-
-        case BlockAction::Skip:
-            // does nothing
-            return;
-
-        default:
-            assert(0 && "not implemented");
-        }
-    }
-
-private:
-    B3dListenerInterface& m_listener;
-};
 
 
 
-class B3dReaderImpl : private common::Reader, private BlockProcessor
+
+class B3dReaderImpl : private common::Reader
 {
 public:
     explicit B3dReaderImpl(Ogre::DataStream& input, B3dListenerInterface& listener)
         : common::Reader(input)
-        , BlockProcessor(listener)
+        , m_listener(listener)
     {
     }
 
@@ -146,6 +67,8 @@ public:
     }
 
 private:
+    B3dListenerInterface& m_listener;
+
     void ReadFileHeader(FileHeader& fileHeader)
     {
         ReadBytes(fileHeader.signature, FileHeader::SignatureSize);
@@ -187,7 +110,7 @@ private:
             ThrowError("Incorrect materials size", "B3dReaderImpl::ReadMaterials");
         }
 
-        OnMaterials(std::move(materials));
+        m_listener.OnMaterials(std::move(materials));
     }
 
     void ReadData(const FileHeader::Section& sectionInfo)
@@ -207,7 +130,7 @@ private:
         bool gotEndOfData = false;
         for (; ; )
         {
-            ReadBlock(gotEndOfData, BlockAction::Process);
+            ReadBlock(gotEndOfData);
             if (gotEndOfData)
             {
                 // reached EOF, exiting
@@ -224,105 +147,105 @@ private:
         }
     }
 
-    void DispatchBlock(std::uint32_t blockType, BlockAction blockAction)
+    void DispatchBlock(std::uint32_t blockType)
     {
         if (blockType == block_data::EmptyBlock0)
         {
-            return ReadBlockData0(blockAction);
+            return ReadBlockData0();
         }
         else if (blockType == block_data::GroupRoadInfraObjectsBlock4)
         {
-            return ReadBlockData4(blockAction);
+            return ReadBlockData4();
         }
         else if (blockType == block_data::GroupObjectsBlock5)
         {
-            return ReadBlockData5(blockAction);
+            return ReadBlockData5();
         }
         else if (blockType == block_data::GroupVertexBlock7)
         {
-            return ReadBlockData7(blockAction);
+            return ReadBlockData7();
         }
         else if (blockType == block_data::SimpleFacesBlock8)
         {
-            return ReadBlockData8(blockAction);
+            return ReadBlockData8();
         }
         else if (blockType == block_data::GroupTriggerBlock9)
         {
-            return ReadBlockData9(blockAction);
+            return ReadBlockData9();
         }
         else if (blockType == block_data::GroupLodParametersBlock10)
         {
-            return ReadBlockData10(blockAction);
+            return ReadBlockData10();
         }
         else if (blockType == block_data::GroupUnknownBlock12)
         {
-            return ReadBlockData12(blockAction);
+            return ReadBlockData12();
         }
         else if (blockType == block_data::SimpleTriggerBlock13)
         {
-            return ReadBlockData13(blockAction);
+            return ReadBlockData13();
         }
         else if (blockType == block_data::SimpleUnknownBlock14)
         {
-            return ReadBlockData14(blockAction);
+            return ReadBlockData14();
         }
         else if (blockType == block_data::SimpleObjectConnectorBlock18)
         {
-            return ReadBlockData18(blockAction);
+            return ReadBlockData18();
         }
         else if (blockType == block_data::GroupObjectsBlock19)
         {
-            return ReadBlockData19(blockAction);
+            return ReadBlockData19();
         }
         else if (blockType == block_data::SimpleFlatCollisionBlock20)
         {
-            return ReadBlockData20(blockAction);
+            return ReadBlockData20();
         }
         else if (blockType == block_data::GroupObjectsBlock21)
         {
-            return ReadBlockData21(blockAction);
+            return ReadBlockData21();
         }
         else if (blockType == block_data::SimpleVolumeCollisionBlock23)
         {
-            return ReadBlockData23(blockAction);
+            return ReadBlockData23();
         }
         else if (blockType == block_data::GroupTransformMatrixBlock24)
         {
-            return ReadBlockData24(blockAction);
+            return ReadBlockData24();
         }
         else if (blockType == block_data::SimpleFacesBlock28)
         {
-            return ReadBlockData28(blockAction);
+            return ReadBlockData28();
         }
         else if (blockType == block_data::GroupUnknownBlock29)
         {
-            return ReadBlockData29(blockAction);
+            return ReadBlockData29();
         }
         else if (blockType == block_data::SimplePortalBlock30)
         {
-            return ReadBlockData30(blockAction);
+            return ReadBlockData30();
         }
         else if (blockType == block_data::GroupLightingObjectBlock33)
         {
-            return ReadBlockData33(blockAction);
+            return ReadBlockData33();
         }
         else if (blockType == block_data::SimpleFaceDataBlock35)
         {
-            return ReadBlockData35(blockAction);
+            return ReadBlockData35();
         }
         else if (blockType == block_data::GroupIndexAndTexturesBlock37)
         {
-            return ReadBlockData37(blockAction);
+            return ReadBlockData37();
         }
         else if (blockType == block_data::SimpleGeneratedObjectsBlock40)
         {
-            return ReadBlockData40(blockAction);
+            return ReadBlockData40();
         }
 
         ThrowError("Unknown block id", "B3dReaderImpl::ReadBlock");
     }
 
-    void ReadBlock(bool& gotEndOfData, BlockAction parentBlockAction)
+    void ReadBlock(bool& gotEndOfData)
     {
         std::uint32_t blockSeparator = ReadUint32();
 
@@ -351,13 +274,11 @@ private:
             ThrowError("Incorrect block id, possible b3d corruption?", "B3dReaderImpl::ReadBlock");
         }
 
-        BlockAction blockAction = OnBlockBegin(blockHeader);
+        m_listener.OnBlockBegin(blockHeader);
 
-        BlockAction mergedBlockAction = MergeBlockActions(parentBlockAction, blockAction);
+        DispatchBlock(blockHeader.type);
 
-        DispatchBlock(blockHeader.type, mergedBlockAction);
-
-        OnBlockEnd(blockHeader, mergedBlockAction);
+        m_listener.OnBlockEnd(blockHeader);
 
         blockSeparator = ReadUint32();
         if ((blockSeparator != BlockNextMagic) && (blockSeparator != BlockEndMagic))
@@ -366,7 +287,7 @@ private:
         }
     }
 
-    void ReadNestedBlocks(BlockAction parentBlockAction)
+    void ReadNestedBlocks()
     {
         const std::uint32_t nestedBlocksCount = ReadUint32();
         if (nestedBlocksCount > 1000)
@@ -377,20 +298,20 @@ private:
 
         for (std::uint32_t nestedBlockNumber = 0; nestedBlockNumber != nestedBlocksCount; ++nestedBlockNumber)
         {
-            OnNestedBlockBegin(nestedBlockNumber);
+            m_listener.OnNestedBlockBegin(nestedBlockNumber);
 
             bool gotEndOfData = false;
-            ReadBlock(gotEndOfData, parentBlockAction);
+            ReadBlock(gotEndOfData);
             if (gotEndOfData)
             {
                 ThrowError("Unexpected end of data", "B3dReaderImpl::ReadNestedBlocks");
             }
 
-            OnNestedBlockEnd(nestedBlockNumber);
+            m_listener.OnNestedBlockEnd(nestedBlockNumber);
         }
     }
 
-    void ReadBlockData0(BlockAction blockAction)
+    void ReadBlockData0()
     {
         block_data::Empty0 block;
 
@@ -398,10 +319,10 @@ private:
         block.unknown = ReadFloat();
         ReadBytes(block.emptyData1, sizeof(block.emptyData1));
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
     }
 
-    void ReadBlockData4(BlockAction blockAction)
+    void ReadBlockData4()
     {
         block_data::GroupRoadInfraObjects4 block;
 
@@ -410,24 +331,24 @@ private:
         ReadBytes(block.name.data(), block.name.size());
         ReadBytes(block.data.data(), block.data.size());
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData5(BlockAction blockAction)
+    void ReadBlockData5()
     {
         block_data::GroupObjects5 block;
 
         block.boundingSphere = ReadBoundingSphere();
         ReadBytes(block.name.data(), block.name.size());
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(block);
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData7(BlockAction blockAction)
+    void ReadBlockData7()
     {
         block_data::GroupVertex7 block;
 
@@ -438,13 +359,13 @@ private:
         common::PositionWithTexCoordList data;
         ReadCount(data, vertexAmount);
 
-        OnBlock(block, blockAction);
-        OnData(std::move(data), blockAction);
+        m_listener.OnBlock(std::move(block));
+        m_listener.OnData(std::move(data));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void DispatchReadFaceData8(const std::uint32_t faceType, const std::uint32_t itemsInFace, BlockAction blockAction)
+    void DispatchReadFaceData8(const std::uint32_t faceType, const std::uint32_t itemsInFace)
     {
         switch (faceType)
         {
@@ -458,7 +379,7 @@ private:
             common::IndexList data;
             ReadCount(data, itemsInFace);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         break;
         
@@ -468,7 +389,7 @@ private:
             common::IndexWithTexCoordList data;
             ReadCount(data, itemsInFace);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         break;
 
@@ -478,7 +399,7 @@ private:
             common::IndexWithPositionList data;
             ReadCount(data, itemsInFace);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         break;
 
@@ -488,7 +409,7 @@ private:
             common::IndexWithPositionTexCoordList data;
             ReadCount(data, itemsInFace);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         break;
         
@@ -497,13 +418,13 @@ private:
         };
     }
 
-    void ReadBlockData8(BlockAction blockAction)
+    void ReadBlockData8()
     {
         {
             block_data::SimpleFaces8 block;
             block.boundingSphere = ReadBoundingSphere();
 
-            OnBlock(block, blockAction);
+            m_listener.OnBlock(std::move(block));
         }
 
         const std::uint32_t facesCount = ReadUint32();
@@ -517,14 +438,14 @@ private:
             face.materialIndex = ReadUint32();
 
             auto faceType = face.type;
-            OnData(std::move(face), blockAction);
+            m_listener.OnData(std::forward<block_data::Face8>(face));
 
             const std::uint32_t itemsInFace = ReadUint32();
-            DispatchReadFaceData8(faceType, itemsInFace, blockAction);
+            DispatchReadFaceData8(faceType, itemsInFace);
         }
     }
 
-    void ReadBlockData9(BlockAction blockAction)
+    void ReadBlockData9()
     {
         block_data::GroupTrigger9 block;
 
@@ -532,12 +453,12 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(block);
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData10(BlockAction blockAction)
+    void ReadBlockData10()
     {
         block_data::GroupLodParameters10 block;
 
@@ -545,12 +466,12 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData12(BlockAction blockAction)
+    void ReadBlockData12()
     {
         block_data::GroupUnknown12 block;
 
@@ -562,12 +483,12 @@ private:
         block.unknown4 = ReadUint32();
         block.unknown5 = ReadUint32();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData13(BlockAction blockAction)
+    void ReadBlockData13()
     {
         {
             block_data::SimpleTrigger13 block;
@@ -576,17 +497,17 @@ private:
             block.unknown0 = ReadUint32();
             block.unknown1 = ReadUint32();
 
-            OnBlock(block, blockAction);
+            m_listener.OnBlock(std::move(block));
         }
 
         const std::uint32_t unknown2Count = ReadUint32();
         common::TriggerInfoList data;
         ReadCount(data.data, unknown2Count);
         
-        OnData(std::move(data), blockAction);
+        m_listener.OnData(std::move(data));
     }
 
-    void ReadBlockData14(BlockAction blockAction)
+    void ReadBlockData14()
     {
         block_data::SimpleUnknown14 block;
         
@@ -600,10 +521,10 @@ private:
         block.unknown5 = ReadFloat();
         block.unknown6 = ReadFloat();
         
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
     }
 
-    void ReadBlockData18(BlockAction blockAction)
+    void ReadBlockData18()
     {
         block_data::SimpleObjectConnector18 block;
 
@@ -611,20 +532,20 @@ private:
         ReadBytes(block.space.data(), block.space.size());
         ReadBytes(block.object.data(), block.object.size());
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
     }
 
-    void ReadBlockData19(BlockAction blockAction)
+    void ReadBlockData19()
     {
         {
             block_data::GroupObjects19 block;
-            OnBlock(block, blockAction);
+            m_listener.OnBlock(std::move(block));
         }
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData20(BlockAction blockAction)
+    void ReadBlockData20()
     {
         block_data::SimpleFlatCollision20 block;
 
@@ -642,12 +563,12 @@ private:
         common::CollisionUnknownList b;
         ReadCount(b.data, countB);
 
-        OnBlock(block, blockAction);
-        OnData(std::move(a), blockAction);
-        OnData(std::move(b), blockAction);
+        m_listener.OnBlock(block);
+        m_listener.OnData(std::move(a));
+        m_listener.OnData(std::move(b));
     }
 
-    void ReadBlockData21(BlockAction blockAction)
+    void ReadBlockData21()
     {
         block_data::GroupObjects21 block;
 
@@ -655,12 +576,12 @@ private:
         block.count = ReadUint32();
         block.unknown = ReadUint32();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void DispatchCollisionEntry23(const std::uint32_t type, BlockAction blockAction)
+    void DispatchCollisionEntry23(const std::uint32_t type)
     {
         if (type == block_data::SimpleVolumeCollision23::UnknownType0)
         {
@@ -668,7 +589,7 @@ private:
             common::CollisionPositionList data;
             ReadCount(data.data, count);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         else
         {
@@ -676,7 +597,7 @@ private:
         }
     }
 
-    void ReadBlockData23(BlockAction blockAction)
+    void ReadBlockData23()
     {
         block_data::SimpleVolumeCollision23 block;
 
@@ -693,16 +614,16 @@ private:
             ThrowError("Unknown type", "B3dReaderImpl::ReadBlockData23");
         }
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(block);
 
         const std::uint32_t collisionCount = ReadUint32();
         for (std::uint32_t collisionNumber = 0; collisionNumber != collisionCount; ++collisionNumber)
         {
-            DispatchCollisionEntry23(block.type, blockAction);
+            DispatchCollisionEntry23(block.type);
         }
     }
 
-    void ReadBlockData24(BlockAction blockAction)
+    void ReadBlockData24()
     {
         block_data::GroupTransformMatrix24 block;
 
@@ -714,12 +635,12 @@ private:
 
         block.unknown = ReadUint32();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void DispatchFaceEntry28(const std::uint32_t type, BlockAction blockAction)
+    void DispatchFaceEntry28(const std::uint32_t type)
     {
         if (type == block_data::Face28Entry::Unknown2)
         {
@@ -727,7 +648,7 @@ private:
             std::vector<block_data::Face28Entry::Unknown> data;
             ReadCount(data, count);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         else
         {
@@ -735,7 +656,7 @@ private:
         }
     }
 
-    void ReadBlockData28(BlockAction blockAction)
+    void ReadBlockData28()
     {
         {
             block_data::SimpleFaces28 block;
@@ -743,7 +664,7 @@ private:
             block.boundingSphere = ReadBoundingSphere();
             block.unknown = ReadVector3();
 
-            OnBlock(block, blockAction);
+            m_listener.OnBlock(std::move(block));
         }
 
         const std::uint32_t facesCount = ReadUint32();
@@ -756,13 +677,13 @@ private:
             data.materialIndex = ReadUint32();
 
             auto dataType = data.type;
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::forward<block_data::Face28Entry>(data));
 
-            DispatchFaceEntry28(dataType, blockAction);
+            DispatchFaceEntry28(dataType);
         }
     }
 
-    void ReadBlockData29(BlockAction blockAction)
+    void ReadBlockData29()
     {
         block_data::GroupUnknown29 block;
 
@@ -772,11 +693,12 @@ private:
 
         ReadBytes(block.unknown1.data(), (block.type == 3 ? 7 : 8) * sizeof(block.unknown1[0]));
 
-        OnBlock(block, blockAction);
-        ReadNestedBlocks(blockAction);
+
+        m_listener.OnBlock(block);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData30(BlockAction blockAction)
+    void ReadBlockData30()
     {
         block_data::SimplePortal30 block;
 
@@ -786,10 +708,10 @@ private:
         block.leftDown = ReadVector3();
         block.upRight = ReadVector3();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
     }
 
-    void ReadBlockData33(BlockAction blockAction)
+    void ReadBlockData33()
     {
         block_data::GroupLightingObjects33 block;
 
@@ -803,12 +725,12 @@ private:
             colorEntry = ReadFloat();
         }
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(std::move(block));
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void DispatchReadMeshData35(const std::uint32_t blockType, const std::uint32_t meshType, BlockAction blockAction)
+    void DispatchReadMeshData35(const std::uint32_t blockType, const std::uint32_t meshType)
     {
         const std::uint32_t dataCount = ReadUint32();
 
@@ -819,28 +741,28 @@ private:
                 common::IndexList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else if (meshType == block_data::Mesh35::Unknown2)
             {
                 common::IndexWithTexCoordList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else if (meshType == block_data::Mesh35::UnknownType48)
             {
                 common::IndexWithPositionList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else if (meshType == block_data::Mesh35::UnknownType50)
             {
                 common::IndexWithPositionTexCoordList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else
             {
@@ -854,28 +776,28 @@ private:
                 common::IndexList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else if (meshType == block_data::Mesh35::UnknownType3)
             {
                 common::IndexWithTexCoordList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else if (meshType == block_data::Mesh35::UnknownType49)
             {
                 std::vector<block_data::Mesh35::Unknown49> data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else if (meshType == block_data::Mesh35::UnknownType51)
             {
                 common::IndexWithPositionList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             else
             {
@@ -895,7 +817,7 @@ private:
                 common::IndexList data;
                 ReadCount(data, dataCount);
 
-                OnData(std::move(data), blockAction);
+                m_listener.OnData(std::move(data));
             }
             break;
 
@@ -909,7 +831,7 @@ private:
         }
     }
 
-    void ReadBlockData35(BlockAction blockAction)
+    void ReadBlockData35()
     {
         block_data::SimpleFaceData35 block;
 
@@ -917,7 +839,7 @@ private:
         block.type = ReadUint32();
         block.materialIndex = ReadUint32();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(block);
 
         const std::uint32_t meshCount = ReadUint32();
         for (std::uint32_t meshNumber = 0; meshNumber != meshCount; ++meshNumber)
@@ -929,13 +851,13 @@ private:
             data.materialIndex = ReadUint32();
 
             auto dataType = data.type;
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::forward<block_data::Mesh35>(data));
 
-            DispatchReadMeshData35(block.type, dataType, blockAction);
+            DispatchReadMeshData35(block.type, dataType);
         }
     }
 
-    void DispatchVertexData37(const std::uint32_t type, BlockAction blockAction)
+    void DispatchVertexData37(const std::uint32_t type)
     {
         const std::uint32_t dataSize = ReadUint32();
 
@@ -953,28 +875,28 @@ private:
             common::PositionWithTexCoordNormalList data;
             ReadCount(data, dataSize);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         else if (type == block_data::GroupVertexData37::Vertex3)
         {
             common::PositionWithNormalList data;
             ReadCount(data, dataSize);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         else if (type == block_data::GroupVertexData37::UnknownType514)
         {
             std::vector<block_data::GroupVertexData37::Unknown514> data;
             ReadCount(data, dataSize);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         else if (type == block_data::GroupVertexData37::UnknownType258)
         {
             std::vector<block_data::GroupVertexData37::Unknown258> data;
             ReadCount(data, dataSize);
 
-            OnData(std::move(data), blockAction);
+            m_listener.OnData(std::move(data));
         }
         else
         {
@@ -982,7 +904,7 @@ private:
         }
     }
 
-    void ReadBlockData37(BlockAction blockAction)
+    void ReadBlockData37()
     {
         block_data::GroupVertexData37 block;
 
@@ -990,14 +912,14 @@ private:
         ReadBytes(block.name.data(), block.name.size());
         block.type = ReadUint32();
 
-        OnBlock(block, blockAction);
+        m_listener.OnBlock(block);
 
-        DispatchVertexData37(block.type, blockAction);
+        DispatchVertexData37(block.type);
 
-        ReadNestedBlocks(blockAction);
+        ReadNestedBlocks();
     }
 
-    void ReadBlockData40(BlockAction blockAction)
+    void ReadBlockData40()
     {
         block_data::SimpleGeneratedObjects40 block;
 
@@ -1012,8 +934,8 @@ private:
         common::GeneratedObjectInfo data;
         ReadCount(data.data, dataSize);
 
-        OnBlock(block, blockAction);
-        OnData(std::move(data), blockAction);
+        m_listener.OnBlock(block);
+        m_listener.OnData(std::move(data));
     }
 };
 

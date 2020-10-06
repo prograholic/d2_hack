@@ -25,12 +25,6 @@ namespace b3d
 
 typedef std::vector<common::ResourceName> Materials;
 
-enum class BlockAction
-{
-    Skip,
-    Process
-};
-
 
 // TODO: add const common::ResourceName& resourceName,  to OnBlock method
 class B3dListenerInterface
@@ -38,9 +32,9 @@ class B3dListenerInterface
 public:
     virtual ~B3dListenerInterface() = default;
 
-    virtual BlockAction OnBlockBegin(const block_data::BlockHeader& /* blockHeader */) = 0;
+    virtual void OnBlockBegin(const block_data::BlockHeader& /* blockHeader */) = 0;
 
-    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */, BlockAction blockAction) = 0;
+    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */) = 0;
 
     virtual void OnNestedBlockBegin(std::uint32_t /* nestedBlockNumber */) = 0;
 
@@ -139,14 +133,14 @@ template <typename SimpleAction>
 class SimpleActionB3dListener : public B3dListenerInterface
 {
 public:
-    virtual BlockAction OnBlockBegin(const block_data::BlockHeader& blockHeader) override
+    virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
     {
-        return SimpleAction::OnBlockBegin(blockHeader);
+        SimpleAction::OnBlockBegin(blockHeader);
     }
 
-    virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader, BlockAction blockAction) override
+    virtual void OnBlockEnd(const block_data::BlockHeader& blockHeader) override
     {
-        SimpleAction::OnBlockEnd(blockHeader, blockAction);
+        SimpleAction::OnBlockEnd(blockHeader);
     }
 
     virtual void OnNestedBlockBegin(std::uint32_t nestedBlockNumber) override
@@ -377,12 +371,11 @@ public:
 
 struct VoidAction
 {
-    static BlockAction OnBlockBegin(const block_data::BlockHeader& /* blockHeader */)
+    static void OnBlockBegin(const block_data::BlockHeader& /* blockHeader */)
     {
-        return BlockAction::Process;
     }
 
-    static void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */, BlockAction /* blockAction */)
+    static void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */)
     {
     }
 

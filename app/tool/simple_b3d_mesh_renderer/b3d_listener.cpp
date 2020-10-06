@@ -69,14 +69,12 @@ void B3dMeshListener::OnMaterials(Materials&& materials)
 
 ///////////////////////////////////////////////////////////////////////////
 
-BlockAction B3dMeshListener::OnBlockBegin(const block_data::BlockHeader& blockHeader)
+void B3dMeshListener::OnBlockBegin(const block_data::BlockHeader& blockHeader)
 {
     m_blockNames.push(GetB3dResourceId(blockHeader.name));
-
-    return BlockAction::Process;
 }
 
-void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader, BlockAction /* blockAction */)
+void B3dMeshListener::OnBlockEnd(const block_data::BlockHeader& blockHeader)
 {
     switch (blockHeader.type)
     {
