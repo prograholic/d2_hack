@@ -193,7 +193,7 @@ private:
 
     std::stack<std::string> m_blockNames;
 
-    std::stack<Ogre::Real> m_currentLods;
+    std::stack<resource::data::b3d::block_data::GroupLodParameters10> m_currentLods;
 
     std::stack<Ogre::SceneNode*> m_sceneNodes;
 

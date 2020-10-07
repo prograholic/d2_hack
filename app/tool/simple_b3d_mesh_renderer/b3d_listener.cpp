@@ -220,7 +220,7 @@ void B3dMeshListener::OnBlock(const block_data::GroupTrigger9& /* block */)
 
 void B3dMeshListener::OnBlock(const block_data::GroupLodParameters10& block)
 {
-    m_currentLods.push(block.distanceToPlayer);
+    m_currentLods.push(block);
 }
 
 void B3dMeshListener::OnBlock(const block_data::GroupUnknown12& /* block */)

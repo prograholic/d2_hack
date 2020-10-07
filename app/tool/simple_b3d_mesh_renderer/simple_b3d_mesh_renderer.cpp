@@ -30,7 +30,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
+#if 0
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
@@ -40,7 +40,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ag", b3dSceneNode);
 #endif
     LoadB3d("ah", b3dSceneNode);
-#if 1
+#if 0
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -108,10 +108,14 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     }
     else if (evt.keysym.sym == '2')
     {
-        const auto& children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
-        Ogre::SceneNode* sc = static_cast<Ogre::SceneNode*>(children[cnt % children.size()]);
-        sc->flipVisibility();
-        D2_HACK_LOG(XXX) << sc->getName();
+        //const auto& children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
+        Ogre::SceneNode* show_009 = m_sceneManager->getSceneNode("ah_show_ah_009_scene_node");
+        //const auto& children = show_009->getChildren();
+        const auto& children = show_009->getAttachedObjects();
+        
+        auto obj = children[cnt % children.size()];
+        obj->setVisible(!obj->getVisible());
+        D2_HACK_LOG(XXX) << obj->getName();
         cnt += 1;
     }
 
