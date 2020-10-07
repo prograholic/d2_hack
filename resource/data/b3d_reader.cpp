@@ -15,6 +15,13 @@ namespace data
 namespace b3d
 {
 
+std::string ResourceNameToString(const common::ResourceName& resName)
+{
+    const char* data = reinterpret_cast<const char*>(resName.data());
+    return std::string(data, data + strnlen(data, resName.size()));
+}
+
+
 struct FileHeader
 {
     static const size_t SignatureSize = 4;
@@ -66,7 +73,22 @@ public:
         ReadData(fileHeader.data);
     }
 
+    common::ResourceName GetProperResourceName(const common::ResourceName& name)
+    {
+        if (name[0] == 0)
+        {
+            std::string uniqueName = std::to_string(m_unnamedObjectCounter++);
+
+            common::ResourceName res{0};
+            std::copy(uniqueName.begin(), uniqueName.end(), res.begin());
+            return res;
+        }
+
+        return name;
+    }
+
 private:
+    int m_unnamedObjectCounter = 0;
     B3dListenerInterface& m_listener;
 
     void ReadFileHeader(FileHeader& fileHeader)
@@ -265,8 +287,10 @@ private:
             ThrowError("Incorrect block begin magic", "B3dReaderImpl::ReadBlock");
         }
 
-        block_data::BlockHeader blockHeader;
+        block_data::BlockHeader blockHeader{0};
         ReadBytes(blockHeader.name.data(), blockHeader.name.size());
+        // Rename all unnammed objects
+        blockHeader.name = GetProperResourceName(blockHeader.name);
         blockHeader.type = ReadUint32();
 
         if (blockHeader.type > block_data::MaxBlockId)

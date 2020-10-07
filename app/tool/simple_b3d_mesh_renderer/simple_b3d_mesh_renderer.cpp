@@ -1,5 +1,9 @@
 #include "simple_b3d_mesh_renderer.h"
 
+#include <OgreEntity.h>
+#include <OgreMesh.h>
+#include <OgreSubMesh.h>
+
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
@@ -89,12 +93,22 @@ static void PrintSceneNode(Ogre::Node* node, int indent)
     for (auto obj : objs)
     {
         D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "OBJECT: " << obj->getName();
+        Ogre::Entity* e = dynamic_cast<Ogre::Entity*>(obj);
+        if (e)
+        {
+            D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << " MESH: " << e->getMesh()->getName();
+            const auto& submeshes = e->getMesh()->getSubMeshes();
+            for (auto submesh : submeshes)
+            {
+                D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "  SUBMESH: " << submesh->getMaterialName();
+            }
+        }
     }
 
     const auto& children = node->getChildren();
     for (auto child : children)
     {
-        PrintSceneNode(child, indent + 2);
+        PrintSceneNode(child, indent + 4);
     }
 }
 

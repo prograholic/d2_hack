@@ -25,6 +25,9 @@ namespace b3d
 
 typedef std::vector<common::ResourceName> Materials;
 
+// TODO: Move to other header (utils.h for example)
+std::string ResourceNameToString(const common::ResourceName& resName);
+
 
 // TODO: add const common::ResourceName& resourceName,  to OnBlock method
 class B3dListenerInterface

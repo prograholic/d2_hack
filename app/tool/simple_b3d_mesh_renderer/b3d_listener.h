@@ -24,8 +24,6 @@ namespace d2_hack
 namespace app
 {
 
-std::string GetResourceName(const common::ResourceName& resName);
-
 struct AssertB3dAction
 {
     static void OnBlockBegin(const resource::data::b3d::block_data::BlockHeader& /* blockHeader */)

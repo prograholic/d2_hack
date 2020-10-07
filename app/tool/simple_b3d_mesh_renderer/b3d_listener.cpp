@@ -31,13 +31,6 @@ namespace app
 
 using namespace resource::data::b3d;
 
-std::string GetResourceName(const common::ResourceName& resName)
-{
-    const char* data = reinterpret_cast<const char*>(resName.data());
-    return std::string(data, data + strnlen(data, resName.size()));
-}
-
-
 B3dMeshListener::B3dMeshListener(const char* b3dId,
                                  const std::string& b3dName,
                                  Ogre::SceneManager* sceneManager,
@@ -1025,23 +1018,17 @@ std::string B3dMeshListener::GetB3dResourceId(const std::string& name) const
 
 std::string B3dMeshListener::GetB3dResourceId(const common::ResourceName& name) const
 {
-    return GetB3dResourceId(GetResourceName(name));
+    return GetB3dResourceId(ResourceNameToString(name));
 }
 
 std::string B3dMeshListener::GetMaterialName(const std::uint32_t materialIndex) const
 {
-    return GetB3dResourceId(GetResourceName(m_materials[materialIndex]));
+    return GetB3dResourceId(ResourceNameToString(m_materials[materialIndex]));
 }
 
 std::string B3dMeshListener::GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique)
 {
-    std::string name = blockName;
-
-    if (name.empty())
-    {
-        name = "unnamed";
-    }
-    name += ("_" + subName);
+    std::string name = blockName + "_" + subName;
 
     if (forceUnique)
     {
@@ -1112,7 +1099,15 @@ void B3dMeshListener::BeginMesh(bool shouldHasName)
     {
         assert(!m_blockNames.top().empty());
     }
-    m_meshQueue.push(m_meshManager->createManual(GetName("mesh", true), "D2"));
+
+    std::string name = GetName("mesh", false);
+    std::string group = "D2";
+    if (m_meshManager->resourceExists(name, group))
+    {
+        name = GetName("mesh", true);
+    }
+
+    m_meshQueue.push(m_meshManager->createManual(name, group));
 }
 
 void B3dMeshListener::EndMesh()
