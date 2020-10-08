@@ -1004,6 +1004,7 @@ void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materi
         }
     }
 
+    // TODO: prograholic: Fix for optimization is needed, some submeshes are smashed
     //if (shouldCreateNewSubMesh)
     {
         Ogre::SubMesh* subMesh = mesh->createSubMesh();
@@ -1018,15 +1019,29 @@ void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materi
 
 void B3dMeshListener::ManageSubMeshIndexBuffer(common::IndexList&& indices, Ogre::SubMesh* subMesh)
 {
-    Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-        Ogre::HardwareIndexBuffer::IT_32BIT,
-        indices.size(),
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+    size_t prevSize = subMesh->indexData->indexBuffer ? subMesh->indexData->indexBuffer->getNumIndexes() : 0;
+    size_t prevSizeInBytes = subMesh->indexData->indexBuffer ? subMesh->indexData->indexBuffer->getSizeInBytes() : 0;
 
-    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
+    auto ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
+        Ogre::HardwareIndexBuffer::IT_32BIT,
+        prevSize + indices.size(),
+        Ogre::HardwareBuffer::HBU_STATIC);
+
+    std::vector<std::uint8_t> buff;
+    buff.resize(ibuf->getSizeInBytes());
+
+    if (prevSize && prevSizeInBytes)
+    {
+        subMesh->indexData->indexBuffer->readData(0, prevSizeInBytes, buff.data());
+    }
+
+    size_t restDataSize = ibuf->getSizeInBytes() - prevSizeInBytes;
+    std::memcpy(buff.data() + prevSizeInBytes, indices.data(), restDataSize);
+
+    ibuf->writeData(0, ibuf->getSizeInBytes(), buff.data(), true);
 
     subMesh->indexData->indexBuffer = ibuf;
-    subMesh->indexData->indexCount = indices.size();
+    subMesh->indexData->indexCount = ibuf->getNumIndexes();
     subMesh->indexData->indexStart = 0;
 }
 
