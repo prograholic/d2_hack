@@ -440,43 +440,23 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
     {
         if (data.type == block_data::Mesh35::Indices16)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::Indices1)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::Indices3)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::Indices0)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::Indices17)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else
         {
@@ -487,35 +467,19 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
     {
         if (data.type == block_data::Mesh35::Indices1)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::UnknownType3)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = false;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::UnknownType51)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = false;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::UnknownType49)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else
         {
@@ -526,35 +490,19 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
     {
         if (data.type == block_data::Mesh35::UnknownType48)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = false;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::UnknownType50)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = false;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::Indices0)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = true;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else if (data.type == block_data::Mesh35::Unknown2)
         {
-            Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-            subMesh->useSharedVertices = false;
-            subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-            subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+            CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
         }
         else
         {
@@ -737,99 +685,51 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
 {
     if (data.type == block_data::Face8::FaceIndexType129)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::FaceIndexType50)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = false;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
     }
     else if (data.type == block_data::Face8::FaceIndexType178)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = false;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::UnknownType144)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::UnknownType16)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::UnknownType1)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::FaceIndexType48)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = false;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::UnknownType0)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::FaceIndexType3)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::FaceIndexType176)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = false;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::FaceIndexType2)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else if (data.type == block_data::Face8::FaceIndexType128)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else
     {
@@ -861,11 +761,7 @@ void B3dMeshListener::OnData(block_data::Face28Entry&& data)
 {
     if (data.type == block_data::Face28Entry::Unknown2)
     {
-        Ogre::SubMesh* subMesh = m_meshQueue.top()->createSubMesh();
-        subMesh->useSharedVertices = true;
-        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_STRIP;
-
-        subMesh->setMaterialName(GetMaterialName(data.materialIndex));
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
     }
     else
     {
@@ -1107,6 +1003,8 @@ void B3dMeshListener::BeginMesh(bool shouldHasName)
         name = GetName("mesh", true);
     }
 
+    D2_HACK_LOG(BeginMesh) << "Starting processing mesh with name: " << name;
+
     m_meshQueue.push(m_meshManager->createManual(name, group));
 }
 
@@ -1122,6 +1020,22 @@ void B3dMeshListener::EndMesh()
 
         m_sceneNodes.top()->attachObject(entity);
     }
+
+    D2_HACK_LOG(EndMesh) << "Finished processing mesh with name: " << currentMesh->getName();
+}
+
+void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType)
+{
+    auto mesh = m_meshQueue.top();
+
+    Ogre::SubMesh* subMesh = mesh->createSubMesh();
+    subMesh->useSharedVertices = useSharedVertices;
+    subMesh->operationType = operationType;
+
+    const std::string materialName = GetMaterialName(materialIndex);
+    subMesh->setMaterialName(materialName);
+
+    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
 }
 
 } // namespace app

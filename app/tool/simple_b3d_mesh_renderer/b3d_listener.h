@@ -6,15 +6,12 @@
 
 #include <d2_hack/common/platform.h>
 
-D2_HACK_DISABLE_WARNING_BEGIN(4100)
-D2_HACK_DISABLE_WARNING_BEGIN(4275)
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 
 #include <OgreMatrix3.h>
+#include <OgreRenderOperation.h>
 
 D2_HACK_DISABLE_WARNING_END() // 4251
-D2_HACK_DISABLE_WARNING_END() // 4275
-D2_HACK_DISABLE_WARNING_END() // 4100
 
 
 #include <d2_hack/resource/data/b3d_reader.h>
@@ -218,6 +215,8 @@ private:
     void BeginMesh(bool shouldHasName);
 
     void EndMesh();
+
+    void CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType);
 };
     
 
