@@ -519,16 +519,7 @@ void B3dMeshListener::OnData(common::IndexList&& data)
 {
     Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
-    Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-        Ogre::HardwareIndexBuffer::IT_32BIT,
-        data.size(),
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    ibuf->writeData(0, ibuf->getSizeInBytes(), data.data(), true);
-
-    subMesh->indexData->indexBuffer = ibuf;
-    subMesh->indexData->indexCount = data.size();
-    subMesh->indexData->indexStart = 0;
+    ManageSubMeshIndexBuffer(std::move(data), subMesh);
 }
 
 void B3dMeshListener::OnData(common::IndexWithTexCoordList&& data)
@@ -543,19 +534,8 @@ void B3dMeshListener::OnData(common::IndexWithTexCoordList&& data)
         texCoords.push_back(item.texCoord);
     }
 
-    {
-        Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-            Ogre::HardwareIndexBuffer::IT_32BIT,
-            indices.size(),
-            Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-        ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
-
-        subMesh->indexData->indexBuffer = ibuf;
-        subMesh->indexData->indexCount = indices.size();
-        subMesh->indexData->indexStart = 0;
-    }
-
+    ManageSubMeshIndexBuffer(std::move(indices), subMesh);
+ 
     {
         std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -592,18 +572,7 @@ void B3dMeshListener::OnData(common::IndexWithPositionList&& data)
         positions.push_back(item.position);
     }
 
-    {
-        Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-            Ogre::HardwareIndexBuffer::IT_32BIT,
-            indices.size(),
-            Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-        ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
-
-        subMesh->indexData->indexBuffer = ibuf;
-        subMesh->indexData->indexCount = indices.size();
-        subMesh->indexData->indexStart = 0;
-    }
+    ManageSubMeshIndexBuffer(std::move(indices), subMesh);
 
     {
         std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
@@ -641,18 +610,7 @@ void B3dMeshListener::OnData(common::IndexWithPositionTexCoordList&& data)
         positions.push_back({ item.position, item.texCoord });
     }
 
-    {
-        Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-            Ogre::HardwareIndexBuffer::IT_32BIT,
-            indices.size(),
-            Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-        ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
-
-        subMesh->indexData->indexBuffer = ibuf;
-        subMesh->indexData->indexCount = indices.size();
-        subMesh->indexData->indexStart = 0;
-    }
+    ManageSubMeshIndexBuffer(std::move(indices), subMesh);
 
     {
         std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
@@ -893,16 +851,7 @@ void B3dMeshListener::OnData(std::vector<block_data::Mesh35::Unknown49>&& data)
 
     Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
-    Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-        Ogre::HardwareIndexBuffer::IT_32BIT,
-        indices.size(),
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
-
-    subMesh->indexData->indexBuffer = ibuf;
-    subMesh->indexData->indexCount = indices.size();
-    subMesh->indexData->indexStart = 0;
+    ManageSubMeshIndexBuffer(std::move(indices), subMesh);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1026,16 +975,59 @@ void B3dMeshListener::EndMesh()
 
 void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType)
 {
+    const std::string materialName = GetMaterialName(materialIndex);
+
     auto mesh = m_meshStack.top();
 
-    Ogre::SubMesh* subMesh = mesh->createSubMesh();
-    subMesh->useSharedVertices = useSharedVertices;
-    subMesh->operationType = operationType;
+    const auto& subMeshes = mesh->getSubMeshes();
 
-    const std::string materialName = GetMaterialName(materialIndex);
-    subMesh->setMaterialName(materialName);
+    bool shouldCreateNewSubMesh = false;
+    if (subMeshes.empty())
+    {
+        shouldCreateNewSubMesh = true;
+    }
+    else
+    {
+        if (!useSharedVertices)
+        {
+            shouldCreateNewSubMesh = true;
+        }
+        else
+        {
+            Ogre::SubMesh* subMesh = subMeshes.back();
+            if ((subMesh->useSharedVertices != useSharedVertices) ||
+                (subMesh->getMaterialName() != materialName) ||
+                (subMesh->operationType != operationType))
+            {
+                shouldCreateNewSubMesh = true;
+            }
+        }
+    }
 
-    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
+    //if (shouldCreateNewSubMesh)
+    {
+        Ogre::SubMesh* subMesh = mesh->createSubMesh();
+        subMesh->useSharedVertices = useSharedVertices;
+        subMesh->operationType = operationType;
+
+        subMesh->setMaterialName(materialName);
+
+        D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
+    }
+}
+
+void B3dMeshListener::ManageSubMeshIndexBuffer(common::IndexList&& indices, Ogre::SubMesh* subMesh)
+{
+    Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
+        Ogre::HardwareIndexBuffer::IT_32BIT,
+        indices.size(),
+        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
+
+    subMesh->indexData->indexBuffer = ibuf;
+    subMesh->indexData->indexCount = indices.size();
+    subMesh->indexData->indexStart = 0;
 }
 
 } // namespace app

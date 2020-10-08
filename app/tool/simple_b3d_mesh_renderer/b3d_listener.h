@@ -217,6 +217,8 @@ private:
     void EndMesh();
 
     void CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType);
+
+    void ManageSubMeshIndexBuffer(common::IndexList&& indices, Ogre::SubMesh* subMesh);
 };
     
 
