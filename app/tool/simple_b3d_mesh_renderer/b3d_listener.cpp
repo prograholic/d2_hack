@@ -47,7 +47,7 @@ B3dMeshListener::B3dMeshListener(const char* b3dId,
 
 B3dMeshListener::~B3dMeshListener()
 {
-    assert(m_meshQueue.empty());
+    assert(m_meshStack.empty());
     assert(m_transformQueue.empty());
     assert(m_blockNames.empty());
     assert(m_currentLods.empty());
@@ -319,7 +319,7 @@ void B3dMeshListener::OnBlock(const block_data::SimpleGeneratedObjects40& /* blo
 
 void B3dMeshListener::OnData(common::PositionWithTexCoordNormalList&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.top();
+    Ogre::MeshPtr currentMesh = m_meshStack.top();
     
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -360,7 +360,7 @@ void B3dMeshListener::OnData(common::PositionWithTexCoordNormalList&& data)
 
 void B3dMeshListener::OnData(common::PositionWithTexCoordList&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.top();
+    Ogre::MeshPtr currentMesh = m_meshStack.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -398,7 +398,7 @@ void B3dMeshListener::OnData(common::PositionWithTexCoordList&& data)
 
 void B3dMeshListener::OnData(common::PositionWithNormalList&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.top();
+    Ogre::MeshPtr currentMesh = m_meshStack.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -517,7 +517,7 @@ void B3dMeshListener::OnData(block_data::Mesh35&& data)
 
 void B3dMeshListener::OnData(common::IndexList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
     Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
         Ogre::HardwareIndexBuffer::IT_32BIT,
@@ -533,7 +533,7 @@ void B3dMeshListener::OnData(common::IndexList&& data)
 
 void B3dMeshListener::OnData(common::IndexWithTexCoordList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
     common::IndexList indices;
     common::TexCoordList texCoords;
@@ -582,7 +582,7 @@ void B3dMeshListener::OnData(common::IndexWithTexCoordList&& data)
 
 void B3dMeshListener::OnData(common::IndexWithPositionList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
     common::IndexList indices;
     common::PositionList positions;
@@ -631,7 +631,7 @@ void B3dMeshListener::OnData(common::IndexWithPositionList&& data)
 
 void B3dMeshListener::OnData(common::IndexWithPositionTexCoordList&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
     common::IndexList indices;
     common::PositionWithTexCoordList positions;
@@ -771,7 +771,7 @@ void B3dMeshListener::OnData(block_data::Face28Entry&& data)
 
 void B3dMeshListener::OnData(std::vector<block_data::Face28Entry::Unknown>&& data)
 {
-    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
     common::TexCoordList texCoords;
     for (const auto& item : data)
@@ -805,7 +805,7 @@ void B3dMeshListener::OnData(std::vector<block_data::Face28Entry::Unknown>&& dat
 
 void B3dMeshListener::OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.top();
+    Ogre::MeshPtr currentMesh = m_meshStack.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -845,7 +845,7 @@ void B3dMeshListener::OnData(std::vector<block_data::GroupVertexData37::Unknown2
 
 void B3dMeshListener::OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& data)
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.top();
+    Ogre::MeshPtr currentMesh = m_meshStack.top();
 
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -891,7 +891,7 @@ void B3dMeshListener::OnData(std::vector<block_data::Mesh35::Unknown49>&& data)
         indices.push_back(item.index);
     }
 
-    Ogre::SubMesh* subMesh = m_meshQueue.top()->getSubMeshes().back();
+    Ogre::SubMesh* subMesh = m_meshStack.top()->getSubMeshes().back();
 
     Ogre::HardwareIndexBufferSharedPtr ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
         Ogre::HardwareIndexBuffer::IT_32BIT,
@@ -1005,13 +1005,13 @@ void B3dMeshListener::BeginMesh(bool shouldHasName)
 
     D2_HACK_LOG(BeginMesh) << "Starting processing mesh with name: " << name;
 
-    m_meshQueue.push(m_meshManager->createManual(name, group));
+    m_meshStack.push(m_meshManager->createManual(name, group));
 }
 
 void B3dMeshListener::EndMesh()
 {
-    Ogre::MeshPtr currentMesh = m_meshQueue.top();
-    m_meshQueue.pop();
+    Ogre::MeshPtr currentMesh = m_meshStack.top();
+    m_meshStack.pop();
 
     if (m_currentLods.size() < 2)
     {
@@ -1026,7 +1026,7 @@ void B3dMeshListener::EndMesh()
 
 void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType)
 {
-    auto mesh = m_meshQueue.top();
+    auto mesh = m_meshStack.top();
 
     Ogre::SubMesh* subMesh = mesh->createSubMesh();
     subMesh->useSharedVertices = useSharedVertices;

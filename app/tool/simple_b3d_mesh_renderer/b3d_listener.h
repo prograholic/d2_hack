@@ -174,7 +174,7 @@ private:
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
 
-    std::stack<Ogre::MeshPtr> m_meshQueue;
+    std::stack<Ogre::MeshPtr> m_meshStack;
 
     struct Transform
     {
