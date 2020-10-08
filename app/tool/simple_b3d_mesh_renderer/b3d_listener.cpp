@@ -671,7 +671,7 @@ void B3dMeshListener::OnData(block_data::Face8&& data)
     }
     else if (data.type == block_data::Face8::UnknownType0)
     {
-        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
+        CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_FAN);
     }
     else if (data.type == block_data::Face8::FaceIndexType3)
     {
