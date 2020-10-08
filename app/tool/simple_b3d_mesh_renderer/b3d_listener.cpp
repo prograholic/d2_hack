@@ -988,7 +988,7 @@ void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materi
     }
     else
     {
-        if (!useSharedVertices)
+        if (!useSharedVertices || (operationType != Ogre::RenderOperation::OT_TRIANGLE_LIST))
         {
             shouldCreateNewSubMesh = true;
         }
@@ -1004,8 +1004,7 @@ void B3dMeshListener::CreateSubMesh(bool useSharedVertices, std::uint32_t materi
         }
     }
 
-    // TODO: prograholic: Fix for optimization is needed, some submeshes are smashed
-    //if (shouldCreateNewSubMesh)
+    if (shouldCreateNewSubMesh)
     {
         Ogre::SubMesh* subMesh = mesh->createSubMesh();
         subMesh->useSharedVertices = useSharedVertices;

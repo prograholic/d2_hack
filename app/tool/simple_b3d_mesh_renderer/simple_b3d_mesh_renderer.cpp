@@ -112,9 +112,19 @@ static void PrintSceneNode(Ogre::Node* node, int indent)
     }
 }
 
+
+void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
+{
+    const auto& children = node->getAttachedObjects();
+
+    auto obj = children[cnt % children.size()];
+    obj->setVisible(!obj->getVisible());
+    D2_HACK_LOG(XXX) << node->getName() << " -> " << obj->getName();
+    cnt += 1;
+}
+
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
-    static int cnt = 0;
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
     if (evt.keysym.sym == '1')
     {
@@ -122,15 +132,29 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     }
     else if (evt.keysym.sym == '2')
     {
-        //const auto& children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
+        static int cnt = 0;
+
         Ogre::SceneNode* show_009 = m_sceneManager->getSceneNode("ah_show_ah_009_scene_node");
-        //const auto& children = show_009->getChildren();
-        const auto& children = show_009->getAttachedObjects();
-        
-        auto obj = children[cnt % children.size()];
-        obj->setVisible(!obj->getVisible());
-        D2_HACK_LOG(XXX) << obj->getName();
+        PrintSubMeshesForNode(show_009, cnt);
+    }
+    else if (evt.keysym.sym == '3')
+    {
+        static int cnt = 0;
+
+        const auto& children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
+        Ogre::Node* node = children[cnt % children.size()];
+
+        Ogre::SceneNode* sceneNode = static_cast<Ogre::SceneNode*>(node);
+        sceneNode->flipVisibility();
+        D2_HACK_LOG(YYY) << node->getName();
         cnt += 1;
+    }
+    else if (evt.keysym.sym == '4')
+    {
+        static int cnt = 0;
+
+        Ogre::SceneNode* show_010 = m_sceneManager->getSceneNode("ah_show_ah_010_scene_node");
+        PrintSubMeshesForNode(show_010, cnt);
     }
 
     return BaseApplication::keyPressed(evt);
