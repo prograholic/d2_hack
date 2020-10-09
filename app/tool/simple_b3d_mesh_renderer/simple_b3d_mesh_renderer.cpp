@@ -34,7 +34,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
+#if 0
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
@@ -44,7 +44,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ag", b3dSceneNode);
 #endif
     LoadB3d("ah", b3dSceneNode);
-#if 1
+#if 0
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -173,6 +173,10 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 
             child->setPosition(pos);
         }
+    }
+    else if (evt.keysym.sym == 'b')
+    {
+        D2_HACK_LOG(BREAK) << "BREAK";
     }
 
     return BaseApplication::keyPressed(evt);

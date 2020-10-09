@@ -20,10 +20,11 @@ namespace b3d
 class TracingListener : public B3dListenerInterface
 {
 public:
-    TracingListener(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData)
+    TracingListener(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printMeshInfo)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
         , m_printVectorData(printVectorData)
+        , m_printMeshInfo(printMeshInfo)
     {
     }
 
@@ -286,21 +287,31 @@ public:
 
     virtual void OnData(block_data::Face8&& data) override
     {
-        GetStream() << "Face8 {" <<
-            "type: " << data.type << ", "
-            "unknown0: " << data.unknown0 << ", "
-            "unknown1: " << data.unknown1 << ", "
-            "materialIndex: " << data.materialIndex << "}" << std::endl;
+        if (m_printMeshInfo)
+        {
+            GetStream() << "Face8 {" <<
+                "type: " << data.type << ", "
+                "unknown0: " << data.unknown0 << ", "
+                "unknown1: " << data.unknown1 << ", "
+                "materialIndex: " << data.materialIndex << "}" << std::endl;
+        }
     }
 
     virtual void OnData(common::IndexList&& data) override
     {
-        PrintVectorData(data, "IndexList");
+        if (m_printMeshInfo)
+        {
+            PrintVectorData(data, "IndexList");
+        }
     }
 
     virtual void OnData(common::IndexWithPositionList&& data) override
     {
-        PrintVectorData(data, "IndexWithPositionList");
+        if (m_printMeshInfo)
+        {
+            PrintVectorData(data, "IndexWithPositionList");
+        }
+        
     }
 
     virtual void OnData(common::IndexWithPositionTexCoordList&& data) override
@@ -334,18 +345,24 @@ public:
 
     virtual void OnData(block_data::Mesh35&& data) override
     {
-        auto& stream = GetStream();
+        if (m_printMeshInfo)
+        {
+            auto& stream = GetStream();
 
-        stream << "Mesh35{" <<
-            "type: " << data.type << ", "
-            "unknown0: " << data.unknown0 << ", "
-            "unknown1: " << data.unknown1 << ", "
-            "materialIndex: " << data.materialIndex << "}" << std::endl;
+            stream << "Mesh35{" <<
+                "type: " << data.type << ", "
+                "unknown0: " << data.unknown0 << ", "
+                "unknown1: " << data.unknown1 << ", "
+                "materialIndex: " << data.materialIndex << "}" << std::endl;
+        }
     }
 
     virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& data) override
     {
-        PrintVectorData(data, "std::vector<block_data::Mesh35::Unknown49>");
+        if (m_printMeshInfo)
+        {
+            PrintVectorData(data, "std::vector<block_data::Mesh35::Unknown49>");
+        }
     }
 
     virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& data) override
@@ -392,6 +409,7 @@ private:
     bool m_printBoundingSphere;
     bool m_newLineForVectorData;
     bool m_printVectorData;
+    bool m_printMeshInfo;
     size_t m_offset = 0;
 
     std::string GetOffsetString(int adjustOffset = 0) const
@@ -627,11 +645,21 @@ int main(int argc, char* argv[])
     std::string fileName = argv[1];
 
     bool printVectorData = true;
+    bool printBoundingSphere = false;
+    bool printMeshInfo = true;
     for (int i = 2; i != argc; ++i)
     {
         if (argv[i] == std::string("--skip_vector_data"))
         {
             printVectorData = false;
+        }
+        else if (argv[i] == std::string("--print_bounding_sphere"))
+        {
+            printBoundingSphere = true;
+        }
+        else if (argv[i] == std::string("--skip_mesh_info"))
+        {
+            printMeshInfo = false;
         }
     }
     
@@ -646,7 +674,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        TracingListener listener{false, true, printVectorData};
+        TracingListener listener{printBoundingSphere, true, printVectorData, printMeshInfo};
         B3dReader reader;
 
         Ogre::FileStreamDataStream dataStream(&inputFile, false);
