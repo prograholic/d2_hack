@@ -65,26 +65,12 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Empt
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupRoadInfraObjects4& /* block */, VisitMode visitMode)
 {
-    if (visitMode == VisitMode::PreOrder)
-    {
-        BeginSceneNode(name);
-    }
-    else
-    {
-        EndSceneNode();
-    }
+    ProcessSceneNode(name, visitMode);
 }
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupObjects5& /* block */, VisitMode visitMode)
 {
-    if (visitMode == VisitMode::PreOrder)
-    {
-        BeginSceneNode(name);
-    }
-    else
-    {
-        EndSceneNode();
-    }
+    ProcessSceneNode(name, visitMode);
 }
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupVertex7& block, VisitMode visitMode)
@@ -221,14 +207,7 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupObjects19& /* block */, VisitMode visitMode)
 {
-    if (visitMode == VisitMode::PreOrder)
-    {
-        BeginSceneNode(name);
-    }
-    else
-    {
-        EndSceneNode();
-    }
+    ProcessSceneNode(name, visitMode);
 }
 
 void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::SimpleFlatCollision20& /* block */, VisitMode /* visitMode */)
@@ -238,14 +217,7 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupObjects21& /* block */, VisitMode visitMode)
 {
-    if (visitMode == VisitMode::PreOrder)
-    {
-        BeginSceneNode(name);
-    }
-    else
-    {
-        EndSceneNode();
-    }
+    ProcessSceneNode(name, visitMode);
 }
 
 void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::SimpleVolumeCollision23& /* block */, VisitMode /* visitMode */)
@@ -308,24 +280,19 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupLightingObjects33& block, VisitMode visitMode)
 {
+    Ogre::SceneNode* sceneNode = ProcessSceneNode(name, visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
-        BeginSceneNode(name);
-
         std::string full_name = GetNameImpl(name, "light", false);
 
         Ogre::Light* light = m_sceneManager->createLight(full_name);
         Ogre::SceneNode* lightNode = m_sceneManager->createSceneNode(full_name + "_scene_node");
         lightNode->attachObject(light);
         lightNode->setPosition(block.position);
-        m_sceneNodes.top()->addChild(lightNode);
+        sceneNode->addChild(lightNode);
 
         // TODO: setup light
         B3D_NOT_IMPLEMENTED();
-    }
-    else
-    {
-        EndSceneNode();
     }
 }
 
@@ -496,26 +463,33 @@ std::string B3dTreeVisitor::GetNameImpl(const std::string& blockName, const std:
     return name;
 }
 
-void B3dTreeVisitor::BeginSceneNode(const std::string& name)
+Ogre::SceneNode* B3dTreeVisitor::ProcessSceneNode(const std::string& name, VisitMode visitMode)
 {
-    std::string full_name = GetNameImpl(name, "scene_node", false);
-    if (m_sceneManager->hasSceneNode(full_name))
+    if (visitMode == VisitMode::PreOrder)
     {
-        full_name = GetNameImpl(name, "scene_node", true);
+        std::string full_name = GetNameImpl(name, "scene_node", false);
+        if (m_sceneManager->hasSceneNode(full_name))
+        {
+            full_name = GetNameImpl(name, "scene_node", true);
+        }
+
+        Ogre::SceneNode* sceneNode = m_sceneManager->createSceneNode(full_name);
+        Ogre::SceneNode* parent = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
+        parent->addChild(sceneNode);
+
+        m_sceneNodes.push(sceneNode);
+
+        D2_HACK_LOG(B3dTreeVisitor::CreateSceneNode) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
+
+        return sceneNode;
     }
+    else
+    {
+        Ogre::SceneNode* sceneNode = m_sceneNodes.top();
+        m_sceneNodes.pop();
 
-    Ogre::SceneNode* sceneNode = m_sceneManager->createSceneNode(full_name);
-    Ogre::SceneNode* parent = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
-    parent->addChild(sceneNode);
-
-    m_sceneNodes.push(sceneNode);
-
-    D2_HACK_LOG(B3dTreeVisitor::CreateSceneNode) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
-}
-
-void B3dTreeVisitor::EndSceneNode()
-{
-    m_sceneNodes.pop();
+        return sceneNode;
+    }
 }
 
 Ogre::MeshPtr B3dTreeVisitor::BeginMesh(const std::string& blockName)
