@@ -99,6 +99,9 @@ void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dScene
     Ogre::FileStreamDataStream dataStream(&inputFile, false);
     B3dReader reader;
     B3dTree b3dTree = reader.Read(dataStream);
+
+    optimizations::RemoveEmptyNodes(b3dTree);
+    optimizations::MergeFaces(b3dTree);
     
     B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
 

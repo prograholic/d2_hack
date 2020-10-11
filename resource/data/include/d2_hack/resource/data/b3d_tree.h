@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include <d2_hack/resource/data/b3d_types.h>
+#include <d2_hack/resource/data/b3d_visitor.h>
 
 namespace d2_hack
 {
@@ -18,57 +18,6 @@ namespace data
 namespace b3d
 {
 
-class NodeVisitorInterface
-{
-public:
-    virtual ~NodeVisitorInterface() = default;
-
-    virtual void Visit(const std::string& /* name */, const block_data::Empty0& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupRoadInfraObjects4& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupObjects5& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupVertex7& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleFaces8& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupTrigger9& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupLodParameters10& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupUnknown12& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleTrigger13& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleUnknown14& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleObjectConnector18& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupObjects19& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleFlatCollision20& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupObjects21& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleVolumeCollision23& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupTransformMatrix24& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupUnknown29& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimplePortal30& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleFaceData35& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */) = 0;
-
-    virtual void Visit(const std::string& /* name */, const block_data::SimpleGeneratedObjects40& /* block */, VisitMode /* visitMode */) = 0;
-};
 
 typedef std::shared_ptr<class Node> NodePtr;
 typedef std::weak_ptr<class Node> WeakNodePtr;

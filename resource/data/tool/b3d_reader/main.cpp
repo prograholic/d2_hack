@@ -4,7 +4,6 @@
 #include <string>
 #include <stdexcept>
 
-#include <d2_hack/resource/data/b3d.h>
 #include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/resource/data/b3d_tree.h>
 #include <d2_hack/common/utils.h>
@@ -51,7 +50,7 @@ public:
         GetStream() << "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::Empty0& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::Empty0& block, VisitMode /* visitMode */) override
     {
         GetStream() << "Empty0: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -60,7 +59,7 @@ public:
         GetStream(1) << "emptyData1: " << ToString(std::begin(block.emptyData1), std::end(block.emptyData1)) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupRoadInfraObjects4& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupRoadInfraObjects4& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupRoadInfraObjects4: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -69,7 +68,7 @@ public:
         GetStream(1) << "data: " << ToString(block.data) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupObjects5& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupObjects5& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupObjects5: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -77,7 +76,7 @@ public:
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupVertex7& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupVertex7& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupVertex7: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -86,7 +85,7 @@ public:
         PrintVectorData(block.vertices, "vertices", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleFaces8: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -94,7 +93,7 @@ public:
         PrintVectorData(block.faces, "faces", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupTrigger9: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -103,7 +102,7 @@ public:
         GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupLodParameters10& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupLodParameters10& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupLodParameters10: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -112,7 +111,7 @@ public:
         GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupUnknown12& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupUnknown12& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupUnknown12: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -125,7 +124,7 @@ public:
         GetStream(1) << "unknown5: " << ToString(block.unknown5) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleTrigger13& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleTrigger13& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleTrigger13: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -135,7 +134,7 @@ public:
         PrintVectorData(block.unknown2, "unknown2", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleUnknown14& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleUnknown14& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleUnknown14: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -149,7 +148,7 @@ public:
         GetStream(1) << "unknown6: " << block.unknown6 << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleObjectConnector18& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleObjectConnector18& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleObjectConnector18: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -158,13 +157,13 @@ public:
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupObjects19& /* block */, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupObjects19& /* block */, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupObjects19: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleFlatCollision20& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFlatCollision20& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleFlatCollision20: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -175,7 +174,7 @@ public:
         PrintVectorData(block.unknown3, "unknown3", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupObjects21& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupObjects21& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupObjects21: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -184,7 +183,7 @@ public:
         GetStream(1) << "unknown: " << block.unknown << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleVolumeCollision23& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleVolumeCollision23& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleVolumeCollision23: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -197,7 +196,7 @@ public:
         PrintVectorData(block.unknown5, "unknown5", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupTransformMatrix24& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupTransformMatrix24& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupTransformMatrix24: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -208,7 +207,7 @@ public:
         GetStream(1) << "unknown: " << block.unknown << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleFaces28& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleFaces28: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -217,7 +216,7 @@ public:
         PrintVectorData(block.facesEntries, "facesEntries", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupUnknown29: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -236,7 +235,7 @@ public:
             "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimplePortal30& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimplePortal30& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimplePortal30: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -246,7 +245,7 @@ public:
         GetStream(1) << "upRight: " << ToString(block.upRight) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupLightingObjects33& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupLightingObjects33& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupLightingObjects33: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -270,7 +269,7 @@ public:
             << block.color[11] << "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleFaceData35& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaceData35& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleFaceData35: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -280,7 +279,7 @@ public:
         PrintVectorData(block.meshList, "meshList", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
     {
         GetStream() << "GroupVertexData37: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -290,7 +289,7 @@ public:
         PrintVariant(block.data, "data", 1);
     }
 
-    virtual void Visit(const std::string& name, const block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
     {
         GetStream() << "SimpleGeneratedObjects40: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
