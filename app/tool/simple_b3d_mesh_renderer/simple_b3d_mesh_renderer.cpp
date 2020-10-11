@@ -7,6 +7,7 @@
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
+#include <d2_hack/resource/data/b3d_reader.h>
 
 #include "b3d_visitor.h"
 

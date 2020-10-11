@@ -3,6 +3,8 @@ d2_hack_add_executable(d2_hack.app.simple_b3d_mesh_renderer
     simple_b3d_mesh_renderer.h
     b3d_visitor.cpp
     b3d_visitor.h
+    b3d_scene_builder.cpp
+    b3d_scene_builder.h
     
     main.cpp
 )
