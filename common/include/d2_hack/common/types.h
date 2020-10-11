@@ -20,6 +20,8 @@ const size_t ResourceNameSize = 32;
 
 typedef std::array<std::uint8_t, ResourceNameSize> ResourceName;
 
+typedef std::vector<common::ResourceName> Materials;
+
 typedef std::vector<std::uint8_t> Blob;
 
 struct BoundingSphere
@@ -31,17 +33,6 @@ struct BoundingSphere
 
 typedef Ogre::Vector3 Position;
 typedef std::vector<Position> PositionList;
-
-typedef Ogre::Vector3 CollisionPosition;
-struct CollisionPositionList
-{
-    std::vector<CollisionPosition> data;
-};
-
-struct CollisionUnknownList
-{
-    std::vector<Ogre::Real> data;
-};
 
 typedef Ogre::Vector2 TexCoord;
 typedef std::vector<TexCoord> TexCoordList;
@@ -113,17 +104,6 @@ struct IndexWithPositionTexCoord
 };
 
 typedef std::vector<IndexWithPositionTexCoord> IndexWithPositionTexCoordList;
-
-
-struct TriggerInfoList
-{
-    std::vector<Ogre::Real> data;
-};
-
-struct GeneratedObjectInfo
-{
-    std::vector<Ogre::Real> data;
-};
 
 } // namespace common
 } // namespace d2_hack

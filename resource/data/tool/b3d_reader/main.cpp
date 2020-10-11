@@ -1,12 +1,13 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <strstream>
 #include <string>
 #include <stdexcept>
 
 #include <d2_hack/resource/data/b3d.h>
 #include <d2_hack/resource/data/b3d_reader.h>
+#include <d2_hack/resource/data/b3d_tree.h>
+#include <d2_hack/common/utils.h>
 
 namespace d2_hack
 {
@@ -17,10 +18,10 @@ namespace data
 namespace b3d
 {
 
-class TracingListener : public B3dListenerInterface
+class TracingVisitor : public NodeVisitorInterface
 {
 public:
-    TracingListener(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printMeshInfo)
+    TracingVisitor(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printMeshInfo)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
         , m_printVectorData(printVectorData)
@@ -28,217 +29,233 @@ public:
     {
     }
 
-    virtual void OnBlockBegin(const block_data::BlockHeader& blockHeader) override
-    {
-        m_offset += 1;
-        GetStream() << "name: " << Print(blockHeader.name) << std::endl;
-        GetStream() << "type: " << blockHeader.type << std::endl;
-    }
-
-    virtual void OnBlockEnd(const block_data::BlockHeader& /* blockHeader */) override
-    {
-        m_offset -= 1;
-        GetStream() << std::endl;
-    }
-
-    virtual void OnNestedBlockBegin(std::uint32_t /* nestedBlockNumber */) override
-    {
-        GetStream() << "nested: {" << std::endl;
-    }
-
-    virtual void OnNestedBlockEnd(std::uint32_t /* nestedBlockNumber */) override
-    {
-        GetStream() << "} //nested" << std::endl;
-    }
-
-    virtual void OnMaterials(Materials&& materials) override
+    void Visit(const common::Materials& materials)
     {
         PrintVectorData(materials, "materials");
     }
 
-    virtual void OnBlock(const block_data::Empty0& block) override
+    void SetLevel(int level)
     {
-        GetStream() << "Empty0 {"
-            "emptyData0: " << Print(std::begin(block.emptyData0), std::end(block.emptyData0)) << ", "
-            "unknown: " << block.unknown << ", "
-            "emptyData1: " << Print(std::begin(block.emptyData1), std::end(block.emptyData1)) <<
+        m_offset = level;
+    }
+
+    void BeginNested()
+    {
+        GetStream(1) << "nested" << std::endl;
+        GetStream(1) << "{" << std::endl;
+    }
+
+    void EndNested()
+    {
+        GetStream(1) << "}" << std::endl;
+        GetStream() << "}" << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::Empty0& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "Empty0: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "emptyData0: " << ToString(std::begin(block.emptyData0), std::end(block.emptyData0)) << "," << std::endl;
+        GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
+        GetStream(1) << "emptyData1: " << ToString(std::begin(block.emptyData1), std::end(block.emptyData1)) << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupRoadInfraObjects4& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupRoadInfraObjects4: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
+        GetStream(1) << "data: " << ToString(block.data) << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupObjects5& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupObjects5: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "name: " << ToString(block.name) << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupVertex7& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupVertex7: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "name: " << ToString(block.name) << std::endl;
+        PrintVectorData(block.vertices, "vertices", 1);
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleFaces8: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
+        PrintVectorData(block.faces, "faces", 1);
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupTrigger9: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
+        GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupLodParameters10& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupLodParameters10: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown: " << ToString(block.unknown) << "," << std::endl;
+        GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupUnknown12& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupUnknown12: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
+        GetStream(1) << "unknown1: " << ToString(block.unknown1) << "," << std::endl;
+        GetStream(1) << "unknown2: " << ToString(block.unknown2) << "," << std::endl;
+        GetStream(1) << "unknown3: " << ToString(block.unknown3) << "," << std::endl;
+        GetStream(1) << "unknown4: " << ToString(block.unknown4) << "," << std::endl;
+        GetStream(1) << "unknown5: " << ToString(block.unknown5) << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleTrigger13& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleTrigger13: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
+        GetStream(1) << "unknown1: " << block.unknown1 << std::endl;
+        PrintVectorData(block.unknown2, "unknown2", 1);
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleUnknown14& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleUnknown14: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
+        GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
+        GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
+        GetStream(1) << "unknown3: " << block.unknown3 << "," << std::endl;
+        GetStream(1) << "unknown4: " << block.unknown4 << "," << std::endl;
+        GetStream(1) << "unknown5: " << block.unknown5 << "," << std::endl;
+        GetStream(1) << "unknown6: " << block.unknown6 << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleObjectConnector18& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleObjectConnector18: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
+        GetStream(1) << "object: " << ToString(block.object) << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupObjects19& /* block */, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupObjects19: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleFlatCollision20& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleFlatCollision20: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
+        GetStream(1) << "unknown1: " << block.unknown1 << std::endl;
+        PrintVectorData(block.unknown2, "unknown2", 1);
+        PrintVectorData(block.unknown3, "unknown3", 1);
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupObjects21& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupObjects21: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "count: " << block.count << "," << std::endl;
+        GetStream(1) << "unknown: " << block.unknown << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleVolumeCollision23& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleVolumeCollision23: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
+        GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
+        GetStream(1) << "type: " << block.type << "," << std::endl;
+        GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
+        GetStream(1) << "unknown3: " << block.unknown3 << "," << std::endl;
+        GetStream(1) << "unknown4: " << block.unknown4 << std::endl;
+        PrintVectorData(block.unknown5, "unknown5", 1);
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupTransformMatrix24& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupTransformMatrix24: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "x: " << block.x << "," << std::endl;
+        GetStream(1) << "y: " << block.y << "," << std::endl;
+        GetStream(1) << "z: " << block.z << "," << std::endl;
+        GetStream(1) << "position: " << block.position << "," << std::endl;
+        GetStream(1) << "unknown: " << block.unknown << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, const block_data::SimpleFaces28& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "SimpleFaces28: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown: " << ToString(block.unknown) << std::endl;
+        PrintVectorData(block.facesEntries, "facesEntries", 1);
+    }
+
+    virtual void Visit(const std::string& name, const block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << "GroupUnknown29: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "type: " << ToString(block.type) << "," << std::endl;
+        GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
+        GetStream(1) << "unknown1: "
+            "{" << block.unknown1[0] << ", "
+            "" << block.unknown1[1] << ", "
+            "" << block.unknown1[2] << ", "
+            "" << block.unknown1[3] << ", "
+            "" << block.unknown1[4] << ", "
+            "" << block.unknown1[5] << ", "
+            "" << block.unknown1[6] << ", "
+            "" << block.unknown1[7] << ", "
             "}" << std::endl;
     }
 
-    virtual void OnBlock(const block_data::GroupRoadInfraObjects4& block) override
+    virtual void Visit(const std::string& name, const block_data::SimplePortal30& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupRoadInfraObjects4 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "name: " << Print(block.name) << ", "
-            "data: " << Print(block.data) << "}" << std::endl;
+        GetStream() << "SimplePortal30: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "connectedRoom: " << ToString(block.connectedRoom) << "," << std::endl;
+        GetStream(1) << "leftDown: " << ToString(block.leftDown) << "," << std::endl;
+        GetStream(1) << "upRight: " << ToString(block.upRight) << std::endl;
     }
 
-    virtual void OnBlock(const block_data::GroupObjects5& block) override
+    virtual void Visit(const std::string& name, const block_data::GroupLightingObjects33& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupObjects5 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "name: " << Print(block.name) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupVertex7& block) override
-    {
-        GetStream() << "GroupVertex7 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "name: " << Print(block.name) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaces8& block) override
-    {
-        GetStream() << "SimpleFaces8 {"
-            "boundingSphere: " << Print(block.boundingSphere) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupTrigger9& block) override
-    {
-        GetStream() << "GroupTrigger9 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown: " << block.unknown << ", "
-            "distanceToPlayer: " << block.distanceToPlayer << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupLodParameters10& block) override
-    {
-        GetStream() << "GroupLodParameters10 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown: " << Print(block.unknown) << ", "
-            "distanceToPlayer: " << block.distanceToPlayer <<
-            "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupUnknown12& block) override
-    {
-        GetStream() << "GroupUnknown12 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown: " << Print(block.unknown0) << ", "
-            "unknown: " << Print(block.unknown1) << ", "
-            "unknown: " << Print(block.unknown2) << ", "
-            "unknown: " << Print(block.unknown3) << ", "
-            "unknown: " << Print(block.unknown4) << ", "
-            "unknown: " << Print(block.unknown5) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleTrigger13& block) override
-    {
-        GetStream() << "SimpleTrigger13 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown0: " << block.unknown0 << ", "
-            "unknown1: " << block.unknown1 << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleUnknown14& block) override
-    {
-        GetStream() << "SimpleUnknown14 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown0: " << block.unknown0 << ", "
-            "unknown0: " << block.unknown1 << ", "
-            "unknown0: " << block.unknown2 << ", "
-            "unknown0: " << block.unknown3 << ", "
-            "unknown0: " << block.unknown4 << ", "
-            "unknown0: " << block.unknown5 << ", "
-            "unknown1: " << block.unknown6 << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleObjectConnector18& block) override
-    {
-        GetStream() << "SimpleObjectConnector18 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "space: " << Print(block.space) << ", "
-            "object: " << Print(block.object) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects19& /* block */) override
-    {
-        GetStream() << "GroupObjects19 {}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleFlatCollision20& block) override
-    {
-        GetStream() << "SimpleFlatCollision20 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown0: " << block.unknown0 << ", "
-            "unknown1: " << block.unknown1 << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupObjects21& block) override
-    {
-        GetStream() << "GroupObjects21 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "count: " << block.count << ", "
-            "unknown: " << block.unknown <<
-            "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleVolumeCollision23& block) override
-    {
-        GetStream() << "SimpleVolumeCollision23 {"
-            "unknown0" << block.unknown0 << ", "
-            "unknown1" << block.unknown1 << ", "
-            "type" << block.type << ", "
-            "unknown2" << block.unknown2 << ", "
-            "unknown3" << block.unknown3 << ", "
-            "unknown4" << block.unknown4 << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupTransformMatrix24& block) override
-    {
-        GetStream() << "GroupTransformMatrix24 {"
-            "x: " << block.x << ", "
-            "y: " << block.y << ", "
-            "z: " << block.z << ", "
-            "position: " << block.position << ", "
-            "unknown: " << block.unknown <<
-            "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimpleFaces28& block) override
-    {
-        GetStream() << "SimpleFaces28 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown: " << Print(block.unknown) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupUnknown29& block) override
-    {
-        GetStream() << "GroupUnknown29 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "type: " << Print(block.type) << ", "
-            "unknown0: " << Print(block.unknown0) << ", "
-            "unknown1: "
-            "{" << Print(block.unknown1[0]) << ", "
-            "" << Print(block.unknown1[1]) << ", "
-            "" << Print(block.unknown1[2]) << ", "
-            "" << Print(block.unknown1[3]) << ", "
-            "" << Print(block.unknown1[4]) << ", "
-            "" << Print(block.unknown1[5]) << ", "
-            "" << Print(block.unknown1[6]) << ", "
-            "" << Print(block.unknown1[7]) << ", "
-            "}"
-            "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::SimplePortal30& block) override
-    {
-        GetStream() << "SimplePortal30 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "connectedRoom: " << Print(block.connectedRoom) << ", "
-            "leftDown: " << Print(block.leftDown) << ", "
-            "upRight: " << Print(block.upRight) << "}" << std::endl;
-    }
-
-    virtual void OnBlock(const block_data::GroupLightingObjects33& block) override
-    {
-        GetStream() << "GroupLightingObjects33 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "unknown0: " << block.unknown0 << ", "
-            "unknown1: " << block.unknown1 << ", "
-            "unknown2: " << block.unknown2 << ", "
-            "position: " << Print(block.position) << ", "
-            "color: {"
+        GetStream() << "GroupLightingObjects33: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
+        GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
+        GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
+        GetStream(1) << "position: " << ToString(block.position) << "," << std::endl;
+        GetStream(1) << "color: {"
             << block.color[0] << ", "
             << block.color[1] << ", "
             << block.color[2] << ", "
@@ -250,159 +267,39 @@ public:
             << block.color[8] << ", "
             << block.color[9] << ", "
             << block.color[10] << ", "
-            << block.color[11] << "}"
-            "}" << std::endl;
+            << block.color[11] << "}" << std::endl;
     }
 
-    virtual void OnBlock(const block_data::SimpleFaceData35& block) override
+    virtual void Visit(const std::string& name, const block_data::SimpleFaceData35& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleFaceData35{"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "type: " << block.type << ", "
-            "materialIndex: " << block.materialIndex << "}" << std::endl;
+        GetStream() << "SimpleFaceData35: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "type: " << block.type << "," << std::endl;
+        GetStream(1) << "materialIndex: " << block.materialIndex << std::endl;
+        PrintVectorData(block.meshList, "meshList", 1);
     }
 
-    virtual void OnBlock(const block_data::GroupVertexData37& block) override
+    virtual void Visit(const std::string& name, const block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupVertexData37 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "name: " << Print(block.name) << ", "
-            "type: " << block.type << "}" << std::endl;
+        GetStream() << "GroupVertexData37: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
+        GetStream(1) << "type: " << block.type << std::endl;
+        PrintVariant(block.data, "data", 1);
     }
 
-    virtual void OnBlock(const block_data::SimpleGeneratedObjects40& block) override
+    virtual void Visit(const std::string& name, const block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleGeneratedObjects40 {"
-            "boundingSphere: " << Print(block.boundingSphere) << ", "
-            "empty: " << Print(block.empty) << ", "
-            "name: " << Print(block.name) << ", "
-            "type: " << block.type << ", "
-            "unknown0: " << block.unknown0 << "}" << std::endl;
-    }
-
-    virtual void OnData(common::PositionWithTexCoordList&& data) override
-    {
-        PrintVectorData(data, "PositionWithTexCoordList");
-    }
-
-    virtual void OnData(block_data::Face8&& data) override
-    {
-        if (m_printMeshInfo)
-        {
-            GetStream() << "Face8 {" <<
-                "type: " << data.type << ", "
-                "unknown0: " << data.unknown0 << ", "
-                "unknown1: " << data.unknown1 << ", "
-                "materialIndex: " << data.materialIndex << "}" << std::endl;
-        }
-    }
-
-    virtual void OnData(common::IndexList&& data) override
-    {
-        if (m_printMeshInfo)
-        {
-            PrintVectorData(data, "IndexList");
-        }
-    }
-
-    virtual void OnData(common::IndexWithPositionList&& data) override
-    {
-        if (m_printMeshInfo)
-        {
-            PrintVectorData(data, "IndexWithPositionList");
-        }
-        
-    }
-
-    virtual void OnData(common::IndexWithPositionTexCoordList&& data) override
-    {
-        PrintVectorData(data, "IndexWithPositionTexCoordList");
-    }
-
-    virtual void OnData(common::IndexWithTexCoordList&& data) override
-    {
-        PrintVectorData(data, "IndexWithTexCoordList");
-    }
-
-    virtual void OnData(common::PositionList&& data) override
-    {
-        PrintVectorData(data, "PositionList");
-    }
-
-    virtual void OnData(block_data::Face28Entry&& data) override
-    {
-        GetStream() << "Face28Entry {" <<
-            "type: " << data.type << ", "
-            "unknown0: " << data.unknown0 << ", "
-            "unknown1: " << data.unknown1 << ", "
-            "materialIndex: " << data.materialIndex << "}" << std::endl;
-    }
-
-    virtual void OnData(std::vector<block_data::Face28Entry::Unknown>&& data) override
-    {
-        PrintVectorData(data, "std::vector<block_data::Face28Entry::Unknown>");
-    }
-
-    virtual void OnData(block_data::Mesh35&& data) override
-    {
-        if (m_printMeshInfo)
-        {
-            auto& stream = GetStream();
-
-            stream << "Mesh35{" <<
-                "type: " << data.type << ", "
-                "unknown0: " << data.unknown0 << ", "
-                "unknown1: " << data.unknown1 << ", "
-                "materialIndex: " << data.materialIndex << "}" << std::endl;
-        }
-    }
-
-    virtual void OnData(std::vector<block_data::Mesh35::Unknown49>&& data) override
-    {
-        if (m_printMeshInfo)
-        {
-            PrintVectorData(data, "std::vector<block_data::Mesh35::Unknown49>");
-        }
-    }
-
-    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown514>&& data) override
-    {
-        PrintVectorData(data, "std::vector<block_data::GroupVertexData37::Unknown514>");
-    }
-
-    virtual void OnData(std::vector<block_data::GroupVertexData37::Unknown258>&& data)
-    {
-        PrintVectorData(data, "std::vector<block_data::GroupVertexData37::Unknown258>");
-    }
-
-    virtual void OnData(common::PositionWithNormalList&& data) override
-    {
-        PrintVectorData(data, "PositionWithNormal");
-    }
-
-    virtual void OnData(common::PositionWithTexCoordNormalList&& data) override
-    {
-        PrintVectorData(data, "PositionWithTexCoordNormalList");
-    }
-
-    virtual void OnData(common::CollisionPositionList&& data) override
-    {
-        PrintVectorData(data.data, "CollisionPositionList");
-    }
-
-    virtual void OnData(common::CollisionUnknownList&& data) override
-    {
-        PrintVectorData(data.data, "CollisionUnknownList");
-    }
-
-    virtual void OnData(common::TriggerInfoList&& data) override
-    {
-        PrintVectorData(data.data, "TriggerInfoList");
-    }
-
-    virtual void OnData(common::GeneratedObjectInfo&& data) override
-    {
-        PrintVectorData(data.data, "GeneratedObjectInfo");
+        GetStream() << "SimpleGeneratedObjects40: " << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "empty: " << ToString(block.empty) << "," << std::endl;
+        GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
+        GetStream(1) << "type: " << block.type << "," << std::endl;
+        GetStream(1) << "unknown0: " << block.unknown0 << std::endl;
+        PrintVectorData(block.unknown1, "unknown1", 1);
     }
 
 private:
@@ -421,206 +318,298 @@ private:
     }
 
 
-    private:
-        std::ostream& GetStream(std::ostream& ostream = std::cout, int adjustOffset = 0)
-        {
-            ostream << GetOffsetString(adjustOffset);
-            return ostream;
-        }
+private:
+    std::ostream& GetStream(int adjustOffset = 0, std::ostream& ostream = std::cout)
+    {
+        ostream << GetOffsetString(adjustOffset);
+        return ostream;
+    }
 
-        std::string Print(const uint8_t* first, const uint8_t* last)
+    void PrintData(const common::ResourceName& name, int adjustOffset)
+    {
+        GetStream(adjustOffset) << ToString(name) << std::endl;
+    }
+
+    void PrintData(const common::PositionWithTexCoord& positionWithTexCoord, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "PositionWithTexCoord" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "position" << ToString(positionWithTexCoord.position) << ", " << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord" << ToString(positionWithTexCoord.texCoord) << std::endl;
+        GetStream(adjustOffset) << "}" << std::endl;
+    }
+
+    void PrintData(const block_data::Face8& data, int adjustOffset)
+    {
+        if (m_printMeshInfo)
         {
-            std::ostringstream ostream;
-            ostream << "{";
-            for (; first != last; ++first)
+            GetStream(adjustOffset) << "Face8" << std::endl;
+            GetStream(adjustOffset) << "{" << std::endl;
+            GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
+            GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
+            GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
+            GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
+            PrintVariant(data.data, "data", adjustOffset + 1);
+            GetStream(adjustOffset) << "}" << std::endl;
+        }
+    }
+
+    void PrintData(Ogre::Real data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << data << std::endl;
+    }
+
+    void PrintData(std::uint32_t data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << data << std::endl;
+    }
+
+    void PrintData(const Ogre::Vector3& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << data << std::endl;
+    }
+
+    void PrintData(const d2_hack::resource::data::b3d::block_data::Face28Entry& data, int adjustOffset)
+    {
+        if (m_printMeshInfo)
+        {
+            GetStream(adjustOffset) << "Face28Entry" << std::endl;
+            GetStream(adjustOffset) << "{" << std::endl;
+            GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
+            GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
+            GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
+            GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
+            PrintVectorData(data.data, "data", adjustOffset + 1);
+            GetStream(adjustOffset) << "}" << std::endl;
+        }
+    }
+
+    void PrintData(const d2_hack::resource::data::b3d::block_data::Face28Entry::Unknown& data, int adjustOffset)
+    {
+        if (m_printMeshInfo)
+        {
+            GetStream(adjustOffset) << "Face28Entry::Unknown" << std::endl;
+            GetStream(adjustOffset) << "{" << std::endl;
+            GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
+            GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
+            GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << std::endl;
+            GetStream(adjustOffset) << "}" << std::endl;
+        }
+    }
+
+    void PrintData(const block_data::Mesh35& data, int adjustOffset)
+    {
+        if (m_printMeshInfo)
+        {
+            GetStream(adjustOffset) << "Mesh35" << std::endl;
+            GetStream(adjustOffset) << "{" << std::endl;
+            GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
+            GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
+            GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
+            GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
+            PrintVariant(data.data, "data", adjustOffset + 1);
+            GetStream(adjustOffset) << "}" << std::endl;
+        }
+    }
+
+    void PrintData(const d2_hack::common::PositionWithTexCoordNormal& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "PositionWithTexCoordNormal" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::common::PositionWithNormal& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "PositionWithNormal" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::resource::data::b3d::block_data::GroupVertexData37::Unknown514& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "GroupVertexData37::Unknown514" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
+        GetStream(adjustOffset + 1) << "unknown1: " << ToString(data.unknown1) << std::endl;
+        GetStream(adjustOffset + 1) << "unknown2: " << ToString(data.unknown2) << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::resource::data::b3d::block_data::GroupVertexData37::Unknown258& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "GroupVertexData37::Unknown258" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
+        GetStream(adjustOffset + 1) << "unknown1: " << ToString(data.unknown1) << std::endl;
+        GetStream(adjustOffset + 1) << "unknown2: " << ToString(data.unknown2) << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::common::IndexWithTexCoord& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "IndexWithTexCoord" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::common::IndexWithPosition& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "IndexWithTexCoord" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::common::IndexWithPositionTexCoord& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "IndexWithPositionTexCoord" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+    void PrintData(const d2_hack::resource::data::b3d::block_data::Mesh35::Unknown49& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "Mesh35::Unknown49" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "unknown: " << ToString(data.unknown) << "," << std::endl;
+        GetStream(adjustOffset) << "}";
+    }
+
+
+    std::string ToString(const std::string& data)
+    {
+        return "\"" + data + "\"";
+    }
+
+    std::string ToString(const uint8_t* first, const uint8_t* last)
+    {
+        std::ostringstream ostream;
+        ostream << "{";
+        for (; first != last; ++first)
+        {
+            ostream << "0x" << std::setw(2) << std::setfill('0') << std::hex << static_cast<unsigned int>(*first) << ", ";
+        }
+        ostream << "}";
+
+        return ostream.str();
+    }
+
+    std::string ToString(const common::BoundingSphere& boundingSphere)
+    {
+        std::ostringstream ostream;
+        ostream << "BoundingSphere {";
+
+        if (m_printBoundingSphere)
+        {
+            ostream <<
+                "center: " << ToString(boundingSphere.center) << ", "
+                "radius: " << boundingSphere.radius;
+        }
+        ostream << "}";
+
+        return ostream.str();
+    }
+
+    std::string ToString(const common::ResourceName& resourceName)
+    {
+        return "\"" + common::ResourceNameToString(resourceName) + "\"";
+    }
+
+    std::string ToString(const Ogre::Vector3& vector)
+    {
+        std::ostringstream ostream;
+        ostream << vector;
+
+        return ostream.str();
+    }
+
+    std::string ToString(Ogre::Real value)
+    {
+        return std::to_string(value);
+    }
+
+    std::string ToString(common::Index index)
+    {
+        return std::to_string(index);
+    }
+
+    std::string ToString(const Ogre::Vector2& vector)
+    {
+        std::ostringstream ostream;
+        ostream << vector;
+
+        return ostream.str();
+    }
+
+    template <typename T, typename A>
+    void PrintVectorData(const std::vector<T, A>& data, const char* name, int adjustOffset = 0)
+    {
+        GetStream(adjustOffset) << name << "(" << data.size() << ")" << std::endl;
+
+        if (m_printVectorData)
+        {
+            GetStream(adjustOffset) << "{" << std::endl;
+
+            for (const auto& item : data)
             {
-                ostream << "0x" << std::setw(2) << std::setfill('0') << std::hex << static_cast<unsigned int>(*first) << ", ";
-            }
-            ostream << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const Ogre::Vector3& vector)
-        {
-            std::ostringstream ostream;
-            ostream << vector;
-
-            return ostream.str();
-        }
-
-        std::string Print(const Ogre::Vector2& vector)
-        {
-            std::ostringstream ostream;
-            ostream << vector;
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::BoundingSphere& boundingSphere)
-        {
-            std::ostringstream ostream;
-            ostream << "BoundingSphere {";
-
-            if (m_printBoundingSphere)
-            {
-                ostream <<
-                    "center: " << Print(boundingSphere.center) << ", "
-                    "radius: " << boundingSphere.radius;
-            }
-            ostream << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::ResourceName& resourceName)
-        {
-            const char* begin = reinterpret_cast<const char*>(resourceName.data());
-
-            return "\"" + std::string(begin, begin + strnlen(begin, resourceName.size())) + "\"";
-        }
-
-        std::string Print(const common::PositionWithTexCoordNormal& positionWithTexCoordNormal)
-        {
-            std::ostringstream ostream;
-            ostream << "PositionWithTexCoordNormal {" <<
-                "position: " << Print(positionWithTexCoordNormal.position) << ", "
-                "texCoord: " << Print(positionWithTexCoordNormal.texCoord) << ", "
-                "normal: " << Print(positionWithTexCoordNormal.normal) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::PositionWithNormal& positionWithNormal)
-        {
-            std::ostringstream ostream;
-            ostream << "PositionWithNormal {" <<
-                "position: " << Print(positionWithNormal.position) << ", "
-                "normal: " << Print(positionWithNormal.normal) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::PositionWithTexCoord& positionWithTexCoord)
-        {
-            std::ostringstream ostream;
-            ostream << "PositionWithTexCoord {" <<
-                "position: " << Print(positionWithTexCoord.position) << ", "
-                "texCoord: " << Print(positionWithTexCoord.texCoord) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::IndexWithPosition& indexWithPosition)
-        {
-            std::ostringstream ostream;
-            ostream << "IndexWithPosition {" <<
-                "index: " << indexWithPosition.index << ", "
-                "position: " << Print(indexWithPosition.position) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::IndexWithTexCoord& indexWithTexCoord)
-        {
-            std::ostringstream ostream;
-            ostream << "IndexWithTexCoord {" <<
-                "index: " << indexWithTexCoord.index << ", "
-                "texCoord: " << Print(indexWithTexCoord.texCoord) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const common::IndexWithPositionTexCoord& indexWithPositionTexCoord)
-        {
-            std::ostringstream ostream;
-            ostream << "IPT{" <<
-                "index: " << indexWithPositionTexCoord.index << ", "
-                "position: " << Print(indexWithPositionTexCoord.position) << ", "
-                "texCoord: " << Print(indexWithPositionTexCoord.texCoord) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(common::Index index)
-        {
-            return std::to_string(index);
-        }
-
-        std::string Print(Ogre::Real value)
-        {
-            return std::to_string(value);
-        }
-
-        std::string Print(const block_data::Face28Entry::Unknown& data)
-        {
-            std::ostringstream ostream;
-            ostream << "Unknown {"
-                "unknown0:" << data.unknown0 << ", "
-                "unknown1:" << data.unknown1 << ", "
-                "texCoord:" << Print(data.texCoord) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const block_data::Mesh35::Unknown49& data)
-        {
-            std::ostringstream ostream;
-            ostream << "Unknown {"
-                "index:" << Print(data.index) << ", "
-                "unknown:" << Print(data.unknown) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const block_data::GroupVertexData37::Unknown514& data)
-        {
-            std::ostringstream ostream;
-            ostream << "Unknown {"
-                "position:" << Print(data.position) << ", "
-                "unknown1:" << Print(data.unknown1) << ", "
-                "unknown2:" << Print(data.unknown2) << ", "
-                "unknown3:" << Print(data.unknown3) << "}";
-
-            return ostream.str();
-        }
-
-        std::string Print(const block_data::GroupVertexData37::Unknown258& data)
-        {
-            std::ostringstream ostream;
-            ostream << "Unknown {"
-                "position:" << Print(data.position) << ", "
-                "unknown1:" << Print(data.unknown1) << ", "
-                "unknown2:" << Print(data.unknown2) << ", "
-                "unknown3:" << Print(data.unknown3) << "}";
-
-            return ostream.str();
-        }
-
-        template <typename T, typename A>
-        void PrintVectorData(const std::vector<T, A>& data, const char* name)
-        {
-            auto& stream = GetStream();
-
-            stream << name << "(" << data.size() << ")";
-
-            if (m_printVectorData)
-            {
-                stream << " {";
-
-                for (const auto& item : data)
-                {
-                    (m_newLineForVectorData ? GetStream(stream << std::endl, 1) : stream) << Print(item) << ", ";
-                }
-
-                (m_newLineForVectorData ? GetStream(stream << std::endl) : stream) << "}" << std::endl;
-            }
-            else
-            {
-                stream << std::endl;
+                PrintData(item, adjustOffset + 1);
             }
         }
+    }
+
+    template <typename... Types>
+    void PrintVariant(const std::variant<Types...>& data, const char* name, int adjustOffset)
+    {
+        auto visitor = [this, name, adjustOffset](auto&& arg)
+        {
+            PrintVectorData(arg, name, adjustOffset);
+        };
+
+        std::visit(visitor, data);
+    }
 };
+
+
+void VisitNode(const NodePtr& node, TracingVisitor& visitor, int level)
+{
+    visitor.SetLevel(level);
+    node->Visit(visitor, VisitMode::PreOrder);
+    visitor.BeginNested();
+
+    const auto& childNodes = node->GetChildNodeList();
+    for (auto child : childNodes)
+    {
+        VisitNode(child, visitor, level + 2);
+    }
+
+    visitor.SetLevel(level);
+    visitor.EndNested();
+}
+
+void VisitTree(const B3dTree& tree, TracingVisitor& visitor)
+{
+    visitor.SetLevel(0);
+    visitor.Visit(tree.materials);
+
+    for (auto node : tree.rootNodes)
+    {
+        VisitNode(node, visitor, 0);
+    }
+}
 
 } // namespace b3d
 } // namespace data
@@ -674,12 +663,14 @@ int main(int argc, char* argv[])
 
     try
     {
-        TracingListener listener{printBoundingSphere, true, printVectorData, printMeshInfo};
         B3dReader reader;
 
         Ogre::FileStreamDataStream dataStream(&inputFile, false);
 
-        reader.Read(dataStream, listener);
+        B3dTree tree = reader.Read(dataStream);
+
+        TracingVisitor visitor{printBoundingSphere, true, printVectorData, printMeshInfo};
+        VisitTree(tree, visitor);
     }
     catch (const std::exception& e)
     {

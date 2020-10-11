@@ -29,7 +29,7 @@ class Reader
 public:
     explicit Reader(Ogre::DataStream& input);
 
-    void ThrowError(const Ogre::String & msg, const Ogre::String & where);
+    [[noreturn]] void ThrowError(const Ogre::String & msg, const Ogre::String & where);
 
     void ReadBytes(void* buffer, size_t size);
 

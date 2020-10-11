@@ -2,6 +2,7 @@ d2_hack_add_library(d2_hack.common
     offset_data_stream.cpp
     reader.cpp
     resource_mgmt.cpp
+    utils.cpp
     
     include/d2_hack/common/log.h
     include/d2_hack/common/memory_mgmt.h

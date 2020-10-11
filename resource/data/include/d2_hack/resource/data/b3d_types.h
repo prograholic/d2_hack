@@ -1,10 +1,11 @@
-#ifndef D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL_H
-#define D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL_H
+#ifndef D2_HACK_RESOURCE_PLUGIN_D2_B3D_TYPES_H
+#define D2_HACK_RESOURCE_PLUGIN_D2_B3D_TYPES_H
 
 #include <d2_hack/common/platform.h>
 
 #include <cstdint>
 #include <memory>
+#include <variant>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
@@ -71,16 +72,12 @@ struct GroupRoadInfraObjects4
     common::ResourceName name;
 
     common::ResourceName data;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct GroupObjects5
 {
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct GroupVertex7
@@ -88,9 +85,7 @@ struct GroupVertex7
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 
-    //common::PositionWithTexCoordList vertices;
-
-    //NestedBlockList nestedBlocks;
+    common::PositionWithTexCoordList vertices;
 };
 
 struct Face8
@@ -113,26 +108,21 @@ struct Face8
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
 
-#if 0
-    typedef boost::variant<
-        common::Index,
-        common::IndexWithTexCoord,
-        common::IndexWithPosition,
-        common::IndexWithPositionTexCoord
-    > FaceData;
-    typedef std::vector<FaceData> FaceDataList;
-
-    FaceDataList faceDataList;
-#endif //0
+    std::variant<
+        common::IndexList,
+        common::IndexWithTexCoordList,
+        common::IndexWithPositionList,
+        common::IndexWithPositionTexCoordList
+    > data;
 };
 
-//typedef std::vector<Face8> Face8List;
+typedef std::vector<Face8> Face8List;
 
 struct SimpleFaces8
 {
     common::BoundingSphere boundingSphere;
 
-    //Face8List faces;
+    Face8List faces;
 };
 
 struct GroupTrigger9
@@ -141,8 +131,6 @@ struct GroupTrigger9
 
     Ogre::Vector3 unknown;
     Ogre::Real distanceToPlayer;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct GroupLodParameters10
@@ -152,8 +140,6 @@ struct GroupLodParameters10
     Ogre::Vector3 unknown;
 
     Ogre::Real distanceToPlayer;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct GroupUnknown12
@@ -167,8 +153,6 @@ struct GroupUnknown12
 
     std::uint32_t unknown4;
     std::uint32_t unknown5;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleTrigger13
@@ -178,7 +162,7 @@ struct SimpleTrigger13
     std::uint32_t unknown0;
     std::uint32_t unknown1;
 
-    //std::vector<Ogre::Real> unknown2;
+    std::vector<Ogre::Real> unknown2;
 };
 
 struct SimpleUnknown14
@@ -205,7 +189,6 @@ struct SimpleObjectConnector18
 
 struct GroupObjects19
 {
-    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleFlatCollision20
@@ -215,8 +198,8 @@ struct SimpleFlatCollision20
     std::uint32_t unknown0;
     std::uint32_t unknown1;
 
-    //PositionList a;
-    //std::vector<Ogre::Real> b;
+    std::vector<common::Position> unknown2;
+    std::vector<Ogre::Real> unknown3;
 };
 
 struct GroupObjects21
@@ -225,26 +208,11 @@ struct GroupObjects21
 
     std::uint32_t count;
     std::uint32_t unknown;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct SimpleVolumeCollision23
 {
     static const std::uint32_t UnknownType0 = 0;
-
-#if 0
-    struct Unknown0
-    {
-        common::PositionList unknown;
-    };
-
-    typedef boost::variant <
-        Unknown0
-    > CollisionEntry;
-
-    typedef std::vector<CollisionEntry> CollisionEntries;
-#endif //0
 
     std::uint32_t unknown0;
     std::uint32_t unknown1;
@@ -255,7 +223,7 @@ struct SimpleVolumeCollision23
     Ogre::Real unknown3;
     Ogre::Real unknown4;
 
-    //CollisionEntries collisionEntries;
+    std::vector<common::Position> unknown5;
 };
 
 struct GroupTransformMatrix24
@@ -267,8 +235,6 @@ struct GroupTransformMatrix24
     Ogre::Vector3 position;
 
     std::uint32_t unknown;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct Face28Entry
@@ -287,9 +253,11 @@ struct Face28Entry
     Ogre::Real unknown0;
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
+
+    std::vector<block_data::Face28Entry::Unknown> data;
 };
 
-//typedef std::vector<Face28Entry> Faces28Entries;
+typedef std::vector<Face28Entry> Faces28Entries;
 
 struct SimpleFaces28
 {
@@ -297,7 +265,7 @@ struct SimpleFaces28
 
     Ogre::Vector3 unknown;
 
-    //Faces28Entries facesEntries;
+    Faces28Entries facesEntries;
 };
 
 struct GroupUnknown29
@@ -330,8 +298,6 @@ struct GroupLightingObjects33
     Ogre::Vector3 position;
 
     std::array<Ogre::Real, 12> color;
-
-    //NestedBlockList nestedBlocks;
 };
 
 struct Mesh35
@@ -354,26 +320,21 @@ struct Mesh35
         Ogre::Real unknown;
     };
 
-#if 0
-    typedef boost::variant<
-        common::Index,
-        common::IndexWithPosition,
-        Unknown49,
-        common::IndexWithPositionTexCoord
-    > MeshData;
-    typedef std::vector<MeshData> MeshDataList;
-#endif //0
-
     std::uint32_t type;
     Ogre::Real unknown0;
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
     
-
-    //MeshDataList meshDataList;
+    std::variant<
+        common::IndexList,
+        common::IndexWithTexCoordList,
+        common::IndexWithPositionList,
+        common::IndexWithPositionTexCoordList,
+        std::vector<block_data::Mesh35::Unknown49>
+    > data;
 };
 
-//typedef std::vector<Mesh35> Mesh35List;
+typedef std::vector<Mesh35> Mesh35List;
 
 struct SimpleFaceData35
 {
@@ -386,7 +347,7 @@ struct SimpleFaceData35
     std::uint32_t type;
     std::uint32_t materialIndex;
 
-    //Mesh35List meshList;
+    Mesh35List meshList;
 };
 
 struct GroupVertexData37
@@ -399,36 +360,29 @@ struct GroupVertexData37
     struct Unknown258
     {
         Ogre::Vector3 position;
+        Ogre::Vector3 unknown0;
         Ogre::Vector3 unknown1;
-        Ogre::Vector3 unknown2;
-        Ogre::Real unknown3;
+        Ogre::Real unknown2;
     };
 
     struct Unknown514
     {
         Ogre::Vector3 position;
+        Ogre::Vector3 unknown0;
         Ogre::Vector3 unknown1;
         Ogre::Vector3 unknown2;
-        Ogre::Vector3 unknown3;
     };
-
-#if 0
-    typedef boost::variant<
-        common::PositionWithTexCoordNormal,
-        common::PositionWithNormal,
-        Unknown514
-    > VertexData;
-
-    typedef std::vector<VertexData> VertexDataList;
-#endif //0
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
     std::uint32_t type;
 
-    //VertexDataList vertexDataList;
-
-    //NestedBlockList nestedBlocks;
+    std::variant<
+        common::PositionWithTexCoordNormalList,
+        common::PositionWithNormalList,
+        std::vector<block_data::GroupVertexData37::Unknown514>,
+        std::vector<block_data::GroupVertexData37::Unknown258>
+    > data;
 };
 
 struct SimpleGeneratedObjects40
@@ -441,7 +395,7 @@ struct SimpleGeneratedObjects40
     std::uint32_t type;
     Ogre::Real unknown0;
 
-    //std::vector<Ogre::Real> unknown1;
+    std::vector<Ogre::Real> unknown1;
 };
 
 } // namespace block_data
@@ -453,4 +407,4 @@ struct SimpleGeneratedObjects40
 
 
 
-#endif /* D2_HACK_RESOURCE_PLUGIN_D2_B3D_BLOCK_DATA_DECL_H */
+#endif /* D2_HACK_RESOURCE_PLUGIN_D2_B3D_TYPES_H */

@@ -15,6 +15,7 @@ namespace d2_hack
 namespace app
 {
 
+using namespace resource::data::b3d;
 
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseApplication()
@@ -34,7 +35,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 0
+#if 1
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
@@ -44,7 +45,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ag", b3dSceneNode);
 #endif
     LoadB3d("ah", b3dSceneNode);
-#if 0
+#if 1
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -64,15 +65,30 @@ void SimpleB3dMeshRenderer::CreateScene()
 }
 
 
+void VisitNode(const NodePtr& node, B3dTreeVisitor& visitor)
+{
+    node->Visit(visitor, VisitMode::PreOrder);
 
+    const auto& children = node->GetChildNodeList();
+    for (auto child : children)
+    {
+        VisitNode(child, visitor);
+    }
 
+    node->Visit(visitor, VisitMode::PostOrder);
+}
 
+void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
+{
+    for (auto node : tree.rootNodes)
+    {
+        VisitNode(node, visitor);
+    }
+}
 
 void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dSceneNode)
 {
     std::string fullB3dName = D2_ROOT_DIR "/ENV/" + std::string(b3dId) + ".b3d";
-    B3dMeshListener listener{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager() };
-
     std::ifstream inputFile{fullB3dName, std::ios_base::binary};
     if (!inputFile)
     {
@@ -80,8 +96,12 @@ void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dScene
     }
 
     Ogre::FileStreamDataStream dataStream(&inputFile, false);
-    resource::data::b3d::B3dReader reader;
-    reader.Read(dataStream, listener);
+    B3dReader reader;
+    B3dTree b3dTree = reader.Read(dataStream);
+    
+    B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
+
+    VisitTree(b3dTree, visitor);
 }
 
 

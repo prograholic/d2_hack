@@ -1,8 +1,10 @@
 d2_hack_add_library(d2_hack.resource.data
     b3d_reader.cpp
+    b3d_tree.cpp
     
-    include/d2_hack/resource/data/b3d_block_data_decl.h
+    include/d2_hack/resource/data/b3d_types.h
     include/d2_hack/resource/data/b3d_reader.h
+    include/d2_hack/resource/data/b3d_tree.h
     include/d2_hack/resource/data/b3d.h
 )
 

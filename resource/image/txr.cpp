@@ -100,7 +100,7 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input
 
     input->skip(tgaHeader.idlength);
 
-    std::auto_ptr<ImageData> imgData(new ImageData());
+    std::unique_ptr<ImageData> imgData(new ImageData());
 
     imgData->depth = 1;
     imgData->width = width;

@@ -13,26 +13,6 @@ namespace data
 namespace b3d
 {
 
-class TestB3dListener : public VoidB3dListener
-{
-public:
-    TestB3dListener(const size_t materialsCount)
-        : m_materialsCount(materialsCount)
-    {
-    }
-
-    virtual void OnMaterials(Materials&& materials) override
-    {
-        if (materials.size() != m_materialsCount)
-        {
-            throw std::runtime_error("Expected " + std::to_string(m_materialsCount) + " materials, got " + std::to_string(materials.size()));
-        }
-    }
-
-private:
-    const size_t m_materialsCount;
-};
-
 
 int LoadB3dFile(const char* b3dFileName, const size_t expectedMaterialsCount)
 {
@@ -45,10 +25,14 @@ int LoadB3dFile(const char* b3dFileName, const size_t expectedMaterialsCount)
 
     Ogre::FileStreamDataStream dataStream(&inputFile, false);
 
-    TestB3dListener listener{ expectedMaterialsCount };
-
     d2_hack::resource::data::b3d::B3dReader reader;
-    reader.Read(dataStream, listener);
+    B3dTree tree = reader.Read(dataStream);
+
+    if (tree.materials.size() != expectedMaterialsCount)
+    {
+        throw std::runtime_error("Expected " + std::to_string(expectedMaterialsCount) + " materials, got " + std::to_string(tree.materials.size()));
+    }
+
 
     return 0;
 }
