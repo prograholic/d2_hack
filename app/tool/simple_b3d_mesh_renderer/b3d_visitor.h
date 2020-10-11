@@ -1,7 +1,10 @@
 #ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_VISITOR_H
 #define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_VISITOR_H
 
+#include <d2_hack/resource/data/b3d_tree.h>
+
 #include "b3d_scene_builder.h"
+
 
 namespace d2_hack
 {

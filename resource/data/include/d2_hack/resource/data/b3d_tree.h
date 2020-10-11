@@ -18,12 +18,6 @@ namespace data
 namespace b3d
 {
 
-enum class VisitMode
-{
-    PreOrder,
-    PostOrder
-};
-
 class NodeVisitorInterface
 {
 public:

@@ -21,6 +21,15 @@ namespace data
 {
 namespace b3d
 {
+
+
+enum class VisitMode
+{
+    PreOrder,
+    PostOrder
+};
+
+
 namespace block_data
 {
 

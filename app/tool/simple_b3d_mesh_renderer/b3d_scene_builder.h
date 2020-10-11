@@ -11,7 +11,8 @@ D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreMatrix3.h>
 D2_HACK_DISABLE_WARNING_END() // 4251
 
-#include <d2_hack/resource/data/b3d_tree.h>
+#include <d2_hack/common/types.h>
+#include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
 {
