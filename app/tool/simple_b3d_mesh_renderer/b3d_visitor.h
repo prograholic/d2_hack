@@ -21,6 +21,16 @@ namespace d2_hack
 namespace app
 {
 
+
+struct SubMeshInfo
+{
+    bool useSharedVertices;
+    std::uint32_t materialIndex;
+    Ogre::RenderOperation::OperationType operationType;
+};
+
+
+
 class B3dTreeVisitor : public resource::data::b3d::NodeVisitorInterface
 {
 public:
@@ -122,7 +132,7 @@ private:
 
     void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown258>& data);
 
-    Ogre::SubMesh* CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType);
+    Ogre::SubMesh* CreateSubMesh(const SubMeshInfo& subMeshInfo);
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const resource::data::b3d::block_data::Face28Entry& face);
 

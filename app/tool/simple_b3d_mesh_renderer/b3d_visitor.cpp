@@ -32,6 +32,142 @@ namespace app
 
 using namespace resource::data::b3d;
 
+static const SubMeshInfo InvalidSubMeshInfo{ false, 0, Ogre::RenderOperation::OT_POINT_LIST };
+
+static SubMeshInfo GetFace8Mapping(std::uint32_t type, std::uint32_t materialIndex)
+{
+    switch (type)
+    {
+    case block_data::Face8::UnknownType0:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_FAN };
+
+    case block_data::Face8::UnknownType1:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType2:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType3:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::UnknownType16:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType48:
+        return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType50:
+        return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+    case block_data::Face8::FaceIndexType128:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType129:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::UnknownType144:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType176:
+        return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType178:
+        return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    default:
+        assert(0 && "not implemented");
+        return InvalidSubMeshInfo;
+    };
+}
+
+static SubMeshInfo GetFace28Mapping(std::uint32_t type, std::uint32_t materialIndex)
+{
+    switch (type)
+    {
+    case block_data::Face28Entry::Unknown2:
+        return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    default:
+        assert(0 && "not implemented");
+        return InvalidSubMeshInfo;
+    }
+}
+
+static SubMeshInfo GetFace35Mapping(std::uint32_t blockType, std::uint32_t dataType, std::uint32_t materialIndex)
+{
+    if (blockType == block_data::SimpleFaceData35::IndicesOnly3)
+    {
+        switch (dataType)
+        {
+        case block_data::Mesh35::Indices0:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::Indices1:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::Indices3:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::Indices16:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::Indices17:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        default:
+            assert(0 && "not implemented");
+            return InvalidSubMeshInfo;
+        };
+    }
+    else if (blockType == block_data::SimpleFaceData35::Unknown2)
+    {
+        switch (dataType)
+        {
+        case block_data::Mesh35::Indices1:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::UnknownType3:
+            return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::UnknownType49:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::UnknownType51:
+            return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        default:
+            assert(0 && "not implemented");
+            return InvalidSubMeshInfo;
+        };
+    }
+    else if (blockType == block_data::SimpleFaceData35::Unknown1)
+    {
+        switch (dataType)
+        {
+        case block_data::Mesh35::Indices0:
+            return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::Unknown2:
+            return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::UnknownType48:
+            return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        case block_data::Mesh35::UnknownType50:
+            return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+        default:
+            assert(0 && "not implemented");
+            return InvalidSubMeshInfo;
+        };
+    }
+    else
+    {
+        assert(0 && "not implemented");
+        return InvalidSubMeshInfo;
+    }
+}
+
 
 
 B3dTreeVisitor::B3dTreeVisitor(const char* b3dId,
@@ -88,59 +224,7 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
     {
         for (const auto& data : block.faces)
         {
-            Ogre::SubMesh* subMesh = nullptr;
-            if (data.type == block_data::Face8::FaceIndexType129)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType50)
-            {
-                subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType178)
-            {
-                subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::UnknownType144)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::UnknownType16)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::UnknownType1)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType48)
-            {
-                subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::UnknownType0)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_FAN);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType3)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType176)
-            {
-                subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType2)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else if (data.type == block_data::Face8::FaceIndexType128)
-            {
-                subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-            }
-            else
-            {
-                assert(0 && "not implemented");
-            }
+            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace8Mapping(data.type, data.materialIndex));
 
             auto visitor = [this, subMesh](auto&& items)
             {
@@ -251,15 +335,8 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
     {
         for (const auto& data : block.facesEntries)
         {
-            if (data.type == block_data::Face28Entry::Unknown2)
-            {
-                Ogre::SubMesh* subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP);
-                SetSubMeshData(subMesh, data);
-            }
-            else
-            {
-                assert(0 && "not implemented");
-            }
+            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace28Mapping(data.type, data.materialIndex));
+            SetSubMeshData(subMesh, data);
         }
     }
 }
@@ -296,112 +373,15 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        if (block.type == block_data::SimpleFaceData35::IndicesOnly3)
+        for (const auto& data : block.meshList)
         {
-            for (const auto& data : block.meshList)
-            {
-                Ogre::SubMesh* subMesh = nullptr;
-                if (data.type == block_data::Mesh35::Indices16)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::Indices1)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::Indices3)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::Indices0)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::Indices17)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else
-                {
-                    assert(0 && "not implemented");
-                }
+            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace35Mapping(block.type, data.type, data.materialIndex));
 
-                auto visitor = [this, subMesh](auto&& items)
-                {
-                    SetSubMeshData(subMesh, items);
-                };
-                std::visit(visitor, data.data);
-            }
-        }
-        else if (block.type == block_data::SimpleFaceData35::Unknown2)
-        {
-            for (const auto& data : block.meshList)
+            auto visitor = [this, subMesh](auto&& items)
             {
-                Ogre::SubMesh* subMesh = nullptr;
-                if (data.type == block_data::Mesh35::Indices1)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::UnknownType3)
-                {
-                    subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::UnknownType51)
-                {
-                    subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::UnknownType49)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else
-                {
-                    assert(0 && "not implemented");
-                }
-
-                auto visitor = [this, subMesh](auto&& items)
-                {
-                    SetSubMeshData(subMesh, items);
-                };
-                std::visit(visitor, data.data);
-            }
-        }
-        else if (block.type == block_data::SimpleFaceData35::Unknown1)
-        {
-            for (const auto& data : block.meshList)
-            {
-                Ogre::SubMesh* subMesh = nullptr;
-                if (data.type == block_data::Mesh35::UnknownType48)
-                {
-                    subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::UnknownType50)
-                {
-                    subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::Indices0)
-                {
-                    subMesh = CreateSubMesh(true, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else if (data.type == block_data::Mesh35::Unknown2)
-                {
-                    subMesh = CreateSubMesh(false, data.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-                }
-                else
-                {
-                    assert(0 && "not implemented");
-                }
-
-                auto visitor = [this, subMesh](auto&& items)
-                {
-                    SetSubMeshData(subMesh, items);
-                };
-                std::visit(visitor, data.data);
-            }
-        }
-        else
-        {
-            assert(0 && "not implemented");
+                SetSubMeshData(subMesh, items);
+            };
+            std::visit(visitor, data.data);
         }
     }
 }
@@ -709,9 +689,9 @@ void B3dTreeVisitor::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<
 
 
 
-Ogre::SubMesh* B3dTreeVisitor::CreateSubMesh(bool useSharedVertices, std::uint32_t materialIndex, Ogre::RenderOperation::OperationType operationType)
+Ogre::SubMesh* B3dTreeVisitor::CreateSubMesh(const SubMeshInfo& subMeshInfo)
 {
-    const std::string materialName = GetMaterialName(materialIndex);
+    const std::string materialName = GetMaterialName(subMeshInfo.materialIndex);
 
     auto mesh = m_meshStack.top();
 
@@ -724,16 +704,16 @@ Ogre::SubMesh* B3dTreeVisitor::CreateSubMesh(bool useSharedVertices, std::uint32
     }
     else
     {
-        if (!useSharedVertices || (operationType != Ogre::RenderOperation::OT_TRIANGLE_LIST))
+        if (!subMeshInfo.useSharedVertices || (subMeshInfo.operationType != Ogre::RenderOperation::OT_TRIANGLE_LIST))
         {
             shouldCreateNewSubMesh = true;
         }
         else
         {
             Ogre::SubMesh* subMesh = subMeshes.back();
-            if ((subMesh->useSharedVertices != useSharedVertices) ||
+            if ((subMesh->useSharedVertices != subMeshInfo.useSharedVertices) ||
                 (subMesh->getMaterialName() != materialName) ||
-                (subMesh->operationType != operationType))
+                (subMesh->operationType != subMeshInfo.operationType))
             {
                 shouldCreateNewSubMesh = true;
             }
@@ -743,8 +723,8 @@ Ogre::SubMesh* B3dTreeVisitor::CreateSubMesh(bool useSharedVertices, std::uint32
     if (shouldCreateNewSubMesh)
     {
         Ogre::SubMesh* subMesh = mesh->createSubMesh();
-        subMesh->useSharedVertices = useSharedVertices;
-        subMesh->operationType = operationType;
+        subMesh->useSharedVertices = subMeshInfo.useSharedVertices;
+        subMesh->operationType = subMeshInfo.operationType;
 
         subMesh->setMaterialName(materialName);
 
