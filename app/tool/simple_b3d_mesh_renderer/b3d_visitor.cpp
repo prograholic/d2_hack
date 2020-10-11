@@ -75,14 +75,10 @@ void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupObjec
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupVertex7& block, VisitMode visitMode)
 {
+    Ogre::MeshPtr mesh = ProcessMesh(name, visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
-        Ogre::MeshPtr mesh = BeginMesh(name);
         AddVertexData(mesh, block.vertices);
-    }
-    else
-    {
-        EndMesh();
     }
 }
 
@@ -412,20 +408,15 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, const block_data::Simp
 
 void B3dTreeVisitor::Visit(const std::string& name, const block_data::GroupVertexData37& block, VisitMode visitMode)
 {
+    Ogre::MeshPtr mesh = ProcessMesh(name, visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
-        Ogre::MeshPtr mesh = BeginMesh(name);
-
         auto visitor = [this, mesh](auto&& vertices)
         {
             AddVertexData(mesh, vertices);
         };
 
         std::visit(visitor, block.data);
-    }
-    else
-    {
-        EndMesh();
     }
 }
 
@@ -479,7 +470,7 @@ Ogre::SceneNode* B3dTreeVisitor::ProcessSceneNode(const std::string& name, Visit
 
         m_sceneNodes.push(sceneNode);
 
-        D2_HACK_LOG(B3dTreeVisitor::CreateSceneNode) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
+        D2_HACK_LOG(B3dTreeVisitor::ProcessSceneNode(PreOrder)) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
 
         return sceneNode;
     }
@@ -492,34 +483,38 @@ Ogre::SceneNode* B3dTreeVisitor::ProcessSceneNode(const std::string& name, Visit
     }
 }
 
-Ogre::MeshPtr B3dTreeVisitor::BeginMesh(const std::string& blockName)
+Ogre::MeshPtr B3dTreeVisitor::ProcessMesh(const std::string& blockName, VisitMode visitMode)
 {
-    std::string name = GetNameImpl(blockName, "mesh", false);
-    std::string group = "D2";
-    if (m_meshManager->resourceExists(name, group))
+    if (visitMode == VisitMode::PreOrder)
     {
-        name = GetNameImpl(blockName, "mesh", true);
+        std::string name = GetNameImpl(blockName, "mesh", false);
+        std::string group = "D2";
+        if (m_meshManager->resourceExists(name, group))
+        {
+            name = GetNameImpl(blockName, "mesh", true);
+        }
+
+        D2_HACK_LOG(B3dTreeVisitor::ProcessMesh(PostOrder)) << "Starting processing mesh with name: " << name;
+
+        Ogre::MeshPtr newMesh = m_meshManager->createManual(name, group);
+        m_meshStack.push(newMesh);
+
+        return newMesh;
     }
+    else
+    {
+        Ogre::MeshPtr mesh = m_meshStack.top();
+        m_meshStack.pop();
 
-    D2_HACK_LOG(BeginMesh) << "Starting processing mesh with name: " << name;
+        const std::string entityName = mesh->getName() + ".entity";
+        Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
 
-    Ogre::MeshPtr newMesh = m_meshManager->createManual(name, group);
-    m_meshStack.push(newMesh);
+        m_sceneNodes.top()->attachObject(entity);
 
-    return newMesh;
-}
+        D2_HACK_LOG(B3dTreeVisitor::ProcessMesh(PostOrder)) << "Finished processing mesh with name: " << mesh->getName();
 
-void B3dTreeVisitor::EndMesh()
-{
-    Ogre::MeshPtr currentMesh = m_meshStack.top();
-    m_meshStack.pop();
-
-    const std::string entityName = currentMesh->getName() + ".entity";
-    Ogre::Entity* entity = m_sceneManager->createEntity(entityName, currentMesh);
-
-    m_sceneNodes.top()->attachObject(entity);
-
-    D2_HACK_LOG(EndMesh) << "Finished processing mesh with name: " << currentMesh->getName();
+        return mesh;
+    }
 }
 
 void B3dTreeVisitor::AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithTexCoordList& data)

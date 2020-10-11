@@ -110,10 +110,7 @@ private:
 
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
-
-    Ogre::MeshPtr BeginMesh(const std::string& name);
-
-    void EndMesh();
+    Ogre::MeshPtr ProcessMesh(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
     void AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithTexCoordList& data);
 
