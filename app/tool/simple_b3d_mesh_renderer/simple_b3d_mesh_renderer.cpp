@@ -8,7 +8,7 @@
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
 
-#include "b3d_listener.h"
+#include "b3d_visitor.h"
 
 namespace d2_hack
 {
