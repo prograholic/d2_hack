@@ -455,10 +455,10 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const SubMeshInfo& subMeshInfo)
 }
 
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const block_data::Face28& face)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face28::Unknown>& data)
 {
     common::TexCoordList texCoords;
-    for (const auto& item : face.data)
+    for (const auto& item : data)
     {
         texCoords.push_back(item.texCoord);
     }

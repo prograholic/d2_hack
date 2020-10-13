@@ -275,7 +275,11 @@ struct Face28
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
 
-    std::vector<block_data::Face28::Unknown> data;
+    using Types = TypeList<
+        std::vector<block_data::Face28::Unknown>
+    >;
+
+    Types::variant_t data;
 };
 
 typedef std::vector<Face28> Face28List;

@@ -646,7 +646,10 @@ private:
         {
             const std::uint32_t count = ReadUint32();
             
-            ReadCount(face.data, count);
+            std::vector<block_data::Face28::Unknown> data;
+            ReadCount(data, count);
+
+            face.data = std::move(data);
         }
         else
         {
