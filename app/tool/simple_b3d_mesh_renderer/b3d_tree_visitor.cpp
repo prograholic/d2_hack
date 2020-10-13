@@ -1,4 +1,4 @@
-#include "b3d_visitor.h"
+#include "b3d_tree_visitor.h"
 
 #include <d2_hack/common/utils.h>
 
@@ -325,6 +325,144 @@ namespace optimizations
 
 class FacesVisitor : public NoOpNodeVisitor
 {
+public:
+    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces8& /* block */, VisitMode /* visitMode */) override
+    {
+
+    }
+
+    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */) override
+    {
+
+    }
+
+    virtual void Visit(const std::string& /* name */, block_data::SimpleFaceData35& block, VisitMode /* visitMode */) override
+    {
+        block_data::Mesh35List origMeshList = std::move(block.meshList);
+
+        if (origMeshList.empty())
+        {
+            return;
+        }
+
+        std::map<SubMeshInfo, block_data::Mesh35List> mapping;
+
+        for (const auto& data : origMeshList)
+        {
+            SubMeshInfo subMeshInfo = GetFace35Mapping(block.type, data.type, data.materialIndex);
+            mapping[subMeshInfo].push_back(data);
+        }
+
+        for (const auto& item : mapping)
+        {
+            if (CanMerge(item.first))
+            {
+                block_data::Mesh35List merged = Merge(item.second);
+                block.meshList.insert(block.meshList.end(), merged.begin(), merged.end());
+            }
+            else
+            {
+                block.meshList.insert(block.meshList.end(), item.second.begin(), item.second.end());
+            }
+        }
+    }
+
+
+private:
+
+    static bool CanMerge(const SubMeshInfo& subMeshInfo)
+    {
+        if (subMeshInfo.useSharedVertices && (subMeshInfo.operationType == Ogre::RenderOperation::OT_TRIANGLE_LIST))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    struct Mesh35Holder
+    {
+        common::IndexList data0;
+        common::IndexWithTexCoordList data1;
+        common::IndexWithPositionList data2;
+        common::IndexWithPositionTexCoordList data3;
+        std::vector<block_data::Mesh35::Unknown49> data4;
+
+        void Add(const common::IndexList& data)
+        {
+            data0.insert(data0.end(), data.begin(), data.end());
+        }
+
+        void Add(const common::IndexWithTexCoordList& data)
+        {
+            data1.insert(data1.end(), data.begin(), data.end());
+        }
+
+        void Add(const common::IndexWithPositionList& data)
+        {
+            data2.insert(data2.end(), data.begin(), data.end());
+        }
+
+        void Add(const common::IndexWithPositionTexCoordList& data)
+        {
+            data3.insert(data3.end(), data.begin(), data.end());
+        }
+
+        void Add(const std::vector<block_data::Mesh35::Unknown49>& data)
+        {
+            data4.insert(data4.end(), data.begin(), data.end());
+        }
+    };
+
+    static block_data::Mesh35List Merge(const block_data::Mesh35List& meshList)
+    {
+        Mesh35Holder holder;
+
+        auto visitor = [&holder](auto&& data)
+        {
+            holder.Add(data);
+        };
+
+        for (const auto& mesh: meshList)
+        {
+            std::visit(visitor, mesh.data);
+        }
+
+        block_data::Mesh35List res;
+        if (!holder.data0.empty())
+        {
+            block_data::Mesh35 mesh = meshList[0];
+            mesh.data = holder.data0;
+            res.push_back(mesh);
+        }
+        if (!holder.data1.empty())
+        {
+            block_data::Mesh35 mesh = meshList[0];
+            mesh.data = holder.data1;
+            res.push_back(mesh);
+        }
+        if (!holder.data2.empty())
+        {
+            block_data::Mesh35 mesh = meshList[0];
+            mesh.data = holder.data2;
+            res.push_back(mesh);
+        }
+        if (!holder.data3.empty())
+        {
+            block_data::Mesh35 mesh = meshList[0];
+            mesh.data = holder.data3;
+            res.push_back(mesh);
+        }
+        if (!holder.data4.empty())
+        {
+            block_data::Mesh35 mesh = meshList[0];
+            mesh.data = holder.data4;
+            res.push_back(mesh);
+        }
+
+        return res;
+    }
 };
 
 void RemoveEmptyNodes(resource::data::b3d::B3dTree& /* tree */)
@@ -332,9 +470,26 @@ void RemoveEmptyNodes(resource::data::b3d::B3dTree& /* tree */)
     // not implemented
 }
 
-void MergeFaces(resource::data::b3d::B3dTree& /* tree */)
+
+void VisitNode(const NodePtr& node, FacesVisitor& visitor)
 {
-    // not implemented
+    node->Visit(visitor, VisitMode::PreOrder);
+
+    const auto& children = node->GetChildNodeList();
+    for (auto child : children)
+    {
+        VisitNode(child, visitor);
+    }
+}
+
+void MergeFaces(resource::data::b3d::B3dTree& tree)
+{
+    FacesVisitor facesVisitor;
+
+    for (const auto& node : tree.rootNodes)
+    {
+        VisitNode(node, facesVisitor);
+    }
 }
 
 

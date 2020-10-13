@@ -26,6 +26,10 @@ struct SubMeshInfo
     Ogre::RenderOperation::OperationType operationType;
 };
 
+std::uint32_t Hash(const SubMeshInfo& subMeshInfo);
+
+bool operator < (const SubMeshInfo& left, const SubMeshInfo& right);
+
 struct Transform
 {
     Ogre::Matrix3 matrix;

@@ -33,6 +33,21 @@ namespace app
 using namespace resource::data::b3d;
 
 
+std::uint32_t Hash(const SubMeshInfo& subMeshInfo)
+{
+    std::uint32_t res = subMeshInfo.useSharedVertices ? 1 : 0;
+
+    res += (subMeshInfo.materialIndex * 2);
+
+    res += (subMeshInfo.operationType * 1024);
+
+    return res;
+}
+
+bool operator < (const SubMeshInfo& left, const SubMeshInfo& right)
+{
+    return Hash(left) < Hash(right);
+}
 
 
 B3dSceneBuilder::B3dSceneBuilder(const char* b3dId,
@@ -430,6 +445,10 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const SubMeshInfo& subMeshInfo)
         D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
 
         return subMesh;
+    }
+    else
+    {
+        //__debugbreak();
     }
 
     return subMeshes.back();

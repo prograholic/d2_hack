@@ -9,7 +9,7 @@
 #include <d2_hack/common/types.h>
 #include <d2_hack/resource/data/b3d_reader.h>
 
-#include "b3d_visitor.h"
+#include "b3d_tree_visitor.h"
 
 namespace d2_hack
 {
@@ -38,6 +38,8 @@ void SimpleB3dMeshRenderer::CreateScene()
 
 #if 1
     LoadB3d("aa", b3dSceneNode);
+#endif
+#if 0
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
     LoadB3d("ad", b3dSceneNode);
@@ -45,8 +47,8 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("af", b3dSceneNode);
     LoadB3d("ag", b3dSceneNode);
 #endif
-    LoadB3d("ah", b3dSceneNode);
-#if 1
+    //LoadB3d("ah", b3dSceneNode);
+#if 0
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
