@@ -317,26 +317,35 @@ namespace optimizations
 class FacesVisitor : public NoOpNodeVisitor
 {
 public:
-    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces8& /* block */, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode visitMode) override
     {
-
+        VisitFaces(name, block, visitMode);
     }
 
-    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode visitMode) override
     {
-
+        VisitFaces(name, block, visitMode);
     }
 
-    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode visitMode) override
     {
-        block_data::Face35List origFaces = std::move(block.faces);
+        VisitFaces(name, block, visitMode);
+    }
+
+
+private:
+
+    template <typename Faces>
+    void VisitFaces(const std::string& /* name */, Faces& block, VisitMode /* visitMode */)
+    {
+        auto origFaces = std::move(block.faces);
 
         if (origFaces.empty())
         {
             return;
         }
 
-        std::map<SubMeshInfo, block_data::Face35List> mapping;
+        std::map<SubMeshInfo, decltype(origFaces)> mapping;
 
         for (const auto& data : origFaces)
         {
@@ -348,7 +357,7 @@ public:
         {
             if (CanMerge(item.first))
             {
-                block_data::Face35List merged = Merge(item.second);
+                auto merged = Merge(item.second);
                 block.faces.insert(block.faces.end(), merged.begin(), merged.end());
             }
             else
@@ -357,9 +366,6 @@ public:
             }
         }
     }
-
-
-private:
 
     static bool CanMerge(const SubMeshInfo& subMeshInfo)
     {
