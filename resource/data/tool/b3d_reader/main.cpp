@@ -213,7 +213,7 @@ public:
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown: " << ToString(block.unknown) << std::endl;
-        PrintVectorData(block.facesEntries, "facesEntries", 1);
+        PrintVectorData(block.faces, "faces", 1);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
@@ -269,14 +269,14 @@ public:
             << block.color[11] << "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleFaceData35& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleFaceData35: " << ToString(name) << std::endl;
+        GetStream() << "SimpleFaces35: " << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "type: " << block.type << "," << std::endl;
         GetStream(1) << "materialIndex: " << block.materialIndex << std::endl;
-        PrintVectorData(block.meshList, "meshList", 1);
+        PrintVectorData(block.faces, "faces", 1);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
@@ -368,11 +368,11 @@ private:
         GetStream(adjustOffset) << data << std::endl;
     }
 
-    void PrintData(const d2_hack::resource::data::b3d::block_data::Face28Entry& data, int adjustOffset)
+    void PrintData(const d2_hack::resource::data::b3d::block_data::Face28& data, int adjustOffset)
     {
         if (m_printMeshInfo)
         {
-            GetStream(adjustOffset) << "Face28Entry" << std::endl;
+            GetStream(adjustOffset) << "Face28" << std::endl;
             GetStream(adjustOffset) << "{" << std::endl;
             GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
@@ -383,11 +383,11 @@ private:
         }
     }
 
-    void PrintData(const d2_hack::resource::data::b3d::block_data::Face28Entry::Unknown& data, int adjustOffset)
+    void PrintData(const d2_hack::resource::data::b3d::block_data::Face28::Unknown& data, int adjustOffset)
     {
         if (m_printMeshInfo)
         {
-            GetStream(adjustOffset) << "Face28Entry::Unknown" << std::endl;
+            GetStream(adjustOffset) << "Face28::Unknown" << std::endl;
             GetStream(adjustOffset) << "{" << std::endl;
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
@@ -396,11 +396,11 @@ private:
         }
     }
 
-    void PrintData(const block_data::Mesh35& data, int adjustOffset)
+    void PrintData(const block_data::Face35& data, int adjustOffset)
     {
         if (m_printMeshInfo)
         {
-            GetStream(adjustOffset) << "Mesh35" << std::endl;
+            GetStream(adjustOffset) << "Face35" << std::endl;
             GetStream(adjustOffset) << "{" << std::endl;
             GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
@@ -480,9 +480,9 @@ private:
         GetStream(adjustOffset) << "}";
     }
 
-    void PrintData(const d2_hack::resource::data::b3d::block_data::Mesh35::Unknown49& data, int adjustOffset)
+    void PrintData(const d2_hack::resource::data::b3d::block_data::Face35::Unknown49& data, int adjustOffset)
     {
-        GetStream(adjustOffset) << "Mesh35::Unknown49" << std::endl;
+        GetStream(adjustOffset) << "Face35::Unknown49" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "unknown: " << ToString(data.unknown) << "," << std::endl;
         GetStream(adjustOffset) << "}";

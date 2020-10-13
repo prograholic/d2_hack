@@ -59,7 +59,7 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */) = 0;
 
-    virtual void Visit(const std::string& /* name */, block_data::SimpleFaceData35& /* block */, VisitMode /* visitMode */) = 0;
+    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */) = 0;
 
@@ -113,7 +113,7 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */) override;
 
-    virtual void Visit(const std::string& /* name */, block_data::SimpleFaceData35& /* block */, VisitMode /* visitMode */) override;
+    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */) override;
 

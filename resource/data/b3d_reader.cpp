@@ -640,9 +640,9 @@ private:
         return ReadNestedBlocks(res);
     }
 
-    void DispatchFaceEntry28(block_data::Face28Entry& face)
+    void DispatchFace28(block_data::Face28& face)
     {
-        if (face.type == block_data::Face28Entry::Unknown2)
+        if (face.type == block_data::Face28::Unknown2)
         {
             const std::uint32_t count = ReadUint32();
             
@@ -665,14 +665,14 @@ private:
         const std::uint32_t facesCount = ReadUint32();
         for (std::uint32_t faceNumber = 0; faceNumber != facesCount; ++faceNumber)
         {
-            block_data::Face28Entry data;
+            block_data::Face28 data;
             data.type = ReadUint32();
             data.unknown0 = ReadFloat();
             data.unknown1 = ReadUint32();
             data.materialIndex = ReadUint32();
 
-            DispatchFaceEntry28(data);
-            block.facesEntries.push_back(data);
+            DispatchFace28(data);
+            block.faces.push_back(data);
         }
 
         return std::make_shared<NodeSimpleFaces28>(blockHeader, block, parent);
@@ -723,94 +723,94 @@ private:
         return ReadNestedBlocks(res);
     }
 
-    void DispatchReadMeshData35(const std::uint32_t blockType, block_data::Mesh35& mesh)
+    void DispatchReadFace35(const std::uint32_t blockType, block_data::Face35& face)
     {
         const std::uint32_t dataCount = ReadUint32();
 
-        if (blockType == block_data::SimpleFaceData35::Unknown1)
+        if (blockType == block_data::SimpleFaces35::Unknown1)
         {
-            if (mesh.type == block_data::Mesh35::Indices0)
+            if (face.type == block_data::Face35::Indices0)
             {
                 common::IndexList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
-            else if (mesh.type == block_data::Mesh35::Unknown2)
+            else if (face.type == block_data::Face35::Unknown2)
             {
                 common::IndexWithTexCoordList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
-            else if (mesh.type == block_data::Mesh35::UnknownType48)
+            else if (face.type == block_data::Face35::UnknownType48)
             {
                 common::IndexWithPositionList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
-            else if (mesh.type == block_data::Mesh35::UnknownType50)
+            else if (face.type == block_data::Face35::UnknownType50)
             {
                 common::IndexWithPositionTexCoordList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
             else
             {
                 ThrowError("Unknown mesh type for block type 1", "B3dReaderImpl::DispatchReadMesh35");
             }
         }
-        else if (blockType == block_data::SimpleFaceData35::Unknown2)
+        else if (blockType == block_data::SimpleFaces35::Unknown2)
         {
-            if (mesh.type == block_data::Mesh35::Indices1)
+            if (face.type == block_data::Face35::Indices1)
             {
                 common::IndexList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
-            else if (mesh.type == block_data::Mesh35::UnknownType3)
+            else if (face.type == block_data::Face35::UnknownType3)
             {
                 common::IndexWithTexCoordList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
-            else if (mesh.type == block_data::Mesh35::UnknownType49)
+            else if (face.type == block_data::Face35::UnknownType49)
             {
-                std::vector<block_data::Mesh35::Unknown49> data;
+                std::vector<block_data::Face35::Unknown49> data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
-            else if (mesh.type == block_data::Mesh35::UnknownType51)
+            else if (face.type == block_data::Face35::UnknownType51)
             {
                 common::IndexWithPositionList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
             else
             {
                 ThrowError("Unknown mesh type for block type 2", "B3dReaderImpl::DispatchReadMesh35");
             }
         }
-        else if (blockType == block_data::SimpleFaceData35::IndicesOnly3)
+        else if (blockType == block_data::SimpleFaces35::IndicesOnly3)
         {
-            switch (mesh.type)
+            switch (face.type)
             {
-            case block_data::Mesh35::Indices0:
-            case block_data::Mesh35::Indices1:
-            case block_data::Mesh35::Indices3:
-            case block_data::Mesh35::Indices16:
-            case block_data::Mesh35::Indices17:
+            case block_data::Face35::Indices0:
+            case block_data::Face35::Indices1:
+            case block_data::Face35::Indices3:
+            case block_data::Face35::Indices16:
+            case block_data::Face35::Indices17:
             {
                 common::IndexList data;
                 ReadCount(data, dataCount);
 
-                mesh.data = std::move(data);
+                face.data = std::move(data);
             }
             break;
 
@@ -826,7 +826,7 @@ private:
 
     NodePtr ReadBlockData35(const block_data::BlockHeader& blockHeader, const NodePtr& parent)
     {
-        block_data::SimpleFaceData35 block;
+        block_data::SimpleFaces35 block;
 
         block.boundingSphere = ReadBoundingSphere();
         block.type = ReadUint32();
@@ -835,18 +835,18 @@ private:
         const std::uint32_t meshCount = ReadUint32();
         for (std::uint32_t meshNumber = 0; meshNumber != meshCount; ++meshNumber)
         {
-            block_data::Mesh35 mesh;
-            mesh.type = ReadUint32();
-            mesh.unknown0 = ReadFloat();
-            mesh.unknown1 = ReadUint32();
-            mesh.materialIndex = ReadUint32();
+            block_data::Face35 face;
+            face.type = ReadUint32();
+            face.unknown0 = ReadFloat();
+            face.unknown1 = ReadUint32();
+            face.materialIndex = ReadUint32();
 
-            DispatchReadMeshData35(block.type, mesh);
+            DispatchReadFace35(block.type, face);
 
-            block.meshList.push_back(mesh);
+            block.faces.push_back(face);
         }
 
-        return std::make_shared<NodeSimpleFaceData35>(blockHeader, block, parent);
+        return std::make_shared<NodeSimpleFaces35>(blockHeader, block, parent);
     }
 
     void DispatchVertexData37(block_data::GroupVertexData37& block)

@@ -89,7 +89,7 @@ void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupLigh
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaceData35& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */)
 {
 }
 

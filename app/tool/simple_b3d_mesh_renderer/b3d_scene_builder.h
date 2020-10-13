@@ -74,7 +74,7 @@ public:
     Ogre::SubMesh* CreateSubMesh(const SubMeshInfo& subMeshInfo);
 
     // todo: switch to std::vector<block_data::Face28Entry::Unknown>
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const resource::data::b3d::block_data::Face28Entry& face);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const resource::data::b3d::block_data::Face28& face);
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& data);
 
@@ -84,7 +84,7 @@ public:
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Mesh35::Unknown49>& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data);
 private:
     std::string m_b3dId;
     std::string m_b3dName;

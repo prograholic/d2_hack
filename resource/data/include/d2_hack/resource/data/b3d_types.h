@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <memory>
 #include <variant>
+#include <tuple>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
@@ -58,6 +59,15 @@ static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
 static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
 static const std::uint32_t MaxBlockId = 40;
+
+
+template <class... Types>
+struct TypeList
+{
+    using tuple_t = std::tuple<Types...>;
+    using variant_t = std::variant<Types...>;
+};
+
 
 struct BlockHeader
 {
@@ -117,12 +127,14 @@ struct Face8
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
 
-    std::variant<
+    using Types = TypeList<
         common::IndexList,
         common::IndexWithTexCoordList,
         common::IndexWithPositionList,
         common::IndexWithPositionTexCoordList
-    > data;
+    >;
+
+    Types::variant_t data;
 };
 
 typedef std::vector<Face8> Face8List;
@@ -246,7 +258,7 @@ struct GroupTransformMatrix24
     std::uint32_t unknown;
 };
 
-struct Face28Entry
+struct Face28
 {
     static const std::uint32_t Unknown2 = 2;
 
@@ -263,10 +275,10 @@ struct Face28Entry
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
 
-    std::vector<block_data::Face28Entry::Unknown> data;
+    std::vector<block_data::Face28::Unknown> data;
 };
 
-typedef std::vector<Face28Entry> Faces28Entries;
+typedef std::vector<Face28> Face28List;
 
 struct SimpleFaces28
 {
@@ -274,7 +286,7 @@ struct SimpleFaces28
 
     Ogre::Vector3 unknown;
 
-    Faces28Entries facesEntries;
+    Face28List faces;
 };
 
 struct GroupUnknown29
@@ -309,7 +321,7 @@ struct GroupLightingObjects33
     std::array<Ogre::Real, 12> color;
 };
 
-struct Mesh35
+struct Face35
 {
     static const std::uint32_t Indices0 = 0;
     static const std::uint32_t Indices1 = 1;
@@ -334,18 +346,21 @@ struct Mesh35
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
     
-    std::variant<
+    
+    using Types = TypeList<
         common::IndexList,
         common::IndexWithTexCoordList,
         common::IndexWithPositionList,
         common::IndexWithPositionTexCoordList,
-        std::vector<block_data::Mesh35::Unknown49>
-    > data;
+        std::vector<block_data::Face35::Unknown49>
+    >;
+    
+    Types::variant_t data;
 };
 
-typedef std::vector<Mesh35> Mesh35List;
+typedef std::vector<Face35> Face35List;
 
-struct SimpleFaceData35
+struct SimpleFaces35
 {
     static const std::uint32_t Unknown1 = 1;
     static const std::uint32_t Unknown2 = 2;
@@ -356,7 +371,7 @@ struct SimpleFaceData35
     std::uint32_t type;
     std::uint32_t materialIndex;
 
-    Mesh35List meshList;
+    Face35List faces;
 };
 
 struct GroupVertexData37
@@ -386,12 +401,14 @@ struct GroupVertexData37
     common::ResourceName name;
     std::uint32_t type;
 
-    std::variant<
+    using Types = TypeList<
         common::PositionWithTexCoordNormalList,
         common::PositionWithNormalList,
         std::vector<block_data::GroupVertexData37::Unknown514>,
         std::vector<block_data::GroupVertexData37::Unknown258>
-    > data;
+    >;
+    
+    Types::variant_t data;
 };
 
 struct SimpleGeneratedObjects40

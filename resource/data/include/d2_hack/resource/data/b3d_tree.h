@@ -94,7 +94,7 @@ using NodeSimpleFaces28 = NodeWithData<block_data::SimpleFaces28>;
 using NodeGroupUnknown29 = NodeWithData<block_data::GroupUnknown29>;
 using NodeSimplePortal30 = NodeWithData<block_data::SimplePortal30>;
 using NodeGroupLightingObjects33 = NodeWithData<block_data::GroupLightingObjects33>;
-using NodeSimpleFaceData35 = NodeWithData<block_data::SimpleFaceData35>;
+using NodeSimpleFaces35 = NodeWithData<block_data::SimpleFaces35>;
 using NodeGroupVertexData37 = NodeWithData<block_data::GroupVertexData37>;
 using NodeSimpleGeneratedObjects40 = NodeWithData<block_data::SimpleGeneratedObjects40>;
 

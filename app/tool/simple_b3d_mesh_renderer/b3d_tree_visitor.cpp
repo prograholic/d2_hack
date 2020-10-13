@@ -69,7 +69,7 @@ static SubMeshInfo GetFace28Mapping(std::uint32_t type, std::uint32_t materialIn
 {
     switch (type)
     {
-    case block_data::Face28Entry::Unknown2:
+    case block_data::Face28::Unknown2:
         return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     default:
@@ -80,23 +80,23 @@ static SubMeshInfo GetFace28Mapping(std::uint32_t type, std::uint32_t materialIn
 
 static SubMeshInfo GetFace35Mapping(std::uint32_t blockType, std::uint32_t dataType, std::uint32_t materialIndex)
 {
-    if (blockType == block_data::SimpleFaceData35::IndicesOnly3)
+    if (blockType == block_data::SimpleFaces35::IndicesOnly3)
     {
         switch (dataType)
         {
-        case block_data::Mesh35::Indices0:
+        case block_data::Face35::Indices0:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::Indices1:
+        case block_data::Face35::Indices1:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::Indices3:
+        case block_data::Face35::Indices3:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::Indices16:
+        case block_data::Face35::Indices16:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::Indices17:
+        case block_data::Face35::Indices17:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
         default:
@@ -104,20 +104,20 @@ static SubMeshInfo GetFace35Mapping(std::uint32_t blockType, std::uint32_t dataT
             return InvalidSubMeshInfo;
         };
     }
-    else if (blockType == block_data::SimpleFaceData35::Unknown2)
+    else if (blockType == block_data::SimpleFaces35::Unknown2)
     {
         switch (dataType)
         {
-        case block_data::Mesh35::Indices1:
+        case block_data::Face35::Indices1:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::UnknownType3:
+        case block_data::Face35::UnknownType3:
             return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::UnknownType49:
+        case block_data::Face35::UnknownType49:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::UnknownType51:
+        case block_data::Face35::UnknownType51:
             return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
         default:
@@ -125,20 +125,20 @@ static SubMeshInfo GetFace35Mapping(std::uint32_t blockType, std::uint32_t dataT
             return InvalidSubMeshInfo;
         };
     }
-    else if (blockType == block_data::SimpleFaceData35::Unknown1)
+    else if (blockType == block_data::SimpleFaces35::Unknown1)
     {
         switch (dataType)
         {
-        case block_data::Mesh35::Indices0:
+        case block_data::Face35::Indices0:
             return { true, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::Unknown2:
+        case block_data::Face35::Unknown2:
             return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::UnknownType48:
+        case block_data::Face35::UnknownType48:
             return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
-        case block_data::Mesh35::UnknownType50:
+        case block_data::Face35::UnknownType50:
             return { false, materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
 
         default:
@@ -264,10 +264,10 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleFace
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        for (const auto& data : block.facesEntries)
+        for (const auto& face : block.faces)
         {
-            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace28Mapping(data.type, data.materialIndex));
-            SetSubMeshData(subMesh, data);
+            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace28Mapping(face.type, face.materialIndex));
+            SetSubMeshData(subMesh, face);
         }
     }
 }
@@ -287,19 +287,19 @@ void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupLightingObj
     ProcessLight(name, block, visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaceData35& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaces35& block, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        for (const auto& data : block.meshList)
+        for (const auto& face : block.faces)
         {
-            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace35Mapping(block.type, data.type, data.materialIndex));
+            Ogre::SubMesh* subMesh = CreateSubMesh(GetFace35Mapping(block.type, face.type, face.materialIndex));
 
             auto visitor = [this, subMesh](auto&& items)
             {
                 SetSubMeshData(subMesh, items);
             };
-            std::visit(visitor, data.data);
+            std::visit(visitor, face.data);
         }
     }
 }
@@ -340,18 +340,18 @@ public:
 
     }
 
-    virtual void Visit(const std::string& /* name */, block_data::SimpleFaceData35& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& block, VisitMode /* visitMode */) override
     {
-        block_data::Mesh35List origMeshList = std::move(block.meshList);
+        block_data::Face35List origFaces = std::move(block.faces);
 
-        if (origMeshList.empty())
+        if (origFaces.empty())
         {
             return;
         }
 
-        std::map<SubMeshInfo, block_data::Mesh35List> mapping;
+        std::map<SubMeshInfo, block_data::Face35List> mapping;
 
-        for (const auto& data : origMeshList)
+        for (const auto& data : origFaces)
         {
             SubMeshInfo subMeshInfo = GetFace35Mapping(block.type, data.type, data.materialIndex);
             mapping[subMeshInfo].push_back(data);
@@ -361,12 +361,12 @@ public:
         {
             if (CanMerge(item.first))
             {
-                block_data::Mesh35List merged = Merge(item.second);
-                block.meshList.insert(block.meshList.end(), merged.begin(), merged.end());
+                block_data::Face35List merged = Merge(item.second);
+                block.faces.insert(block.faces.end(), merged.begin(), merged.end());
             }
             else
             {
-                block.meshList.insert(block.meshList.end(), item.second.begin(), item.second.end());
+                block.faces.insert(block.faces.end(), item.second.begin(), item.second.end());
             }
         }
     }
@@ -384,16 +384,10 @@ private:
         return false;
     }
 
-
-    struct Mesh35Holder
+    template <typename MeshType>
+    struct MeshHolder
     {
-        std::tuple<
-            common::IndexList,
-            common::IndexWithTexCoordList,
-            common::IndexWithPositionList,
-            common::IndexWithPositionTexCoordList,
-            std::vector<block_data::Mesh35::Unknown49>
-        > meshData;
+        typename MeshType::Types::tuple_t meshData;
 
 
         template <typename DataType>
@@ -404,9 +398,10 @@ private:
         }
     };
 
-    static block_data::Mesh35List Merge(const block_data::Mesh35List& meshList)
+    template <typename MeshList>
+    static MeshList Merge(const MeshList& meshList)
     {
-        Mesh35Holder holder;
+        MeshHolder<MeshList::value_type> holder;
 
         auto visitor = [&holder](auto&& data)
         {
@@ -418,13 +413,13 @@ private:
             std::visit(visitor, mesh.data);
         }
 
-        block_data::Mesh35List res;
+        MeshList res;
 
         auto visitor2 = [&meshList, &res](auto&& arg)
         {
             if (!arg.empty())
             {
-                block_data::Mesh35 mesh = meshList[0];
+                MeshList::value_type mesh = meshList[0];
                 mesh.data = arg;
                 res.push_back(mesh);
             }
