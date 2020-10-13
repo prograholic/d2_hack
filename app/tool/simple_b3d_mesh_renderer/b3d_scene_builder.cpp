@@ -400,58 +400,21 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
 }
 
 
-
-
-
 Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const SubMeshInfo& subMeshInfo)
 {
     const std::string materialName = GetMaterialName(subMeshInfo.materialIndex);
 
     auto mesh = m_meshStack.top();
 
-    const auto& subMeshes = mesh->getSubMeshes();
+    Ogre::SubMesh* subMesh = mesh->createSubMesh();
+    subMesh->useSharedVertices = subMeshInfo.useSharedVertices;
+    subMesh->operationType = subMeshInfo.operationType;
 
-    bool shouldCreateNewSubMesh = false;
-    if (subMeshes.empty())
-    {
-        shouldCreateNewSubMesh = true;
-    }
-    else
-    {
-        if (!subMeshInfo.useSharedVertices || (subMeshInfo.operationType != Ogre::RenderOperation::OT_TRIANGLE_LIST))
-        {
-            shouldCreateNewSubMesh = true;
-        }
-        else
-        {
-            Ogre::SubMesh* subMesh = subMeshes.back();
-            if ((subMesh->useSharedVertices != subMeshInfo.useSharedVertices) ||
-                (subMesh->getMaterialName() != materialName) ||
-                (subMesh->operationType != subMeshInfo.operationType))
-            {
-                shouldCreateNewSubMesh = true;
-            }
-        }
-    }
+    subMesh->setMaterialName(materialName);
 
-    if (shouldCreateNewSubMesh)
-    {
-        Ogre::SubMesh* subMesh = mesh->createSubMesh();
-        subMesh->useSharedVertices = subMeshInfo.useSharedVertices;
-        subMesh->operationType = subMeshInfo.operationType;
+    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
 
-        subMesh->setMaterialName(materialName);
-
-        D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
-
-        return subMesh;
-    }
-    else
-    {
-        //__debugbreak();
-    }
-
-    return subMeshes.back();
+    return subMesh;
 }
 
 
