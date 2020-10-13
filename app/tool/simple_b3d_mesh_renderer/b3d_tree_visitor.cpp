@@ -1,5 +1,9 @@
 #include "b3d_tree_visitor.h"
 
+#include <boost/fusion/algorithm.hpp>
+#include <boost/fusion/adapted/std_tuple.hpp>
+#include <boost/fusion/include/std_tuple.hpp>
+
 #include <d2_hack/common/utils.h>
 
 //#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
@@ -383,35 +387,20 @@ private:
 
     struct Mesh35Holder
     {
-        common::IndexList data0;
-        common::IndexWithTexCoordList data1;
-        common::IndexWithPositionList data2;
-        common::IndexWithPositionTexCoordList data3;
-        std::vector<block_data::Mesh35::Unknown49> data4;
+        std::tuple<
+            common::IndexList,
+            common::IndexWithTexCoordList,
+            common::IndexWithPositionList,
+            common::IndexWithPositionTexCoordList,
+            std::vector<block_data::Mesh35::Unknown49>
+        > meshData;
 
-        void Add(const common::IndexList& data)
-        {
-            data0.insert(data0.end(), data.begin(), data.end());
-        }
 
-        void Add(const common::IndexWithTexCoordList& data)
+        template <typename DataType>
+        void Add(const DataType& data)
         {
-            data1.insert(data1.end(), data.begin(), data.end());
-        }
-
-        void Add(const common::IndexWithPositionList& data)
-        {
-            data2.insert(data2.end(), data.begin(), data.end());
-        }
-
-        void Add(const common::IndexWithPositionTexCoordList& data)
-        {
-            data3.insert(data3.end(), data.begin(), data.end());
-        }
-
-        void Add(const std::vector<block_data::Mesh35::Unknown49>& data)
-        {
-            data4.insert(data4.end(), data.begin(), data.end());
+            auto& holder = std::get<DataType>(meshData);
+            holder.insert(holder.end(), data.begin(), data.end());
         }
     };
 
@@ -430,36 +419,18 @@ private:
         }
 
         block_data::Mesh35List res;
-        if (!holder.data0.empty())
+
+        auto visitor2 = [&meshList, &res](auto&& arg)
         {
-            block_data::Mesh35 mesh = meshList[0];
-            mesh.data = holder.data0;
-            res.push_back(mesh);
-        }
-        if (!holder.data1.empty())
-        {
-            block_data::Mesh35 mesh = meshList[0];
-            mesh.data = holder.data1;
-            res.push_back(mesh);
-        }
-        if (!holder.data2.empty())
-        {
-            block_data::Mesh35 mesh = meshList[0];
-            mesh.data = holder.data2;
-            res.push_back(mesh);
-        }
-        if (!holder.data3.empty())
-        {
-            block_data::Mesh35 mesh = meshList[0];
-            mesh.data = holder.data3;
-            res.push_back(mesh);
-        }
-        if (!holder.data4.empty())
-        {
-            block_data::Mesh35 mesh = meshList[0];
-            mesh.data = holder.data4;
-            res.push_back(mesh);
-        }
+            if (!arg.empty())
+            {
+                block_data::Mesh35 mesh = meshList[0];
+                mesh.data = arg;
+                res.push_back(mesh);
+            }
+        };
+
+        boost::fusion::for_each(holder.meshData, visitor2);
 
         return res;
     }
