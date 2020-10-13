@@ -5,6 +5,7 @@
 #include <boost/fusion/include/std_tuple.hpp>
 
 #include <d2_hack/common/utils.h>
+#include <d2_hack/common/log.h>
 
 //#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
 #define B3D_NOT_IMPLEMENTED()
@@ -424,11 +425,6 @@ private:
     }
 };
 
-void RemoveEmptyNodes(resource::data::b3d::B3dTree& /* tree */)
-{
-    // not implemented
-}
-
 
 void VisitNode(const NodePtr& node, FacesVisitor& visitor)
 {
@@ -448,6 +444,50 @@ void MergeFaces(resource::data::b3d::B3dTree& tree)
     for (const auto& node : tree.rootNodes)
     {
         VisitNode(node, facesVisitor);
+    }
+}
+
+
+bool NeedToRemove(const NodePtr& node)
+{
+    const auto& children = node->GetChildNodeList();
+
+    NodeList newChildList;
+    for (auto child : children)
+    {
+        bool needToRemove = NeedToRemove(child);
+        if (!needToRemove)
+        {
+            newChildList.push_back(child);
+        }
+        else
+        {
+            D2_HACK_LOG(NeedToRemove) << "removed node: " << child->GetName() << " with type: " << child->GetType();
+        }
+    }
+
+    node->SetChildNodes(std::move(newChildList));
+
+    if (node->GetChildNodeList().empty())
+    {
+        switch (node->GetType())
+        {
+        case block_data::GroupRoadInfraObjectsBlock4:
+        case block_data::GroupObjectsBlock5:
+        case block_data::GroupObjectsBlock19:
+        case block_data::GroupObjectsBlock21:
+            return true;
+        };
+    }
+
+    return false;
+}
+
+void RemoveEmptyNodes(resource::data::b3d::B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        NeedToRemove(node);
     }
 }
 

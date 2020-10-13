@@ -77,9 +77,9 @@ private:
 namespace optimizations
 {
 
-void RemoveEmptyNodes(resource::data::b3d::B3dTree& tree);
-
 void MergeFaces(resource::data::b3d::B3dTree& tree);
+
+void RemoveEmptyNodes(resource::data::b3d::B3dTree& tree);
 
 } // namespace optimizations
 
