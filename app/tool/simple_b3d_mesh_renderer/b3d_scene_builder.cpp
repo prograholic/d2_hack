@@ -118,14 +118,19 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
     {
         std::string sceneName = GetNameImpl(common::ResourceNameToString(block.object), "scene_node", false);
 
+        Ogre::SceneNode* parentSceneNode = m_sceneNodes.top();
+
         Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName, false);
         if (sceneNode)
         {
-            //auto transformList = m_transformMap[GetB3dResourceId(block.space)];
-            //for (const auto& transform : transformList)
-            //{
-            //    sceneNode->translate(transform.matrix, transform.position);
-            //}
+            sceneNode->getParentSceneNode()->removeChild(sceneNode);
+            parentSceneNode->addChild(sceneNode);
+            auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
+            for (const auto& transform : transformList)
+            {
+                sceneNode->translate(transform.position);
+                sceneNode->rotate(Ogre::Quaternion{transform.matrix});
+            }
         }
     }
 }

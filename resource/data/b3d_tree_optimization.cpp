@@ -236,7 +236,10 @@ static void RemoveLods(B3dTree& tree)
 void Optimize(B3dTree& tree)
 {
     RemoveEmptyNodes(tree);
-    RemoveLods(tree);
+    if (0)
+    {
+        RemoveLods(tree);
+    }
     MergeFaces(tree);
 }
 

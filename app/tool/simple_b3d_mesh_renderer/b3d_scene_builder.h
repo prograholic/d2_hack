@@ -25,7 +25,7 @@ struct Transform
     Ogre::Matrix3 matrix;
     Ogre::Vector3 position;
 };
-typedef std::list<Transform> TransformList;
+typedef std::vector<Transform> TransformList;
 
 class B3dSceneBuilder
 {
