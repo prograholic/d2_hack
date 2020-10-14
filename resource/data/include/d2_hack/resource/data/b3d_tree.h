@@ -69,6 +69,11 @@ public:
         visitor.Visit(GetName(), m_block, visitMode);
     }
 
+    const BlockType& GetBlockData() const
+    {
+        return m_block;
+    }
+
 private:
     BlockType m_block;
 };

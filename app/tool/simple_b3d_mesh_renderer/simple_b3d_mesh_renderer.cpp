@@ -8,6 +8,7 @@
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
 #include <d2_hack/resource/data/b3d_reader.h>
+#include <d2_hack/resource/data/b3d_tree_optimization.h>
 
 #include "b3d_tree_visitor.h"
 
@@ -36,10 +37,8 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
+#if 0
     LoadB3d("aa", b3dSceneNode);
-#endif
-#if 1
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
     LoadB3d("ad", b3dSceneNode);
@@ -48,7 +47,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ag", b3dSceneNode);
 #endif
     LoadB3d("ah", b3dSceneNode);
-#if 1
+#if 0
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -102,8 +101,7 @@ void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dScene
     B3dReader reader;
     B3dTree b3dTree = reader.Read(dataStream);
 
-    optimizations::RemoveEmptyNodes(b3dTree);
-    optimizations::MergeFaces(b3dTree);
+    optimization::Optimize(b3dTree);
     
     B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
 

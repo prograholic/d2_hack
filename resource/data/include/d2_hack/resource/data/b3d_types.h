@@ -23,11 +23,18 @@ namespace data
 namespace b3d
 {
 
-
 enum class VisitMode
 {
     PreOrder,
     PostOrder
+};
+
+
+struct SubMeshInfo
+{
+    bool useSharedVertices;
+    std::uint32_t materialIndex;
+    Ogre::RenderOperation::OperationType operationType;
 };
 
 
@@ -54,7 +61,7 @@ static const std::uint32_t SimpleFacesBlock28 = 28;
 static const std::uint32_t GroupUnknownBlock29 = 29;
 static const std::uint32_t SimplePortalBlock30 = 30;
 static const std::uint32_t GroupLightingObjectBlock33 = 33;
-static const std::uint32_t SimpleFaceDataBlock35 = 35;
+static const std::uint32_t SimpleFacesBlock35 = 35;
 static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
 static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 

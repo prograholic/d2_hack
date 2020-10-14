@@ -10,7 +10,6 @@ namespace common
     
 std::string ResourceNameToString(const ResourceName& resName);
 
-
 } // namespace common
 } // namespace d2_hack
 

@@ -74,16 +74,6 @@ private:
 };
 
 
-namespace optimizations
-{
-
-void MergeFaces(resource::data::b3d::B3dTree& tree);
-
-void RemoveEmptyNodes(resource::data::b3d::B3dTree& tree);
-
-} // namespace optimizations
-
-
 } // namespace app
 } // namespace d2_hack
 

@@ -4,8 +4,11 @@
 #include <string>
 #include <stdexcept>
 
+#include <OgreLogManager.h>
+
 #include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/resource/data/b3d_tree.h>
+#include <d2_hack/resource/data/b3d_tree_optimization.h>
 #include <d2_hack/common/utils.h>
 
 namespace d2_hack
@@ -418,7 +421,7 @@ private:
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
         GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
         GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::common::PositionWithNormal& data, int adjustOffset)
@@ -427,7 +430,7 @@ private:
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
         GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::resource::data::b3d::block_data::GroupVertexData37::Unknown514& data, int adjustOffset)
@@ -438,7 +441,7 @@ private:
         GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
         GetStream(adjustOffset + 1) << "unknown1: " << ToString(data.unknown1) << std::endl;
         GetStream(adjustOffset + 1) << "unknown2: " << ToString(data.unknown2) << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::resource::data::b3d::block_data::GroupVertexData37::Unknown258& data, int adjustOffset)
@@ -449,7 +452,7 @@ private:
         GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
         GetStream(adjustOffset + 1) << "unknown1: " << ToString(data.unknown1) << std::endl;
         GetStream(adjustOffset + 1) << "unknown2: " << ToString(data.unknown2) << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::common::IndexWithTexCoord& data, int adjustOffset)
@@ -458,7 +461,7 @@ private:
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
         GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::common::IndexWithPosition& data, int adjustOffset)
@@ -467,7 +470,7 @@ private:
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::common::IndexWithPositionTexCoord& data, int adjustOffset)
@@ -477,7 +480,7 @@ private:
         GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
         GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const d2_hack::resource::data::b3d::block_data::Face35::Unknown49& data, int adjustOffset)
@@ -485,7 +488,7 @@ private:
         GetStream(adjustOffset) << "Face35::Unknown49" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "unknown: " << ToString(data.unknown) << "," << std::endl;
-        GetStream(adjustOffset) << "}";
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
 
@@ -567,6 +570,8 @@ private:
             {
                 PrintData(item, adjustOffset + 1);
             }
+
+            GetStream(adjustOffset) << "}" << std::endl;
         }
     }
 
@@ -662,11 +667,15 @@ int main(int argc, char* argv[])
 
     try
     {
+        Ogre::LogManager logMgr;
+        logMgr.createLog("default", true, false, true);
+
         B3dReader reader;
 
         Ogre::FileStreamDataStream dataStream(&inputFile, false);
 
         B3dTree tree = reader.Read(dataStream);
+        optimization::Optimize(tree);
 
         TracingVisitor visitor{printBoundingSphere, true, printVectorData, printMeshInfo};
         VisitTree(tree, visitor);

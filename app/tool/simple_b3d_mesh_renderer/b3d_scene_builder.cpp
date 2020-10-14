@@ -32,24 +32,6 @@ namespace app
 
 using namespace resource::data::b3d;
 
-
-std::uint32_t Hash(const SubMeshInfo& subMeshInfo)
-{
-    std::uint32_t res = subMeshInfo.useSharedVertices ? 1 : 0;
-
-    res += (subMeshInfo.materialIndex * 2);
-
-    res += (subMeshInfo.operationType * 1024);
-
-    return res;
-}
-
-bool operator < (const SubMeshInfo& left, const SubMeshInfo& right)
-{
-    return Hash(left) < Hash(right);
-}
-
-
 B3dSceneBuilder::B3dSceneBuilder(const char* b3dId,
                                  const std::string& b3dName,
                                  Ogre::SceneManager* sceneManager,

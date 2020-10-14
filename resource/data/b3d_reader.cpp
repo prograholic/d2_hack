@@ -251,7 +251,7 @@ private:
         {
             return ReadBlockData33(blockHeader, parent);
         }
-        else if (blockHeader.type == block_data::SimpleFaceDataBlock35)
+        else if (blockHeader.type == block_data::SimpleFacesBlock35)
         {
             return ReadBlockData35(blockHeader, parent);
         }

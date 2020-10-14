@@ -19,16 +19,6 @@ namespace d2_hack
 namespace app
 {
 
-struct SubMeshInfo
-{
-    bool useSharedVertices;
-    std::uint32_t materialIndex;
-    Ogre::RenderOperation::OperationType operationType;
-};
-
-std::uint32_t Hash(const SubMeshInfo& subMeshInfo);
-
-bool operator < (const SubMeshInfo& left, const SubMeshInfo& right);
 
 struct Transform
 {
@@ -71,7 +61,7 @@ public:
 
     void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown258>& data);
 
-    Ogre::SubMesh* CreateSubMesh(const SubMeshInfo& subMeshInfo);
+    Ogre::SubMesh* CreateSubMesh(const resource::data::b3d::SubMeshInfo& subMeshInfo);
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face28::Unknown>& data);
 

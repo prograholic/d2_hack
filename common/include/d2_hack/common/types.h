@@ -9,6 +9,7 @@
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
+#include <OgreRenderOperation.h>
 D2_HACK_DISABLE_WARNING_END() // 4251
 
 namespace d2_hack
