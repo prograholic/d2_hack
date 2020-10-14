@@ -45,7 +45,7 @@ SubMeshInfo GetFaceMapping(const block_data::SimpleFaces8& /* block */, const bl
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     case block_data::Face8::UnknownType16:
-        return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+        return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_FAN };
 
     case block_data::Face8::FaceIndexType17:
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
