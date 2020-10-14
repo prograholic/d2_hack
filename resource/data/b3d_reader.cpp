@@ -175,6 +175,10 @@ private:
         {
             return ReadBlockData0(blockHeader, parent);
         }
+        else if (blockHeader.type == block_data::GroupUnknownBlock2)
+        {
+            return ReadBlockData2(blockHeader, parent);
+        }
         else if (blockHeader.type == block_data::GroupRoadInfraObjectsBlock4)
         {
             return ReadBlockData4(blockHeader, parent);
@@ -235,6 +239,10 @@ private:
         {
             return ReadBlockData24(blockHeader, parent);
         }
+        else if (blockHeader.type == block_data::SimpleUnknownBlock25)
+        {
+            return ReadBlockData25(blockHeader, parent);
+        }
         else if (blockHeader.type == block_data::SimpleFacesBlock28)
         {
             return ReadBlockData28(blockHeader, parent);
@@ -250,6 +258,10 @@ private:
         else if (blockHeader.type == block_data::GroupLightingObjectBlock33)
         {
             return ReadBlockData33(blockHeader, parent);
+        }
+        else if (blockHeader.type == block_data::SimpleUnknownBlock34)
+        {
+            return ReadBlockData34(blockHeader, parent);
         }
         else if (blockHeader.type == block_data::SimpleFacesBlock35)
         {
@@ -346,6 +358,19 @@ private:
         return std::make_shared<NodeEmpty0>(blockHeader, block, parent);
     }
 
+    NodePtr ReadBlockData2(const block_data::BlockHeader& blockHeader, const NodePtr& parent)
+    {
+        block_data::GroupUnknown2 block;
+
+        block.boundingSphere = ReadBoundingSphere();
+        block.unknown0 = ReadVector3();
+        block.unknown1 = ReadFloat();
+
+        NodePtr res = std::make_shared<NodeGroupUnknown2>(blockHeader, block, parent);
+
+        return ReadNestedBlocks(res);
+    }
+
     NodePtr ReadBlockData4(const block_data::BlockHeader& blockHeader, const NodePtr& parent)
     {
         block_data::GroupRoadInfraObjects4 block;
@@ -394,9 +419,11 @@ private:
         case block_data::Face8::UnknownType0:
         case block_data::Face8::UnknownType1:
         case block_data::Face8::UnknownType16:
+        case block_data::Face8::FaceIndexType17:
         case block_data::Face8::FaceIndexType128:
         case block_data::Face8::FaceIndexType129:
         case block_data::Face8::UnknownType144:
+        case block_data::Face8::UnknownType145:
         {
             common::IndexList data;
             ReadCount(data, itemsInFace);
@@ -407,6 +434,7 @@ private:
         
         case block_data::Face8::FaceIndexType2:
         case block_data::Face8::FaceIndexType3:
+        case block_data::Face8::FaceIndexType131:
         {
             common::IndexWithTexCoordList data;
             ReadCount(data, itemsInFace);
@@ -416,7 +444,9 @@ private:
         break;
 
         case block_data::Face8::FaceIndexType48:
+        case block_data::Face8::FaceIndexType51:
         case block_data::Face8::FaceIndexType176:
+        case block_data::Face8::FaceIndexType179:
         {
             common::IndexWithPositionList data;
             ReadCount(data, itemsInFace);
@@ -429,6 +459,15 @@ private:
         case block_data::Face8::FaceIndexType178:
         {
             common::IndexWithPositionTexCoordList data;
+            ReadCount(data, itemsInFace);
+
+            face.data = std::move(data);
+        }
+        break;
+
+        case block_data::Face8::FaceIndexType177:
+        {
+            common::TexCoordList data;
             ReadCount(data, itemsInFace);
 
             face.data = std::move(data);
@@ -586,40 +625,21 @@ private:
         return ReadNestedBlocks(res);
     }
 
-    void DispatchCollisionEntry23(const std::uint32_t type, std::vector<common::Position>& unknown5)
-    {
-        if (type == block_data::SimpleVolumeCollision23::UnknownType0)
-        {
-            const std::uint32_t count = ReadUint32();
-            ReadCount(unknown5, count);
-        }
-        else
-        {
-            ThrowError("Unknown type", "B3dReaderImpl::DispatchCollisionEntry23");
-        }
-    }
-
     NodePtr ReadBlockData23(const block_data::BlockHeader& blockHeader, const NodePtr& parent)
     {
         block_data::SimpleVolumeCollision23 block;
 
         block.unknown0 = ReadUint32();
-        block.unknown1 = ReadUint32();
-        block.type = ReadUint32();
-
-        if (block.type == block_data::SimpleVolumeCollision23::UnknownType0)
-        {
-            // does nothing
-        }
-        else
-        {
-            ThrowError("Unknown type", "B3dReaderImpl::ReadBlockData23");
-        }
-
+        block.surfaceType = ReadUint32();
+        
         const std::uint32_t collisionCount = ReadUint32();
         for (std::uint32_t collisionNumber = 0; collisionNumber != collisionCount; ++collisionNumber)
         {
-            DispatchCollisionEntry23(block.type, block.unknown5);
+            const std::uint32_t vertexCount = ReadUint32();
+            common::PositionList polygon;
+            ReadCount(polygon, vertexCount);
+
+            block.polygons.push_back(polygon);
         }
 
         return std::make_shared<NodeSimpleVolumeCollision23>(blockHeader, block, parent);
@@ -638,6 +658,22 @@ private:
 
         NodePtr res = std::make_shared<NodeGroupTransformMatrix24>(blockHeader, block, parent);
         return ReadNestedBlocks(res);
+    }
+
+    NodePtr ReadBlockData25(const block_data::BlockHeader& blockHeader, const NodePtr& parent)
+    {
+        block_data::SimpleUnknown25 block;
+
+        block.unknown0 = ReadFloat();
+        block.unknown1 = ReadUint32();
+        block.unknown2 = ReadUint32();
+        ReadBytes(block.soundName.data(), block.soundName.size());
+        for (auto& unknown : block.unknown3)
+        {
+            unknown = ReadFloat();
+        }
+
+        return std::make_shared<NodeSimpleUnknown25>(blockHeader, block, parent);
     }
 
     void DispatchFace28(block_data::Face28& face)
@@ -724,6 +760,19 @@ private:
 
         NodePtr res = std::make_shared<NodeGroupLightingObjects33>(blockHeader, block, parent);
         return ReadNestedBlocks(res);
+    }
+
+    NodePtr ReadBlockData34(const block_data::BlockHeader& blockHeader, const NodePtr& parent)
+    {
+        block_data::SimpleUnknown34 block;
+
+        block.boundingSphere = ReadBoundingSphere();
+        block.unknown0 = ReadFloat();
+
+        std::uint32_t dataCount = ReadUint32();
+        ReadCount(block.data, dataCount);
+
+        return std::make_shared<NodeSimpleUnknown34>(blockHeader, block, parent);
     }
 
     void DispatchReadFace35(const std::uint32_t blockType, block_data::Face35& face)
@@ -888,7 +937,14 @@ private:
         }
         else if (block.type == block_data::GroupVertexData37::UnknownType258)
         {
-            std::vector<block_data::GroupVertexData37::Unknown258> data;
+            std::vector<block_data::GroupVertexData37::Unknown258Or515> data;
+            ReadCount(data, dataSize);
+
+            block.data = std::move(data);
+        }
+        else if (block.type == block_data::GroupVertexData37::UnknownType515)
+        {
+            std::vector<block_data::GroupVertexData37::Unknown258Or515> data;
             ReadCount(data, dataSize);
 
             block.data = std::move(data);

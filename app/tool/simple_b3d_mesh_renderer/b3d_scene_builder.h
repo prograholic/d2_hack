@@ -59,7 +59,7 @@ public:
 
     void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown514>& data);
 
-    void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown258>& data);
+    void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown258Or515>& data);
 
     Ogre::SubMesh* CreateSubMesh(const resource::data::b3d::SubMeshInfo& subMeshInfo);
 
@@ -74,6 +74,8 @@ public:
     void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data);
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data);
+
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data);
 private:
     std::string m_b3dId;
     std::string m_b3dName;

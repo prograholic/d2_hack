@@ -80,6 +80,7 @@ private:
 
 
 using NodeEmpty0 = NodeWithData<block_data::Empty0>;
+using NodeGroupUnknown2 = NodeWithData<block_data::GroupUnknown2>;
 using NodeGroupRoadInfraObjects4 = NodeWithData<block_data::GroupRoadInfraObjects4>;
 using NodeGroupObjects5 = NodeWithData<block_data::GroupObjects5>;
 using NodeGroupVertex7 = NodeWithData<block_data::GroupVertex7>;
@@ -95,10 +96,12 @@ using NodeSimpleFlatCollision20 = NodeWithData<block_data::SimpleFlatCollision20
 using NodeGroupObjects21 = NodeWithData<block_data::GroupObjects21>;
 using NodeSimpleVolumeCollision23 = NodeWithData<block_data::SimpleVolumeCollision23>;
 using NodeGroupTransformMatrix24 = NodeWithData<block_data::GroupTransformMatrix24>;
+using NodeSimpleUnknown25 = NodeWithData<block_data::SimpleUnknown25>;
 using NodeSimpleFaces28 = NodeWithData<block_data::SimpleFaces28>;
 using NodeGroupUnknown29 = NodeWithData<block_data::GroupUnknown29>;
 using NodeSimplePortal30 = NodeWithData<block_data::SimplePortal30>;
 using NodeGroupLightingObjects33 = NodeWithData<block_data::GroupLightingObjects33>;
+using NodeSimpleUnknown34 = NodeWithData<block_data::SimpleUnknown34>;
 using NodeSimpleFaces35 = NodeWithData<block_data::SimpleFaces35>;
 using NodeGroupVertexData37 = NodeWithData<block_data::GroupVertexData37>;
 using NodeSimpleGeneratedObjects40 = NodeWithData<block_data::SimpleGeneratedObjects40>;

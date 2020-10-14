@@ -36,6 +36,10 @@ public:
     template <typename T, typename A>
     void ReadCount(std::vector<T, A>& data, size_t count)
     {
+        if (count > 10000)
+        {
+            ThrowError("Count too big: " + std::to_string(count), "ReadCount");
+        }
         data.resize(count);
         ReadBytes(data.data(), count * sizeof(T));
     }

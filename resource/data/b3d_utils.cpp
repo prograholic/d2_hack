@@ -47,11 +47,17 @@ SubMeshInfo GetFaceMapping(const block_data::SimpleFaces8& /* block */, const bl
     case block_data::Face8::UnknownType16:
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
+    case block_data::Face8::FaceIndexType17:
+        return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
     case block_data::Face8::FaceIndexType48:
         return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     case block_data::Face8::FaceIndexType50:
         return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
+
+    case block_data::Face8::FaceIndexType51:
+        return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     case block_data::Face8::FaceIndexType128:
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
@@ -59,13 +65,25 @@ SubMeshInfo GetFaceMapping(const block_data::SimpleFaces8& /* block */, const bl
     case block_data::Face8::FaceIndexType129:
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
+    case block_data::Face8::FaceIndexType131:
+        return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
     case block_data::Face8::UnknownType144:
+        return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::UnknownType145:
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     case block_data::Face8::FaceIndexType176:
         return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
+    case block_data::Face8::FaceIndexType177:
+        return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
     case block_data::Face8::FaceIndexType178:
+        return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+
+    case block_data::Face8::FaceIndexType179:
         return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     default:

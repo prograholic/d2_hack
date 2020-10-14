@@ -99,6 +99,10 @@ void B3dSceneBuilder::ProcessLight(const std::string& name, const block_data::Gr
     if (visitMode == VisitMode::PreOrder)
     {
         std::string full_name = GetNameImpl(name, "light", false);
+        if (m_sceneManager->hasLight(full_name))
+        {
+            full_name = GetNameImpl(name, "light", true);
+        }
 
         Ogre::Light* light = m_sceneManager->createLight(full_name);
         Ogre::SceneNode* lightNode = m_sceneManager->createSceneNode(full_name + "_scene_node");
@@ -348,7 +352,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
 }
 
 
-void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<block_data::GroupVertexData37::Unknown258>& data)
+void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<block_data::GroupVertexData37::Unknown258Or515>& data)
 {
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -562,6 +566,30 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<b
     }
 
     ManageSubMeshIndexBuffer(subMesh, indices);
+}
+
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data)
+{
+    std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
+
+    vertexData->vertexCount = data.size();
+    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
+    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
+
+    size_t offset = 0;
+
+    decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
+
+    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+        offset,
+        vertexData->vertexCount,
+        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+    vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
+    bind->setBinding(0, vbuf);
+
+    subMesh->vertexData = vertexData.release();
 }
 
 void B3dSceneBuilder::ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const common::IndexList& indices)

@@ -13,6 +13,10 @@ void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::Empty0& /
 {
 }
 
+void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */)
+{
+}
+
 void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupRoadInfraObjects4& /* block */, VisitMode /* visitMode */)
 {
 }
@@ -73,6 +77,10 @@ void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupTran
 {
 }
 
+void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown25& /* block */, VisitMode /* visitMode */)
+{
+}
+
 void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */)
 {
 }
@@ -86,6 +94,10 @@ void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimplePor
 }
 
 void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */)
+{
+}
+
+void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */)
 {
 }
 

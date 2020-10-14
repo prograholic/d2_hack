@@ -33,6 +33,11 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::Empty0& /*
     // no need to implement
 }
 
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
 void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupRoadInfraObjects4& /* block */, VisitMode visitMode)
 {
     ProcessSceneNode(name, visitMode);
@@ -112,6 +117,11 @@ void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupTransformMa
     ProcessTransformQueue(name, block, visitMode);
 }
 
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown25& /* block */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
 void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode visitMode)
 {
     VisitFaces(name, block, visitMode);
@@ -130,6 +140,11 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimplePort
 void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupLightingObjects33& block, VisitMode visitMode)
 {
     ProcessLight(name, block, visitMode);
+}
+
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
 }
 
 void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode visitMode)

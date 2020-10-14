@@ -21,6 +21,8 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::Empty0& /* block */, VisitMode /* visitMode */) = 0;
 
+    virtual void Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */) = 0;
+
     virtual void Visit(const std::string& /* name */, block_data::GroupRoadInfraObjects4& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupObjects5& /* block */, VisitMode /* visitMode */) = 0;
@@ -51,6 +53,8 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupTransformMatrix24& /* block */, VisitMode /* visitMode */) = 0;
 
+    virtual void Visit(const std::string& /* name */, block_data::SimpleUnknown25& /* block */, VisitMode /* visitMode */) = 0;
+
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupUnknown29& /* block */, VisitMode /* visitMode */) = 0;
@@ -58,6 +62,8 @@ public:
     virtual void Visit(const std::string& /* name */, block_data::SimplePortal30& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */) = 0;
+
+    virtual void Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */) = 0;
 
@@ -74,6 +80,8 @@ class NoOpNodeVisitor: public NodeVisitorInterface
 {
 public:
     virtual void Visit(const std::string& /* name */, block_data::Empty0& /* block */, VisitMode /* visitMode */) override;
+
+    virtual void Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupRoadInfraObjects4& /* block */, VisitMode /* visitMode */) override;
 
@@ -105,6 +113,8 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupTransformMatrix24& /* block */, VisitMode /* visitMode */) override;
 
+    virtual void Visit(const std::string& /* name */, block_data::SimpleUnknown25& /* block */, VisitMode /* visitMode */) override;
+
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupUnknown29& /* block */, VisitMode /* visitMode */) override;
@@ -112,6 +122,8 @@ public:
     virtual void Visit(const std::string& /* name */, block_data::SimplePortal30& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */) override;
+
+    virtual void Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */) override;
 

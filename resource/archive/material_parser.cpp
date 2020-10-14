@@ -119,7 +119,7 @@ std::string LookupTextureByIndex(const ResFileInfo& fileInfo, std::uint32_t text
 {
     for (const auto& resEntry : fileInfo.info)
     {
-        if (resEntry.name.find("txr\\") == 0)
+        if (resEntry.name.find("txr\\") != std::string::npos)
         {
             if (textureIndex == resEntry.index)
             {
@@ -196,6 +196,19 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
         {
             tokens.pop_front();
             //assert(0 && "process `usecol` option");
+        }
+        else if (tokens.front() == "RotPoint")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            tokens.pop_front();
+            //assert(0 && "process `RotPoint` option");
+        }
+        else if (tokens.front() == "rot")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //assert(0 && "process `RotPoint` option");
         }
         else
         {
