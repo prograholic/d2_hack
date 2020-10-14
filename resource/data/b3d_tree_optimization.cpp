@@ -201,8 +201,7 @@ static bool ShouldRemoveLods(const NodePtr& node, bool insideLod)
     bool isLodNode = node->GetType() == block_data::GroupLodParametersBlock10;
     if (insideLod && isLodNode)
     {
-        //return true;
-        return false;
+        return true;
     }
 
     const auto& children = node->GetChildNodeList();
