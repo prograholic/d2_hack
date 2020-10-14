@@ -37,7 +37,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 0
+#if 1
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
@@ -47,7 +47,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ag", b3dSceneNode);
 #endif
     LoadB3d("ah", b3dSceneNode);
-#if 0
+#if 1
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -62,7 +62,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
 #endif
-#if 0
+#if 1
     LoadB3d("ba", b3dSceneNode);
     LoadB3d("bb", b3dSceneNode);
     LoadB3d("bc", b3dSceneNode);

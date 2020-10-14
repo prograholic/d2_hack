@@ -631,7 +631,10 @@ private:
 
         block.unknown0 = ReadUint32();
         block.surfaceType = ReadUint32();
-        
+
+        const std::uint32_t unknown1Count = ReadUint32();
+        ReadCount(block.unknown1, unknown1Count);
+
         const std::uint32_t collisionCount = ReadUint32();
         for (std::uint32_t collisionNumber = 0; collisionNumber != collisionCount; ++collisionNumber)
         {
