@@ -214,11 +214,15 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
         cnt += 1;
         int dir = ((cnt % 2) * 2) - 1; // [-1, 1]
 
-        const auto& children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
+        auto children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
 
         int i = 0;
-        for (auto child : children)
+        while (!children.empty())
         {
+            auto child = children[0];
+            children.erase(children.begin());
+            children.insert(children.end(), child->getChildren().begin(), child->getChildren().end());
+
             i += 2;
             auto pos = child->getPosition();
             pos.z += (i * dir);

@@ -508,7 +508,7 @@ private:
 
     void PrintData(const common::IndexWithPosition& data, int adjustOffset)
     {
-        GetStream(adjustOffset) << "IndexWithTexCoord" << std::endl;
+        GetStream(adjustOffset) << "IndexWithPosition" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
