@@ -169,6 +169,8 @@ void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
+
+    const char* node_name = "aa_store_aa_scene_node";
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
@@ -177,7 +179,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        Ogre::SceneNode* node = m_sceneManager->getSceneNode("aa_lamp_store1_scene_node", false);
+        Ogre::SceneNode* node = m_sceneManager->getSceneNode(node_name, false);
         if (node)
         {
             PrintSubMeshesForNode(node, cnt);
@@ -187,7 +189,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        const auto& children = m_sceneManager->getSceneNode("aa_lamp_store1_scene_node", false)->getChildren();
+        const auto& children = m_sceneManager->getSceneNode(node_name, false)->getChildren();
         if (!children.empty())
         {
             Ogre::Node* node = children[cnt % children.size()];
@@ -196,16 +198,6 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             sceneNode->flipVisibility();
             D2_HACK_LOG(YYY) << node->getName();
             cnt += 1;
-        }
-    }
-    else if (evt.keysym.sym == '4')
-    {
-        static int cnt = 0;
-
-        Ogre::SceneNode* show_010 = m_sceneManager->getSceneNode("ah_show_ah_010_scene_node", false);
-        if (show_010)
-        {
-            PrintSubMeshesForNode(show_010, cnt);
         }
     }
     else if (evt.keysym.sym == '5')

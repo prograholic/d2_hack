@@ -467,7 +467,7 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
 
         size_t offset = 0;
 
-        decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+        decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
         offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
         Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -476,7 +476,7 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
             Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
         vbuf->writeData(0, vbuf->getSizeInBytes(), texCoords.data(), true);
-        bind->setBinding(0, vbuf);
+        bind->setBinding(1, vbuf);
 
         subMesh->vertexData = vertexData.release();
     }
