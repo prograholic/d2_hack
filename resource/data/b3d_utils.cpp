@@ -302,7 +302,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return {};
 
     case block_data::Face8::FaceIndexType129:
-        return GetIndexListFromTriangleFan<common::IndexList>(face);
+        return GetIndexListFromTriangleStrip<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType131:
         //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
