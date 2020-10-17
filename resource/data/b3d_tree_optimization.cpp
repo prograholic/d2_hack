@@ -239,8 +239,8 @@ void Optimize(B3dTree& tree)
     if (0)
     {
         RemoveLods(tree);
+        MergeFaces(tree);
     }
-    MergeFaces(tree);
 }
 
 } // namespace optimization

@@ -467,7 +467,7 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
 
         size_t offset = 0;
 
-        decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+        decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
         offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
         Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -476,7 +476,7 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
             Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
         vbuf->writeData(0, vbuf->getSizeInBytes(), texCoords.data(), true);
-        bind->setBinding(1, vbuf);
+        bind->setBinding(0, vbuf);
 
         subMesh->vertexData = vertexData.release();
     }
@@ -594,26 +594,12 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCo
 
 void B3dSceneBuilder::ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const common::IndexList& indices)
 {
-    size_t prevSize = subMesh->indexData->indexBuffer ? subMesh->indexData->indexBuffer->getNumIndexes() : 0;
-    size_t prevSizeInBytes = subMesh->indexData->indexBuffer ? subMesh->indexData->indexBuffer->getSizeInBytes() : 0;
-
     auto ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
         Ogre::HardwareIndexBuffer::IT_32BIT,
-        prevSize + indices.size(),
-        Ogre::HardwareBuffer::HBU_STATIC);
+        indices.size(),
+        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
-    std::vector<std::uint8_t> buff;
-    buff.resize(ibuf->getSizeInBytes());
-
-    if (prevSize && prevSizeInBytes)
-    {
-        subMesh->indexData->indexBuffer->readData(0, prevSizeInBytes, buff.data());
-    }
-
-    size_t restDataSize = ibuf->getSizeInBytes() - prevSizeInBytes;
-    std::memcpy(buff.data() + prevSizeInBytes, indices.data(), restDataSize);
-
-    ibuf->writeData(0, ibuf->getSizeInBytes(), buff.data(), true);
+    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
 
     subMesh->indexData->indexBuffer = ibuf;
     subMesh->indexData->indexCount = ibuf->getNumIndexes();

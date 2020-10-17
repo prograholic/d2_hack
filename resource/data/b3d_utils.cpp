@@ -26,7 +26,7 @@ bool operator < (const SubMeshInfo& left, const SubMeshInfo& right)
 }
 
 
-static const SubMeshInfo InvalidSubMeshInfo{ false, 0, Ogre::RenderOperation::OT_POINT_LIST };
+static const SubMeshInfo InvalidSubMeshInfo{ false, std::numeric_limits<std::uint32_t>::max(), Ogre::RenderOperation::OT_POINT_LIST };
 
 SubMeshInfo GetFaceMapping(const block_data::SimpleFaces8& /* block */, const block_data::Face8& face)
 {
@@ -81,7 +81,7 @@ SubMeshInfo GetFaceMapping(const block_data::SimpleFaces8& /* block */, const bl
         return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     case block_data::Face8::FaceIndexType178:
-        return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
+        return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
 
     case block_data::Face8::FaceIndexType179:
         return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_FAN };
