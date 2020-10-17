@@ -63,19 +63,19 @@ public:
 
     Ogre::SubMesh* CreateSubMesh(const resource::data::b3d::SubMeshInfo& subMeshInfo);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face28::Unknown>& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face28::Unknown>& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionList& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionList& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data, const common::IndexList& indices);
 private:
     std::string m_b3dId;
     std::string m_b3dName;

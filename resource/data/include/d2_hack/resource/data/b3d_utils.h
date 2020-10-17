@@ -23,6 +23,13 @@ SubMeshInfo GetFaceMapping(const block_data::SimpleFaces28& block, const block_d
 
 SubMeshInfo GetFaceMapping(const block_data::SimpleFaces35& block, const block_data::Face35& face);
 
+
+common::IndexList PrepareIndices(const block_data::SimpleFaces8& block, const block_data::Face8& face);
+
+common::IndexList PrepareIndices(const block_data::SimpleFaces28& block, const block_data::Face28& face);
+
+common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const block_data::Face35& face);
+
 } // namespace b3d
 } // namespace data
 } // namespace resource

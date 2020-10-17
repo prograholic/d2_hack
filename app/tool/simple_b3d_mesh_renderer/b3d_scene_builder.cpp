@@ -399,7 +399,7 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const SubMeshInfo& subMeshInfo)
 
     Ogre::SubMesh* subMesh = mesh->createSubMesh();
     subMesh->useSharedVertices = subMeshInfo.useSharedVertices;
-    subMesh->operationType = subMeshInfo.operationType;
+    subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
     subMesh->setMaterialName(materialName);
 
@@ -409,7 +409,7 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const SubMeshInfo& subMeshInfo)
 }
 
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face28::Unknown>& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face28::Unknown>& data, const common::IndexList& indices)
 {
     common::TexCoordList texCoords;
     for (const auto& item : data)
@@ -439,20 +439,20 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<b
 
         subMesh->vertexData = vertexData.release();
     }
+
+    ManageSubMeshIndexBuffer(subMesh, indices);
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& /* data */, const common::IndexList& indices)
 {
-    ManageSubMeshIndexBuffer(subMesh, data);
+    ManageSubMeshIndexBuffer(subMesh, indices);
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data, const common::IndexList& indices)
 {
-    common::IndexList indices;
     common::TexCoordList texCoords;
     for (const auto& item : data)
     {
-        indices.push_back(item.index);
         texCoords.push_back(item.texCoord);
     }
 
@@ -482,13 +482,11 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
     }
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionList& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionList& data, const common::IndexList& indices)
 {
-    common::IndexList indices;
     common::PositionList positions;
     for (const auto& item : data)
     {
-        indices.push_back(item.index);
         positions.push_back(item.position);
     }
 
@@ -518,13 +516,11 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
     }
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data, const common::IndexList& indices)
 {
-    common::IndexList indices;
     common::PositionWithTexCoordList positions;
     for (const auto& item : data)
     {
-        indices.push_back(item.index);
         positions.push_back({ item.position, item.texCoord });
     }
 
@@ -557,18 +553,12 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
     }
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face35::Unknown49>& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face35::Unknown49>& /* data */, const common::IndexList& indices)
 {
-    common::IndexList indices;
-    for (const auto& item : data)
-    {
-        indices.push_back(item.index);
-    }
-
     ManageSubMeshIndexBuffer(subMesh, indices);
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data, const common::IndexList& indices)
 {
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 
@@ -590,6 +580,8 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCo
     bind->setBinding(0, vbuf);
 
     subMesh->vertexData = vertexData.release();
+
+    ManageSubMeshIndexBuffer(subMesh, indices);
 }
 
 void B3dSceneBuilder::ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const common::IndexList& indices)

@@ -34,7 +34,7 @@ struct SubMeshInfo
 {
     bool useSharedVertices;
     std::uint32_t materialIndex;
-    Ogre::RenderOperation::OperationType operationType;
+    Ogre::RenderOperation::OperationType unusedOperationType;
 };
 
 

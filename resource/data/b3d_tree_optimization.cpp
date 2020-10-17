@@ -74,7 +74,7 @@ private:
 
     static bool CanMerge(const SubMeshInfo& subMeshInfo)
     {
-        if (subMeshInfo.useSharedVertices && (subMeshInfo.operationType == Ogre::RenderOperation::OT_TRIANGLE_LIST))
+        if (subMeshInfo.useSharedVertices)
         {
             return true;
         }

@@ -179,10 +179,11 @@ void B3dTreeVisitor::VisitFaces(const std::string& /* name */, Faces& block, res
         for (const auto& face : block.faces)
         {
             Ogre::SubMesh* subMesh = CreateSubMesh(GetFaceMapping(block, face));
+            common::IndexList indices = PrepareIndices(block, face);
 
-            auto visitor = [this, subMesh](auto&& items)
+            auto visitor = [this, subMesh, &indices](auto&& items)
             {
-                SetSubMeshData(subMesh, items);
+                SetSubMeshData(subMesh, items, indices);
             };
             std::visit(visitor, face.data);
         }
