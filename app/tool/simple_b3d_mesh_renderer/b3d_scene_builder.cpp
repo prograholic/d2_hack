@@ -558,7 +558,7 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<b
     ManageSubMeshIndexBuffer(subMesh, indices);
 }
 
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data, const common::IndexList& indices)
+void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face8::Unknown177>& data, const common::IndexList& indices)
 {
     std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
 

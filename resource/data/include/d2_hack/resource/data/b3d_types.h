@@ -150,9 +150,15 @@ struct Face8
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
 
+    struct Unknown177
+    {
+        common::Index index;
+        Ogre::Real unknown;
+    };
+
     using Types = TypeList<
         common::IndexList,
-        common::TexCoordList,
+        std::vector<block_data::Face8::Unknown177>,
         common::IndexWithTexCoordList,
         common::IndexWithPositionList,
         common::IndexWithPositionTexCoordList

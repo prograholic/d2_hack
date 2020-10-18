@@ -549,6 +549,15 @@ private:
         PrintVectorData(data, "data", adjustOffset + 1);
     }
 
+    void PrintData(const block_data::Face8::Unknown177& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "Face8::Unknown177" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "index: " << data.index << "," << std::endl;
+        GetStream(adjustOffset + 1) << "unknown: " << ToString(data.unknown) << "," << std::endl;
+        GetStream(adjustOffset) << "}" << std::endl;
+    }
+
 
     std::string ToString(const std::string& data)
     {

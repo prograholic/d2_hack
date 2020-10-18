@@ -75,7 +75,7 @@ public:
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::TexCoordList& data, const common::IndexList& indices);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face8::Unknown177>& data, const common::IndexList& indices);
 private:
     std::string m_b3dId;
     std::string m_b3dName;

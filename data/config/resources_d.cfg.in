@@ -6,10 +6,9 @@ FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/materials/scripts
 FileSystem=${D2_ROOT_DIR}/ENV
 D2Res=${D2_ROOT_DIR}/COMMON/common.res
 
-D2Res=${D2_ROOT_DIR}/ENV/ar.res
-D2Res=${D2_ROOT_DIR}/ENV/as.res
-D2Res=${D2_ROOT_DIR}/ENV/at.res
-D2Res=${D2_ROOT_DIR}/ENV/au.res
-D2Res=${D2_ROOT_DIR}/ENV/av.res
-D2Res=${D2_ROOT_DIR}/ENV/aw.res
-D2Res=${D2_ROOT_DIR}/ENV/ax.res
+D2Res=${D2_ROOT_DIR}/ENV/ch.res
+D2Res=${D2_ROOT_DIR}/ENV/da.res
+D2Res=${D2_ROOT_DIR}/ENV/db.res
+D2Res=${D2_ROOT_DIR}/ENV/dc.res
+D2Res=${D2_ROOT_DIR}/ENV/dq.res
+D2Res=${D2_ROOT_DIR}/ENV/dr.res

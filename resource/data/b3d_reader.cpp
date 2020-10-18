@@ -467,7 +467,7 @@ private:
 
         case block_data::Face8::FaceIndexType177:
         {
-            common::TexCoordList data;
+            std::vector<block_data::Face8::Unknown177> data;
             ReadCount(data, itemsInFace);
 
             face.data = std::move(data);
