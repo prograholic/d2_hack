@@ -254,6 +254,14 @@ common::IndexList GetIndexListFromTriangleStrip(const FaceType& face)
     return res;
 }
 
+common::IndexList GetIndexListForFace28(const block_data::Face28& face)
+{
+    assert(std::get<std::vector<block_data::Face28::Unknown>>(face.data).size() == 4);
+    (void)face;
+
+    return { 0, 2, 1, 3, 2, 0 };
+}
+
 
 #define B3D_INDEX_NOT_IMPLEMENTED() assert(0 && "not implemented");
 
@@ -268,14 +276,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return GetIndexListFromTriangleFan<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType2:
-        //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
-        B3D_INDEX_NOT_IMPLEMENTED();
-        return {};
+        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordList>(face);
 
     case block_data::Face8::FaceIndexType3:
-        //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
-        B3D_INDEX_NOT_IMPLEMENTED();
-        return {};
+        return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
 
     case block_data::Face8::UnknownType16:
         return GetIndexListFromTriangleFan<common::IndexList>(face);
@@ -297,9 +301,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return {};
 
     case block_data::Face8::FaceIndexType128:
-        //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
-        B3D_INDEX_NOT_IMPLEMENTED();
-        return {};
+        return GetIndexListFromTriangleStrip<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType129:
         return GetIndexListFromTriangleStrip<common::IndexList>(face);
@@ -318,14 +320,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return {};
 
     case block_data::Face8::FaceIndexType176:
-        //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_FAN };
-        B3D_INDEX_NOT_IMPLEMENTED();
-        return {};
+        return GetIndexListFromTriangleFan<common::IndexWithPositionList>(face);
 
     case block_data::Face8::FaceIndexType177:
-        //return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
-        B3D_INDEX_NOT_IMPLEMENTED();
-        return {};
+        return GetIndexListFromTriangleStrip<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType178:
         return GetIndexListFromTriangleStrip<common::IndexWithPositionTexCoordList>(face);
@@ -346,9 +344,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces28& /* block */, c
     switch (face.type)
     {
     case block_data::Face28::Unknown2:
-        //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_STRIP };
-        B3D_INDEX_NOT_IMPLEMENTED();
-        return {};
+        return GetIndexListForFace28(face);
 
     default:
         assert(0 && "not implemented");
@@ -377,9 +373,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
             return std::get<common::IndexList>(face.data);
 
         case block_data::Face35::Indices17:
-            //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
-            B3D_INDEX_NOT_IMPLEMENTED();
-            return {};
+            return std::get<common::IndexList>(face.data);
 
         default:
             assert(0 && "not implemented");
@@ -397,14 +391,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
             return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
 
         case block_data::Face35::UnknownType49:
-            //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
-            B3D_INDEX_NOT_IMPLEMENTED();
-            return {};
+            return GetSimpleIndexList<std::vector<block_data::Face35::Unknown49>>(face);
 
         case block_data::Face35::UnknownType51:
-            //return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
-            B3D_INDEX_NOT_IMPLEMENTED();
-            return {};
+            return GetSimpleIndexList<common::IndexWithPositionList>(face);
 
         default:
             assert(0 && "not implemented");
@@ -416,14 +406,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices0:
-            //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
-            B3D_INDEX_NOT_IMPLEMENTED();
-            return {};
+            return std::get<common::IndexList>(face.data);
 
         case block_data::Face35::Unknown2:
-            //return { false, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
-            B3D_INDEX_NOT_IMPLEMENTED();
-            return {};
+            return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
 
         case block_data::Face35::UnknownType48:
             return GetSimpleIndexList<common::IndexWithPositionList>(face);

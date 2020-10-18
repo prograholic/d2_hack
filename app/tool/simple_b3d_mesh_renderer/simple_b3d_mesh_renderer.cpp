@@ -50,10 +50,10 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
     LoadB3d("am", b3dSceneNode);
-#endif
     LoadB3d("ap", b3dSceneNode);
-#if 0
     LoadB3d("aq", b3dSceneNode);
+#endif
+#if 1
     LoadB3d("ar", b3dSceneNode);
     LoadB3d("as", b3dSceneNode);
     LoadB3d("at", b3dSceneNode);
@@ -61,6 +61,8 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("av", b3dSceneNode);
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
+#endif
+#if 0
     LoadB3d("ba", b3dSceneNode);
     LoadB3d("bb", b3dSceneNode);
     LoadB3d("bc", b3dSceneNode);
