@@ -215,7 +215,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
-    decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
     Ogre::AxisAlignedBox bbox = mesh->getBounds();
@@ -232,6 +232,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
     bind->setBinding(0, vbuf);
+    bind->setBinding(1, vbuf);
 
     mesh->sharedVertexData = vertexData.release();
 
@@ -251,7 +252,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+    decl->addElement(1, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
     Ogre::AxisAlignedBox bbox = mesh->getBounds();
@@ -268,6 +269,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
     bind->setBinding(0, vbuf);
+    bind->setBinding(1, vbuf);
 
     mesh->sharedVertexData = vertexData.release();
 
@@ -287,10 +289,10 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
-    decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+    decl->addElement(2, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
     Ogre::AxisAlignedBox bbox = mesh->getBounds();
@@ -307,6 +309,8 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
     bind->setBinding(0, vbuf);
+    bind->setBinding(1, vbuf);
+    bind->setBinding(2, vbuf);
 
     mesh->sharedVertexData = vertexData.release();
 
@@ -326,9 +330,13 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
+    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
+
+    decl->addElement(2, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT4);
 
 
     Ogre::AxisAlignedBox bbox = mesh->getBounds();
@@ -345,6 +353,8 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
     bind->setBinding(0, vbuf);
+    bind->setBinding(1, vbuf);
+    bind->setBinding(2, vbuf);
 
     mesh->sharedVertexData = vertexData.release();
 
@@ -365,9 +375,13 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
     decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
+    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
+
+    decl->addElement(2, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT1);
+
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
 
     Ogre::AxisAlignedBox bbox = mesh->getBounds();
@@ -384,6 +398,8 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
     bind->setBinding(0, vbuf);
+    bind->setBinding(1, vbuf);
+    bind->setBinding(2, vbuf);
 
     mesh->sharedVertexData = vertexData.release();
 

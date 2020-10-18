@@ -37,8 +37,8 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
     LoadB3d("aa", b3dSceneNode);
+#if 0
     LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
     LoadB3d("ad", b3dSceneNode);
@@ -52,8 +52,6 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("am", b3dSceneNode);
     LoadB3d("ap", b3dSceneNode);
     LoadB3d("aq", b3dSceneNode);
-#endif
-#if 1
     LoadB3d("ar", b3dSceneNode);
     LoadB3d("as", b3dSceneNode);
     LoadB3d("at", b3dSceneNode);
@@ -62,7 +60,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
 #endif
-#if 1
+#if 0
     LoadB3d("ba", b3dSceneNode);
     LoadB3d("bb", b3dSceneNode);
     LoadB3d("bc", b3dSceneNode);
@@ -75,8 +73,6 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("cc", b3dSceneNode);
     LoadB3d("ce", b3dSceneNode);
     LoadB3d("cf", b3dSceneNode);
-#endif 
-#if 1
     LoadB3d("ch", b3dSceneNode);
     LoadB3d("da", b3dSceneNode);
     LoadB3d("db", b3dSceneNode);
@@ -175,7 +171,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "ap_AirportTerminal_scene_node";
+    const char* node_name = "aa_store_aa_scene_node";
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);

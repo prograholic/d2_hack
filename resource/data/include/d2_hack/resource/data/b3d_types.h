@@ -439,17 +439,17 @@ struct GroupVertexData37
     struct Unknown258Or515
     {
         Ogre::Vector3 position;
-        Ogre::Vector3 unknown0;
-        Ogre::Vector3 unknown1;
-        Ogre::Real unknown2;
+        Ogre::Vector2 texCoord;
+        Ogre::Vector3 normal;
+        Ogre::Vector2 unknown0;
     };
 
     struct Unknown514
     {
         Ogre::Vector3 position;
-        Ogre::Vector3 unknown0;
-        Ogre::Vector3 unknown1;
-        Ogre::Vector3 unknown2;
+        Ogre::Vector2 texCoord;
+        Ogre::Vector3 normal;
+        Ogre::Vector4 unknown0;
     };
 
     common::BoundingSphere boundingSphere;

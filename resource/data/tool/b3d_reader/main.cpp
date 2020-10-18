@@ -480,9 +480,9 @@ private:
         GetStream(adjustOffset) << "GroupVertexData37::Unknown514" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
-        GetStream(adjustOffset + 1) << "unknown1: " << ToString(data.unknown1) << std::endl;
-        GetStream(adjustOffset + 1) << "unknown2: " << ToString(data.unknown2) << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << std::endl;
+        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
+        GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -491,9 +491,9 @@ private:
         GetStream(adjustOffset) << "GroupVertexData37::Unknown258Or515" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << std::endl;
+        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
         GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
-        GetStream(adjustOffset + 1) << "unknown1: " << ToString(data.unknown1) << std::endl;
-        GetStream(adjustOffset + 1) << "unknown2: " << ToString(data.unknown2) << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
