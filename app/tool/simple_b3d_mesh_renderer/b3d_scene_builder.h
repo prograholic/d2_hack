@@ -101,6 +101,10 @@ private:
     std::string GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const;
 
     void ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const common::IndexList& indices);
+
+    Ogre::VertexData* GetSubMeshNonSharedVertexBuffer(Ogre::SubMesh* subMesh);
+
+    static unsigned short ResetElementBySemantic(Ogre::VertexData* vertexData, Ogre::VertexElementSemantic sem, unsigned short index = 0);
 };
 
 } // namespace app

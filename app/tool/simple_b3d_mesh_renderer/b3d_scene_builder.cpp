@@ -231,6 +231,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
         Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
+    
     bind->setBinding(0, vbuf);
     bind->setBinding(1, vbuf);
 
@@ -268,6 +269,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
         Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
+    
     bind->setBinding(0, vbuf);
     bind->setBinding(1, vbuf);
 
@@ -308,6 +310,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::Pos
         Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
+
     bind->setBinding(0, vbuf);
     bind->setBinding(1, vbuf);
     bind->setBinding(2, vbuf);
@@ -352,6 +355,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
         Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
+
     bind->setBinding(0, vbuf);
     bind->setBinding(1, vbuf);
     bind->setBinding(2, vbuf);
@@ -397,6 +401,7 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
         Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
+
     bind->setBinding(0, vbuf);
     bind->setBinding(1, vbuf);
     bind->setBinding(2, vbuf);
@@ -466,24 +471,27 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
 
 void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data, const common::IndexList& indices)
 {
-    common::TexCoordList texCoords;
-    for (const auto& item : data)
-    {
-        texCoords.push_back(item.texCoord);
-    }
-
     ManageSubMeshIndexBuffer(subMesh, indices);
 
     {
-        std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
+        common::TexCoordList texCoords;
+        for (const auto& item : data)
+        {
+            texCoords.resize(std::max(texCoords.size(), static_cast<size_t>(item.index) + 1));
+            texCoords[item.index] = item.texCoord;
+        }
+
+        Ogre::VertexData* vertexData = GetSubMeshNonSharedVertexBuffer(subMesh);
 
         vertexData->vertexCount = texCoords.size();
         Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
         Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
 
+        unsigned short texCoordSource = ResetElementBySemantic(vertexData, Ogre::VES_TEXTURE_COORDINATES);
+
         size_t offset = 0;
 
-        decl->addElement(0, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+        decl->addElement(texCoordSource, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
         offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
         Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -492,9 +500,8 @@ void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::Index
             Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
 
         vbuf->writeData(0, vbuf->getSizeInBytes(), texCoords.data(), true);
-        bind->setBinding(0, vbuf);
 
-        subMesh->vertexData = vertexData.release();
+        bind->setBinding(texCoordSource, vbuf);
     }
 }
 
@@ -612,6 +619,34 @@ void B3dSceneBuilder::ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const com
     subMesh->indexData->indexBuffer = ibuf;
     subMesh->indexData->indexCount = ibuf->getNumIndexes();
     subMesh->indexData->indexStart = 0;
+}
+
+Ogre::VertexData* B3dSceneBuilder::GetSubMeshNonSharedVertexBuffer(Ogre::SubMesh* subMesh)
+{
+    if (subMesh->useSharedVertices)
+    {
+        subMesh->vertexData = m_meshStack.top()->sharedVertexData->clone(true);
+        subMesh->useSharedVertices = false;
+    }
+
+    return subMesh->vertexData;
+}
+
+unsigned short B3dSceneBuilder::ResetElementBySemantic(Ogre::VertexData* vertexData, Ogre::VertexElementSemantic sem, unsigned short index)
+{
+    auto vertexElement = vertexData->vertexDeclaration->findElementBySemantic(sem, index);
+    unsigned short texCoordSource = 0;
+    if (vertexElement)
+    {
+        texCoordSource = vertexElement->getSource();
+        vertexData->vertexDeclaration->removeElement(Ogre::VES_TEXTURE_COORDINATES);
+    }
+    else
+    {
+        texCoordSource = vertexData->vertexBufferBinding->getNextIndex();
+    }
+
+    return texCoordSource;
 }
 
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const
