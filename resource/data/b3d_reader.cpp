@@ -448,7 +448,7 @@ private:
         case block_data::Face8::FaceIndexType176:
         case block_data::Face8::FaceIndexType179:
         {
-            common::IndexWithPositionList data;
+            common::IndexWithNormalList data;
             ReadCount(data, itemsInFace);
 
             face.data = std::move(data);
@@ -458,7 +458,7 @@ private:
         case block_data::Face8::FaceIndexType50:
         case block_data::Face8::FaceIndexType178:
         {
-            common::IndexWithPositionTexCoordList data;
+            common::IndexWithTexCoordNormalList data;
             ReadCount(data, itemsInFace);
 
             face.data = std::move(data);
@@ -800,14 +800,14 @@ private:
             }
             else if (face.type == block_data::Face35::UnknownType48)
             {
-                common::IndexWithPositionList data;
+                common::IndexWithNormalList data;
                 ReadCount(data, dataCount);
 
                 face.data = std::move(data);
             }
             else if (face.type == block_data::Face35::UnknownType50)
             {
-                common::IndexWithPositionTexCoordList data;
+                common::IndexWithTexCoordNormalList data;
                 ReadCount(data, dataCount);
 
                 face.data = std::move(data);
@@ -842,7 +842,7 @@ private:
             }
             else if (face.type == block_data::Face35::UnknownType51)
             {
-                common::IndexWithPositionList data;
+                common::IndexWithNormalList data;
                 ReadCount(data, dataCount);
 
                 face.data = std::move(data);

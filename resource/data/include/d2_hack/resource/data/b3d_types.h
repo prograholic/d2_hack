@@ -160,8 +160,8 @@ struct Face8
         common::IndexList,
         std::vector<block_data::Face8::Unknown177>,
         common::IndexWithTexCoordList,
-        common::IndexWithPositionList,
-        common::IndexWithPositionTexCoordList
+        common::IndexWithNormalList,
+        common::IndexWithTexCoordNormalList
     >;
 
     Types::variant_t data;
@@ -404,8 +404,8 @@ struct Face35
     using Types = TypeList<
         common::IndexList,
         common::IndexWithTexCoordList,
-        common::IndexWithPositionList,
-        common::IndexWithPositionTexCoordList,
+        common::IndexWithNormalList,
+        common::IndexWithTexCoordNormalList,
         std::vector<block_data::Face35::Unknown49>
     >;
     

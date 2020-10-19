@@ -373,8 +373,8 @@ private:
     {
         GetStream(adjustOffset) << "PositionWithTexCoord" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "position" << ToString(positionWithTexCoord.position) << ", " << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord" << ToString(positionWithTexCoord.texCoord) << std::endl;
+        GetStream(adjustOffset + 1) << "position: " << ToString(positionWithTexCoord.position) << ", " << std::endl;
+        GetStream(adjustOffset + 1) << "texCoord: " << ToString(positionWithTexCoord.texCoord) << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -506,22 +506,22 @@ private:
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
-    void PrintData(const common::IndexWithPosition& data, int adjustOffset)
+    void PrintData(const common::IndexWithNormal& data, int adjustOffset)
     {
-        GetStream(adjustOffset) << "IndexWithPosition" << std::endl;
+        GetStream(adjustOffset) << "IndexWithNormal" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << "," << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
-    void PrintData(const common::IndexWithPositionTexCoord& data, int adjustOffset)
+    void PrintData(const common::IndexWithTexCoordNormal& data, int adjustOffset)
     {
-        GetStream(adjustOffset) << "IndexWithPositionTexCoord" << std::endl;
+        GetStream(adjustOffset) << "IndexWithTexCoordNormal" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
         GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
         GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << "," << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 

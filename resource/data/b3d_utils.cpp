@@ -296,13 +296,13 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return GetIndexListFromTriangleStrip<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType48:
-        return GetIndexListFromTriangleFan<common::IndexWithPositionList>(face);
+        return GetIndexListFromTriangleFan<common::IndexWithNormalList>(face);
 
     case block_data::Face8::FaceIndexType50:
-        return GetIndexListFromTriangleFan<common::IndexWithPositionTexCoordList>(face);
+        return GetIndexListFromTriangleFan<common::IndexWithTexCoordNormalList>(face);
 
     case block_data::Face8::FaceIndexType51:
-        return GetIndexListFromTriangleStrip<common::IndexWithPositionList>(face);
+        return GetIndexListFromTriangleStrip<common::IndexWithNormalList>(face);
 
     case block_data::Face8::FaceIndexType128:
         return GetIndexListFromTriangleStrip<common::IndexList>(face);
@@ -320,16 +320,16 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return GetIndexListFromTriangleStrip<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType176:
-        return GetIndexListFromTriangleFan<common::IndexWithPositionList>(face);
+        return GetIndexListFromTriangleFan<common::IndexWithNormalList>(face);
 
     case block_data::Face8::FaceIndexType177:
         return GetIndexListFromTriangleStrip<std::vector<block_data::Face8::Unknown177>>(face);
 
     case block_data::Face8::FaceIndexType178:
-        return GetIndexListFromTriangleStrip<common::IndexWithPositionTexCoordList>(face);
+        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordNormalList>(face);
 
     case block_data::Face8::FaceIndexType179:
-        return GetIndexListFromTriangleFan<common::IndexWithPositionList>(face);
+        return GetIndexListFromTriangleFan<common::IndexWithNormalList>(face);
 
     default:
         assert(0 && "not implemented");
@@ -392,7 +392,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
             return GetSimpleIndexList<std::vector<block_data::Face35::Unknown49>>(face);
 
         case block_data::Face35::UnknownType51:
-            return GetSimpleIndexList<common::IndexWithPositionList>(face);
+            return GetSimpleIndexList<common::IndexWithNormalList>(face);
 
         default:
             assert(0 && "not implemented");
@@ -410,10 +410,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
             return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
 
         case block_data::Face35::UnknownType48:
-            return GetSimpleIndexList<common::IndexWithPositionList>(face);
+            return GetSimpleIndexList<common::IndexWithNormalList>(face);
 
         case block_data::Face35::UnknownType50:
-            return GetSimpleIndexList<common::IndexWithPositionTexCoordList>(face);
+            return GetSimpleIndexList<common::IndexWithTexCoordNormalList>(face);
 
         default:
             assert(0 && "not implemented");

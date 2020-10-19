@@ -69,9 +69,9 @@ public:
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionList& data, const common::IndexList& indices);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithNormalList& data, const common::IndexList& indices);
 
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithPositionTexCoordList& data, const common::IndexList& indices);
+    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordNormalList& data, const common::IndexList& indices);
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data, const common::IndexList& indices);
 
@@ -109,6 +109,8 @@ private:
     template <typename SubMeshDataList>
     void ResetTexCoords(Ogre::SubMesh* subMesh, const SubMeshDataList& data);
 
+    template <typename SubMeshDataList>
+    void ResetNormals(Ogre::SubMesh* subMesh, const SubMeshDataList& data);
 };
 
 } // namespace app

@@ -76,7 +76,6 @@ struct PositionWithNormal
 typedef std::vector<PositionWithNormal> PositionWithNormalList;
 
 
-
 struct IndexWithTexCoord
 {
     Index index;
@@ -86,25 +85,22 @@ struct IndexWithTexCoord
 typedef std::vector<IndexWithTexCoord> IndexWithTexCoordList;
 
 
-
-struct IndexWithPosition
+struct IndexWithNormal
 {
     Index index;
-    Position position;
+    Position normal;
 };
 
-typedef std::vector<IndexWithPosition> IndexWithPositionList;
+typedef std::vector<IndexWithNormal> IndexWithNormalList;
 
-
-
-struct IndexWithPositionTexCoord
+struct IndexWithTexCoordNormal
 {
     Index index;
-    Position position;
     TexCoord texCoord;
+    Position normal;
 };
 
-typedef std::vector<IndexWithPositionTexCoord> IndexWithPositionTexCoordList;
+typedef std::vector<IndexWithTexCoordNormal> IndexWithTexCoordNormalList;
 
 } // namespace common
 } // namespace d2_hack
