@@ -72,13 +72,8 @@ private:
         }
     }
 
-    static bool CanMerge(const SubMeshInfo& subMeshInfo)
+    static bool CanMerge(const SubMeshInfo& /* subMeshInfo */)
     {
-        if (subMeshInfo.useSharedVertices)
-        {
-            return true;
-        }
-
         return false;
     }
 

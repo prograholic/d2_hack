@@ -32,7 +32,7 @@ enum class VisitMode
 
 struct SubMeshInfo
 {
-    bool useSharedVertices;
+    bool unusedUseSharedVertices;
     std::uint32_t materialIndex;
     Ogre::RenderOperation::OperationType unusedOperationType;
 };

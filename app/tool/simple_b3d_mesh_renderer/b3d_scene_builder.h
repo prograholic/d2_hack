@@ -105,6 +105,10 @@ private:
     Ogre::VertexData* GetSubMeshNonSharedVertexBuffer(Ogre::SubMesh* subMesh);
 
     static unsigned short ResetElementBySemantic(Ogre::VertexData* vertexData, Ogre::VertexElementSemantic sem, unsigned short index = 0);
+
+    template <typename SubMeshDataList>
+    void ResetTexCoords(Ogre::SubMesh* subMesh, const SubMeshDataList& data);
+
 };
 
 } // namespace app

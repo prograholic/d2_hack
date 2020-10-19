@@ -11,7 +11,7 @@ namespace b3d
 
 std::uint32_t Hash(const SubMeshInfo& subMeshInfo)
 {
-    std::uint32_t res = subMeshInfo.useSharedVertices ? 1 : 0;
+    std::uint32_t res = subMeshInfo.unusedUseSharedVertices ? 1 : 0;
 
     res += (subMeshInfo.materialIndex * 2);
 
