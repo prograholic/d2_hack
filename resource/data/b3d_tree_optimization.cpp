@@ -50,11 +50,11 @@ private:
             return;
         }
 
-        std::map<SubMeshInfo, decltype(origFaces)> mapping;
+        std::map<Ogre::RenderOperation::OperationType, decltype(origFaces)> mapping;
 
         for (const auto& data : origFaces)
         {
-            SubMeshInfo subMeshInfo = GetFaceMapping(block, data);
+            Ogre::RenderOperation::OperationType subMeshInfo = GetRenderOperation(block, data);
             mapping[subMeshInfo].push_back(data);
         }
 
@@ -72,7 +72,7 @@ private:
         }
     }
 
-    static bool CanMerge(const SubMeshInfo& /* subMeshInfo */)
+    static bool CanMerge(const Ogre::RenderOperation::OperationType& /* operationType */)
     {
         return false;
     }

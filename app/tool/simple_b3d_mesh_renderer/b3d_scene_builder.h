@@ -61,7 +61,7 @@ public:
 
     void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown258Or515>& data);
 
-    Ogre::SubMesh* CreateSubMesh(const resource::data::b3d::SubMeshInfo& subMeshInfo);
+    Ogre::SubMesh* CreateSubMesh(std::uint32_t materialIndex);
 
     void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face28::Unknown>& data, const common::IndexList& indices);
 

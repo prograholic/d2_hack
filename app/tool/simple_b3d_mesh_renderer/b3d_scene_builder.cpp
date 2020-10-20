@@ -412,9 +412,9 @@ void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector
 }
 
 
-Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const SubMeshInfo& subMeshInfo)
+Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(std::uint32_t materialIndex)
 {
-    const std::string materialName = GetMaterialName(subMeshInfo.materialIndex);
+    const std::string materialName = GetMaterialName(materialIndex);
 
     auto mesh = m_meshStack.top();
 

@@ -12,16 +12,12 @@ namespace data
 {
 namespace b3d
 {
-    
-std::uint32_t Hash(const SubMeshInfo& subMeshInfo);
 
-bool operator < (const SubMeshInfo& left, const SubMeshInfo& right);
+Ogre::RenderOperation::OperationType GetRenderOperation(const block_data::SimpleFaces8& block, const block_data::Face8& face);
 
-SubMeshInfo GetFaceMapping(const block_data::SimpleFaces8& block, const block_data::Face8& face);
+Ogre::RenderOperation::OperationType GetRenderOperation(const block_data::SimpleFaces28& block, const block_data::Face28& face);
 
-SubMeshInfo GetFaceMapping(const block_data::SimpleFaces28& block, const block_data::Face28& face);
-
-SubMeshInfo GetFaceMapping(const block_data::SimpleFaces35& block, const block_data::Face35& face);
+Ogre::RenderOperation::OperationType GetRenderOperation(const block_data::SimpleFaces35& block, const block_data::Face35& face);
 
 
 common::IndexList PrepareIndices(const block_data::SimpleFaces8& block, const block_data::Face8& face);

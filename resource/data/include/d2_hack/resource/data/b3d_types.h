@@ -30,14 +30,6 @@ enum class VisitMode
 };
 
 
-struct SubMeshInfo
-{
-    bool unusedUseSharedVertices;
-    std::uint32_t materialIndex;
-    Ogre::RenderOperation::OperationType unusedOperationType;
-};
-
-
 namespace block_data
 {
 
