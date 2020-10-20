@@ -269,7 +269,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return GetIndexListFromTriangleStrip<common::IndexWithTexCoordList>(face);
 
     case block_data::Face8::FaceIndexType3:
-        return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
+        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordList>(face);
 
     case block_data::Face8::UnknownType16:
         return GetIndexListFromTriangleFan<common::IndexList>(face);
@@ -302,7 +302,7 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
         return GetIndexListFromTriangleStrip<common::IndexList>(face);
 
     case block_data::Face8::FaceIndexType176:
-        return GetIndexListFromTriangleFan<common::IndexWithNormalList>(face);
+        return GetIndexListFromTriangleStrip<common::IndexWithNormalList>(face);
 
     case block_data::Face8::FaceIndexType177:
         return GetIndexListFromTriangleStrip<std::vector<block_data::Face8::Unknown177>>(face);
