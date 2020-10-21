@@ -99,7 +99,7 @@ Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string
         }        
     }
 
-    palette::PalettePtr plm = manager::Manager::getSingleton().Load("common.plm", "D2");
+    palette::PalettePtr plm = manager::Manager::getSingleton().Load("common\\common.plm", "D2");
 
     Ogre::ColourValue cv = plm->GetColor(colorIndex);
     std::string materialContent = str(boost::format(ColorMaterialTemplate) % filename.substr(0, filename.size() - 9) % cv.r % cv.g % cv.b % alpha % depthCheck);

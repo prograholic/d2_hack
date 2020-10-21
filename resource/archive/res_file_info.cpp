@@ -118,7 +118,7 @@ public:
     void SkipFilesData(const std::string & /* sectionName */, ResEntry & entry, size_t /* index */)
     {
         entry.type = EntryType::File;
-        entry.name = ReadString('\0');
+        entry.name = m_resId + "\\" + ReadString('\0');
 
         auto sep = entry.name.find(' ');
         if (sep != entry.name.npos)
