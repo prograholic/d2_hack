@@ -54,8 +54,8 @@ private:
 
         for (const auto& data : origFaces)
         {
-            Ogre::RenderOperation::OperationType subMeshInfo = GetRenderOperation(block, data);
-            mapping[subMeshInfo].push_back(data);
+            Ogre::RenderOperation::OperationType renderOperation = GetRenderOperation(block, data);
+            mapping[renderOperation].push_back(data);
         }
 
         for (const auto& item : mapping)
