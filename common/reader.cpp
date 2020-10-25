@@ -88,6 +88,18 @@ float Reader::ReadFloat()
     return common::ToNumeric<float>(buffer);
 }
 
+Ogre::Vector4 Reader::ReadVector4()
+{
+    Ogre::Vector4 res;
+
+    res.x = ReadFloat();
+    res.y = ReadFloat();
+    res.z = ReadFloat();
+    res.w = ReadFloat();
+
+    return res;
+}
+
 Ogre::Vector3 Reader::ReadVector3()
 {
     Ogre::Vector3 res;

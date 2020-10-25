@@ -94,7 +94,7 @@ public:
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
-        PrintVectorData(block.vertices, "vertices", 1);
+        PrintData(block.meshInfo, 1);
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
@@ -326,7 +326,9 @@ public:
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
-        PrintVariant(block.data, "data", 1);
+        PrintData(block.meshInfo, 1);
+        PrintVectorData(block.unknown258Or515.value_or(block_data::GroupVertexData37::Unknown258Or515List{}), "unknown258Or515", 1);
+        PrintVectorData(block.unknown514.value_or(block_data::GroupVertexData37::Unknown514List{}), "unknown514", 1);
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
@@ -369,12 +371,14 @@ private:
         GetStream(adjustOffset) << ToString(name) << std::endl;
     }
 
-    void PrintData(const common::PositionWithTexCoord& positionWithTexCoord, int adjustOffset)
+    void PrintData(const common::SimpleMeshInfo& meshInfo, int adjustOffset)
     {
-        GetStream(adjustOffset) << "PositionWithTexCoord" << std::endl;
+        GetStream(adjustOffset) << "SimpleMeshInfo" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(positionWithTexCoord.position) << ", " << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord: " << ToString(positionWithTexCoord.texCoord) << std::endl;
+        PrintVectorData(meshInfo.positions.value_or(common::PositionList{}), "positions", adjustOffset + 1);
+        PrintVectorData(meshInfo.texCoords.value_or(common::TexCoordList{}), "texCoords", adjustOffset + 1);
+        PrintVectorData(meshInfo.normals.value_or(common::NormalList{}), "normals", adjustOffset + 1);
+        PrintVectorData(meshInfo.indices.value_or(common::IndexList{}), "indices", adjustOffset + 1);
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -388,7 +392,7 @@ private:
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
-            PrintVariant(data.data, "data", adjustOffset + 1);
+            PrintData(data.meshInfo, 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
@@ -423,7 +427,8 @@ private:
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
-            PrintVariant(data.data, "data", adjustOffset + 1);
+            PrintData(data.meshInfo, 1);
+            PrintVectorData(data.unknown.value_or(block_data::Face28::UnknownList{}), "unknown", 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
@@ -434,9 +439,7 @@ private:
         {
             GetStream(adjustOffset) << "Face28::Unknown" << std::endl;
             GetStream(adjustOffset) << "{" << std::endl;
-            GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
-            GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
-            GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << std::endl;
+            GetStream(adjustOffset + 1) << "unknown: " << data.unknown << std::endl;
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
@@ -451,38 +454,17 @@ private:
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
-            PrintVariant(data.data, "data", adjustOffset + 1);
+            PrintData(data.meshInfo, 1);
+            PrintVectorData(data.unknown49.value_or(block_data::Face35::Unknown49List{}), "unknown49", 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
-    }
-
-    void PrintData(const common::PositionWithTexCoordNormal& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "PositionWithTexCoordNormal" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
-        GetStream(adjustOffset) << "}" << std::endl;
-    }
-
-    void PrintData(const common::PositionWithNormal& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "PositionWithNormal" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
-        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const block_data::GroupVertexData37::Unknown514& data, int adjustOffset)
     {
         GetStream(adjustOffset) << "GroupVertexData37::Unknown514" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << std::endl;
-        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
-        GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
+        GetStream(adjustOffset + 1) << "unknown: " << data.unknown << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -490,38 +472,7 @@ private:
     {
         GetStream(adjustOffset) << "GroupVertexData37::Unknown258Or515" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "position: " << ToString(data.position) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << std::endl;
-        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << std::endl;
-        GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << std::endl;
-        GetStream(adjustOffset) << "}" << std::endl;
-    }
-
-    void PrintData(const common::IndexWithTexCoord& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "IndexWithTexCoord" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
-        GetStream(adjustOffset) << "}" << std::endl;
-    }
-
-    void PrintData(const common::IndexWithNormal& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "IndexWithNormal" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << "," << std::endl;
-        GetStream(adjustOffset) << "}" << std::endl;
-    }
-
-    void PrintData(const common::IndexWithTexCoordNormal& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "IndexWithTexCoordNormal" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "index: " << ToString(data.index) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "texCoord: " << ToString(data.texCoord) << "," << std::endl;
-        GetStream(adjustOffset + 1) << "normal: " << ToString(data.normal) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "unknown: " << ToString(data.unknown) << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -553,7 +504,6 @@ private:
     {
         GetStream(adjustOffset) << "Face8::Unknown177" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "index: " << data.index << "," << std::endl;
         GetStream(adjustOffset + 1) << "unknown: " << ToString(data.unknown) << "," << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
@@ -640,17 +590,6 @@ private:
 
             GetStream(adjustOffset) << "}" << std::endl;
         }
-    }
-
-    template <typename... Types>
-    void PrintVariant(const std::variant<Types...>& data, const char* name, int adjustOffset)
-    {
-        auto visitor = [this, name, adjustOffset](auto&& arg)
-        {
-            PrintVectorData(arg, name, adjustOffset);
-        };
-
-        std::visit(visitor, data);
     }
 };
 

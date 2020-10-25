@@ -73,7 +73,6 @@ public:
 
     virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleGeneratedObjects40& block, resource::data::b3d::VisitMode visitMode) override;
 
-
 private:
     template <typename Faces>
     void VisitFaces(const std::string& name, Faces& block, resource::data::b3d::VisitMode visitMode);

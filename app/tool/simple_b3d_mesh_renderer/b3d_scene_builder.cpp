@@ -50,7 +50,6 @@ B3dSceneBuilder::B3dSceneBuilder(const char* b3dId,
 
 B3dSceneBuilder::~B3dSceneBuilder()
 {
-    assert(m_meshStack.empty());
     assert(m_transformQueue.empty());
     assert(m_currentLods.empty());
     assert(m_sceneNodes.empty());
@@ -168,312 +167,25 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
     }
 }
 
-Ogre::MeshPtr B3dSceneBuilder::ProcessMesh(const std::string& blockName, VisitMode visitMode)
+void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex)
 {
-    if (visitMode == VisitMode::PreOrder)
+    std::string name = GetNameImpl(blockName, "mesh", false);
+    std::string group = "D2";
+    if (m_meshManager->resourceExists(name, group))
     {
-        std::string name = GetNameImpl(blockName, "mesh", false);
-        std::string group = "D2";
-        if (m_meshManager->resourceExists(name, group))
-        {
-            name = GetNameImpl(blockName, "mesh", true);
-        }
-
-        D2_HACK_LOG(B3dTreeVisitor::ProcessMesh(PreOrder)) << "Starting processing mesh with name: " << name;
-
-        Ogre::MeshPtr newMesh = m_meshManager->createManual(name, group);
-        m_meshStack.push(newMesh);
-
-        return newMesh;
-    }
-    else
-    {
-        Ogre::MeshPtr mesh = m_meshStack.top();
-        m_meshStack.pop();
-
-        const std::string entityName = mesh->getName() + ".entity";
-        Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
-
-        m_sceneNodes.top()->attachObject(entity);
-
-        D2_HACK_LOG(B3dTreeVisitor::ProcessMesh(PostOrder)) << "Finished processing mesh with name: " << mesh->getName();
-
-        return mesh;
-    }
-}
-
-void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithTexCoordList& data)
-{
-    std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
-
-    vertexData->vertexCount = data.size();
-    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
-    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
-
-    size_t offset = 0;
-
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-
-    Ogre::AxisAlignedBox bbox = mesh->getBounds();
-
-    for (const auto& vertex : data)
-    {
-        bbox.merge(vertex.position);
+        name = GetNameImpl(blockName, "mesh", true);
     }
 
-    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        offset,
-        vertexData->vertexCount,
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+    D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Starting processing mesh with name: " << name;
 
-    vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-    
-    bind->setBinding(0, vbuf);
-    bind->setBinding(1, vbuf);
+    Ogre::MeshPtr mesh = m_meshManager->createManual(name, group);
 
-    mesh->sharedVertexData = vertexData.release();
+    SetMeshInfo(mesh, meshInfo, materialIndex);
 
-    mesh->_setBounds(bbox, true);
-}
+    const std::string entityName = mesh->getName() + ".entity";
+    Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
 
-void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithNormalList& data)
-{
-    std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
-
-    vertexData->vertexCount = data.size();
-    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
-    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
-
-    size_t offset = 0;
-
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    decl->addElement(1, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    Ogre::AxisAlignedBox bbox = mesh->getBounds();
-
-    for (const auto& vertex : data)
-    {
-        bbox.merge(vertex.position);
-    }
-
-    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        offset,
-        vertexData->vertexCount,
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-    
-    bind->setBinding(0, vbuf);
-    bind->setBinding(1, vbuf);
-
-    mesh->sharedVertexData = vertexData.release();
-
-    mesh->_setBounds(bbox, true);
-}
-
-void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithTexCoordNormalList& data)
-{
-    std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
-
-    vertexData->vertexCount = data.size();
-    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
-    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
-
-    size_t offset = 0;
-
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-
-    decl->addElement(2, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    Ogre::AxisAlignedBox bbox = mesh->getBounds();
-
-    for (const auto& vertex : data)
-    {
-        bbox.merge(vertex.position);
-    }
-
-    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        offset,
-        vertexData->vertexCount,
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-
-    bind->setBinding(0, vbuf);
-    bind->setBinding(1, vbuf);
-    bind->setBinding(2, vbuf);
-
-    mesh->sharedVertexData = vertexData.release();
-
-    mesh->_setBounds(bbox, true);
-}
-
-void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<block_data::GroupVertexData37::Unknown514>& data)
-{
-    std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
-
-    vertexData->vertexCount = data.size();
-    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
-    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
-
-    size_t offset = 0;
-
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-
-    decl->addElement(2, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT4);
-
-
-    Ogre::AxisAlignedBox bbox = mesh->getBounds();
-
-    for (const auto& vertex : data)
-    {
-        bbox.merge(vertex.position);
-    }
-
-    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        offset,
-        vertexData->vertexCount,
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-
-    bind->setBinding(0, vbuf);
-    bind->setBinding(1, vbuf);
-    bind->setBinding(2, vbuf);
-
-    mesh->sharedVertexData = vertexData.release();
-
-    mesh->_setBounds(bbox, true);
-}
-
-
-void B3dSceneBuilder::AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<block_data::GroupVertexData37::Unknown258Or515>& data)
-{
-    std::unique_ptr<Ogre::VertexData> vertexData{ OGRE_NEW Ogre::VertexData };
-
-    vertexData->vertexCount = data.size();
-    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
-    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
-
-    size_t offset = 0;
-
-    decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    decl->addElement(1, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-
-    decl->addElement(2, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
-
-    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
-
-
-    Ogre::AxisAlignedBox bbox = mesh->getBounds();
-
-    for (const auto& vertex : data)
-    {
-        bbox.merge(vertex.position);
-    }
-
-    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-        offset,
-        vertexData->vertexCount,
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    vbuf->writeData(0, vbuf->getSizeInBytes(), data.data(), true);
-
-    bind->setBinding(0, vbuf);
-    bind->setBinding(1, vbuf);
-    bind->setBinding(2, vbuf);
-
-    mesh->sharedVertexData = vertexData.release();
-
-    mesh->_setBounds(bbox, true);
-}
-
-
-Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(std::uint32_t materialIndex)
-{
-    const std::string materialName = GetMaterialName(materialIndex);
-
-    auto mesh = m_meshStack.top();
-
-    Ogre::SubMesh* subMesh = mesh->createSubMesh();
-    subMesh->useSharedVertices = true;
-    subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
-
-    subMesh->setMaterialName(materialName);
-
-    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
-
-    return subMesh;
-}
-
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face28::Unknown>& data, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
-
-    (void)data;
-
-    //ResetTexCoords(subMesh, data);
-}
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& /* data */, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
-}
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
-
-    ResetTexCoords(subMesh, data);
-}
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithNormalList& data, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
-
-    ResetNormals(subMesh, data);
-}
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordNormalList& data, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
-
-    ResetTexCoords(subMesh, data);
-    ResetNormals(subMesh, data);
-}
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face35::Unknown49>& /* data */, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
-}
-
-void B3dSceneBuilder::SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<block_data::Face8::Unknown177>& /* data */, const common::IndexList& indices)
-{
-    ManageSubMeshIndexBuffer(subMesh, indices);
+    m_sceneNodes.top()->attachObject(entity);
 }
 
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const
@@ -505,69 +217,86 @@ std::string B3dSceneBuilder::GetNameImpl(const std::string& blockName, const std
     return name;
 }
 
-void B3dSceneBuilder::ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const common::IndexList& indices)
+Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, std::uint32_t materialIndex)
 {
-    auto ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-        Ogre::HardwareIndexBuffer::IT_32BIT,
-        indices.size(),
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+    const std::string materialName = GetMaterialName(materialIndex);
 
-    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
+    Ogre::SubMesh* subMesh = mesh->createSubMesh();
+    subMesh->useSharedVertices = true;
+    subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
-    subMesh->indexData->indexBuffer = ibuf;
-    subMesh->indexData->indexCount = ibuf->getNumIndexes();
-    subMesh->indexData->indexStart = 0;
+    subMesh->setMaterialName(materialName);
+
+    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
+
+    return subMesh;
 }
 
-Ogre::VertexData* B3dSceneBuilder::GetSubMeshNonSharedVertexBuffer(Ogre::SubMesh* subMesh)
+void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex)
 {
-    if (subMesh->useSharedVertices)
+    mesh->sharedVertexData = new Ogre::VertexData{};
+
+    Ogre::SubMesh* subMesh = CreateSubMesh(mesh, materialIndex);
+
+    unsigned short bufferIndex = 0;
+    if (meshInfo.positions)
     {
-        subMesh->vertexData = m_meshStack.top()->sharedVertexData->clone(true);
-        subMesh->useSharedVertices = false;
+        ManagePositions(mesh->sharedVertexData, *meshInfo.positions, bufferIndex);
+        bufferIndex += 1;
+
+        Ogre::AxisAlignedBox bbox = mesh->getBounds();
+        for (const auto& position : *meshInfo.positions)
+        {
+            bbox.merge(position);
+        }
+        mesh->_setBounds(bbox, true);
     }
 
-    return subMesh->vertexData;
+    if (meshInfo.texCoords)
+    {
+        ManageTexCoords(mesh->sharedVertexData, *meshInfo.texCoords, bufferIndex);
+        bufferIndex += 1;
+    }
+
+    if (meshInfo.normals)
+    {
+        ManageNormals(mesh->sharedVertexData, *meshInfo.normals, bufferIndex);
+        bufferIndex += 1;
+    }
+
+    if (meshInfo.indices)
+    {
+        ManageIndexBuffer(subMesh->indexData, *meshInfo.indices);
+    }
 }
 
-unsigned short B3dSceneBuilder::ResetElementBySemantic(Ogre::VertexData* vertexData, Ogre::VertexElementSemantic sem, unsigned short index)
+void B3dSceneBuilder::ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex)
 {
-    auto vertexElement = vertexData->vertexDeclaration->findElementBySemantic(sem, index);
-    unsigned short texCoordSource = 0;
-    if (vertexElement)
-    {
-        texCoordSource = vertexElement->getSource();
-        vertexData->vertexDeclaration->removeElement(Ogre::VES_TEXTURE_COORDINATES);
-    }
-    else
-    {
-        texCoordSource = vertexData->vertexBufferBinding->getNextIndex();
-    }
-
-    return texCoordSource;
-}
-
-template <typename SubMeshDataList>
-void B3dSceneBuilder::ResetTexCoords(Ogre::SubMesh* subMesh, const SubMeshDataList& data)
-{
-    common::TexCoordList texCoords;
-    for (const auto& item : data)
-    {
-        texCoords.resize(std::max(texCoords.size(), static_cast<size_t>(item.index) + 1));
-        texCoords[item.index] = item.texCoord;
-    }
-
-    Ogre::VertexData* vertexData = GetSubMeshNonSharedVertexBuffer(subMesh);
-
-    vertexData->vertexCount = texCoords.size();
+    vertexData->vertexCount = positions.size();
     Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
     Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
 
-    unsigned short texCoordSource = ResetElementBySemantic(vertexData, Ogre::VES_TEXTURE_COORDINATES);
+    size_t offset = 0;
+    decl->addElement(bufferIndex, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+    offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+    Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+        offset,
+        vertexData->vertexCount,
+        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+    vbuf->writeData(0, vbuf->getSizeInBytes(), positions.data(), true);
+
+    bind->setBinding(bufferIndex, vbuf);
+}
+
+void B3dSceneBuilder::ManageTexCoords(Ogre::VertexData* vertexData, const common::TexCoordList& texCoords, unsigned short bufferIndex)
+{
+    Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
+    Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
 
     size_t offset = 0;
-
-    decl->addElement(texCoordSource, offset, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+    decl->addElement(bufferIndex, 0, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
 
     Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -577,31 +306,16 @@ void B3dSceneBuilder::ResetTexCoords(Ogre::SubMesh* subMesh, const SubMeshDataLi
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), texCoords.data(), true);
 
-    bind->setBinding(texCoordSource, vbuf);
+    bind->setBinding(bufferIndex, vbuf);
 }
 
-
-template <typename SubMeshDataList>
-void B3dSceneBuilder::ResetNormals(Ogre::SubMesh* subMesh, const SubMeshDataList& data)
+void B3dSceneBuilder::ManageNormals(Ogre::VertexData* vertexData, const common::NormalList& normals, unsigned short bufferIndex)
 {
-    common::PositionList normals;
-    for (const auto& item : data)
-    {
-        normals.resize(std::max(normals.size(), static_cast<size_t>(item.index) + 1));
-        normals[item.index] = item.normal;
-    }
-
-    Ogre::VertexData* vertexData = GetSubMeshNonSharedVertexBuffer(subMesh);
-
-    vertexData->vertexCount = normals.size();
     Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
     Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
 
-    unsigned short normalSource = ResetElementBySemantic(vertexData, Ogre::VES_NORMAL);
-
     size_t offset = 0;
-
-    decl->addElement(normalSource, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+    decl->addElement(bufferIndex, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
     offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
 
     Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
@@ -611,7 +325,21 @@ void B3dSceneBuilder::ResetNormals(Ogre::SubMesh* subMesh, const SubMeshDataList
 
     vbuf->writeData(0, vbuf->getSizeInBytes(), normals.data(), true);
 
-    bind->setBinding(normalSource, vbuf);
+    bind->setBinding(bufferIndex, vbuf);
+}
+
+void B3dSceneBuilder::ManageIndexBuffer(Ogre::IndexData* indexData, const common::IndexList& indices)
+{
+    auto ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
+        Ogre::HardwareIndexBuffer::IT_32BIT,
+        indices.size(),
+        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
+
+    indexData->indexBuffer = ibuf;
+    indexData->indexCount = ibuf->getNumIndexes();
+    indexData->indexStart = 0;
 }
 
 } // namespace app

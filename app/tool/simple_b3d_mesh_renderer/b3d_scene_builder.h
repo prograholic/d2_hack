@@ -49,33 +49,8 @@ public:
 
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
-    Ogre::MeshPtr ProcessMesh(const std::string& name, resource::data::b3d::VisitMode visitMode);
+    void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);
 
-    void AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithTexCoordList& data);
-
-    void AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithNormalList& data);
-
-    void AddVertexData(const Ogre::MeshPtr& mesh, const common::PositionWithTexCoordNormalList& data);
-
-    void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown514>& data);
-
-    void AddVertexData(const Ogre::MeshPtr& mesh, const std::vector<resource::data::b3d::block_data::GroupVertexData37::Unknown258Or515>& data);
-
-    Ogre::SubMesh* CreateSubMesh(std::uint32_t materialIndex);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face28::Unknown>& data, const common::IndexList& indices);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexList& data, const common::IndexList& indices);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordList& data, const common::IndexList& indices);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithNormalList& data, const common::IndexList& indices);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const common::IndexWithTexCoordNormalList& data, const common::IndexList& indices);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face35::Unknown49>& data, const common::IndexList& indices);
-
-    void SetSubMeshData(Ogre::SubMesh* subMesh, const std::vector<resource::data::b3d::block_data::Face8::Unknown177>& data, const common::IndexList& indices);
 private:
     std::string m_b3dId;
     std::string m_b3dName;
@@ -85,7 +60,6 @@ private:
     const common::Materials m_materials;
 
     std::stack<Ogre::SceneNode*> m_sceneNodes;
-    std::stack<Ogre::MeshPtr> m_meshStack;
     std::stack<resource::data::b3d::block_data::GroupLodParameters10> m_currentLods;
     std::list<resource::data::b3d::block_data::GroupTransformMatrix24> m_transformQueue;
 
@@ -100,17 +74,17 @@ private:
 
     std::string GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const;
 
-    void ManageSubMeshIndexBuffer(Ogre::SubMesh* subMesh, const common::IndexList& indices);
+    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, std::uint32_t materialIndex);
 
-    Ogre::VertexData* GetSubMeshNonSharedVertexBuffer(Ogre::SubMesh* subMesh);
+    void SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);
 
-    static unsigned short ResetElementBySemantic(Ogre::VertexData* vertexData, Ogre::VertexElementSemantic sem, unsigned short index = 0);
+    void ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex);
 
-    template <typename SubMeshDataList>
-    void ResetTexCoords(Ogre::SubMesh* subMesh, const SubMeshDataList& data);
+    void ManageTexCoords(Ogre::VertexData* vertexData, const common::TexCoordList& texCoords, unsigned short bufferIndex);
 
-    template <typename SubMeshDataList>
-    void ResetNormals(Ogre::SubMesh* subMesh, const SubMeshDataList& data);
+    void ManageNormals(Ogre::VertexData* vertexData, const common::NormalList& normals, unsigned short bufferIndex);
+
+    void ManageIndexBuffer(Ogre::IndexData* indexData, const common::IndexList& indices);
 };
 
 } // namespace app

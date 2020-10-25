@@ -45,6 +45,23 @@ public:
     void SetChildNodes(NodeList&& childNodes);
 
     virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
+
+    template <typename TypedNode>
+    TypedNode* NodeCast()
+    {
+        assert(GetType() == TypedNode::Value);
+
+        return static_cast<TypedNode*>(this);
+    }
+
+    template <typename TypedNode>
+    const TypedNode* NodeCast() const
+    {
+        assert(GetType() == TypedNode::Value);
+
+        return static_cast<const TypedNode*>(this);
+    }
+
 private:
     const std::string m_name;
     const std::uint32_t m_type;
@@ -58,6 +75,9 @@ template <typename BlockType>
 class NodeWithData : public Node
 {
 public:
+
+    static constexpr auto Value = BlockType::Value;
+
     NodeWithData(const block_data::BlockHeader& blockHeader, const BlockType& block, WeakNodePtr parent = WeakNodePtr())
         : Node(blockHeader, parent)
         , m_block(block)
@@ -70,6 +90,11 @@ public:
     }
 
     const BlockType& GetBlockData() const
+    {
+        return m_block;
+    }
+
+    BlockType& GetBlockData()
     {
         return m_block;
     }

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+#include <optional>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
@@ -37,70 +38,23 @@ typedef std::vector<Position> PositionList;
 
 typedef Ogre::Vector2 TexCoord;
 typedef std::vector<TexCoord> TexCoordList;
-typedef Ogre::Vector3 Normal;
 
+typedef Ogre::Vector3 Normal;
+typedef std::vector<Normal> NormalList;
 
 
 typedef std::uint32_t Index;
 typedef std::vector<Index> IndexList;
 
 
-
-struct PositionWithTexCoord
+struct SimpleMeshInfo
 {
-    Position position;
-    TexCoord texCoord;
+    std::optional<PositionList> positions;
+    std::optional<TexCoordList> texCoords;
+    std::optional<NormalList> normals;
+    std::optional<IndexList> indices;
 };
 
-typedef std::vector<PositionWithTexCoord> PositionWithTexCoordList;
-
-
-
-struct PositionWithTexCoordNormal
-{
-    Position position;
-    TexCoord texCoord;
-    Normal normal;
-};
-
-typedef std::vector<PositionWithTexCoordNormal> PositionWithTexCoordNormalList;
-
-
-
-struct PositionWithNormal
-{
-    Position position;
-    Normal normal;
-};
-
-typedef std::vector<PositionWithNormal> PositionWithNormalList;
-
-
-struct IndexWithTexCoord
-{
-    Index index;
-    TexCoord texCoord;
-};
-
-typedef std::vector<IndexWithTexCoord> IndexWithTexCoordList;
-
-
-struct IndexWithNormal
-{
-    Index index;
-    Position normal;
-};
-
-typedef std::vector<IndexWithNormal> IndexWithNormalList;
-
-struct IndexWithTexCoordNormal
-{
-    Index index;
-    TexCoord texCoord;
-    Position normal;
-};
-
-typedef std::vector<IndexWithTexCoordNormal> IndexWithTexCoordNormalList;
 
 } // namespace common
 } // namespace d2_hack

@@ -163,57 +163,25 @@ Ogre::RenderOperation::OperationType GetRenderOperation(const block_data::Simple
 }
 
 
-
-template <typename ContainerType, typename FaceType>
-common::IndexList GetSimpleIndexList(const FaceType& face)
+static common::IndexList GetIndexListFromTriangleFan(const common::IndexList& data)
 {
-    auto data = std::get<ContainerType>(face.data);
-
-    common::IndexList res;
-    for (const auto& item : data)
-    {
-        res.push_back(item.index);
-    }
-
-    return res;
-}
-
-
-template <typename IndexEntry>
-std::uint32_t GetIndex(const IndexEntry& entry)
-{
-    return entry.index;
-}
-
-static std::uint32_t GetIndex(std::uint32_t entry)
-{
-    return entry;
-}
-
-
-
-template <typename ContainerType, typename FaceType>
-common::IndexList GetIndexListFromTriangleFan(const FaceType& face)
-{
-    auto data = std::get<ContainerType>(face.data);
     assert(data.size() >= 3);
 
     common::IndexList res;
     for (size_t i = 2; i != data.size(); ++i)
     {
-        res.push_back(GetIndex(data[0]));
-        res.push_back(GetIndex(data[i - 1]));
-        res.push_back(GetIndex(data[i]));
+        res.push_back(data[0]);
+        res.push_back(data[i - 1]);
+        res.push_back(data[i]);
     }
 
     return res;
 }
 
 
-template <typename ContainerType, typename FaceType>
-common::IndexList GetIndexListFromTriangleStrip(const FaceType& face)
+
+static common::IndexList GetIndexListFromTriangleStrip(const common::IndexList& data)
 {
-    auto data = std::get<ContainerType>(face.data);
     assert(data.size() >= 3);
 
     common::IndexList res;
@@ -221,15 +189,15 @@ common::IndexList GetIndexListFromTriangleStrip(const FaceType& face)
     {
         if ((i % 2) == 0)
         {
-            res.push_back(GetIndex(data[i - 2]));
-            res.push_back(GetIndex(data[i - 1]));
-            res.push_back(GetIndex(data[i]));
+            res.push_back(data[i - 2]);
+            res.push_back(data[i - 1]);
+            res.push_back(data[i]);
         }
         else
         {
-            res.push_back(GetIndex(data[i - 2]));
-            res.push_back(GetIndex(data[i]));
-            res.push_back(GetIndex(data[i - 1]));
+            res.push_back(data[i - 2]);
+            res.push_back(data[i]);
+            res.push_back(data[i - 1]);
         }
     }
 
@@ -238,14 +206,18 @@ common::IndexList GetIndexListFromTriangleStrip(const FaceType& face)
 
 common::IndexList GetIndexListForFace28(const block_data::Face28& face)
 {
-    const auto& data = std::get<std::vector<block_data::Face28::Unknown>>(face.data);
-    if (data.size() == 4)
+    if (face.meshInfo.texCoords.has_value())
     {
-        return { 0, 2, 1, 3, 2, 0 };
-    }
-    else if (data.size() == 3)
-    {
-        return { 0, 2, 1 };
+        const auto& data = *(face.meshInfo.texCoords);
+
+        if (data.size() == 4)
+        {
+            return { 0, 2, 1, 3, 2, 0 };
+        }
+        else if (data.size() == 3)
+        {
+            return { 0, 2, 1 };
+        }
     }
 
     assert(0 && "not implemented");
@@ -260,58 +232,58 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
     switch (face.type)
     {
     case block_data::Face8::UnknownType0:
-        return GetIndexListFromTriangleFan<common::IndexList>(face);
+        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
 
     case block_data::Face8::UnknownType1:
-        return GetIndexListFromTriangleFan<common::IndexList>(face);
+        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType2:
-        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType3:
-        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::UnknownType16:
-        return GetIndexListFromTriangleFan<common::IndexList>(face);
+        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType17:
-        return GetIndexListFromTriangleStrip<common::IndexList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType48:
-        return GetIndexListFromTriangleFan<common::IndexWithNormalList>(face);
+        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType50:
-        return GetIndexListFromTriangleFan<common::IndexWithTexCoordNormalList>(face);
+        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType51:
-        return GetIndexListFromTriangleStrip<common::IndexWithNormalList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType128:
-        return GetIndexListFromTriangleStrip<common::IndexList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType129:
-        return GetIndexListFromTriangleStrip<common::IndexList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType131:
-        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::UnknownType144:
-        return GetIndexListFromTriangleStrip<common::IndexList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::UnknownType145:
-        return GetIndexListFromTriangleStrip<common::IndexList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType176:
-        return GetIndexListFromTriangleStrip<common::IndexWithNormalList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType177:
-        return GetIndexListFromTriangleStrip<std::vector<block_data::Face8::Unknown177>>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType178:
-        return GetIndexListFromTriangleStrip<common::IndexWithTexCoordNormalList>(face);
+        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType179:
-        return GetIndexListFromTriangleFan<common::IndexWithNormalList>(face);
+        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
 
     default:
         assert(0 && "not implemented");
@@ -339,10 +311,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices0:
-            return std::get<common::IndexList>(face.data);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::Indices1:
-            return std::get<common::IndexList>(face.data);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::Indices3:
             //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
@@ -350,10 +322,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
             return {};
 
         case block_data::Face35::Indices16:
-            return std::get<common::IndexList>(face.data);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::Indices17:
-            return std::get<common::IndexList>(face.data);
+            return *face.meshInfo.indices;
 
         default:
             assert(0 && "not implemented");
@@ -365,16 +337,16 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices1:
-            return std::get<common::IndexList>(face.data);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::UnknownType3:
-            return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::UnknownType49:
-            return GetSimpleIndexList<std::vector<block_data::Face35::Unknown49>>(face);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::UnknownType51:
-            return GetSimpleIndexList<common::IndexWithNormalList>(face);
+            return *face.meshInfo.indices;
 
         default:
             assert(0 && "not implemented");
@@ -386,16 +358,16 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices0:
-            return std::get<common::IndexList>(face.data);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::Unknown2:
-            return GetSimpleIndexList<common::IndexWithTexCoordList>(face);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::UnknownType48:
-            return GetSimpleIndexList<common::IndexWithNormalList>(face);
+            return *face.meshInfo.indices;
 
         case block_data::Face35::UnknownType50:
-            return GetSimpleIndexList<common::IndexWithTexCoordNormalList>(face);
+            return *face.meshInfo.indices;
 
         default:
             assert(0 && "not implemented");

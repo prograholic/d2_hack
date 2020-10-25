@@ -5,8 +5,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <variant>
-#include <tuple>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
@@ -63,14 +61,6 @@ static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 static const std::uint32_t MaxBlockId = 40;
 
 
-template <class... Types>
-struct TypeList
-{
-    using tuple_t = std::tuple<Types...>;
-    using variant_t = std::variant<Types...>;
-};
-
-
 struct BlockHeader
 {
     common::ResourceName name;
@@ -79,6 +69,8 @@ struct BlockHeader
 
 struct Empty0
 {
+    static constexpr auto Value = EmptyBlock0;
+
     static const size_t EmptyDataSize0 = 40;
     static const size_t EmptyDataSize1 = 4;
 
@@ -89,6 +81,8 @@ struct Empty0
 
 struct GroupUnknown2
 {
+    static constexpr auto Value = GroupUnknownBlock2;
+
     common::BoundingSphere boundingSphere;
     common::Position unknown0;
     Ogre::Real unknown1;
@@ -96,6 +90,8 @@ struct GroupUnknown2
 
 struct GroupRoadInfraObjects4
 {
+    static constexpr auto Value = GroupRoadInfraObjectsBlock4;
+
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 
@@ -104,16 +100,20 @@ struct GroupRoadInfraObjects4
 
 struct GroupObjects5
 {
+    static constexpr auto Value = GroupObjectsBlock5;
+
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 };
 
 struct GroupVertex7
 {
+    static constexpr auto Value = GroupVertexBlock7;
+
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
 
-    common::PositionWithTexCoordList vertices;
+    common::SimpleMeshInfo meshInfo;
 };
 
 struct Face8
@@ -144,25 +144,21 @@ struct Face8
 
     struct Unknown177
     {
-        common::Index index;
         Ogre::Real unknown;
     };
 
-    using Types = TypeList<
-        common::IndexList,
-        std::vector<block_data::Face8::Unknown177>,
-        common::IndexWithTexCoordList,
-        common::IndexWithNormalList,
-        common::IndexWithTexCoordNormalList
-    >;
+    using Unknown177List = std::vector<Unknown177>;
 
-    Types::variant_t data;
+    common::SimpleMeshInfo meshInfo;
+    std::optional<Unknown177List> unknown177;
 };
 
 typedef std::vector<Face8> Face8List;
 
 struct SimpleFaces8
 {
+    static constexpr auto Value = SimpleFacesBlock8;
+
     common::BoundingSphere boundingSphere;
 
     Face8List faces;
@@ -170,6 +166,8 @@ struct SimpleFaces8
 
 struct GroupTrigger9
 {
+    static constexpr auto Value = GroupTriggerBlock9;
+
     common::BoundingSphere boundingSphere;
 
     Ogre::Vector3 unknown;
@@ -178,6 +176,8 @@ struct GroupTrigger9
 
 struct GroupLodParameters10
 {
+    static constexpr auto Value = GroupLodParametersBlock10;
+
     common::BoundingSphere boundingSphere;
 
     Ogre::Vector3 unknown;
@@ -187,6 +187,8 @@ struct GroupLodParameters10
 
 struct GroupUnknown12
 {
+    static constexpr auto Value = GroupUnknownBlock12;
+
     common::BoundingSphere boundingSphere;
 
     Ogre::Real unknown0;
@@ -200,6 +202,8 @@ struct GroupUnknown12
 
 struct SimpleTrigger13
 {
+    static constexpr auto Value = SimpleTriggerBlock13;
+
     common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
@@ -210,6 +214,8 @@ struct SimpleTrigger13
 
 struct SimpleUnknown14
 {
+    static constexpr auto Value = SimpleUnknownBlock14;
+
     common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
@@ -224,6 +230,8 @@ struct SimpleUnknown14
 
 struct SimpleObjectConnector18
 {
+    static constexpr auto Value = SimpleObjectConnectorBlock18;
+
     common::BoundingSphere boundingSphere;
 
     common::ResourceName space;
@@ -232,10 +240,13 @@ struct SimpleObjectConnector18
 
 struct GroupObjects19
 {
+    static constexpr auto Value = GroupObjectsBlock19;
 };
 
 struct SimpleFlatCollision20
 {
+    static constexpr auto Value = SimpleFlatCollisionBlock20;
+
     common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
@@ -247,6 +258,8 @@ struct SimpleFlatCollision20
 
 struct GroupObjects21
 {
+    static constexpr auto Value = GroupObjectsBlock21;
+
     common::BoundingSphere boundingSphere;
 
     std::uint32_t count;
@@ -255,6 +268,8 @@ struct GroupObjects21
 
 struct SimpleVolumeCollision23
 {
+    static constexpr auto Value = SimpleVolumeCollisionBlock23;
+
     std::uint32_t unknown0;
     std::uint32_t surfaceType;
 
@@ -266,6 +281,8 @@ struct SimpleVolumeCollision23
 
 struct GroupTransformMatrix24
 {
+    static constexpr auto Value = GroupTransformMatrixBlock24;
+
     Ogre::Vector3 x;
     Ogre::Vector3 y;
     Ogre::Vector3 z;
@@ -277,6 +294,8 @@ struct GroupTransformMatrix24
 
 struct SimpleUnknown25
 {
+    static constexpr auto Value = SimpleUnknownBlock25;
+
     Ogre::Real unknown0;
     std::uint32_t unknown1;
     std::uint32_t unknown2;
@@ -290,10 +309,10 @@ struct Face28
 
     struct Unknown
     {
-        Ogre::Real unknown0;
-        Ogre::Real unknown1;
-        common::TexCoord texCoord;
+        Ogre::Vector2 unknown;
     };
+
+    using UnknownList = std::vector<Unknown>;
 
     std::uint32_t type;
 
@@ -301,17 +320,16 @@ struct Face28
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
 
-    using Types = TypeList<
-        std::vector<block_data::Face28::Unknown>
-    >;
-
-    Types::variant_t data;
+    common::SimpleMeshInfo meshInfo;
+    std::optional<UnknownList> unknown;
 };
 
 typedef std::vector<Face28> Face28List;
 
 struct SimpleFaces28
 {
+    static constexpr auto Value = SimpleFacesBlock28;
+
     common::BoundingSphere boundingSphere;
 
     Ogre::Vector3 unknown;
@@ -321,6 +339,8 @@ struct SimpleFaces28
 
 struct GroupUnknown29
 {
+    static constexpr auto Value = GroupUnknownBlock29;
+
     common::BoundingSphere boundingSphere;
     std::uint32_t type;
     std::uint32_t unknown0;
@@ -330,6 +350,8 @@ struct GroupUnknown29
 
 struct SimplePortal30
 {
+    static constexpr auto Value = SimplePortalBlock30;
+
     common::BoundingSphere boundingSphere;
 
     common::ResourceName connectedRoom;
@@ -340,6 +362,8 @@ struct SimplePortal30
 
 struct GroupLightingObjects33
 {
+    static constexpr auto Value = GroupLightingObjectBlock33;
+
     common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
@@ -353,6 +377,8 @@ struct GroupLightingObjects33
 
 struct SimpleUnknown34
 {
+    static constexpr auto Value = SimpleUnknownBlock34;
+
     common::BoundingSphere boundingSphere;
     Ogre::Real unknown0;
 
@@ -383,31 +409,26 @@ struct Face35
 
     struct Unknown49
     {
-        common::Index index;
         Ogre::Real unknown;
     };
+
+    using Unknown49List = std::vector<Unknown49>;
 
     std::uint32_t type;
     Ogre::Real unknown0;
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
     
-    
-    using Types = TypeList<
-        common::IndexList,
-        common::IndexWithTexCoordList,
-        common::IndexWithNormalList,
-        common::IndexWithTexCoordNormalList,
-        std::vector<block_data::Face35::Unknown49>
-    >;
-    
-    Types::variant_t data;
+    common::SimpleMeshInfo meshInfo;
+    std::optional<Unknown49List> unknown49;
 };
 
 typedef std::vector<Face35> Face35List;
 
 struct SimpleFaces35
 {
+    static constexpr auto Value = SimpleFacesBlock35;
+
     static const std::uint32_t Unknown1 = 1;
     static const std::uint32_t Unknown2 = 2;
     static const std::uint32_t IndicesOnly3 = 3;
@@ -422,6 +443,8 @@ struct SimpleFaces35
 
 struct GroupVertexData37
 {
+    static constexpr auto Value = GroupIndexAndTexturesBlock37;
+
     static const std::uint32_t Vertex2 = 2;
     static const std::uint32_t Vertex3 = 3;
     static const std::uint32_t UnknownType258 = 258;
@@ -430,36 +453,31 @@ struct GroupVertexData37
 
     struct Unknown258Or515
     {
-        Ogre::Vector3 position;
-        Ogre::Vector2 texCoord;
-        Ogre::Vector3 normal;
-        Ogre::Vector2 unknown0;
+        Ogre::Vector2 unknown;
     };
+
+    using Unknown258Or515List = std::vector<Unknown258Or515>;
 
     struct Unknown514
     {
-        Ogre::Vector3 position;
-        Ogre::Vector2 texCoord;
-        Ogre::Vector3 normal;
-        Ogre::Vector4 unknown0;
+        Ogre::Vector4 unknown;
     };
+
+    using Unknown514List = std::vector<Unknown514>;
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
     std::uint32_t type;
 
-    using Types = TypeList<
-        common::PositionWithTexCoordNormalList,
-        common::PositionWithNormalList,
-        std::vector<block_data::GroupVertexData37::Unknown514>,
-        std::vector<block_data::GroupVertexData37::Unknown258Or515>
-    >;
-    
-    Types::variant_t data;
+    common::SimpleMeshInfo meshInfo;
+    std::optional<Unknown258Or515List> unknown258Or515;
+    std::optional<Unknown514List> unknown514;
 };
 
 struct SimpleGeneratedObjects40
 {
+    static constexpr auto Value = SimpleGeneratedObjectsBlock40;
+
     common::BoundingSphere boundingSphere;
 
     common::ResourceName empty;

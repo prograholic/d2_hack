@@ -405,7 +405,19 @@ private:
         ReadBytes(block.name.data(), block.name.size());
 
         const std::uint32_t vertexAmount = ReadUint32();
-        ReadCount(block.vertices, vertexAmount);
+        common::PositionList positions;
+        common::TexCoordList texCoords;
+        for (size_t i = 0; i != vertexAmount; ++i)
+        {
+            common::Position pos = ReadVector3();
+            common::TexCoord texCoord = ReadVector2();
+
+            positions.push_back(pos);
+            texCoords.push_back(texCoord);
+        }
+
+        block.meshInfo.positions = std::move(positions);
+        block.meshInfo.texCoords = std::move(texCoords);
 
         NodePtr res = std::make_shared<NodeGroupVertex7>(blockHeader, block, parent);
 
@@ -428,7 +440,7 @@ private:
             common::IndexList data;
             ReadCount(data, itemsInFace);
 
-            face.data = std::move(data);
+            face.meshInfo.indices = std::move(data);
         }
         break;
         
@@ -436,10 +448,16 @@ private:
         case block_data::Face8::FaceIndexType3:
         case block_data::Face8::FaceIndexType131:
         {
-            common::IndexWithTexCoordList data;
-            ReadCount(data, itemsInFace);
+            common::IndexList indices;
+            common::TexCoordList texCoords;
+            for (size_t i = 0; i != itemsInFace; ++i)
+            {
+                indices.push_back(ReadUint32());
+                texCoords.push_back(ReadVector2());
+            }
 
-            face.data = std::move(data);
+            face.meshInfo.indices = std::move(indices);
+            face.meshInfo.texCoords = std::move(texCoords);
         }
         break;
 
@@ -448,29 +466,51 @@ private:
         case block_data::Face8::FaceIndexType176:
         case block_data::Face8::FaceIndexType179:
         {
-            common::IndexWithNormalList data;
-            ReadCount(data, itemsInFace);
+            common::IndexList indices;
+            common::NormalList normals;
+            for (size_t i = 0; i != itemsInFace; ++i)
+            {
+                indices.push_back(ReadUint32());
+                normals.push_back(ReadVector3());
+            }
 
-            face.data = std::move(data);
+            face.meshInfo.indices = std::move(indices);
+            face.meshInfo.normals = std::move(normals);
         }
         break;
 
         case block_data::Face8::FaceIndexType50:
         case block_data::Face8::FaceIndexType178:
         {
-            common::IndexWithTexCoordNormalList data;
-            ReadCount(data, itemsInFace);
+            common::IndexList indices;
+            common::TexCoordList texCoords;
+            common::NormalList normals;
+            for (size_t i = 0; i != itemsInFace; ++i)
+            {
+                indices.push_back(ReadUint32());
+                texCoords.push_back(ReadVector2());
+                normals.push_back(ReadVector3());
+            }
 
-            face.data = std::move(data);
+            face.meshInfo.indices = std::move(indices);
+            face.meshInfo.texCoords = std::move(texCoords);
+            face.meshInfo.normals = std::move(normals);
         }
         break;
 
         case block_data::Face8::FaceIndexType177:
         {
-            std::vector<block_data::Face8::Unknown177> data;
-            ReadCount(data, itemsInFace);
+            common::IndexList indices;
+            block_data::Face8::Unknown177List unknown177;
+            common::NormalList normals;
+            for (size_t i = 0; i != itemsInFace; ++i)
+            {
+                indices.push_back(ReadUint32());
+                unknown177.push_back({ReadFloat()});
+            }
 
-            face.data = std::move(data);
+            face.meshInfo.indices = std::move(indices);
+            face.unknown177 = std::move(unknown177);
         }
         break;
         
@@ -684,11 +724,18 @@ private:
         if (face.type == block_data::Face28::Unknown2)
         {
             const std::uint32_t count = ReadUint32();
-            
-            std::vector<block_data::Face28::Unknown> data;
-            ReadCount(data, count);
 
-            face.data = std::move(data);
+            common::TexCoordList texCoords;
+            block_data::Face28::UnknownList unknown;
+
+            for (size_t i = 0; i != count; ++i)
+            {
+                texCoords.push_back(ReadVector2());
+                unknown.push_back({ReadVector2()});
+            }
+
+            face.meshInfo.texCoords = std::move(texCoords);
+            face.unknown = std::move(unknown);
         }
         else
         {
@@ -786,31 +833,55 @@ private:
         {
             if (face.type == block_data::Face35::Indices0)
             {
-                common::IndexList data;
-                ReadCount(data, dataCount);
-
-                face.data = std::move(data);
+                common::IndexList indices;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                }
+                
+                face.meshInfo.indices = std::move(indices);
             }
             else if (face.type == block_data::Face35::Unknown2)
             {
-                common::IndexWithTexCoordList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                common::TexCoordList texCoords;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                    texCoords.push_back(ReadVector2());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
+                face.meshInfo.texCoords = std::move(texCoords);
             }
             else if (face.type == block_data::Face35::UnknownType48)
             {
-                common::IndexWithNormalList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                common::NormalList normals;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                    normals.push_back(ReadVector3());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
+                face.meshInfo.normals = std::move(normals);
             }
             else if (face.type == block_data::Face35::UnknownType50)
             {
-                common::IndexWithTexCoordNormalList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                common::TexCoordList texCoords;
+                common::NormalList normals;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                    texCoords.push_back(ReadVector2());
+                    normals.push_back(ReadVector3());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
+                face.meshInfo.texCoords = std::move(texCoords);
+                face.meshInfo.normals = std::move(normals);
             }
             else
             {
@@ -821,31 +892,52 @@ private:
         {
             if (face.type == block_data::Face35::Indices1)
             {
-                common::IndexList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
             }
             else if (face.type == block_data::Face35::UnknownType3)
             {
-                common::IndexWithTexCoordList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                common::TexCoordList texCoords;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                    texCoords.push_back(ReadVector2());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
+                face.meshInfo.texCoords = std::move(texCoords);
             }
             else if (face.type == block_data::Face35::UnknownType49)
             {
-                std::vector<block_data::Face35::Unknown49> data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                block_data::Face35::Unknown49List unknown49;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                    unknown49.push_back({ReadFloat()});
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
+                face.unknown49 = std::move(unknown49);
             }
             else if (face.type == block_data::Face35::UnknownType51)
             {
-                common::IndexWithNormalList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                common::NormalList normals;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                    normals.push_back(ReadVector3());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
+                face.meshInfo.normals = std::move(normals);
             }
             else
             {
@@ -862,10 +954,13 @@ private:
             case block_data::Face35::Indices16:
             case block_data::Face35::Indices17:
             {
-                common::IndexList data;
-                ReadCount(data, dataCount);
+                common::IndexList indices;
+                for (size_t i = 0; i != dataCount; ++i)
+                {
+                    indices.push_back(ReadUint32());
+                }
 
-                face.data = std::move(data);
+                face.meshInfo.indices = std::move(indices);
             }
             break;
 
@@ -919,38 +1014,89 @@ private:
 
         if (block.type == block_data::GroupVertexData37::Vertex2)
         {
-            common::PositionWithTexCoordNormalList data;
-            ReadCount(data, dataSize);
+            common::PositionList positions;
+            common::TexCoordList texCoords;
+            common::NormalList normals;
+            for (size_t i = 0; i != dataSize; ++i)
+            {
+                positions.push_back(ReadVector3());
+                texCoords.push_back(ReadVector2());
+                normals.push_back(ReadVector3());
+            }
 
-            block.data = std::move(data);
+            block.meshInfo.positions = std::move(positions);
+            block.meshInfo.texCoords = std::move(texCoords);
+            block.meshInfo.normals = std::move(normals);
         }
         else if (block.type == block_data::GroupVertexData37::Vertex3)
         {
-            common::PositionWithNormalList data;
-            ReadCount(data, dataSize);
+            common::PositionList positions;
+            common::NormalList normals;
+            for (size_t i = 0; i != dataSize; ++i)
+            {
+                positions.push_back(ReadVector3());
+                normals.push_back(ReadVector3());
+            }
 
-            block.data = std::move(data);
+            block.meshInfo.positions = std::move(positions);
+            block.meshInfo.normals = std::move(normals);
         }
         else if (block.type == block_data::GroupVertexData37::UnknownType514)
         {
-            std::vector<block_data::GroupVertexData37::Unknown514> data;
-            ReadCount(data, dataSize);
+            common::PositionList positions;
+            common::TexCoordList texCoords;
+            common::NormalList normals;
+            block_data::GroupVertexData37::Unknown514List unknown514;
+            for (size_t i = 0; i != dataSize; ++i)
+            {
+                positions.push_back(ReadVector3());
+                texCoords.push_back(ReadVector2());
+                normals.push_back(ReadVector3());
+                unknown514.push_back({ReadVector4()});
+            }
 
-            block.data = std::move(data);
+            block.meshInfo.positions = std::move(positions);
+            block.meshInfo.texCoords = std::move(texCoords);
+            block.meshInfo.normals = std::move(normals);
+            block.unknown514 = std::move(unknown514);
         }
         else if (block.type == block_data::GroupVertexData37::UnknownType258)
         {
-            std::vector<block_data::GroupVertexData37::Unknown258Or515> data;
-            ReadCount(data, dataSize);
+            common::PositionList positions;
+            common::TexCoordList texCoords;
+            common::NormalList normals;
+            block_data::GroupVertexData37::Unknown258Or515List unknown258Or515;
+            for (size_t i = 0; i != dataSize; ++i)
+            {
+                positions.push_back(ReadVector3());
+                texCoords.push_back(ReadVector2());
+                normals.push_back(ReadVector3());
+                unknown258Or515.push_back({ReadVector2()});
+            }
 
-            block.data = std::move(data);
+            block.meshInfo.positions = std::move(positions);
+            block.meshInfo.texCoords = std::move(texCoords);
+            block.meshInfo.normals = std::move(normals);
+            block.unknown258Or515 = std::move(unknown258Or515);
         }
         else if (block.type == block_data::GroupVertexData37::UnknownType515)
         {
-            std::vector<block_data::GroupVertexData37::Unknown258Or515> data;
-            ReadCount(data, dataSize);
+            common::PositionList positions;
+            common::TexCoordList texCoords;
+            common::NormalList normals;
+            block_data::GroupVertexData37::Unknown258Or515List unknown258Or515;
+            for (size_t i = 0; i != dataSize; ++i)
+            {
+                positions.push_back(ReadVector3());
+                texCoords.push_back(ReadVector2());
+                normals.push_back(ReadVector3());
+                unknown258Or515.push_back({ ReadVector2() });
+            }
 
-            block.data = std::move(data);
+            block.meshInfo.positions = std::move(positions);
+            block.meshInfo.texCoords = std::move(texCoords);
+            block.meshInfo.normals = std::move(normals);
+            block.unknown258Or515 = std::move(unknown258Or515);
         }
         else
         {

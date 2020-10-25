@@ -1,9 +1,5 @@
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
 
-#include <boost/fusion/algorithm.hpp>
-#include <boost/fusion/adapted/std_tuple.hpp>
-#include <boost/fusion/include/std_tuple.hpp>
-
 
 #include <d2_hack/resource/data/b3d_utils.h>
 #include <d2_hack/common/log.h>
@@ -18,6 +14,78 @@ namespace b3d
 {
 namespace optimization
 {
+
+template <typename BlockType>
+void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
+{
+    assert(parentMeshInfo);
+
+    for (auto& mesh : blockData.faces)
+    {
+        if (!mesh.meshInfo.positions)
+        {
+            mesh.meshInfo.positions = parentMeshInfo->positions;
+        }
+        if (!mesh.meshInfo.texCoords)
+        {
+            mesh.meshInfo.texCoords = parentMeshInfo->texCoords;
+        }
+        if (!mesh.meshInfo.normals)
+        {
+            mesh.meshInfo.normals = parentMeshInfo->normals;
+        }
+        if (!mesh.meshInfo.indices)
+        {
+            mesh.meshInfo.indices = parentMeshInfo->indices;
+        }
+    }
+}
+
+static void MergeFacesWithVertices(const NodePtr& node, const common::SimpleMeshInfo* parentMeshInfo)
+{
+    if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
+    {
+        NodeGroupVertexData37* typedNode = node->NodeCast<NodeGroupVertexData37>();
+
+        parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
+    }
+    else if (node->GetType() == block_data::GroupVertexBlock7)
+    {
+        NodeGroupVertex7* typedNode = node->NodeCast<NodeGroupVertex7>();
+
+        parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
+    }
+    else if (node->GetType() == block_data::SimpleFacesBlock8)
+    {
+        NodeSimpleFaces8* typedNode = node->NodeCast<NodeSimpleFaces8>();
+        DoMerge(typedNode->GetBlockData(), parentMeshInfo);
+    }
+    else if (node->GetType() == block_data::SimpleFacesBlock28)
+    {
+        NodeSimpleFaces28* typedNode = node->NodeCast<NodeSimpleFaces28>();
+        DoMerge(typedNode->GetBlockData(), parentMeshInfo);
+    }
+    else if (node->GetType() == block_data::SimpleFacesBlock35)
+    {
+        NodeSimpleFaces35* typedNode = node->NodeCast<NodeSimpleFaces35>();
+        DoMerge(typedNode->GetBlockData(), parentMeshInfo);
+    }
+
+    for (const auto& child : node->GetChildNodeList())
+    {
+        MergeFacesWithVertices(child, parentMeshInfo);
+    }
+}
+
+static void MergeFacesWithVertices(const B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        MergeFacesWithVertices(node, nullptr);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 static bool NeedToRemove(const NodePtr& node)
 {
@@ -62,11 +130,11 @@ static void RemoveEmptyNodes(B3dTree& tree)
     }
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 
 void Optimize(B3dTree& tree)
 {
+    MergeFacesWithVertices(tree);
     RemoveEmptyNodes(tree);
 }
 

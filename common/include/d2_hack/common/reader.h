@@ -65,6 +65,8 @@ public:
 
     float ReadFloat();
 
+    Ogre::Vector4 ReadVector4();
+
     Ogre::Vector3 ReadVector3();
 
     Ogre::Vector2 ReadVector2();

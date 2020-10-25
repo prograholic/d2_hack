@@ -48,13 +48,9 @@ void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupObjects5& /
     ProcessSceneNode(name, visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertex7& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertex7& /* block */, VisitMode visitMode)
 {
-    Ogre::MeshPtr mesh = ProcessMesh(name, visitMode);
-    if (visitMode == VisitMode::PreOrder)
-    {
-        AddVertexData(mesh, block.vertices);
-    }
+    ProcessSceneNode(name, visitMode);
 }
 
 void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode visitMode)
@@ -152,18 +148,9 @@ void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces35& b
     VisitFaces(name, block, visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertexData37& /* block */, VisitMode visitMode)
 {
-    Ogre::MeshPtr mesh = ProcessMesh(name, visitMode);
-    if (visitMode == VisitMode::PreOrder)
-    {
-        auto visitor = [this, mesh](auto&& vertices)
-        {
-            AddVertexData(mesh, vertices);
-        };
-
-        std::visit(visitor, block.data);
-    }
+    ProcessSceneNode(name, visitMode);
 }
 
 void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleGeneratedObjects40& /* block */, VisitMode /* visitMode */)
@@ -172,20 +159,16 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleGene
 }
 
 template <typename Faces>
-void B3dTreeVisitor::VisitFaces(const std::string& /* name */, Faces& block, resource::data::b3d::VisitMode visitMode)
+void B3dTreeVisitor::VisitFaces(const std::string& name, Faces& block, resource::data::b3d::VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
         for (const auto& face : block.faces)
         {
-            Ogre::SubMesh* subMesh = CreateSubMesh(face.materialIndex);
-            common::IndexList indices = PrepareIndices(block, face);
+            common::SimpleMeshInfo meshInfo = face.meshInfo;
+            meshInfo.indices = PrepareIndices(block, face);
 
-            auto visitor = [this, subMesh, &indices](auto&& items)
-            {
-                SetSubMeshData(subMesh, items, indices);
-            };
-            std::visit(visitor, face.data);
+            CreateMesh(name, face.meshInfo, face.materialIndex);
         }
     }
 }
