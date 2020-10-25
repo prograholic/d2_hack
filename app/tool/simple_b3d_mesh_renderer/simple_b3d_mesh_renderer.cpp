@@ -37,16 +37,17 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-    LoadB3d("aa", b3dSceneNode);
-
-    LoadB3d("ab", b3dSceneNode);
 #if 0
+    LoadB3d("aa", b3dSceneNode);
+    LoadB3d("ab", b3dSceneNode);
     LoadB3d("ac", b3dSceneNode);
     LoadB3d("ad", b3dSceneNode);
     LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
     LoadB3d("ag", b3dSceneNode);
+#endif
     LoadB3d("ah", b3dSceneNode);
+#if 0
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -172,7 +173,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "aa_store_aa_scene_node";
+    const char* node_name = "ah_show_ah_009_scene_node";
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);

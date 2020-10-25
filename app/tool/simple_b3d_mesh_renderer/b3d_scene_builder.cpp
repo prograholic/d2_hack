@@ -179,7 +179,7 @@ Ogre::MeshPtr B3dSceneBuilder::ProcessMesh(const std::string& blockName, VisitMo
             name = GetNameImpl(blockName, "mesh", true);
         }
 
-        D2_HACK_LOG(B3dTreeVisitor::ProcessMesh(PostOrder)) << "Starting processing mesh with name: " << name;
+        D2_HACK_LOG(B3dTreeVisitor::ProcessMesh(PreOrder)) << "Starting processing mesh with name: " << name;
 
         Ogre::MeshPtr newMesh = m_meshManager->createManual(name, group);
         m_meshStack.push(newMesh);
