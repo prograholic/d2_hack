@@ -32,6 +32,8 @@ struct BoundingSphere
     Ogre::Real radius;
 };
 
+const BoundingSphere InvalidBoundingSphere{Ogre::Vector3::ZERO, 0.0f};
+
 
 typedef Ogre::Vector3 Position;
 typedef std::vector<Position> PositionList;

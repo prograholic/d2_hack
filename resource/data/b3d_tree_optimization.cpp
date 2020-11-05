@@ -3,6 +3,7 @@
 
 #include <d2_hack/resource/data/b3d_utils.h>
 #include <d2_hack/common/log.h>
+#include <d2_hack/common/utils.h>
 
 namespace d2_hack
 {
@@ -14,6 +15,57 @@ namespace b3d
 {
 namespace optimization
 {
+
+
+static void SkipLodParametersFor37(NodePtr node, bool hasLod)
+{
+    if (hasLod)
+    {
+        NodeList newChildren;
+        for (auto child : node->GetChildNodeList())
+        {
+            if (child->GetType() == block_data::GroupLodParametersBlock10)
+            {
+                D2_HACK_LOG(SkipLodParametersFor37) << "skipping node " << child->GetName();
+                continue;
+            }
+            newChildren.push_back(child);
+        }
+        node->SetChildNodes(std::move(newChildren));
+    }
+    else
+    {
+        for (auto child : node->GetChildNodeList())
+        {
+            SkipLodParametersFor37(child, child->GetType() == block_data::GroupLodParametersBlock10);
+        }
+    }
+}
+
+static void SearchFor37(NodePtr node)
+{
+    if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
+    {
+        SkipLodParametersFor37(node, false);
+    }
+    else
+    {
+        for (auto child : node->GetChildNodeList())
+        {
+            SearchFor37(child);
+        }
+    }
+}
+
+static void SkipLodParametersFor37(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        SearchFor37(node);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 template <typename BlockType>
 void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
@@ -134,6 +186,7 @@ static void RemoveEmptyNodes(B3dTree& tree)
 
 void Optimize(B3dTree& tree)
 {
+    SkipLodParametersFor37(tree);
     MergeFacesWithVertices(tree);
     RemoveEmptyNodes(tree);
 }

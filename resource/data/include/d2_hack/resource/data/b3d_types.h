@@ -70,6 +70,7 @@ struct BlockHeader
 struct Empty0
 {
     static constexpr auto Value = EmptyBlock0;
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     static const size_t EmptyDataSize0 = 40;
     static const size_t EmptyDataSize1 = 4;
@@ -241,6 +242,7 @@ struct SimpleObjectConnector18
 struct GroupObjects19
 {
     static constexpr auto Value = GroupObjectsBlock19;
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 };
 
 struct SimpleFlatCollision20
@@ -269,6 +271,7 @@ struct GroupObjects21
 struct SimpleVolumeCollision23
 {
     static constexpr auto Value = SimpleVolumeCollisionBlock23;
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     std::uint32_t unknown0;
     std::uint32_t surfaceType;
@@ -282,6 +285,7 @@ struct SimpleVolumeCollision23
 struct GroupTransformMatrix24
 {
     static constexpr auto Value = GroupTransformMatrixBlock24;
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     Ogre::Vector3 x;
     Ogre::Vector3 y;
@@ -295,6 +299,7 @@ struct GroupTransformMatrix24
 struct SimpleUnknown25
 {
     static constexpr auto Value = SimpleUnknownBlock25;
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     Ogre::Real unknown0;
     std::uint32_t unknown1;

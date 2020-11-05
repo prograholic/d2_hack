@@ -46,6 +46,8 @@ public:
 
     virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
+    virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
+
     template <typename TypedNode>
     TypedNode* NodeCast()
     {
@@ -87,6 +89,11 @@ public:
     virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) override
     {
         visitor.Visit(GetName(), m_block, visitMode);
+    }
+
+    virtual const common::BoundingSphere& GetBoundingSphere() const override
+    {
+        return m_block.boundingSphere;
     }
 
     const BlockType& GetBlockData() const

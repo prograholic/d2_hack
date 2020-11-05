@@ -12,6 +12,7 @@ d2_hack_add_library(d2_hack.common
     include/d2_hack/common/reader.h
     include/d2_hack/common/types.h
     include/d2_hack/common/resource_mgmt.h
+    include/d2_hack/common/utils.h
 )
 
 target_link_libraries(d2_hack.common

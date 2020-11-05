@@ -10,6 +10,21 @@ namespace common
     
 std::string ResourceNameToString(const ResourceName& resName);
 
+
+bool IsValid(const BoundingSphere& boundingSphere);
+
+template <typename T>
+struct Hash;
+
+template <>
+struct Hash<common::BoundingSphere>
+{
+    size_t operator()(const common::BoundingSphere& data) const noexcept;
+};
+
+bool operator==(const BoundingSphere& left, const BoundingSphere& right);
+
+
 } // namespace common
 } // namespace d2_hack
 
