@@ -39,8 +39,6 @@ public:
 
     ~B3dSceneBuilder();
 
-    void ProcessLod(const resource::data::b3d::block_data::GroupLodParameters10& block, resource::data::b3d::VisitMode visitMode);
-
     void ProcessTransformQueue(const std::string& name, const resource::data::b3d::block_data::GroupTransformMatrix24& block, resource::data::b3d::VisitMode visitMode);
 
     void ProcessLight(const std::string& name, const resource::data::b3d::block_data::GroupLightingObjects33& block, resource::data::b3d::VisitMode visitMode);
@@ -60,7 +58,6 @@ private:
     const common::Materials m_materials;
 
     std::stack<Ogre::SceneNode*> m_sceneNodes;
-    std::stack<resource::data::b3d::block_data::GroupLodParameters10> m_currentLods;
     std::list<resource::data::b3d::block_data::GroupTransformMatrix24> m_transformQueue;
 
     std::map<std::string, TransformList> m_transformMap;

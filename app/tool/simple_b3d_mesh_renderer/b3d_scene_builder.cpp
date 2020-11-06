@@ -51,21 +51,7 @@ B3dSceneBuilder::B3dSceneBuilder(const char* b3dId,
 B3dSceneBuilder::~B3dSceneBuilder()
 {
     assert(m_transformQueue.empty());
-    assert(m_currentLods.empty());
     assert(m_sceneNodes.empty());
-}
-
-
-void B3dSceneBuilder::ProcessLod(const block_data::GroupLodParameters10& block, VisitMode visitMode)
-{
-    if (visitMode == VisitMode::PreOrder)
-    {
-        m_currentLods.push(block);
-    }
-    else
-    {
-        m_currentLods.pop();
-    }
 }
 
 void B3dSceneBuilder::ProcessTransformQueue(const std::string& name, const block_data::GroupTransformMatrix24& block, VisitMode visitMode)

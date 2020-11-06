@@ -67,6 +67,143 @@ static void SkipLodParametersFor37(B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static NodeList OptimizeSequence5(NodePtr node)
+{
+    if (node->GetType() != block_data::GroupObjectsBlock5)
+    {
+        NodeList res;
+        res.push_back(node);
+        return res;
+    }
+
+    return node->GetChildNodeList();
+}
+
+static NodeList OptimizeSequence10_5(NodePtr node)
+{
+    if (node->GetType() != block_data::GroupLodParametersBlock10)
+    {
+        NodeList res;
+        res.push_back(node);
+        return res;
+    }
+
+    NodeList res;
+    for (auto child : node->GetChildNodeList())
+    {
+        NodeList tmp = OptimizeSequence5(child);
+        res.insert(res.end(), tmp.begin(), tmp.end());
+    }
+    
+    return res;
+}
+
+static void OptimizeSequence37_10_5(NodePtr node)
+{
+    if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
+    {
+        NodeList newChildren;
+        for (const auto child : node->GetChildNodeList())
+        {
+            auto newChild = OptimizeSequence10_5(child);
+            newChildren.insert(newChildren.end(), newChild.begin(), newChild.end());
+        }
+
+        node->SetChildNodes(std::move(newChildren));
+    }
+    else
+    {
+        for (const auto child : node->GetChildNodeList())
+        {
+            OptimizeSequence37_10_5(child);
+        }
+    }
+}
+
+
+static void OptimizeSequence37_10_5(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        OptimizeSequence37_10_5(node);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+static void UseFirstLod(NodePtr node, bool insideLod)
+{
+    if (node->GetType() == block_data::GroupLodParametersBlock10)
+    {
+        insideLod = true;
+    }
+
+    NodeList newChildren;
+    for (auto child : node->GetChildNodeList())
+    {
+        if ((child->GetType() == block_data::GroupLodParametersBlock10) && insideLod)
+        {
+            D2_HACK_LOG(UseFirstLod) << "skipping LOD entry: " << child->GetName();
+            continue;
+        }
+
+        newChildren.push_back(child);
+
+        UseFirstLod(child, insideLod);
+    }
+
+    node->SetChildNodes(std::move(newChildren));
+}
+
+static void UseFirstLod(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        UseFirstLod(node, false);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <typename Item>
+Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& indices)
+{
+    if (item)
+    {
+        return item;
+    }
+
+    if (parentItem)
+    {
+        Item res = Item::value_type{};
+        for (auto index : indices)
+        {
+            res->push_back((*parentItem)[index]);
+        }
+
+        return res;
+    }
+
+    return item;
+}
+
+static void MergeAndOptimizeMeshInfo(const common::SimpleMeshInfo& parentMeshInfo, common::SimpleMeshInfo& meshInfo)
+{
+    const auto& indices = *meshInfo.indices;
+    common::SimpleMeshInfo newMeshInfo;
+    newMeshInfo.positions = DoMerge(meshInfo.positions, parentMeshInfo.positions, indices);
+    newMeshInfo.texCoords = DoMerge(meshInfo.texCoords, parentMeshInfo.texCoords, indices);
+    newMeshInfo.normals = DoMerge(meshInfo.normals, parentMeshInfo.normals, indices);
+
+    newMeshInfo.indices = common::IndexList{};
+    for (std::uint32_t i = 0; i != indices.size(); ++i)
+    {
+        newMeshInfo.indices->push_back(i);
+    }
+
+    meshInfo = std::move(newMeshInfo);
+}
+
 template <typename BlockType>
 void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
 {
@@ -74,26 +211,11 @@ void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
 
     for (auto& mesh : blockData.faces)
     {
-        if (!mesh.meshInfo.positions)
-        {
-            mesh.meshInfo.positions = parentMeshInfo->positions;
-        }
-        if (!mesh.meshInfo.texCoords)
-        {
-            mesh.meshInfo.texCoords = parentMeshInfo->texCoords;
-        }
-        if (!mesh.meshInfo.normals)
-        {
-            mesh.meshInfo.normals = parentMeshInfo->normals;
-        }
-        if (!mesh.meshInfo.indices)
-        {
-            mesh.meshInfo.indices = parentMeshInfo->indices;
-        }
+        MergeAndOptimizeMeshInfo(*parentMeshInfo, mesh.meshInfo);
     }
 }
 
-static void MergeFacesWithVertices(const NodePtr& node, const common::SimpleMeshInfo* parentMeshInfo)
+static void MergeFacesWithVertices(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
 {
     if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
     {
@@ -187,6 +309,8 @@ static void RemoveEmptyNodes(B3dTree& tree)
 void Optimize(B3dTree& tree)
 {
     SkipLodParametersFor37(tree);
+    OptimizeSequence37_10_5(tree);
+    UseFirstLod(tree);
     MergeFacesWithVertices(tree);
     RemoveEmptyNodes(tree);
 }

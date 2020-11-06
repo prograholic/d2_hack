@@ -63,9 +63,9 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupTrigg
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupLodParameters10& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupLodParameters10& /* block */, VisitMode /* visitMode */)
 {
-    ProcessLod(block, visitMode);
+    // no need to implement
 }
 
 void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown12& /* block */, VisitMode /* visitMode */)
