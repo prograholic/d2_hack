@@ -25,6 +25,14 @@ struct Hash<common::BoundingSphere>
 bool operator==(const BoundingSphere& left, const BoundingSphere& right);
 
 
+
+template <>
+struct Hash<Ogre::Vector3>
+{
+    size_t operator()(const Ogre::Vector3& data) const noexcept;
+};
+
+
 } // namespace common
 } // namespace d2_hack
 

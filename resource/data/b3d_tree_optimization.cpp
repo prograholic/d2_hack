@@ -131,6 +131,54 @@ static void OptimizeSequence37_10_5(B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static size_t GetLodCount(NodePtr node)
+{
+    size_t count = 0;
+    if (node->GetType() == block_data::GroupLodParametersBlock10)
+    {
+        count += 1;
+    }
+
+    for (auto child : node->GetChildNodeList())
+    {
+        count += GetLodCount(child);
+    }
+
+    return count;
+}
+
+static void UseHalfChildFromSingleLod(NodePtr node)
+{
+    if (node->GetType() == block_data::GroupLodParametersBlock10)
+    {
+        if (GetLodCount(node) == 1)
+        {
+            NodeList newChildren = node->GetChildNodeList();
+            assert((newChildren.size() % 2) == 0);
+            newChildren.resize(newChildren.size() / 2);
+            node->SetChildNodes(std::move(newChildren));
+            D2_HACK_LOG(UseHalfChildFromSingleLod) << "skip second half of child nodes for " << node->GetName();
+        }
+    }
+    else
+    {
+        for (auto child : node->GetChildNodeList())
+        {
+            UseHalfChildFromSingleLod(child);
+        }
+    }
+}
+
+static void UseHalfChildFromSingleLod(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        UseHalfChildFromSingleLod(node);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 static void UseFirstLod(NodePtr node, bool insideLod)
 {
     if (node->GetType() == block_data::GroupLodParametersBlock10)
@@ -310,6 +358,7 @@ void Optimize(B3dTree& tree)
 {
     SkipLodParametersFor37(tree);
     OptimizeSequence37_10_5(tree);
+    UseHalfChildFromSingleLod(tree);
     UseFirstLod(tree);
     MergeFacesWithVertices(tree);
     RemoveEmptyNodes(tree);

@@ -19,17 +19,24 @@ bool IsValid(const BoundingSphere& boundingSphere)
 
 size_t Hash<common::BoundingSphere>::operator()(const common::BoundingSphere& data) const noexcept
 {
-    auto x = std::hash<Ogre::Real>{}(data.center.x);
-    auto y = std::hash<Ogre::Real>{}(data.center.y);
-    auto z = std::hash<Ogre::Real>{}(data.center.z);
+    auto c = Hash<Ogre::Vector3>{}(data.center);
     auto r = std::hash<Ogre::Real>{}(data.radius);
 
-    return x ^ (y > 1) ^ (z > 2) ^ (r > 3);
+    return c ^ (r >> 3);
 }
 
 bool operator==(const BoundingSphere& left, const BoundingSphere& right)
 {
     return (left.center == right.center) && (left.radius == right.radius);
+}
+
+size_t Hash<Ogre::Vector3>::operator()(const Ogre::Vector3& data) const noexcept
+{
+    auto x = std::hash<Ogre::Real>{}(data.x);
+    auto y = std::hash<Ogre::Real>{}(data.y);
+    auto z = std::hash<Ogre::Real>{}(data.z);
+
+    return x ^ (y >> 1) ^ (z >> 2);
 }
 
 } // namespace common
