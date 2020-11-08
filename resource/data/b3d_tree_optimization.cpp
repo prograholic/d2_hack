@@ -15,7 +15,75 @@ namespace b3d
 {
 namespace optimization
 {
+namespace predicates
+{
 
+static bool IsNodeOfType(NodePtr node, const std::uint32_t* begin, const std::uint32_t* end)
+{
+    auto nodeType = node->GetType();
+    while (begin != end)
+    {
+        if (*begin == nodeType)
+        {
+            return true;
+        }
+        ++begin;
+    }
+
+    return false;
+}
+static bool IsUnusedNode(NodePtr node)
+{
+    static const std::uint32_t unusedNodeTypes[] =
+    {
+        block_data::SimpleFlatCollisionBlock20,
+        block_data::SimpleVolumeCollisionBlock23
+    };
+
+    return IsNodeOfType(node, std::begin(unusedNodeTypes), std::end(unusedNodeTypes));
+}
+
+static bool IsVertexNode(NodePtr node)
+{
+    static const std::uint32_t vertexNodeTypes[] =
+    {
+        block_data::GroupVertexBlock7,
+        block_data::GroupIndexAndTexturesBlock37
+    };
+
+    return IsNodeOfType(node, std::begin(vertexNodeTypes), std::end(vertexNodeTypes));
+}
+
+} // namespace predicates
+
+static void FilterUnusedNodes(NodePtr node)
+{
+    NodeList newChildren;
+    for (auto child : node->GetChildNodeList())
+    {
+        if (predicates::IsUnusedNode(child))
+        {
+            D2_HACK_LOG(FilterUnusedNodes) << "Skipping unused node " << child->GetName() << ", with type: " << child->GetType();
+            continue;
+        }
+
+        FilterUnusedNodes(child);
+
+        newChildren.push_back(child);
+    }
+
+    node->SetChildNodes(std::move(newChildren));
+}
+
+static void FilterUnusedNodes(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        FilterUnusedNodes(node);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 static void SkipLodParametersFor37(NodePtr node, bool hasLod)
 {
@@ -154,10 +222,13 @@ static void UseHalfChildFromSingleLod(NodePtr node)
         if (GetLodCount(node) == 1)
         {
             NodeList newChildren = node->GetChildNodeList();
-            assert((newChildren.size() % 2) == 0);
-            newChildren.resize(newChildren.size() / 2);
-            node->SetChildNodes(std::move(newChildren));
-            D2_HACK_LOG(UseHalfChildFromSingleLod) << "skip second half of child nodes for " << node->GetName();
+            if (std::all_of(newChildren.begin(), newChildren.end(), predicates::IsVertexNode) && (newChildren.size() >= 2))
+            {
+                assert((newChildren.size() % 2) == 0);
+                newChildren.resize(newChildren.size() / 2);
+                node->SetChildNodes(std::move(newChildren));
+                D2_HACK_LOG(UseHalfChildFromSingleLod) << "skip second half of child nodes for " << node->GetName();
+            }
         }
     }
     else
@@ -237,7 +308,9 @@ Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& 
 
 static void MergeAndOptimizeMeshInfo(const common::SimpleMeshInfo& parentMeshInfo, common::SimpleMeshInfo& meshInfo)
 {
+    assert(meshInfo.indices);
     const auto& indices = *meshInfo.indices;
+
     common::SimpleMeshInfo newMeshInfo;
     newMeshInfo.positions = DoMerge(meshInfo.positions, parentMeshInfo.positions, indices);
     newMeshInfo.texCoords = DoMerge(meshInfo.texCoords, parentMeshInfo.texCoords, indices);
@@ -252,6 +325,82 @@ static void MergeAndOptimizeMeshInfo(const common::SimpleMeshInfo& parentMeshInf
     meshInfo = std::move(newMeshInfo);
 }
 
+
+template <typename Item>
+void MergeItem(Item& dest, const Item& src)
+{
+    if (!dest)
+    {
+        dest = src;
+        return;
+    }
+
+    assert(src);
+    dest->insert(dest->end(), src->begin(), src->end());
+}
+
+template <typename FaceType>
+static std::vector<FaceType> MergeMeshInfoListForMaterial(const std::vector<common::SimpleMeshInfo>& data, std::uint32_t materialIndex)
+{
+    std::map<size_t, std::vector<common::SimpleMeshInfo>> meshInfoMapping;
+
+    for (const auto& item: data)
+    {
+        size_t id =
+            (item.positions ? 1 : 0) +
+            (item.texCoords ? 2 : 0) +
+            (item.normals ? 4 : 0) +
+            (item.indices ? 8 : 0);
+
+        meshInfoMapping[id].push_back(item);
+    }
+
+    std::vector<FaceType> res;
+    for (auto entry : meshInfoMapping)
+    {
+        FaceType face;
+        face.materialIndex = materialIndex;
+        face.meshInfo.indices = common::IndexList{};
+
+        for (const auto meshInfo : entry.second)
+        {
+            MergeItem(face.meshInfo.positions, meshInfo.positions);
+            MergeItem(face.meshInfo.texCoords, meshInfo.texCoords);
+            MergeItem(face.meshInfo.normals, meshInfo.normals);
+
+            std::uint32_t prevIndexSize = static_cast<std::uint32_t>(face.meshInfo.indices->size());
+            assert(prevIndexSize == face.meshInfo.indices->size());
+
+            for (auto index : *(meshInfo.indices))
+            {
+                face.meshInfo.indices->push_back(index + prevIndexSize);
+            }
+        }
+        res.push_back(face);
+    }
+
+    return res;
+}
+
+template <typename FacesVector>
+void MergeFacesWithSameMaterial(FacesVector& faces)
+{
+    std::map<std::uint32_t, std::vector<common::SimpleMeshInfo>> faceMapping;
+    for (const auto& face : faces)
+    {
+        faceMapping[face.materialIndex].push_back(face.meshInfo);
+    }
+
+    FacesVector tmp;
+    for (auto faceEntry : faceMapping)
+    {
+        auto merged = MergeMeshInfoListForMaterial<FacesVector::value_type>(faceEntry.second, faceEntry.first);
+        tmp.insert(tmp.end(), merged.begin(), merged.end());
+    }
+
+    faces = std::move(tmp);
+}
+
 template <typename BlockType>
 void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
 {
@@ -259,8 +408,11 @@ void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
 
     for (auto& mesh : blockData.faces)
     {
+        mesh.meshInfo.indices = PrepareIndices(blockData, mesh);
         MergeAndOptimizeMeshInfo(*parentMeshInfo, mesh.meshInfo);
     }
+
+    MergeFacesWithSameMaterial(blockData.faces);
 }
 
 static void MergeFacesWithVertices(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
@@ -356,6 +508,7 @@ static void RemoveEmptyNodes(B3dTree& tree)
 
 void Optimize(B3dTree& tree)
 {
+    FilterUnusedNodes(tree);
     SkipLodParametersFor37(tree);
     OptimizeSequence37_10_5(tree);
     UseHalfChildFromSingleLod(tree);

@@ -165,9 +165,6 @@ void B3dTreeVisitor::VisitFaces(const std::string& name, Faces& block, resource:
     {
         for (const auto& face : block.faces)
         {
-            common::SimpleMeshInfo meshInfo = face.meshInfo;
-            meshInfo.indices = PrepareIndices(block, face);
-
             CreateMesh(name, face.meshInfo, face.materialIndex);
         }
     }
