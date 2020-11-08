@@ -427,8 +427,8 @@ private:
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
-            PrintData(data.meshInfo, 1);
-            PrintVectorData(data.unknown, "unknown", 1);
+            PrintData(data.meshInfo, adjustOffset + 1);
+            PrintVectorData(data.unknown, "unknown", adjustOffset + 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
@@ -644,21 +644,26 @@ int main(int argc, char* argv[])
     std::string fileName = argv[1];
 
     bool printVectorData = true;
-    bool printBoundingSphere = false;
+    bool printBoundingSphere = true;
     bool printMeshInfo = true;
+    bool optimize = true;
     for (int i = 2; i != argc; ++i)
     {
         if (argv[i] == std::string("--skip_vector_data"))
         {
             printVectorData = false;
         }
-        else if (argv[i] == std::string("--print_bounding_sphere"))
+        else if (argv[i] == std::string("--skip_bounding_sphere"))
         {
-            printBoundingSphere = true;
+            printBoundingSphere = false;
         }
         else if (argv[i] == std::string("--skip_mesh_info"))
         {
             printMeshInfo = false;
+        }
+        else if (argv[i] == std::string("--skip_optimization"))
+        {
+            optimize = false;
         }
     }
     
@@ -681,7 +686,10 @@ int main(int argc, char* argv[])
         Ogre::FileStreamDataStream dataStream(&inputFile, false);
 
         B3dTree tree = reader.Read(dataStream);
-        optimization::Optimize(tree);
+        if (optimize)
+        {
+            optimization::Optimize(tree);
+        }
 
         TracingVisitor visitor{printBoundingSphere, true, printVectorData, printMeshInfo};
         VisitTree(tree, visitor);

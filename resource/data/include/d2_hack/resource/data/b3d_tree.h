@@ -35,7 +35,7 @@ class Node
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
 public:
-    Node(const block_data::BlockHeader& blockHeader, WeakNodePtr parent = WeakNodePtr());
+    Node(const block_data::BlockHeader& blockHeader);
 
     const std::string& GetName() const;
     std::uint32_t GetType() const;
@@ -67,7 +67,6 @@ public:
 private:
     const std::string m_name;
     const std::uint32_t m_type;
-    WeakNodePtr m_parent;
 
     NodeList m_childNodeList;
 };
@@ -80,8 +79,8 @@ public:
 
     static constexpr auto Value = BlockType::Value;
 
-    NodeWithData(const block_data::BlockHeader& blockHeader, const BlockType& block, WeakNodePtr parent = WeakNodePtr())
-        : Node(blockHeader, parent)
+    NodeWithData(const block_data::BlockHeader& blockHeader, const BlockType& block)
+        : Node(blockHeader)
         , m_block(block)
     {
     }

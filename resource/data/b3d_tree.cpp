@@ -11,10 +11,9 @@ namespace data
 namespace b3d
 {
 
-Node::Node(const block_data::BlockHeader& blockHeader, WeakNodePtr parent)
+Node::Node(const block_data::BlockHeader& blockHeader)
 	: m_name(common::ResourceNameToString(blockHeader.name))
 	, m_type(blockHeader.type)
-	, m_parent(parent)
 {
 }
 
