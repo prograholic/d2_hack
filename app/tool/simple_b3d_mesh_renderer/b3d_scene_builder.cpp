@@ -225,34 +225,34 @@ void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::Simpl
     Ogre::SubMesh* subMesh = CreateSubMesh(mesh, materialIndex);
 
     unsigned short bufferIndex = 0;
-    if (meshInfo.positions)
+    if (!meshInfo.positions.empty())
     {
-        ManagePositions(mesh->sharedVertexData, *meshInfo.positions, bufferIndex);
+        ManagePositions(mesh->sharedVertexData, meshInfo.positions, bufferIndex);
         bufferIndex += 1;
 
         Ogre::AxisAlignedBox bbox = mesh->getBounds();
-        for (const auto& position : *meshInfo.positions)
+        for (const auto& position : meshInfo.positions)
         {
             bbox.merge(position);
         }
         mesh->_setBounds(bbox, true);
     }
 
-    if (meshInfo.texCoords)
+    if (!meshInfo.texCoords.empty())
     {
-        ManageTexCoords(mesh->sharedVertexData, *meshInfo.texCoords, bufferIndex);
+        ManageTexCoords(mesh->sharedVertexData, meshInfo.texCoords, bufferIndex);
         bufferIndex += 1;
     }
 
-    if (meshInfo.normals)
+    if (!meshInfo.normals.empty())
     {
-        ManageNormals(mesh->sharedVertexData, *meshInfo.normals, bufferIndex);
+        ManageNormals(mesh->sharedVertexData, meshInfo.normals, bufferIndex);
         bufferIndex += 1;
     }
 
-    if (meshInfo.indices)
+    if (!meshInfo.indices.empty())
     {
-        ManageIndexBuffer(subMesh->indexData, *meshInfo.indices);
+        ManageIndexBuffer(subMesh->indexData, meshInfo.indices);
     }
 }
 

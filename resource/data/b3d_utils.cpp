@@ -206,15 +206,13 @@ static common::IndexList GetIndexListFromTriangleStrip(const common::IndexList& 
 
 common::IndexList GetIndexListForFace28(const block_data::Face28& face)
 {
-    if (face.meshInfo.texCoords.has_value())
+    if (!face.meshInfo.texCoords.empty())
     {
-        const auto& data = *(face.meshInfo.texCoords);
-
-        if (data.size() == 4)
+        if (face.meshInfo.texCoords.size() == 4)
         {
             return { 0, 2, 1, 3, 2, 0 };
         }
-        else if (data.size() == 3)
+        else if (face.meshInfo.texCoords.size() == 3)
         {
             return { 0, 2, 1 };
         }
@@ -232,58 +230,58 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces8& /* block */, co
     switch (face.type)
     {
     case block_data::Face8::UnknownType0:
-        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
+        return GetIndexListFromTriangleFan(face.meshInfo.indices);
 
     case block_data::Face8::UnknownType1:
-        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
+        return GetIndexListFromTriangleFan(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType2:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType3:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::UnknownType16:
-        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
+        return GetIndexListFromTriangleFan(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType17:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType48:
-        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
+        return GetIndexListFromTriangleFan(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType50:
-        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
+        return GetIndexListFromTriangleFan(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType51:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType128:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType129:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType131:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::UnknownType144:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::UnknownType145:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType176:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType177:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType178:
-        return GetIndexListFromTriangleStrip(*face.meshInfo.indices);
+        return GetIndexListFromTriangleStrip(face.meshInfo.indices);
 
     case block_data::Face8::FaceIndexType179:
-        return GetIndexListFromTriangleFan(*face.meshInfo.indices);
+        return GetIndexListFromTriangleFan(face.meshInfo.indices);
 
     default:
         assert(0 && "not implemented");
@@ -311,10 +309,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices0:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::Indices1:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::Indices3:
             //return { true, face.materialIndex, Ogre::RenderOperation::OT_TRIANGLE_LIST };
@@ -322,10 +320,10 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
             return {};
 
         case block_data::Face35::Indices16:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::Indices17:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         default:
             assert(0 && "not implemented");
@@ -337,16 +335,16 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices1:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::UnknownType3:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::UnknownType49:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::UnknownType51:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         default:
             assert(0 && "not implemented");
@@ -358,16 +356,16 @@ common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const b
         switch (face.type)
         {
         case block_data::Face35::Indices0:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::Unknown2:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::UnknownType48:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         case block_data::Face35::UnknownType50:
-            return *face.meshInfo.indices;
+            return face.meshInfo.indices;
 
         default:
             assert(0 && "not implemented");

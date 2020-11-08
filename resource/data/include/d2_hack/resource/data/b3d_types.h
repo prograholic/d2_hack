@@ -151,7 +151,7 @@ struct Face8
     using Unknown177List = std::vector<Unknown177>;
 
     common::SimpleMeshInfo meshInfo;
-    std::optional<Unknown177List> unknown177;
+    Unknown177List unknown177;
 };
 
 typedef std::vector<Face8> Face8List;
@@ -326,7 +326,7 @@ struct Face28
     std::uint32_t materialIndex;
 
     common::SimpleMeshInfo meshInfo;
-    std::optional<UnknownList> unknown;
+    UnknownList unknown;
 };
 
 typedef std::vector<Face28> Face28List;
@@ -425,7 +425,7 @@ struct Face35
     std::uint32_t materialIndex;
     
     common::SimpleMeshInfo meshInfo;
-    std::optional<Unknown49List> unknown49;
+    Unknown49List unknown49;
 };
 
 typedef std::vector<Face35> Face35List;
@@ -475,8 +475,8 @@ struct GroupVertexData37
     std::uint32_t type;
 
     common::SimpleMeshInfo meshInfo;
-    std::optional<Unknown258Or515List> unknown258Or515;
-    std::optional<Unknown514List> unknown514;
+    Unknown258Or515List unknown258Or515;
+    Unknown514List unknown514;
 };
 
 struct SimpleGeneratedObjects40

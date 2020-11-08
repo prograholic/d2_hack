@@ -287,17 +287,19 @@ static void UseFirstLod(B3dTree& tree)
 template <typename Item>
 Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& indices)
 {
-    if (item)
+    if (!item.empty())
     {
         return item;
     }
 
-    if (parentItem)
+    if (!parentItem.empty())
     {
-        Item res = Item::value_type{};
+        assert(parentItem.size() == indices.size());
+
+        Item res;
         for (auto index : indices)
         {
-            res->push_back((*parentItem)[index]);
+            res.push_back(parentItem[index]);
         }
 
         return res;
@@ -308,18 +310,16 @@ Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& 
 
 static void MergeAndOptimizeMeshInfo(const common::SimpleMeshInfo& parentMeshInfo, common::SimpleMeshInfo& meshInfo)
 {
-    assert(meshInfo.indices);
-    const auto& indices = *meshInfo.indices;
+    assert(!meshInfo.indices.empty());
 
     common::SimpleMeshInfo newMeshInfo;
-    newMeshInfo.positions = DoMerge(meshInfo.positions, parentMeshInfo.positions, indices);
-    newMeshInfo.texCoords = DoMerge(meshInfo.texCoords, parentMeshInfo.texCoords, indices);
-    newMeshInfo.normals = DoMerge(meshInfo.normals, parentMeshInfo.normals, indices);
+    newMeshInfo.positions = DoMerge(meshInfo.positions, parentMeshInfo.positions, meshInfo.indices);
+    newMeshInfo.texCoords = DoMerge(meshInfo.texCoords, parentMeshInfo.texCoords, meshInfo.indices);
+    newMeshInfo.normals = DoMerge(meshInfo.normals, parentMeshInfo.normals, meshInfo.indices);
 
-    newMeshInfo.indices = common::IndexList{};
-    for (std::uint32_t i = 0; i != indices.size(); ++i)
+    for (std::uint32_t i = 0; i != meshInfo.indices.size(); ++i)
     {
-        newMeshInfo.indices->push_back(i);
+        newMeshInfo.indices.push_back(i);
     }
 
     meshInfo = std::move(newMeshInfo);
@@ -329,14 +329,14 @@ static void MergeAndOptimizeMeshInfo(const common::SimpleMeshInfo& parentMeshInf
 template <typename Item>
 void MergeItem(Item& dest, const Item& src)
 {
-    if (!dest)
+    if (dest.empty())
     {
         dest = src;
         return;
     }
 
-    assert(src);
-    dest->insert(dest->end(), src->begin(), src->end());
+    assert(!src.empty());
+    dest.insert(dest.end(), src.begin(), src.end());
 }
 
 template <typename FaceType>
@@ -347,10 +347,10 @@ static std::vector<FaceType> MergeMeshInfoListForMaterial(const std::vector<comm
     for (const auto& item: data)
     {
         size_t id =
-            (item.positions ? 1 : 0) +
-            (item.texCoords ? 2 : 0) +
-            (item.normals ? 4 : 0) +
-            (item.indices ? 8 : 0);
+            (item.positions.empty() ? 0 : 1) +
+            (item.texCoords.empty() ? 0 : 2) +
+            (item.normals.empty() ? 0 : 4) +
+            (item.indices.empty() ? 0 : 8);
 
         meshInfoMapping[id].push_back(item);
     }
@@ -368,12 +368,12 @@ static std::vector<FaceType> MergeMeshInfoListForMaterial(const std::vector<comm
             MergeItem(face.meshInfo.texCoords, meshInfo.texCoords);
             MergeItem(face.meshInfo.normals, meshInfo.normals);
 
-            std::uint32_t prevIndexSize = static_cast<std::uint32_t>(face.meshInfo.indices->size());
-            assert(prevIndexSize == face.meshInfo.indices->size());
+            std::uint32_t prevIndexSize = static_cast<std::uint32_t>(face.meshInfo.indices.size());
+            assert(prevIndexSize == face.meshInfo.indices.size());
 
-            for (auto index : *(meshInfo.indices))
+            for (auto index : meshInfo.indices)
             {
-                face.meshInfo.indices->push_back(index + prevIndexSize);
+                face.meshInfo.indices.push_back(index + prevIndexSize);
             }
         }
         res.push_back(face);

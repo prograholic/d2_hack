@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <array>
 #include <vector>
-#include <optional>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
@@ -51,10 +50,10 @@ typedef std::vector<Index> IndexList;
 
 struct SimpleMeshInfo
 {
-    std::optional<PositionList> positions;
-    std::optional<TexCoordList> texCoords;
-    std::optional<NormalList> normals;
-    std::optional<IndexList> indices;
+    PositionList positions;
+    TexCoordList texCoords;
+    NormalList normals;
+    IndexList indices;
 };
 
 

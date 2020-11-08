@@ -327,8 +327,8 @@ public:
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
         PrintData(block.meshInfo, 1);
-        PrintVectorData(block.unknown258Or515.value_or(block_data::GroupVertexData37::Unknown258Or515List{}), "unknown258Or515", 1);
-        PrintVectorData(block.unknown514.value_or(block_data::GroupVertexData37::Unknown514List{}), "unknown514", 1);
+        PrintVectorData(block.unknown258Or515, "unknown258Or515", 1);
+        PrintVectorData(block.unknown514, "unknown514", 1);
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
@@ -375,10 +375,10 @@ private:
     {
         GetStream(adjustOffset) << "SimpleMeshInfo" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        PrintVectorData(meshInfo.positions.value_or(common::PositionList{}), "positions", adjustOffset + 1);
-        PrintVectorData(meshInfo.texCoords.value_or(common::TexCoordList{}), "texCoords", adjustOffset + 1);
-        PrintVectorData(meshInfo.normals.value_or(common::NormalList{}), "normals", adjustOffset + 1);
-        PrintVectorData(meshInfo.indices.value_or(common::IndexList{}), "indices", adjustOffset + 1);
+        PrintVectorData(meshInfo.positions, "positions", adjustOffset + 1);
+        PrintVectorData(meshInfo.texCoords, "texCoords", adjustOffset + 1);
+        PrintVectorData(meshInfo.normals, "normals", adjustOffset + 1);
+        PrintVectorData(meshInfo.indices, "indices", adjustOffset + 1);
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -428,7 +428,7 @@ private:
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
             PrintData(data.meshInfo, 1);
-            PrintVectorData(data.unknown.value_or(block_data::Face28::UnknownList{}), "unknown", 1);
+            PrintVectorData(data.unknown, "unknown", 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
@@ -455,7 +455,7 @@ private:
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
             PrintData(data.meshInfo, 1);
-            PrintVectorData(data.unknown49.value_or(block_data::Face35::Unknown49List{}), "unknown49", 1);
+            PrintVectorData(data.unknown49, "unknown49", 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
