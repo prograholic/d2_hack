@@ -285,10 +285,11 @@ static void UseFirstLod(B3dTree& tree)
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename Item>
-Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& indices)
+Item FillItem(const Item& item, const Item& parentItem, const common::IndexList& indices)
 {
     if (!item.empty())
     {
+        assert(item.size() == indices.size());
         return item;
     }
 
@@ -306,14 +307,14 @@ Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& 
     return item;
 }
 
-static void MergeAndOptimizeMeshInfo(const common::SimpleMeshInfo& parentMeshInfo, common::SimpleMeshInfo& meshInfo)
+static void FillMeshInfo(const common::SimpleMeshInfo& parentMeshInfo, common::SimpleMeshInfo& meshInfo)
 {
     assert(!meshInfo.indices.empty());
 
     common::SimpleMeshInfo newMeshInfo;
-    newMeshInfo.positions = DoMerge(meshInfo.positions, parentMeshInfo.positions, meshInfo.indices);
-    newMeshInfo.texCoords = DoMerge(meshInfo.texCoords, parentMeshInfo.texCoords, meshInfo.indices);
-    newMeshInfo.normals = DoMerge(meshInfo.normals, parentMeshInfo.normals, meshInfo.indices);
+    newMeshInfo.positions = FillItem(meshInfo.positions, parentMeshInfo.positions, meshInfo.indices);
+    newMeshInfo.texCoords = FillItem(meshInfo.texCoords, parentMeshInfo.texCoords, meshInfo.indices);
+    newMeshInfo.normals = FillItem(meshInfo.normals, parentMeshInfo.normals, meshInfo.indices);
 
     for (std::uint32_t i = 0; i != meshInfo.indices.size(); ++i)
     {
@@ -402,11 +403,12 @@ template <typename BlockType>
 void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
 {
     assert(parentMeshInfo);
+    assert(parentMeshInfo->indices.empty());
 
     for (auto& mesh : blockData.faces)
     {
         mesh.meshInfo.indices = PrepareIndices(blockData, mesh);
-        MergeAndOptimizeMeshInfo(*parentMeshInfo, mesh.meshInfo);
+        FillMeshInfo(*parentMeshInfo, mesh.meshInfo);
     }
 
     MergeFacesWithSameMaterial(blockData.faces);

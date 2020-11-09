@@ -250,7 +250,7 @@ void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::Simpl
         bufferIndex += 1;
     }
 
-    if (!meshInfo.indices.empty())
+    if (!meshInfo.indices.empty() && 0)
     {
         ManageIndexBuffer(subMesh->indexData, meshInfo.indices);
     }

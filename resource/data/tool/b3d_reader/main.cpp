@@ -454,8 +454,8 @@ private:
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
-            PrintData(data.meshInfo, 1);
-            PrintVectorData(data.unknown49, "unknown49", 1);
+            PrintData(data.meshInfo, adjustOffset + 1);
+            PrintVectorData(data.unknown49, "unknown49", adjustOffset + 1);
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }

@@ -40,7 +40,9 @@ void SimpleB3dMeshRenderer::CreateScene()
 #if 1
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
+#endif // 0
     LoadB3d("ac", b3dSceneNode);
+#if 1
     LoadB3d("ad", b3dSceneNode);
     LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
@@ -171,7 +173,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "ah_show_ah_009_scene_node";
+    const char* node_name = "ac_1512_scene_node";
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
