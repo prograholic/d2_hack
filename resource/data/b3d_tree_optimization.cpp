@@ -294,8 +294,6 @@ Item DoMerge(const Item& item, const Item& parentItem, const common::IndexList& 
 
     if (!parentItem.empty())
     {
-        assert(parentItem.size() == indices.size());
-
         Item res;
         for (auto index : indices)
         {
@@ -339,26 +337,25 @@ void MergeItem(Item& dest, const Item& src)
     dest.insert(dest.end(), src.begin(), src.end());
 }
 
-template <typename FaceType>
-static std::vector<FaceType> MergeMeshInfoListForMaterial(const std::vector<common::SimpleMeshInfo>& data, std::uint32_t materialIndex)
+template <typename FacesVector>
+static FacesVector MergeMeshInfoListForMaterial(const std::vector<common::SimpleMeshInfo>& data, std::uint32_t materialIndex)
 {
-    std::map<size_t, std::vector<common::SimpleMeshInfo>> meshInfoMapping;
+    std::map<size_t, std::vector<common::SimpleMeshInfo>> meshInfoForMerging;
 
     for (const auto& item: data)
     {
         size_t id =
             (item.positions.empty() ? 0 : 1) +
             (item.texCoords.empty() ? 0 : 2) +
-            (item.normals.empty() ? 0 : 4) +
-            (item.indices.empty() ? 0 : 8);
+            (item.normals.empty() ? 0 : 4);
 
-        meshInfoMapping[id].push_back(item);
+        meshInfoForMerging[id].push_back(item);
     }
 
-    std::vector<FaceType> res;
-    for (auto entry : meshInfoMapping)
+    FacesVector res;
+    for (auto entry : meshInfoForMerging)
     {
-        FaceType face;
+        FacesVector::value_type face;
         face.materialIndex = materialIndex;
         face.meshInfo.indices = common::IndexList{};
 
@@ -394,7 +391,7 @@ void MergeFacesWithSameMaterial(FacesVector& faces)
     FacesVector tmp;
     for (auto faceEntry : faceMapping)
     {
-        auto merged = MergeMeshInfoListForMaterial<FacesVector::value_type>(faceEntry.second, faceEntry.first);
+        auto merged = MergeMeshInfoListForMaterial<FacesVector>(faceEntry.second, faceEntry.first);
         tmp.insert(tmp.end(), merged.begin(), merged.end());
     }
 
