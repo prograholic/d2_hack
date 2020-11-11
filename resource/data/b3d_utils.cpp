@@ -10,28 +10,54 @@ namespace b3d
 {
 
 template <typename VertexListType>
+VertexListType ExtractVertexFromTriangleFan(const VertexListType& data, const common::IndexList& indices)
+{
+    assert(indices.size() >= 3);
+
+    VertexListType res;
+
+    for (size_t i = 2; i != indices.size(); ++i)
+    {
+        res.push_back(data[indices[0]]);
+        res.push_back(data[indices[i - 1]]);
+        res.push_back(data[indices[i]]);
+    }
+
+    return res;
+}
+
+template <typename VertexListType>
 VertexListType PrepareVertexFromTriangleFan(const VertexListType& parent, const VertexListType& current, const common::IndexList& indices)
 {
     assert(indices.size() >= 3);
-#if !defined(NDEBUG)
     const size_t extractedSize = (indices.size() - 2) * 3;
-#endif
 
     if (!current.empty())
     {
-        assert(current.size() == extractedSize);
-        return current;
+        if (current.size() == extractedSize)
+        {
+            return current;
+        }
+        else if (current.size() == indices.size())
+        {
+            common::IndexList newIndices;
+            for (std::uint32_t i = 0; i != indices.size(); ++i)
+            {
+                newIndices.push_back(i);
+            }
+            return ExtractVertexFromTriangleFan(current, newIndices);
+        }
+        else
+        {
+            assert(0 && "not implemented");
+            return {};
+        }
     }
 
     VertexListType res;
     if (!parent.empty())
     {
-        for (size_t i = 2; i != indices.size(); ++i)
-        {
-            res.push_back(parent[indices[0]]);
-            res.push_back(parent[indices[i - 1]]);
-            res.push_back(parent[indices[i]]);
-        }
+        res = ExtractVertexFromTriangleFan(parent, indices);
     }
 
     return res;
@@ -79,21 +105,18 @@ VertexListType ExtractVertexFromTriangleStrip(const VertexListType& data, const 
 
 
 template <typename VertexListType>
-VertexListType PrepareVertexFromTriangleStrip(const VertexListType& parent, const VertexListType& current, const common::IndexList& indices, bool extractCurrent = false)
+VertexListType PrepareVertexFromTriangleStrip(const VertexListType& parent, const VertexListType& current, const common::IndexList& indices)
 {
     assert(indices.size() >= 3);
-#if !defined(NDEBUG)
     const size_t extractedSize = (indices.size() - 2) * 3;
-#endif
 
     if (!current.empty())
     {
-        if (!extractCurrent)
+        if (current.size() == extractedSize)
         {
-            assert(current.size() == extractedSize);
             return current;
         }
-        else
+        else if (current.size() == indices.size())
         {
             common::IndexList newIndices;
             for (std::uint32_t i = 0; i != indices.size(); ++i)
@@ -101,6 +124,11 @@ VertexListType PrepareVertexFromTriangleStrip(const VertexListType& parent, cons
                 newIndices.push_back(i);
             }
             return ExtractVertexFromTriangleStrip(current, newIndices);
+        }
+        else
+        {
+            assert(0 && "not implemented");
+            return {};
         }
     }
 
@@ -127,12 +155,26 @@ static common::SimpleMeshInfo PrepareStandaloneMeshInfoFromTriangleStrip(const c
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename VertexListType>
-VertexListType PrepareVertexFromTriangleList(const VertexListType& parent, const VertexListType& current, const common::IndexList& indices)
+VertexListType PrepareVertexFromTriangleList(const VertexListType& parent, const VertexListType& current, const common::IndexList& indices, bool extractCurrent = false)
 {
     if (!current.empty())
     {
-        assert(current.size() == indices.size());
-        return current;
+        if (!extractCurrent)
+        {
+            assert(current.size() == indices.size());
+            return current;
+        }
+        else
+        {
+            VertexListType res;
+
+            for (auto index : indices)
+            {
+                res.push_back(current[index]);
+            }
+
+            return res;
+        }
     }
 
     VertexListType res;
@@ -178,22 +220,9 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfoForFace28(const common::SimpleMe
 
     common::SimpleMeshInfo res;
 
-    res.positions = PrepareVertexFromTriangleList(parentMeshInfo.positions, meshInfo.positions, indices);
-    res.texCoords = PrepareVertexFromTriangleList(parentMeshInfo.texCoords, meshInfo.texCoords, indices);
-    res.normals = PrepareVertexFromTriangleList(parentMeshInfo.normals, meshInfo.normals, indices);
-
-    return res;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-common::SimpleMeshInfo PrepareStandaloneMeshInfoForFace8Type176And178(const common::SimpleMeshInfo& parentMeshInfo, const common::SimpleMeshInfo& meshInfo)
-{
-    common::SimpleMeshInfo res;
-
-    res.positions = PrepareVertexFromTriangleStrip(parentMeshInfo.positions, meshInfo.positions, meshInfo.indices, true);
-    res.texCoords = PrepareVertexFromTriangleStrip(parentMeshInfo.texCoords, meshInfo.texCoords, meshInfo.indices, true);
-    res.normals = PrepareVertexFromTriangleStrip(parentMeshInfo.normals, meshInfo.normals, meshInfo.indices, true);
+    res.positions = PrepareVertexFromTriangleList(parentMeshInfo.positions, meshInfo.positions, indices, true);
+    res.texCoords = PrepareVertexFromTriangleList(parentMeshInfo.texCoords, meshInfo.texCoords, indices, true);
+    res.normals = PrepareVertexFromTriangleList(parentMeshInfo.normals, meshInfo.normals, indices, true);
 
     return res;
 }
@@ -249,13 +278,13 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces8&
         return PrepareStandaloneMeshInfoFromTriangleStrip(parentMeshInfo, face.meshInfo);
 
     case block_data::Face8::FaceIndexType176:
-        return PrepareStandaloneMeshInfoForFace8Type176And178(parentMeshInfo, face.meshInfo);
+        return PrepareStandaloneMeshInfoFromTriangleStrip(parentMeshInfo, face.meshInfo);
 
     case block_data::Face8::FaceIndexType177:
         return PrepareStandaloneMeshInfoFromTriangleStrip(parentMeshInfo, face.meshInfo);
 
     case block_data::Face8::FaceIndexType178:
-        return PrepareStandaloneMeshInfoForFace8Type176And178(parentMeshInfo, face.meshInfo);
+        return PrepareStandaloneMeshInfoFromTriangleStrip(parentMeshInfo, face.meshInfo);
 
     case block_data::Face8::FaceIndexType179:
         return PrepareStandaloneMeshInfoFromTriangleStrip(parentMeshInfo, face.meshInfo);
