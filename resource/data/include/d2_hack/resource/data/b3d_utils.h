@@ -13,11 +13,11 @@ namespace data
 namespace b3d
 {
 
-common::IndexList PrepareIndices(const block_data::SimpleFaces8& block, const block_data::Face8& face);
+common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces8& block, const block_data::Face8& face, const common::SimpleMeshInfo& parentMeshInfo);
 
-common::IndexList PrepareIndices(const block_data::SimpleFaces28& block, const block_data::Face28& face);
+common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces28& block, const block_data::Face28& face, const common::SimpleMeshInfo& parentMeshInfo);
 
-common::IndexList PrepareIndices(const block_data::SimpleFaces35& block, const block_data::Face35& face);
+common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces35& block, const block_data::Face35& face, const common::SimpleMeshInfo& parentMeshInfo);
 
 } // namespace b3d
 } // namespace data

@@ -222,7 +222,7 @@ void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::Simpl
 {
     mesh->sharedVertexData = new Ogre::VertexData{};
 
-    Ogre::SubMesh* subMesh = CreateSubMesh(mesh, materialIndex);
+    CreateSubMesh(mesh, materialIndex);
 
     unsigned short bufferIndex = 0;
     if (!meshInfo.positions.empty())
@@ -248,11 +248,6 @@ void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::Simpl
     {
         ManageNormals(mesh->sharedVertexData, meshInfo.normals, bufferIndex);
         bufferIndex += 1;
-    }
-
-    if (!meshInfo.indices.empty() && 0)
-    {
-        ManageIndexBuffer(subMesh->indexData, meshInfo.indices);
     }
 }
 
@@ -312,20 +307,6 @@ void B3dSceneBuilder::ManageNormals(Ogre::VertexData* vertexData, const common::
     vbuf->writeData(0, vbuf->getSizeInBytes(), normals.data(), true);
 
     bind->setBinding(bufferIndex, vbuf);
-}
-
-void B3dSceneBuilder::ManageIndexBuffer(Ogre::IndexData* indexData, const common::IndexList& indices)
-{
-    auto ibuf = Ogre::HardwareBufferManager::getSingleton().createIndexBuffer(
-        Ogre::HardwareIndexBuffer::IT_32BIT,
-        indices.size(),
-        Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
-
-    ibuf->writeData(0, ibuf->getSizeInBytes(), indices.data(), true);
-
-    indexData->indexBuffer = ibuf;
-    indexData->indexCount = ibuf->getNumIndexes();
-    indexData->indexStart = 0;
 }
 
 } // namespace app

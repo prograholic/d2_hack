@@ -80,8 +80,6 @@ private:
     void ManageTexCoords(Ogre::VertexData* vertexData, const common::TexCoordList& texCoords, unsigned short bufferIndex);
 
     void ManageNormals(Ogre::VertexData* vertexData, const common::NormalList& normals, unsigned short bufferIndex);
-
-    void ManageIndexBuffer(Ogre::IndexData* indexData, const common::IndexList& indices);
 };
 
 } // namespace app

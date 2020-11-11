@@ -285,47 +285,6 @@ static void UseFirstLod(B3dTree& tree)
 ////////////////////////////////////////////////////////////////////////////////
 
 template <typename Item>
-Item FillItem(const Item& item, const Item& parentItem, const common::IndexList& indices)
-{
-    if (!item.empty())
-    {
-        assert(item.size() == indices.size());
-        return item;
-    }
-
-    if (!parentItem.empty())
-    {
-        Item res;
-        for (auto index : indices)
-        {
-            res.push_back(parentItem[index]);
-        }
-
-        return res;
-    }
-
-    return item;
-}
-
-static void FillMeshInfo(const common::SimpleMeshInfo& parentMeshInfo, common::SimpleMeshInfo& meshInfo)
-{
-    assert(!meshInfo.indices.empty());
-
-    common::SimpleMeshInfo newMeshInfo;
-    newMeshInfo.positions = FillItem(meshInfo.positions, parentMeshInfo.positions, meshInfo.indices);
-    newMeshInfo.texCoords = FillItem(meshInfo.texCoords, parentMeshInfo.texCoords, meshInfo.indices);
-    newMeshInfo.normals = FillItem(meshInfo.normals, parentMeshInfo.normals, meshInfo.indices);
-
-    for (std::uint32_t i = 0; i != meshInfo.indices.size(); ++i)
-    {
-        newMeshInfo.indices.push_back(i);
-    }
-
-    meshInfo = std::move(newMeshInfo);
-}
-
-
-template <typename Item>
 void MergeItem(Item& dest, const Item& src)
 {
     if (dest.empty())
@@ -407,8 +366,7 @@ void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
 
     for (auto& mesh : blockData.faces)
     {
-        mesh.meshInfo.indices = PrepareIndices(blockData, mesh);
-        FillMeshInfo(*parentMeshInfo, mesh.meshInfo);
+        mesh.meshInfo = PrepareStandaloneMeshInfo(blockData, mesh, *parentMeshInfo);
     }
 
     MergeFacesWithSameMaterial(blockData.faces);
