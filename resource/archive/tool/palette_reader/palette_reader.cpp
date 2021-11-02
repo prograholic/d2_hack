@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <OgreLogManager.h>
+#include <OgreArchiveManager.h>
 
 #include <d2_hack/resource/archive/res.h>
 #include <d2_hack/resource/manager/manager.h>
@@ -87,24 +88,6 @@ private:
     }
 };
 
-void ReadPalleteFromCommon()
-{
-    ResArchive archive{D2_ROOT_DIR "/COMMON/common.res", "test"};
-
-    archive.load();
-    Ogre::DataStreamPtr stream = archive.open("common.plm");
-    if (!stream)
-    {
-        throw std::runtime_error("common: stream is NULL");
-    }
-
-    PlmReader plmReader{ *stream };
-
-    Plm plm;
-    plmReader.Read(plm);
-}
-
-
 void ReadResourceFromArchive(ResArchive& archive, const std::string& mask)
 {
     Ogre::StringVectorPtr resources = archive.find(mask);
@@ -130,9 +113,9 @@ void ReadResourceFromArchive(ResArchive& archive, const std::string& mask)
     }
 }
 
-void ReadMaterialsAndColorsFromAa()
+void ReadMaterialsAndColorsFromRes()
 {
-    ResArchive archive{D2_ROOT_DIR "/ENV/aa.res", "test"};
+    ResArchive archive{D2_ROOT_DIR "/ENV/ah.res", "test"};
 
     archive.load();
     ReadResourceFromArchive(archive, "*.d2colorinfo");
@@ -154,13 +137,19 @@ int main()
         using namespace d2_hack::resource::archive::res;
 
         Ogre::LogManager logMgr;
+        
         Ogre::ResourceGroupManager rgMgr;
-        rgMgr.createResourceGroup("D2");
 
+        ResArchive::Factory d2ResArchiveFactory;
+        Ogre::ArchiveManager archiveManager;
         manager::Manager mgr;
+        
+        Ogre::ArchiveManager::getSingleton().addArchiveFactory(&d2ResArchiveFactory);
 
-        ReadPalleteFromCommon();
-        ReadMaterialsAndColorsFromAa();
+        rgMgr.createResourceGroup("D2");
+        rgMgr.addResourceLocation(D2_ROOT_DIR "/COMMON/common.res", "D2Res", "D2");
+
+        ReadMaterialsAndColorsFromRes();
     }
     catch (const std::exception& e)
     {

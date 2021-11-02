@@ -37,17 +37,15 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
+#if 0
     LoadB3d("aa", b3dSceneNode);
     LoadB3d("ab", b3dSceneNode);
-#endif // 0
     LoadB3d("ac", b3dSceneNode);
-#if 1
     LoadB3d("ad", b3dSceneNode);
     LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
     LoadB3d("ag", b3dSceneNode);
-    LoadB3d("ah", b3dSceneNode);
+    LoadB3d("ENV", "ah", b3dSceneNode);
     LoadB3d("aj", b3dSceneNode);
     LoadB3d("ak", b3dSceneNode);
     LoadB3d("al", b3dSceneNode);
@@ -61,8 +59,6 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("av", b3dSceneNode);
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
-#endif
-#if 1
     LoadB3d("ba", b3dSceneNode);
     LoadB3d("bb", b3dSceneNode);
     LoadB3d("bc", b3dSceneNode);
@@ -82,6 +78,9 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("dq", b3dSceneNode);
     LoadB3d("dr", b3dSceneNode);
 #endif
+
+    Ogre::SceneNode* trucksSceneNode = b3dSceneNode->createChildSceneNode("b3d.trucks");
+    LoadB3d("COMMON", "trucks", trucksSceneNode);
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -108,9 +107,9 @@ void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
     }
 }
 
-void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dSceneNode)
+void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::string& b3dId, Ogre::SceneNode* b3dSceneNode)
 {
-    std::string fullB3dName = D2_ROOT_DIR "/ENV/" + std::string(b3dId) + ".b3d";
+    std::string fullB3dName = D2_ROOT_DIR "/" + subdirectory + "/" + b3dId + ".b3d";
     std::ifstream inputFile{fullB3dName, std::ios_base::binary};
     if (!inputFile)
     {
@@ -122,6 +121,7 @@ void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dScene
     B3dTree b3dTree = reader.Read(dataStream);
 
     optimization::Optimize(b3dTree);
+    optimization::MergeFacesWithVertices(b3dTree);
     
     B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
 
@@ -173,7 +173,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "ac_1512_scene_node";
+    const char* node_name = "b3d.trucks";
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
@@ -223,6 +223,14 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             pos.z += (i * dir);
 
             child->setPosition(pos);
+        }
+    }
+    else if (evt.keysym.sym == '6')
+    {
+        auto sceneNode = m_sceneManager->getSceneNode("trucks_Zil_scene_node", false);
+        if (sceneNode)
+        {
+            sceneNode->translate(0, 0, 1);
         }
     }
     else if (evt.keysym.sym == 'b')

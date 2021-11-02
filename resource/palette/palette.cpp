@@ -45,7 +45,8 @@ void Palette::loadImpl()
 
 void Palette::unloadImpl()
 {
-    throw std::runtime_error("not implemented");
+    std::vector<Ogre::ColourValue> empty;
+    std::swap(m_palette, empty);
 }
 
 

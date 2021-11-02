@@ -53,9 +53,15 @@ public:
         GetStream() << "}" << std::endl;
     }
 
+    template <typename BlockType>
+    std::string GetBlockNamePrefix(const BlockType& /* block */)
+    {
+        return std::string(BlockType::Name) + ": ";
+    }
+
     virtual void Visit(const std::string& name, block_data::Empty0& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "Empty0: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "emptyData0: " << ToString(std::begin(block.emptyData0), std::end(block.emptyData0)) << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
@@ -64,7 +70,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown2& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupUnknown2: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
@@ -73,7 +79,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupRoadInfraObjects4& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupRoadInfraObjects4: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
@@ -82,7 +88,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupObjects5& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupObjects5: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
@@ -90,7 +96,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupVertex7& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupVertex7: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
@@ -99,7 +105,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleFaces8: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
         PrintVectorData(block.faces, "faces", 1);
@@ -107,7 +113,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupTrigger9: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
@@ -116,7 +122,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupLodParameters10& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupLodParameters10: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown: " << ToString(block.unknown) << "," << std::endl;
@@ -125,7 +131,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown12& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupUnknown12: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
@@ -138,7 +144,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleTrigger13& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleTrigger13: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
@@ -148,7 +154,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleUnknown14& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleUnknown14: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
@@ -162,22 +168,22 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleObjectConnector18& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleObjectConnector18: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupObjects19& /* block */, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupObjects19& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupObjects19: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleFlatCollision20& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleFlatCollision20: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
@@ -188,7 +194,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupObjects21& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupObjects21: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "count: " << block.count << "," << std::endl;
@@ -197,7 +203,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleVolumeCollision23& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleVolumeCollision23: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "surfaceType: " << block.surfaceType << "," << std::endl;
@@ -207,7 +213,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupTransformMatrix24& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupTransformMatrix24: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "x: " << block.x << "," << std::endl;
         GetStream(1) << "y: " << block.y << "," << std::endl;
@@ -218,7 +224,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleUnknown25& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleUnknown25: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
@@ -240,7 +246,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleFaces28: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown: " << ToString(block.unknown) << std::endl;
@@ -249,7 +255,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupUnknown29: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "type: " << ToString(block.type) << "," << std::endl;
@@ -268,7 +274,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimplePortal30& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimplePortal30: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "connectedRoom: " << ToString(block.connectedRoom) << "," << std::endl;
@@ -278,7 +284,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupLightingObjects33& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupLightingObjects33: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
@@ -302,7 +308,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleUnknown34& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleUnknown34: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
@@ -311,7 +317,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleFaces35: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "type: " << block.type << "," << std::endl;
@@ -321,7 +327,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "GroupVertexData37: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
@@ -333,7 +339,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
     {
-        GetStream() << "SimpleGeneratedObjects40: " << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "empty: " << ToString(block.empty) << "," << std::endl;
@@ -621,6 +627,154 @@ void VisitTree(const B3dTree& tree, TracingVisitor& visitor)
     }
 }
 
+
+std::string GetOffsetString(int indent)
+{
+    std::string res;
+    res.resize(indent * 4, ' ');
+
+    return res;
+}
+    
+std::ostream& GetStream(int indent = 0, std::ostream& ostream = std::cout)
+{
+    ostream << GetOffsetString(indent);
+    return ostream;
+}
+
+void PrintSequence(const std::vector<std::uint32_t>& sequence)
+{
+    if (!sequence.empty())
+    {
+        auto it = sequence.begin();
+        std::cout << *it;
+        ++it;
+        while (it != sequence.end())
+        {
+            std::cout << " -> " << *it;
+            ++it;
+        }
+        std::cout << std::endl;
+    }
+}
+
+
+void PrintOnlyTypes(const NodePtr& node, const std::vector<std::uint32_t>& sequence, std::set< std::vector<std::uint32_t>>& uniqueSequences, int indent = 0)
+{
+    GetStream(indent) << node->GetTypeName() << "(" << node->GetName() << ")";
+    if (!node->GetChildNodeList().empty())
+    {
+        std::cout << std::endl;
+    }
+
+    for (auto child : node->GetChildNodeList())
+    {
+        std::vector<std::uint32_t> newSequence = sequence;
+        newSequence.push_back(child->GetType());
+
+        PrintOnlyTypes(child, newSequence, uniqueSequences, indent + 1);
+    }
+
+    if (node->GetChildNodeList().empty())
+    {
+        uniqueSequences.insert(sequence);
+        PrintSequence(sequence);
+    }
+}
+
+
+void PrintSequences(const std::set< std::vector<std::uint32_t>>& sequences)
+{
+    for (const auto& seq : sequences)
+    {
+        PrintSequence(seq);
+    }
+}
+
+void PrintOnlyTypes(std::set< std::vector<std::uint32_t>>& sequences, const B3dTree& tree)
+{
+    for (auto node : tree.rootNodes)
+    {
+        PrintOnlyTypes(node, {node->GetType()}, sequences);
+    }
+}
+
+void PrintOnlyTypes(const std::string& baseDir, const std::string& subDir, const std::string& prefix, std::set< std::vector<std::uint32_t>>& sequences)
+{
+    std::string fileName = baseDir + "/" + subDir + "/" + prefix + ".b3d";
+    std::cout << "processing " << prefix << " ..." << std::endl;
+
+    std::ifstream inputFile(fileName.c_str(), std::ios_base::binary);
+    if (!inputFile)
+    {
+        throw std::runtime_error("failed to open file [" + fileName + "]");
+    }
+
+    B3dReader reader;
+
+    Ogre::FileStreamDataStream dataStream(&inputFile, false);
+
+    B3dTree tree = reader.Read(dataStream);
+
+    optimization::Optimize(tree);
+
+    PrintOnlyTypes(sequences, tree);
+}
+
+
+void PrintOnlyTypes(const std::string& dir)
+{
+    std::set< std::vector<std::uint32_t>> sequences;
+
+    PrintOnlyTypes(dir, "ENV", "aa", sequences);
+    PrintOnlyTypes(dir, "ENV", "ab", sequences);
+    PrintOnlyTypes(dir, "ENV", "ac", sequences);
+    PrintOnlyTypes(dir, "ENV", "ad", sequences);
+    PrintOnlyTypes(dir, "ENV", "ae", sequences);
+    PrintOnlyTypes(dir, "ENV", "af", sequences);
+    PrintOnlyTypes(dir, "ENV", "ag", sequences);
+    PrintOnlyTypes(dir, "ENV", "ah", sequences);
+    PrintOnlyTypes(dir, "ENV", "aj", sequences);
+    PrintOnlyTypes(dir, "ENV", "ak", sequences);
+    PrintOnlyTypes(dir, "ENV", "al", sequences);
+    PrintOnlyTypes(dir, "ENV", "am", sequences);
+    PrintOnlyTypes(dir, "ENV", "ap", sequences);
+    PrintOnlyTypes(dir, "ENV", "aq", sequences);
+    PrintOnlyTypes(dir, "ENV", "ar", sequences);
+    PrintOnlyTypes(dir, "ENV", "as", sequences);
+    PrintOnlyTypes(dir, "ENV", "at", sequences);
+    PrintOnlyTypes(dir, "ENV", "au", sequences);
+    PrintOnlyTypes(dir, "ENV", "av", sequences);
+    PrintOnlyTypes(dir, "ENV", "aw", sequences);
+    PrintOnlyTypes(dir, "ENV", "ax", sequences);
+    PrintOnlyTypes(dir, "ENV", "ba", sequences);
+    PrintOnlyTypes(dir, "ENV", "bb", sequences);
+    PrintOnlyTypes(dir, "ENV", "bc", sequences);
+    PrintOnlyTypes(dir, "ENV", "bd", sequences);
+    PrintOnlyTypes(dir, "ENV", "be", sequences);
+    PrintOnlyTypes(dir, "ENV", "bf", sequences);
+    PrintOnlyTypes(dir, "ENV", "bg", sequences);
+    PrintOnlyTypes(dir, "ENV", "ca", sequences);
+    PrintOnlyTypes(dir, "ENV", "cb", sequences);
+    PrintOnlyTypes(dir, "ENV", "cc", sequences);
+    PrintOnlyTypes(dir, "ENV", "ce", sequences);
+    PrintOnlyTypes(dir, "ENV", "cf", sequences);
+    PrintOnlyTypes(dir, "ENV", "ch", sequences);
+    PrintOnlyTypes(dir, "ENV", "da", sequences);
+    PrintOnlyTypes(dir, "ENV", "db", sequences);
+    PrintOnlyTypes(dir, "ENV", "dc", sequences);
+    PrintOnlyTypes(dir, "ENV", "dq", sequences);
+    PrintOnlyTypes(dir, "ENV", "dr", sequences);
+
+    PrintOnlyTypes(dir, "COMMON", "trucks", sequences);
+
+
+    PrintSequences(sequences);
+}
+
+
+
+
 } // namespace b3d
 } // namespace data
 } // namespace resource
@@ -647,6 +801,7 @@ int main(int argc, char* argv[])
     bool printBoundingSphere = true;
     bool printMeshInfo = true;
     bool optimize = true;
+    bool printOnlyTypes = false;
     for (int i = 2; i != argc; ++i)
     {
         if (argv[i] == std::string("--skip_vector_data"))
@@ -665,15 +820,17 @@ int main(int argc, char* argv[])
         {
             optimize = false;
         }
+        else if (argv[i] == std::string("--print_only_types"))
+        {
+            printOnlyTypes = true;
+        }
+        else
+        {
+            std::cerr << "Unknown argument: " << argv[i] << std::endl;
+            return 1;
+        }
     }
     
-    std::ifstream inputFile(fileName.c_str(), std::ios_base::binary);
-    if (!inputFile)
-    {
-        std::cerr << "failed to open file [" << fileName << "]" << std::endl;
-        return 2;
-    }
-
     using namespace d2_hack::resource::data::b3d;
 
     try
@@ -681,18 +838,32 @@ int main(int argc, char* argv[])
         Ogre::LogManager logMgr;
         logMgr.createLog("default", true, false, true);
 
-        B3dReader reader;
-
-        Ogre::FileStreamDataStream dataStream(&inputFile, false);
-
-        B3dTree tree = reader.Read(dataStream);
-        if (optimize)
+        if (!printOnlyTypes)
         {
-            optimization::Optimize(tree);
-        }
+            std::ifstream inputFile(fileName.c_str(), std::ios_base::binary);
+            if (!inputFile)
+            {
+                std::cerr << "failed to open file [" << fileName << "]" << std::endl;
+                return 2;
+            }
 
-        TracingVisitor visitor{printBoundingSphere, true, printVectorData, printMeshInfo};
-        VisitTree(tree, visitor);
+            B3dReader reader;
+
+            Ogre::FileStreamDataStream dataStream(&inputFile, false);
+
+            B3dTree tree = reader.Read(dataStream);
+            if (optimize)
+            {
+                optimization::Optimize(tree);
+            }
+
+            TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printMeshInfo };
+            VisitTree(tree, visitor);
+        }
+        else
+        {
+            PrintOnlyTypes(fileName);
+        }
     }
     catch (const std::exception& e)
     {

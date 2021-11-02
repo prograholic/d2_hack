@@ -30,12 +30,12 @@ typedef std::vector<Transform> TransformList;
 class B3dSceneBuilder
 {
 public:
-    B3dSceneBuilder(const char* b3dId,
-                   const std::string& b3dName,
-                   Ogre::SceneManager* sceneManager,
-                   Ogre::SceneNode* rootNode,
-                   Ogre::MeshManager* meshManager,
-                   const common::Materials& materials);
+    B3dSceneBuilder(const std::string& b3dId,
+                    const std::string& b3dName,
+                    Ogre::SceneManager* sceneManager,
+                    Ogre::SceneNode* rootNode,
+                    Ogre::MeshManager* meshManager,
+                    const common::Materials& materials);
 
     ~B3dSceneBuilder();
 
@@ -47,7 +47,7 @@ public:
 
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
-    void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);
+    Ogre::MeshPtr CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);
 
 private:
     std::string m_b3dId;
