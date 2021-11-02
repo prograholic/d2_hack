@@ -302,9 +302,6 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces28
     case block_data::Face28::Unknown2:
         return PrepareStandaloneMeshInfoForFace28(parentMeshInfo, face.meshInfo);
 
-    case block_data::Face28::Unknown_minus256:
-        return PrepareStandaloneMeshInfoForFace28(parentMeshInfo, face.meshInfo);
-
     default:
         assert(0 && "not implemented");
         return {};

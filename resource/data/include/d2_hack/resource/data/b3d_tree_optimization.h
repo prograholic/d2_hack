@@ -17,8 +17,6 @@ namespace optimization
 
 void Optimize(B3dTree& tree);
 
-void MergeFacesWithVertices(const B3dTree& tree);
-
 } // namespace optimization
 } // namespace b3d
 } // namespace data

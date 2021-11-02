@@ -70,8 +70,6 @@ struct BlockHeader
 struct Empty0
 {
     static constexpr auto Value = EmptyBlock0;
-    static constexpr char Name[] = "Empty0";
-
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     static const size_t EmptyDataSize0 = 40;
@@ -85,7 +83,6 @@ struct Empty0
 struct GroupUnknown2
 {
     static constexpr auto Value = GroupUnknownBlock2;
-    static constexpr char Name[] = "GroupUnknown2";
 
     common::BoundingSphere boundingSphere;
     common::Position unknown0;
@@ -95,7 +92,6 @@ struct GroupUnknown2
 struct GroupRoadInfraObjects4
 {
     static constexpr auto Value = GroupRoadInfraObjectsBlock4;
-    static constexpr char Name[] = "GroupRoadInfraObjects4";
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -106,7 +102,6 @@ struct GroupRoadInfraObjects4
 struct GroupObjects5
 {
     static constexpr auto Value = GroupObjectsBlock5;
-    static constexpr char Name[] = "GroupObjects5";
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -115,7 +110,6 @@ struct GroupObjects5
 struct GroupVertex7
 {
     static constexpr auto Value = GroupVertexBlock7;
-    static constexpr char Name[] = "GroupVertex7";
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -165,7 +159,6 @@ typedef std::vector<Face8> Face8List;
 struct SimpleFaces8
 {
     static constexpr auto Value = SimpleFacesBlock8;
-    static constexpr char Name[] = "SimpleFaces8";
 
     common::BoundingSphere boundingSphere;
 
@@ -175,7 +168,6 @@ struct SimpleFaces8
 struct GroupTrigger9
 {
     static constexpr auto Value = GroupTriggerBlock9;
-    static constexpr char Name[] = "GroupTrigger9";
 
     common::BoundingSphere boundingSphere;
 
@@ -186,7 +178,6 @@ struct GroupTrigger9
 struct GroupLodParameters10
 {
     static constexpr auto Value = GroupLodParametersBlock10;
-    static constexpr char Name[] = "GroupLodParameters10";
 
     common::BoundingSphere boundingSphere;
 
@@ -198,7 +189,6 @@ struct GroupLodParameters10
 struct GroupUnknown12
 {
     static constexpr auto Value = GroupUnknownBlock12;
-    static constexpr char Name[] = "GroupUnknown12";
 
     common::BoundingSphere boundingSphere;
 
@@ -214,7 +204,6 @@ struct GroupUnknown12
 struct SimpleTrigger13
 {
     static constexpr auto Value = SimpleTriggerBlock13;
-    static constexpr char Name[] = "SimpleTrigger13";
 
     common::BoundingSphere boundingSphere;
 
@@ -227,7 +216,6 @@ struct SimpleTrigger13
 struct SimpleUnknown14
 {
     static constexpr auto Value = SimpleUnknownBlock14;
-    static constexpr char Name[] = "SimpleUnknown14";
 
     common::BoundingSphere boundingSphere;
 
@@ -244,7 +232,6 @@ struct SimpleUnknown14
 struct SimpleObjectConnector18
 {
     static constexpr auto Value = SimpleObjectConnectorBlock18;
-    static constexpr char Name[] = "SimpleObjectConnector18";
 
     common::BoundingSphere boundingSphere;
 
@@ -255,15 +242,12 @@ struct SimpleObjectConnector18
 struct GroupObjects19
 {
     static constexpr auto Value = GroupObjectsBlock19;
-    static constexpr char Name[] = "GroupObjects19";
-
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 };
 
 struct SimpleFlatCollision20
 {
     static constexpr auto Value = SimpleFlatCollisionBlock20;
-    static constexpr char Name[] = "SimpleFlatCollision20";
 
     common::BoundingSphere boundingSphere;
 
@@ -277,7 +261,6 @@ struct SimpleFlatCollision20
 struct GroupObjects21
 {
     static constexpr auto Value = GroupObjectsBlock21;
-    static constexpr char Name[] = "GroupObjects21";
 
     common::BoundingSphere boundingSphere;
 
@@ -288,8 +271,6 @@ struct GroupObjects21
 struct SimpleVolumeCollision23
 {
     static constexpr auto Value = SimpleVolumeCollisionBlock23;
-    static constexpr char Name[] = "SimpleVolumeCollision23";
-
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     std::uint32_t unknown0;
@@ -304,8 +285,6 @@ struct SimpleVolumeCollision23
 struct GroupTransformMatrix24
 {
     static constexpr auto Value = GroupTransformMatrixBlock24;
-    static constexpr char Name[] = "GroupTransformMatrix24";
-
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     Ogre::Vector3 x;
@@ -320,8 +299,6 @@ struct GroupTransformMatrix24
 struct SimpleUnknown25
 {
     static constexpr auto Value = SimpleUnknownBlock25;
-    static constexpr char Name[] = "SimpleUnknown25";
-
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     Ogre::Real unknown0;
@@ -334,7 +311,6 @@ struct SimpleUnknown25
 struct Face28
 {
     static const std::uint32_t Unknown2 = 2;
-    static const std::uint32_t Unknown_minus256 = 0xFFFFFF00;
 
     struct Unknown
     {
@@ -358,7 +334,6 @@ typedef std::vector<Face28> Face28List;
 struct SimpleFaces28
 {
     static constexpr auto Value = SimpleFacesBlock28;
-    static constexpr char Name[] = "SimpleFaces28";
 
     common::BoundingSphere boundingSphere;
 
@@ -370,7 +345,6 @@ struct SimpleFaces28
 struct GroupUnknown29
 {
     static constexpr auto Value = GroupUnknownBlock29;
-    static constexpr char Name[] = "GroupUnknown29";
 
     common::BoundingSphere boundingSphere;
     std::uint32_t type;
@@ -382,7 +356,6 @@ struct GroupUnknown29
 struct SimplePortal30
 {
     static constexpr auto Value = SimplePortalBlock30;
-    static constexpr char Name[] = "SimplePortal30";
 
     common::BoundingSphere boundingSphere;
 
@@ -395,7 +368,6 @@ struct SimplePortal30
 struct GroupLightingObjects33
 {
     static constexpr auto Value = GroupLightingObjectBlock33;
-    static constexpr char Name[] = "GroupLightingObjects33";
 
     common::BoundingSphere boundingSphere;
 
@@ -411,7 +383,6 @@ struct GroupLightingObjects33
 struct SimpleUnknown34
 {
     static constexpr auto Value = SimpleUnknownBlock34;
-    static constexpr char Name[] = "SimpleUnknown34";
 
     common::BoundingSphere boundingSphere;
     Ogre::Real unknown0;
@@ -462,7 +433,6 @@ typedef std::vector<Face35> Face35List;
 struct SimpleFaces35
 {
     static constexpr auto Value = SimpleFacesBlock35;
-    static constexpr char Name[] = "SimpleFaces35";
 
     static const std::uint32_t Unknown1 = 1;
     static const std::uint32_t Unknown2 = 2;
@@ -479,7 +449,6 @@ struct SimpleFaces35
 struct GroupVertexData37
 {
     static constexpr auto Value = GroupIndexAndTexturesBlock37;
-    static constexpr char Name[] = "GroupVertexData37";
 
     static const std::uint32_t Vertex2 = 2;
     static const std::uint32_t Vertex3 = 3;
@@ -513,7 +482,6 @@ struct GroupVertexData37
 struct SimpleGeneratedObjects40
 {
     static constexpr auto Value = SimpleGeneratedObjectsBlock40;
-    static constexpr char Name[] = "SimpleGeneratedObjects40";
 
     common::BoundingSphere boundingSphere;
 

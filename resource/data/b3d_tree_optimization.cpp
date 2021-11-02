@@ -2,6 +2,7 @@
 
 
 #include <d2_hack/resource/data/b3d_utils.h>
+#include <d2_hack/common/log.h>
 #include <d2_hack/common/utils.h>
 
 namespace d2_hack
@@ -35,7 +36,6 @@ static bool IsUnusedNode(NodePtr node)
 {
     static const std::uint32_t unusedNodeTypes[] =
     {
-        block_data::SimpleTriggerBlock13,
         block_data::SimpleFlatCollisionBlock20,
         block_data::SimpleVolumeCollisionBlock23
     };
@@ -63,7 +63,7 @@ static void FilterUnusedNodes(NodePtr node)
     {
         if (predicates::IsUnusedNode(child))
         {
-            // Skipping unused node
+            D2_HACK_LOG(FilterUnusedNodes) << "Skipping unused node " << child->GetName() << ", with type: " << child->GetType();
             continue;
         }
 
@@ -94,7 +94,7 @@ static void SkipLodParametersFor37(NodePtr node, bool hasLod)
         {
             if (child->GetType() == block_data::GroupLodParametersBlock10)
             {
-                // Skipping node
+                D2_HACK_LOG(SkipLodParametersFor37) << "skipping node " << child->GetName();
                 continue;
             }
             newChildren.push_back(child);
@@ -224,10 +224,10 @@ static void UseHalfChildFromSingleLod(NodePtr node)
             NodeList newChildren = node->GetChildNodeList();
             if (std::all_of(newChildren.begin(), newChildren.end(), predicates::IsVertexNode) && (newChildren.size() >= 2))
             {
-                // Skip second half of child nodes
                 assert((newChildren.size() % 2) == 0);
                 newChildren.resize(newChildren.size() / 2);
                 node->SetChildNodes(std::move(newChildren));
+                D2_HACK_LOG(UseHalfChildFromSingleLod) << "skip second half of child nodes for " << node->GetName();
             }
         }
     }
@@ -262,7 +262,7 @@ static void UseFirstLod(NodePtr node, bool insideLod)
     {
         if ((child->GetType() == block_data::GroupLodParametersBlock10) && insideLod)
         {
-            // Skipping LOD entry
+            D2_HACK_LOG(UseFirstLod) << "skipping LOD entry: " << child->GetName();
             continue;
         }
 
@@ -369,7 +369,7 @@ void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
         mesh.meshInfo = PrepareStandaloneMeshInfo(blockData, mesh, *parentMeshInfo);
     }
 
-    //MergeFacesWithSameMaterial(blockData.faces);
+    MergeFacesWithSameMaterial(blockData.faces);
 }
 
 static void MergeFacesWithVertices(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
@@ -408,7 +408,7 @@ static void MergeFacesWithVertices(NodePtr node, const common::SimpleMeshInfo* p
     }
 }
 
-void MergeFacesWithVertices(const B3dTree& tree)
+static void MergeFacesWithVertices(const B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
@@ -432,7 +432,7 @@ static bool NeedToRemove(const NodePtr& node)
         }
         else
         {
-            // Removed node
+            D2_HACK_LOG(NeedToRemove) << "removed node: " << child->GetName() << " with type: " << child->GetType();
         }
     }
 
@@ -444,8 +444,6 @@ static bool NeedToRemove(const NodePtr& node)
         {
         case block_data::GroupRoadInfraObjectsBlock4:
         case block_data::GroupObjectsBlock5:
-        case block_data::GroupTriggerBlock9:
-        case block_data::GroupLodParametersBlock10:
         case block_data::GroupObjectsBlock19:
         case block_data::GroupObjectsBlock21:
             return true;
@@ -457,76 +455,10 @@ static bool NeedToRemove(const NodePtr& node)
 
 static void RemoveEmptyNodes(B3dTree& tree)
 {
-    NodeList newRootNodes;
     for (const auto& node : tree.rootNodes)
     {
-        bool needToRemove = NeedToRemove(node);
-        if (!needToRemove)
-        {
-            newRootNodes.push_back(node);
-        }
+        NeedToRemove(node);
     }
-
-    tree.rootNodes = std::move(newRootNodes);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-static bool SkipSpecialTrucksNodes(const NodePtr& node)
-{
-    const auto& children = node->GetChildNodeList();
-
-    NodeList newChildList;
-    for (auto child : children)
-    {
-        bool needToRemove = SkipSpecialTrucksNodes(child);
-        if (!needToRemove)
-        {
-            newChildList.push_back(child);
-        }
-        else
-        {
-            // Removed node
-        }
-    }
-
-    node->SetChildNodes(std::move(newChildList));
-
-    const char* specialTruckNodeNames[] =
-    {
-        //"refer_Damage",
-        //"LNKTRK",
-        //"LNKCAR",
-        //"LNKRGD",
-        //"LNKTRL",
-        //"$$$Group"
-        "afukaekaded"
-    };
-
-    for (const auto& specialTruckNodeName : specialTruckNodeNames)
-    {
-        if (node->GetName().find(specialTruckNodeName) == 0)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-static void SkipSpecialTrucksNodes(B3dTree& tree)
-{
-    NodeList newRootNodes;
-    for (const auto& node : tree.rootNodes)
-    {
-        bool needToRemove = SkipSpecialTrucksNodes(node);
-        if (!needToRemove)
-        {
-            newRootNodes.push_back(node);
-        }
-    }
-
-    tree.rootNodes = std::move(newRootNodes);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -534,23 +466,12 @@ static void SkipSpecialTrucksNodes(B3dTree& tree)
 void Optimize(B3dTree& tree)
 {
     FilterUnusedNodes(tree);
-    
-    if (0)
-    {
-        SkipLodParametersFor37(tree);
-        OptimizeSequence37_10_5(tree);
-        UseHalfChildFromSingleLod(tree);
-        UseFirstLod(tree);
-        //MergeFacesWithVertices(tree);
-    }
-
-    
+    SkipLodParametersFor37(tree);
+    OptimizeSequence37_10_5(tree);
+    UseHalfChildFromSingleLod(tree);
+    UseFirstLod(tree);
+    MergeFacesWithVertices(tree);
     RemoveEmptyNodes(tree);
-    
-    if (0)
-    {
-        SkipSpecialTrucksNodes(tree);
-    }
 }
 
 } // namespace optimization

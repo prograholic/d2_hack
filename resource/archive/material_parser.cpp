@@ -136,7 +136,7 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
 {
     const std::uint32_t textureIndex = std::stoul(tokens.front()) - 1;
     tokens.pop_front();
-
+    
     std::string depthCheck = "on";
 
     while (!tokens.empty())
@@ -166,15 +166,8 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
         else if (tokens.front() == "col")
         {
             tokens.pop_front();
-
-            const std::uint32_t colorIndex = std::stoi(tokens.front().c_str());
             tokens.pop_front();
-            if (colorIndex != 256)
-            {
-                palette::PalettePtr plm = manager::Manager::getSingleton().Load("common\\common.plm", "D2");
-
-                Ogre::ColourValue cv = plm->GetColor(colorIndex);
-            }
+            //assert(0 && "process `col` option");
         }
         else if (tokens.front() == "env")
         {
@@ -217,24 +210,6 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
             tokens.pop_front();
             tokens.pop_front();
             //assert(0 && "process `RotPoint` option");
-        }
-        else if (tokens.front() == "specular")
-        {
-            tokens.pop_front();
-            tokens.pop_front();
-            //assert(0 && "process `specular` option");
-        }
-        else if (tokens.front() == "power")
-        {
-            tokens.pop_front();
-            tokens.pop_front();
-            //assert(0 && "process `power` option");
-        }
-        else if (tokens.front() == "par")
-        {
-            tokens.pop_front();
-            tokens.pop_front();
-            //assert(0 && "process `par` option");
         }
         else
         {

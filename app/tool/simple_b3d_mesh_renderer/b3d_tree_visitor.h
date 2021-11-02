@@ -14,7 +14,7 @@ namespace app
 class B3dTreeVisitor : public resource::data::b3d::NodeVisitorInterface, private B3dSceneBuilder
 {
 public:
-    B3dTreeVisitor(const std::string& b3dId,
+    B3dTreeVisitor(const char* b3dId,
                    const std::string& b3dName,
                    Ogre::SceneManager* sceneManager,
                    Ogre::SceneNode* rootNode,

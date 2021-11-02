@@ -71,7 +71,7 @@ public:
 
     common::ResourceName GetProperResourceName(const common::ResourceName& name)
     {
-        if (0)//(name[0] == 0)
+        if (name[0] == 0)
         {
             std::string uniqueName = std::to_string(m_unnamedObjectCounter++);
 
@@ -690,20 +690,14 @@ private:
 
     void DispatchFace28(block_data::Face28& face)
     {
-        const std::uint32_t count = ReadUint32();
         if (face.type == block_data::Face28::Unknown2)
         {
+            const std::uint32_t count = ReadUint32();
+
             for (size_t i = 0; i != count; ++i)
             {
                 face.meshInfo.texCoords.push_back(ReadVector2());
                 face.unknown.push_back({ReadVector2()});
-            }
-        }
-        else if (face.type == block_data::Face28::Unknown_minus256)
-        {
-            for (size_t i = 0; i != count; ++i)
-            {
-                face.meshInfo.texCoords.push_back({ReadVector2()});
             }
         }
         else

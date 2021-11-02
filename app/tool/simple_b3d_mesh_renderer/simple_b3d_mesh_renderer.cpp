@@ -37,50 +37,51 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-    LoadB3d("ENV", "aa", b3dSceneNode);
-    LoadB3d("ENV", "ab", b3dSceneNode);
-    LoadB3d("ENV", "ac", b3dSceneNode);
-    LoadB3d("ENV", "ad", b3dSceneNode);
-    LoadB3d("ENV", "ae", b3dSceneNode);
-    LoadB3d("ENV", "af", b3dSceneNode);
-    LoadB3d("ENV", "ag", b3dSceneNode);
-    LoadB3d("ENV", "ah", b3dSceneNode);
-    LoadB3d("ENV", "aj", b3dSceneNode);
-    LoadB3d("ENV", "ak", b3dSceneNode);
-    LoadB3d("ENV", "al", b3dSceneNode);
-    LoadB3d("ENV", "am", b3dSceneNode);
-    LoadB3d("ENV", "ap", b3dSceneNode);
-    LoadB3d("ENV", "aq", b3dSceneNode);
-    LoadB3d("ENV", "ar", b3dSceneNode);
-    LoadB3d("ENV", "as", b3dSceneNode);
-    LoadB3d("ENV", "at", b3dSceneNode);
-    LoadB3d("ENV", "au", b3dSceneNode);
-    LoadB3d("ENV", "av", b3dSceneNode);
-    LoadB3d("ENV", "aw", b3dSceneNode);
-    LoadB3d("ENV", "ax", b3dSceneNode);
-#if 0
-    LoadB3d("ENV", "ba", b3dSceneNode);
-    LoadB3d("ENV", "bb", b3dSceneNode);
-    LoadB3d("ENV", "bc", b3dSceneNode);
-    LoadB3d("ENV", "bd", b3dSceneNode);
-    LoadB3d("ENV", "be", b3dSceneNode);
-    LoadB3d("ENV", "bf", b3dSceneNode);
-    LoadB3d("ENV", "bg", b3dSceneNode);
-    LoadB3d("ENV", "ca", b3dSceneNode);
-    LoadB3d("ENV", "cb", b3dSceneNode);
-    LoadB3d("ENV", "cc", b3dSceneNode);
-    LoadB3d("ENV", "ce", b3dSceneNode);
-    LoadB3d("ENV", "cf", b3dSceneNode);
-    LoadB3d("ENV", "ch", b3dSceneNode);
-    LoadB3d("ENV", "da", b3dSceneNode);
-    LoadB3d("ENV", "db", b3dSceneNode);
-    LoadB3d("ENV", "dc", b3dSceneNode);
-    LoadB3d("ENV", "dq", b3dSceneNode);
-    LoadB3d("ENV", "dr", b3dSceneNode);
+#if 1
+    LoadB3d("aa", b3dSceneNode);
+    LoadB3d("ab", b3dSceneNode);
+#endif // 0
+    LoadB3d("ac", b3dSceneNode);
+#if 1
+    LoadB3d("ad", b3dSceneNode);
+    LoadB3d("ae", b3dSceneNode);
+    LoadB3d("af", b3dSceneNode);
+    LoadB3d("ag", b3dSceneNode);
+    LoadB3d("ah", b3dSceneNode);
+    LoadB3d("aj", b3dSceneNode);
+    LoadB3d("ak", b3dSceneNode);
+    LoadB3d("al", b3dSceneNode);
+    LoadB3d("am", b3dSceneNode);
+    LoadB3d("ap", b3dSceneNode);
+    LoadB3d("aq", b3dSceneNode);
+    LoadB3d("ar", b3dSceneNode);
+    LoadB3d("as", b3dSceneNode);
+    LoadB3d("at", b3dSceneNode);
+    LoadB3d("au", b3dSceneNode);
+    LoadB3d("av", b3dSceneNode);
+    LoadB3d("aw", b3dSceneNode);
+    LoadB3d("ax", b3dSceneNode);
 #endif
-
-    //Ogre::SceneNode* trucksSceneNode = b3dSceneNode->createChildSceneNode("b3d.trucks");
-    //LoadB3d("COMMON", "trucks", trucksSceneNode);
+#if 1
+    LoadB3d("ba", b3dSceneNode);
+    LoadB3d("bb", b3dSceneNode);
+    LoadB3d("bc", b3dSceneNode);
+    LoadB3d("bd", b3dSceneNode);
+    LoadB3d("be", b3dSceneNode);
+    LoadB3d("bf", b3dSceneNode);
+    LoadB3d("bg", b3dSceneNode);
+    LoadB3d("ca", b3dSceneNode);
+    LoadB3d("cb", b3dSceneNode);
+    LoadB3d("cc", b3dSceneNode);
+    LoadB3d("ce", b3dSceneNode);
+    LoadB3d("cf", b3dSceneNode);
+    LoadB3d("ch", b3dSceneNode);
+    LoadB3d("da", b3dSceneNode);
+    LoadB3d("db", b3dSceneNode);
+    LoadB3d("dc", b3dSceneNode);
+    LoadB3d("dq", b3dSceneNode);
+    LoadB3d("dr", b3dSceneNode);
+#endif
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -107,9 +108,9 @@ void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
     }
 }
 
-void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::string& b3dId, Ogre::SceneNode* b3dSceneNode)
+void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dSceneNode)
 {
-    std::string fullB3dName = D2_ROOT_DIR "/" + subdirectory + "/" + b3dId + ".b3d";
+    std::string fullB3dName = D2_ROOT_DIR "/ENV/" + std::string(b3dId) + ".b3d";
     std::ifstream inputFile{fullB3dName, std::ios_base::binary};
     if (!inputFile)
     {
@@ -121,7 +122,6 @@ void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::
     B3dTree b3dTree = reader.Read(dataStream);
 
     optimization::Optimize(b3dTree);
-    optimization::MergeFacesWithVertices(b3dTree);
     
     B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
 
@@ -173,7 +173,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "b3d.trucks";
+    const char* node_name = "ac_1512_scene_node";
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
@@ -182,13 +182,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        Ogre::SceneNode* node = nullptr;
-
-        if (m_sceneManager->hasSceneNode(node_name))
-        {
-            node = m_sceneManager->getSceneNode(node_name);
-        }
-
+        Ogre::SceneNode* node = m_sceneManager->getSceneNode(node_name, false);
         if (node)
         {
             PrintSubMeshesForNode(node, cnt);
@@ -198,25 +192,15 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        Ogre::SceneNode* node = nullptr;
-
-        if (m_sceneManager->hasSceneNode(node_name))
+        const auto& children = m_sceneManager->getSceneNode(node_name, false)->getChildren();
+        if (!children.empty())
         {
-            node = m_sceneManager->getSceneNode(node_name);
-        }
+            Ogre::Node* node = children[cnt % children.size()];
 
-        if (node)
-        {
-            const auto& children = node->getChildren();
-            if (!children.empty())
-            {
-                Ogre::Node* childNode = children[cnt % children.size()];
-
-                Ogre::SceneNode* childSceneNode = static_cast<Ogre::SceneNode*>(childNode);
-                childSceneNode->flipVisibility();
-                D2_HACK_LOG(YYY) << childNode->getName();
-                cnt += 1;
-            }
+            Ogre::SceneNode* sceneNode = static_cast<Ogre::SceneNode*>(node);
+            sceneNode->flipVisibility();
+            D2_HACK_LOG(YYY) << node->getName();
+            cnt += 1;
         }
     }
     else if (evt.keysym.sym == '5')
@@ -239,15 +223,6 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             pos.z += (i * dir);
 
             child->setPosition(pos);
-        }
-    }
-    else if (evt.keysym.sym == '6')
-    {
-        const char* zil_scene_node = "trucks_Zil_scene_node";
-        if (m_sceneManager->hasSceneNode(zil_scene_node))
-        {
-            auto sceneNode = m_sceneManager->getSceneNode(zil_scene_node);
-            sceneNode->translate(0, 0, 1);
         }
     }
     else if (evt.keysym.sym == 'b')

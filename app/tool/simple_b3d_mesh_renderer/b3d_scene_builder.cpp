@@ -19,6 +19,7 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 
 #include <d2_hack/common/resource_mgmt.h>
 #include <d2_hack/common/utils.h>
+#include <d2_hack/common/log.h>
 
 //#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
 #define B3D_NOT_IMPLEMENTED()
@@ -31,7 +32,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
-B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
+B3dSceneBuilder::B3dSceneBuilder(const char* b3dId,
                                  const std::string& b3dName,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,
@@ -108,22 +109,16 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
 
         Ogre::SceneNode* parentSceneNode = m_sceneNodes.top();
 
-        
-        if (m_sceneManager->hasSceneNode(sceneName))
+        Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName, false);
+        if (sceneNode)
         {
-            Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName);
-            Ogre::SceneNode* clone = m_sceneManager->createSceneNode();
-            for (const auto& object : sceneNode->getAttachedObjects())
-            {
-                clone->attachObject(object);
-            }
-
-            parentSceneNode->addChild(clone);
+            sceneNode->getParentSceneNode()->removeChild(sceneNode);
+            parentSceneNode->addChild(sceneNode);
             auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
             for (const auto& transform : transformList)
             {
-                clone->translate(transform.position);
-                clone->rotate(Ogre::Quaternion{transform.matrix});
+                sceneNode->translate(transform.position);
+                sceneNode->rotate(Ogre::Quaternion{transform.matrix});
             }
         }
     }
@@ -145,6 +140,8 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
 
         m_sceneNodes.push(sceneNode);
 
+        D2_HACK_LOG(B3dTreeVisitor::ProcessSceneNode(PreOrder)) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
+
         return sceneNode;
     }
     else
@@ -156,7 +153,7 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
     }
 }
 
-Ogre::MeshPtr B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex)
+void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex)
 {
     std::string name = GetNameImpl(blockName, "mesh", false);
     std::string group = "D2";
@@ -165,16 +162,16 @@ Ogre::MeshPtr B3dSceneBuilder::CreateMesh(const std::string& blockName, const co
         name = GetNameImpl(blockName, "mesh", true);
     }
 
+    D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Starting processing mesh with name: " << name;
+
     Ogre::MeshPtr mesh = m_meshManager->createManual(name, group);
 
     SetMeshInfo(mesh, meshInfo, materialIndex);
 
-    return mesh;
+    const std::string entityName = mesh->getName() + ".entity";
+    Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
 
-    //const std::string entityName = mesh->getName() + ".entity";
-    //Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
-
-    //m_sceneNodes.top()->attachObject(entity);
+    m_sceneNodes.top()->attachObject(entity);
 }
 
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const
@@ -215,6 +212,8 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, std::ui
     subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
     subMesh->setMaterialName(materialName);
+
+    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
 
     return subMesh;
 }

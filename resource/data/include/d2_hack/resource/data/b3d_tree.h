@@ -48,8 +48,6 @@ public:
 
     virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
 
-    virtual std::string GetTypeName() const = 0;
-
     template <typename TypedNode>
     TypedNode* NodeCast()
     {
@@ -95,11 +93,6 @@ public:
     virtual const common::BoundingSphere& GetBoundingSphere() const override
     {
         return m_block.boundingSphere;
-    }
-
-    virtual std::string GetTypeName() const override
-    {
-        return BlockType::Name;
     }
 
     const BlockType& GetBlockData() const
