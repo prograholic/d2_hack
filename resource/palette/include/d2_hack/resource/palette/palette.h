@@ -26,6 +26,8 @@ public:
             Ogre::ManualResourceLoader* loader);
 
     Ogre::ColourValue GetColor(size_t index) const;
+
+    bool hasColor(size_t index) const;
 private:
     std::vector<Ogre::ColourValue> m_palette;
     

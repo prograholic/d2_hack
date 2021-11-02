@@ -2,6 +2,8 @@
 
 #include <d2_hack/common/platform.h>
 
+#include <optional>
+
 #include <boost/format.hpp>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4100)
@@ -11,6 +13,7 @@ D2_HACK_DISABLE_WARNING_BEGIN(4100)
 D2_HACK_DISABLE_WARNING_END() // 4100
 
 #include <d2_hack/common/memory_mgmt.h>
+#include <d2_hack/common/log.h>
 #include <d2_hack/resource/manager/manager.h>
 
 namespace d2_hack
@@ -136,8 +139,10 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
 {
     const std::uint32_t textureIndex = std::stoul(tokens.front()) - 1;
     tokens.pop_front();
-    
+        
     std::string depthCheck = "on";
+    std::optional<Ogre::ColourValue> color;
+    std::string colorIndexString;
 
     while (!tokens.empty())
     {
@@ -166,6 +171,14 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
         else if (tokens.front() == "col")
         {
             tokens.pop_front();
+            palette::PalettePtr plm = manager::Manager::getSingleton().Load("common\\common.plm", "D2");
+
+            const std::uint32_t colorIndex = std::stoul(tokens.front());
+            if (plm->hasColor(colorIndex))
+            {
+                color = plm->GetColor(colorIndex);
+            }
+            
             tokens.pop_front();
             //assert(0 && "process `col` option");
         }
@@ -219,6 +232,11 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
 
     
     const std::string textureFilename = LookupTextureByIndex(fileInfo, textureIndex);
+
+    if (color)
+    {
+        D2_HACK_LOG(MaterialParser) << "color: " << *color;
+    }
 
     std::string materialContent = str(boost::format(TextureMaterialTemplate) % filename.substr(0, filename.size() - 9) % textureFilename % depthCheck);
     //D2_HACK_LOG(MaterialParser) << "content: \n" << materialContent;

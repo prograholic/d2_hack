@@ -32,6 +32,11 @@ Ogre::ColourValue Palette::GetColor(size_t index) const
     return m_palette.at(index);
 }
 
+bool Palette::hasColor(size_t index) const
+{
+    return index < m_palette.size();
+}
+
 void Palette::loadImpl()
 {
     Ogre::DataStreamPtr dataStream = Ogre::ResourceGroupManager::getSingleton().openResource(mName, "D2");

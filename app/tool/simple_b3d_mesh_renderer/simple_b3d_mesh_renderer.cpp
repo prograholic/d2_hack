@@ -37,12 +37,11 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
+
     LoadB3d("aa", b3dSceneNode);
+#if 0
     LoadB3d("ab", b3dSceneNode);
-#endif // 0
     LoadB3d("ac", b3dSceneNode);
-#if 1
     LoadB3d("ad", b3dSceneNode);
     LoadB3d("ae", b3dSceneNode);
     LoadB3d("af", b3dSceneNode);
@@ -62,7 +61,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("aw", b3dSceneNode);
     LoadB3d("ax", b3dSceneNode);
 #endif
-#if 1
+#if 0
     LoadB3d("ba", b3dSceneNode);
     LoadB3d("bb", b3dSceneNode);
     LoadB3d("bc", b3dSceneNode);
@@ -182,7 +181,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        Ogre::SceneNode* node = m_sceneManager->getSceneNode(node_name, false);
+        Ogre::SceneNode* node = m_sceneManager->getSceneNode(node_name);
         if (node)
         {
             PrintSubMeshesForNode(node, cnt);
@@ -192,7 +191,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        const auto& children = m_sceneManager->getSceneNode(node_name, false)->getChildren();
+        const auto& children = m_sceneManager->getSceneNode(node_name)->getChildren();
         if (!children.empty())
         {
             Ogre::Node* node = children[cnt % children.size()];

@@ -109,9 +109,10 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
 
         Ogre::SceneNode* parentSceneNode = m_sceneNodes.top();
 
-        Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName, false);
-        if (sceneNode)
+        
+        if (m_sceneManager->hasSceneNode(sceneName))
         {
+            Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName);
             sceneNode->getParentSceneNode()->removeChild(sceneNode);
             parentSceneNode->addChild(sceneNode);
             auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
