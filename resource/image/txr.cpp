@@ -5,7 +5,6 @@
 #include <OgreImage.h>
 #include <OgreDataStream.h>
 
-#include <d2_hack/common/log.h>
 #include <d2_hack/common/numeric_conversion.h>
 
 namespace d2_hack
@@ -70,33 +69,18 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Can`t read tga header");
     }
 
-    D2_HACK_LOG(TxrImageCodec) << "length of image id data: " << static_cast<int>(tgaHeader.idlength);
-
-    D2_HACK_LOG(TxrImageCodec) << "color map type: " << static_cast<int>(tgaHeader.colourmaptype);
     if (tgaHeader.colourmaptype != 0)
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "can`t decode color mapped image");
     }
 
-    D2_HACK_LOG(TxrImageCodec) << "data type: " << static_cast<int>(tgaHeader.datatypecode);
     if (tgaHeader.datatypecode != 2)
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "can`t decode other then uncompressed RGB");
     }
-    D2_HACK_LOG(TxrImageCodec) << "data type is uncompressed RGB image";
 
-    std::uint16_t xOrigin = common::ToNumeric<std::uint16_t>(tgaHeader.x_origin);
-    std::uint16_t yOrigin = common::ToNumeric<std::uint16_t>(tgaHeader.y_origin);
     std::uint16_t width = common::ToNumeric<std::uint16_t>(tgaHeader.width);
     std::uint16_t height = common::ToNumeric<std::uint16_t>(tgaHeader.height);
-
-    D2_HACK_LOG(TxrImageCodec) << "image size " << width << " x " << height;
-    D2_HACK_LOG(TxrImageCodec) << "image offset " << xOrigin << " x " << yOrigin;
-
-
-    D2_HACK_LOG(TxrImageCodec) << "bits per pixel: " << static_cast<int>(tgaHeader.bitsperpixel);
-
-    D2_HACK_LOG(TxrImageCodec) << "image descriptor: " << static_cast<int>(tgaHeader.imagedescriptor);
 
     input->skip(tgaHeader.idlength);
 
