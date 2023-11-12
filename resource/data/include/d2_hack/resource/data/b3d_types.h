@@ -67,6 +67,12 @@ struct BlockHeader
     std::uint32_t type;
 };
 
+
+/**
+ * TODO - разобраться, что это.
+ *
+ * По ощущениям - во всех b3d файлах оно одинаково, хотя иногда в последних байтах emptyData0 и emptyData1 встречаются ненулевые значения (размер?)
+ */
 struct Empty0
 {
     static constexpr auto Value = EmptyBlock0;
@@ -92,6 +98,12 @@ struct GroupUnknown2
     Ogre::Real unknown1;
 };
 
+
+/**
+ * Контейнер для объектов
+ * 
+ * Скорее всего тут есть какая-то классификация типов объектов, по ощущениям не влияет на отрисовку
+ */
 struct GroupRoadInfraObjects4
 {
     static constexpr auto Value = GroupRoadInfraObjectsBlock4;
@@ -103,6 +115,13 @@ struct GroupRoadInfraObjects4
     common::ResourceName data;
 };
 
+/**
+ * Контейнер для объектов
+ * 
+ * Скорее всего тут есть какая-то классификация типов объектов, по ощущениям не влияет на отрисовку
+ * 
+ * TODO - разобраться, для чего нужны разные типы контейнеров для объектов
+ */
 struct GroupObjects5
 {
     static constexpr auto Value = GroupObjectsBlock5;
@@ -112,6 +131,14 @@ struct GroupObjects5
     common::ResourceName name;
 };
 
+
+/**
+ * Описание графического объекта.
+ * 
+ * TODO - в чем отличие от GroupVertex37?
+ *     Гипотеза - тут Face8 не только индексные, но еще и переопределяют текстурные координаты
+ *     Возможно ли свести к GroupVertex37?
+ */
 struct GroupVertex7
 {
     static constexpr auto Value = GroupVertexBlock7;
@@ -123,6 +150,17 @@ struct GroupVertex7
     common::SimpleMeshInfo meshInfo;
 };
 
+
+/**
+ * Описание одной грани
+ *
+ * Содержит индекс материала
+ *   скорее всего, значение из этой структуры должно переопределять значение из SimpleFaces8
+ *
+ * В отличие от Face35 не имеет зависимости от типа верхнеуровневой структуры (или такая зависимость не выявлена)
+ * - UnknownType0
+ *     индекс (i32)
+ */
 struct Face8
 {
     static const std::uint32_t UnknownType0 = 0;
@@ -183,6 +221,12 @@ struct GroupTrigger9
     Ogre::Real distanceToPlayer;
 };
 
+
+/**
+ * Группа объектов, группирует по Level Of Details.
+ * 
+ * Алгоритм группировки неясен, вероятно, поле distanceToPlayer должно влиять на выбор нужного LoD
+ */
 struct GroupLodParameters10
 {
     static constexpr auto Value = GroupLodParametersBlock10;
@@ -301,6 +345,12 @@ struct SimpleVolumeCollision23
 
 };
 
+
+/**
+ * Описывает трансформацию узла, клиент использует соотв. трансформацию по имени.
+ * 
+ * Могут быть вложенные трансформации (TODO - уточнить, как именно они применяются)
+ */
 struct GroupTransformMatrix24
 {
     static constexpr auto Value = GroupTransformMatrixBlock24;
@@ -391,6 +441,10 @@ struct SimplePortal30
     Ogre::Vector3 upRight;
 };
 
+
+/**
+ * Освещение, не разбирался детально.
+ */
 struct GroupLightingObjects33
 {
     static constexpr auto Value = GroupLightingObjectBlock33;
@@ -426,6 +480,59 @@ struct SimpleUnknown34
     std::vector<Unknown> data;
 };
 
+/**
+ * Описание одной грани
+ * 
+ * Содержит индекс материала
+ *   скорее всего, значение из этой структуры должно переопределять значение из SimpleFaces35
+ * 
+ * В зависимости от типа верхнеуровневой структуры (SimpleFaces35::type) и текущего поля type имеет разное содержимое:
+ * - SimpleFaces35::type == SimpleFaces35::Unknown1
+ *     Indices0
+ *       индекс (i32)
+ *
+ *     Unknown2
+ *       индекс (i32)
+ *       текстурные координаты (V2)
+ * 
+ *     UnknownType48
+ *       индекс (i32)
+ *       нормаль (V3)
+ * 
+ *     UnknownType50
+ *       индекс (i32)
+ *       текстурные координаты (V2)
+ *       нормаль (V3)
+ * 
+ * - SimpleFaces35::type == SimpleFaces35::Unknown2
+ *     Indices1
+ *       индекс (i32)
+ *
+ *     UnknownType3
+ *       индекс (i32)
+ *       текстурные координаты (V2)
+ *
+ *     UnknownType49
+ *       индекс (i32)
+ *       unknown49 (F32) <-- TODO хз, что это
+ * 
+ *     UnknownType51
+ *       индекс (i32)
+ *       нормаль (V3)
+ *
+ * - SimpleFaces35::type == SimpleFaces35::IndicesOnly3
+ *     TODO: разобраться, в чем разница в типах индексов
+ *     Indices0
+ *       индекс (i32)
+ *     Indices1
+ *       индекс (i32)
+ *     Indices3
+ *       индекс (i32)
+ *     Indices16
+ *       индекс (i32)
+ *     Indices17
+ *       индекс (i32)
+ */
 struct Face35
 {
     static const std::uint32_t Indices0 = 0;
@@ -458,6 +565,22 @@ struct Face35
 
 typedef std::vector<Face35> Face35List;
 
+
+/**
+ * Описание граней графического объекта
+ * 
+ * Содержит индекс материала
+ * В зависимости от типа, содержит:
+ * 
+ * - Unknown1
+ *     Пока хз, что это
+ * 
+ * - Unknown2
+ *     Пока хз, что это
+ * 
+ * - IndicesOnly3
+ *     Содержит только целочисленные индексы для порядка передачи вертексов
+ */
 struct SimpleFaces35
 {
     static constexpr auto Value = SimpleFacesBlock35;
@@ -475,6 +598,40 @@ struct SimpleFaces35
     Face35List faces;
 };
 
+
+/** 
+ * Описание графического объекта.
+ * 
+ * Содержит набор координат, нормалей, текстурных координат (возможно, что-то еще)
+ * 
+ * Бывает нескольких подтипов:
+ * - Vertex2
+ *     позиция (V3)
+ *     текстурные координаты (V2)
+ *     нормали (V3)
+ *
+ * - Vertex3
+ *     позиция (V3)
+ *     нормали (V3)
+ *
+ * - UnknownType258
+ *     позиция (V3)
+ *     текстурные координаты (V2)
+ *     нормали (V3)
+ *     unknown258Or515 (V2)
+ *
+ * - UnknownType514
+ *     позиция (V3)
+ *     текстурные координаты (V2)
+ *     нормали (V3)
+ *     unknown514 (V4)
+ *
+ * - UnknownType515
+ *     позиция (V3)
+ *     текстурные координаты (V2)
+ *     нормали (V3)
+ *     unknown258Or515 (V2)
+ */
 struct GroupVertexData37
 {
     static constexpr auto Value = GroupIndexAndTexturesBlock37;
