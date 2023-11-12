@@ -32,7 +32,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
-B3dSceneBuilder::B3dSceneBuilder(const char* b3dId,
+B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
                                  const std::string& b3dName,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,

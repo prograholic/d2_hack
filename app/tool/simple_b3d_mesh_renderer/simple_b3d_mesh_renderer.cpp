@@ -38,49 +38,47 @@ void SimpleB3dMeshRenderer::CreateScene()
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
 #if 1
-    LoadB3d("aa", b3dSceneNode);
-    LoadB3d("ab", b3dSceneNode);
-#endif // 0
-    LoadB3d("ac", b3dSceneNode);
-#if 1
-    LoadB3d("ad", b3dSceneNode);
-    LoadB3d("ae", b3dSceneNode);
-    LoadB3d("af", b3dSceneNode);
-    LoadB3d("ag", b3dSceneNode);
-    LoadB3d("ah", b3dSceneNode);
-    LoadB3d("aj", b3dSceneNode);
-    LoadB3d("ak", b3dSceneNode);
-    LoadB3d("al", b3dSceneNode);
-    LoadB3d("am", b3dSceneNode);
-    LoadB3d("ap", b3dSceneNode);
-    LoadB3d("aq", b3dSceneNode);
-    LoadB3d("ar", b3dSceneNode);
-    LoadB3d("as", b3dSceneNode);
-    LoadB3d("at", b3dSceneNode);
-    LoadB3d("au", b3dSceneNode);
-    LoadB3d("av", b3dSceneNode);
-    LoadB3d("aw", b3dSceneNode);
-    LoadB3d("ax", b3dSceneNode);
-#endif
-#if 1
-    LoadB3d("ba", b3dSceneNode);
-    LoadB3d("bb", b3dSceneNode);
-    LoadB3d("bc", b3dSceneNode);
-    LoadB3d("bd", b3dSceneNode);
-    LoadB3d("be", b3dSceneNode);
-    LoadB3d("bf", b3dSceneNode);
-    LoadB3d("bg", b3dSceneNode);
-    LoadB3d("ca", b3dSceneNode);
-    LoadB3d("cb", b3dSceneNode);
-    LoadB3d("cc", b3dSceneNode);
-    LoadB3d("ce", b3dSceneNode);
-    LoadB3d("cf", b3dSceneNode);
-    LoadB3d("ch", b3dSceneNode);
-    LoadB3d("da", b3dSceneNode);
-    LoadB3d("db", b3dSceneNode);
-    LoadB3d("dc", b3dSceneNode);
-    LoadB3d("dq", b3dSceneNode);
-    LoadB3d("dr", b3dSceneNode);
+    LoadB3d("ENV", "aa", b3dSceneNode);
+    LoadB3d("ENV", "ab", b3dSceneNode);
+    LoadB3d("ENV", "ac", b3dSceneNode);
+    LoadB3d("ENV", "ad", b3dSceneNode);
+    LoadB3d("ENV", "ae", b3dSceneNode);
+    LoadB3d("ENV", "af", b3dSceneNode);
+    LoadB3d("ENV", "ag", b3dSceneNode);
+    LoadB3d("ENV", "ah", b3dSceneNode);
+    LoadB3d("ENV", "aj", b3dSceneNode);
+    LoadB3d("ENV", "ak", b3dSceneNode);
+    LoadB3d("ENV", "al", b3dSceneNode);
+    LoadB3d("ENV", "am", b3dSceneNode);
+    LoadB3d("ENV", "ap", b3dSceneNode);
+    LoadB3d("ENV", "aq", b3dSceneNode);
+    LoadB3d("ENV", "ar", b3dSceneNode);
+    LoadB3d("ENV", "as", b3dSceneNode);
+    LoadB3d("ENV", "at", b3dSceneNode);
+    LoadB3d("ENV", "au", b3dSceneNode);
+    LoadB3d("ENV", "av", b3dSceneNode);
+    LoadB3d("ENV", "aw", b3dSceneNode);
+    LoadB3d("ENV", "ax", b3dSceneNode);
+
+    LoadB3d("ENV", "ba", b3dSceneNode);
+    LoadB3d("ENV", "bb", b3dSceneNode);
+    LoadB3d("ENV", "bc", b3dSceneNode);
+    LoadB3d("ENV", "bd", b3dSceneNode);
+    LoadB3d("ENV", "be", b3dSceneNode);
+    LoadB3d("ENV", "bf", b3dSceneNode);
+    LoadB3d("ENV", "bg", b3dSceneNode);
+
+    LoadB3d("ENV", "ca", b3dSceneNode);
+    LoadB3d("ENV", "cb", b3dSceneNode);
+    LoadB3d("ENV", "cc", b3dSceneNode);
+    LoadB3d("ENV", "ce", b3dSceneNode);
+    LoadB3d("ENV", "cf", b3dSceneNode);
+    LoadB3d("ENV", "ch", b3dSceneNode);
+    LoadB3d("ENV", "da", b3dSceneNode);
+    LoadB3d("ENV", "db", b3dSceneNode);
+    LoadB3d("ENV", "dc", b3dSceneNode);
+    LoadB3d("ENV", "dq", b3dSceneNode);
+    LoadB3d("ENV", "dr", b3dSceneNode);
 #endif
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
@@ -108,9 +106,9 @@ void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
     }
 }
 
-void SimpleB3dMeshRenderer::LoadB3d(const char* b3dId, Ogre::SceneNode* b3dSceneNode)
+void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::string& b3dId, Ogre::SceneNode* b3dSceneNode)
 {
-    std::string fullB3dName = D2_ROOT_DIR "/ENV/" + std::string(b3dId) + ".b3d";
+    std::string fullB3dName = D2_ROOT_DIR "/" + subdirectory + "/" + b3dId + ".b3d";
     std::ifstream inputFile{fullB3dName, std::ios_base::binary};
     if (!inputFile)
     {

@@ -17,7 +17,7 @@ public:
 private:
     virtual void CreateScene() override;
 
-    void LoadB3d(const char* b3dName, Ogre::SceneNode* b3dSceneNode);
+    void LoadB3d(const std::string& subdirectory, const std::string& b3dIde, Ogre::SceneNode* b3dSceneNode);
 
     bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 };
