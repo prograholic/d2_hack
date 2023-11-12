@@ -36,6 +36,7 @@ static bool IsUnusedNode(NodePtr node)
 {
     static const std::uint32_t unusedNodeTypes[] =
     {
+        block_data::SimpleTriggerBlock13,
         block_data::SimpleFlatCollisionBlock20,
         block_data::SimpleVolumeCollisionBlock23
     };

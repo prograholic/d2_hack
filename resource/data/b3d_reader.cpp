@@ -690,10 +690,10 @@ private:
 
     void DispatchFace28(block_data::Face28& face)
     {
+        const std::uint32_t count = ReadUint32();
+
         if (face.type == block_data::Face28::Unknown2)
         {
-            const std::uint32_t count = ReadUint32();
-
             for (size_t i = 0; i != count; ++i)
             {
                 face.meshInfo.texCoords.push_back(ReadVector2());
