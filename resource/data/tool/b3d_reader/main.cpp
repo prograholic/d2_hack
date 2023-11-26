@@ -23,10 +23,11 @@ namespace b3d
 class TracingVisitor : public NodeVisitorInterface
 {
 public:
-    TracingVisitor(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printMeshInfo)
+    TracingVisitor(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printFaceInfo, bool printMeshInfo)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
         , m_printVectorData(printVectorData)
+        , m_printFaceInfo(printFaceInfo)
         , m_printMeshInfo(printMeshInfo)
     {
     }
@@ -108,7 +109,7 @@ public:
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
-        PrintVectorData(block.faces, "faces", 1);
+        PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
@@ -322,7 +323,7 @@ public:
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
         GetStream(1) << "type: " << block.type << "," << std::endl;
         GetStream(1) << "materialIndex: " << block.materialIndex << std::endl;
-        PrintVectorData(block.faces, "faces", 1);
+        PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
@@ -353,6 +354,7 @@ private:
     bool m_printBoundingSphere;
     bool m_newLineForVectorData;
     bool m_printVectorData;
+    bool m_printFaceInfo;
     bool m_printMeshInfo;
     size_t m_offset = 0;
 
@@ -381,26 +383,25 @@ private:
     {
         GetStream(adjustOffset) << "SimpleMeshInfo" << std::endl;
         GetStream(adjustOffset) << "{" << std::endl;
-        PrintVectorData(meshInfo.positions, "positions", adjustOffset + 1);
-        PrintVectorData(meshInfo.texCoords, "texCoords", adjustOffset + 1);
-        PrintVectorData(meshInfo.normals, "normals", adjustOffset + 1);
-        PrintVectorData(meshInfo.indices, "indices", adjustOffset + 1);
+
+        PrintVectorData(meshInfo.positions, "positions", adjustOffset + 1, m_printMeshInfo);
+        PrintVectorData(meshInfo.texCoords, "texCoords", adjustOffset + 1, m_printMeshInfo);
+        PrintVectorData(meshInfo.normals, "normals", adjustOffset + 1, m_printMeshInfo);
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const block_data::Face8& data, int adjustOffset)
     {
-        if (m_printMeshInfo)
-        {
-            GetStream(adjustOffset) << "Face8" << std::endl;
-            GetStream(adjustOffset) << "{" << std::endl;
-            GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
-            GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
-            GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
-            GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
-            PrintData(data.meshInfo, adjustOffset + 1);
-            GetStream(adjustOffset) << "}" << std::endl;
-        }
+        GetStream(adjustOffset) << "Face8" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+
+        GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
+        GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
+        GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
+        GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
+        PrintData(data.meshInfo, adjustOffset + 1);
+
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(Ogre::Real data, int adjustOffset)
@@ -425,23 +426,27 @@ private:
 
     void PrintData(const block_data::Face28& data, int adjustOffset)
     {
-        if (m_printMeshInfo)
+        GetStream(adjustOffset) << "Face28" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        if (m_printFaceInfo)
         {
-            GetStream(adjustOffset) << "Face28" << std::endl;
-            GetStream(adjustOffset) << "{" << std::endl;
             GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
             PrintData(data.meshInfo, adjustOffset + 1);
             PrintVectorData(data.unknown, "unknown", adjustOffset + 1);
-            GetStream(adjustOffset) << "}" << std::endl;
         }
+        else
+        {
+            GetStream(adjustOffset + 1) << "//..." << std::endl;
+        }
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const block_data::Face28::Unknown& data, int adjustOffset)
     {
-        if (m_printMeshInfo)
+        if (m_printFaceInfo)
         {
             GetStream(adjustOffset) << "Face28::Unknown" << std::endl;
             GetStream(adjustOffset) << "{" << std::endl;
@@ -449,21 +454,25 @@ private:
             GetStream(adjustOffset) << "}" << std::endl;
         }
     }
-
     void PrintData(const block_data::Face35& data, int adjustOffset)
     {
-        if (m_printMeshInfo)
+        GetStream(adjustOffset) << "Face35" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+
+        if (m_printFaceInfo)
         {
-            GetStream(adjustOffset) << "Face35" << std::endl;
-            GetStream(adjustOffset) << "{" << std::endl;
             GetStream(adjustOffset + 1) << "type: " << data.type << std::endl;
             GetStream(adjustOffset + 1) << "unknown0: " << data.unknown0 << std::endl;
             GetStream(adjustOffset + 1) << "unknown1: " << data.unknown1 << std::endl;
             GetStream(adjustOffset + 1) << "materialIndex: " << data.materialIndex << std::endl;
             PrintData(data.meshInfo, adjustOffset + 1);
             PrintVectorData(data.unknown49, "unknown49", adjustOffset + 1);
-            GetStream(adjustOffset) << "}" << std::endl;
         }
+        else
+        {
+            GetStream(adjustOffset + 1) << "//..." << std::endl;
+        }
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 
     void PrintData(const block_data::GroupVertexData37::Unknown514& data, int adjustOffset)
@@ -581,21 +590,23 @@ private:
     }
 
     template <typename T, typename A>
-    void PrintVectorData(const std::vector<T, A>& data, const char* name, int adjustOffset = 0)
+    void PrintVectorData(const std::vector<T, A>& data, const char* name, int adjustOffset = 0, bool printVectorData = true)
     {
         GetStream(adjustOffset) << name << "(" << data.size() << ")" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
 
-        if (m_printVectorData)
+        if (m_printVectorData && printVectorData)
         {
-            GetStream(adjustOffset) << "{" << std::endl;
-
             for (const auto& item : data)
             {
                 PrintData(item, adjustOffset + 1);
             }
-
-            GetStream(adjustOffset) << "}" << std::endl;
         }
+        else
+        {
+            GetStream(adjustOffset + 1) << "//..." << std::endl;
+        }
+        GetStream(adjustOffset) << "}" << std::endl;
     }
 };
 
@@ -799,6 +810,7 @@ int main(int argc, char* argv[])
 
     bool printVectorData = true;
     bool printBoundingSphere = true;
+    bool printFaceInfo = true;
     bool printMeshInfo = true;
     bool optimize = true;
     bool printOnlyTypes = false;
@@ -811,6 +823,10 @@ int main(int argc, char* argv[])
         else if (argv[i] == std::string("--skip_bounding_sphere"))
         {
             printBoundingSphere = false;
+        }
+        else if (argv[i] == std::string("--skip_face_info"))
+        {
+            printFaceInfo = false;
         }
         else if (argv[i] == std::string("--skip_mesh_info"))
         {
@@ -857,7 +873,7 @@ int main(int argc, char* argv[])
                 optimization::Optimize(tree);
             }
 
-            TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printMeshInfo };
+            TracingVisitor visitor{printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo};
             VisitTree(tree, visitor);
         }
         else
