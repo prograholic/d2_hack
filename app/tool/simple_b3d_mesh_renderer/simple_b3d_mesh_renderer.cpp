@@ -37,7 +37,6 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-#if 1
     LoadB3d("ENV", "aa", b3dSceneNode);
     LoadB3d("ENV", "ab", b3dSceneNode);
     LoadB3d("ENV", "ac", b3dSceneNode);
@@ -74,12 +73,12 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ENV", "ce", b3dSceneNode);
     LoadB3d("ENV", "cf", b3dSceneNode);
     LoadB3d("ENV", "ch", b3dSceneNode);
+
     LoadB3d("ENV", "da", b3dSceneNode);
     LoadB3d("ENV", "db", b3dSceneNode);
     LoadB3d("ENV", "dc", b3dSceneNode);
     LoadB3d("ENV", "dq", b3dSceneNode);
     LoadB3d("ENV", "dr", b3dSceneNode);
-#endif
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -119,7 +118,8 @@ void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::
     B3dReader reader;
     B3dTree b3dTree = reader.Read(dataStream);
 
-    optimization::Optimize(b3dTree);
+    transformation::Transform(b3dTree);
+    transformation::Optimize(b3dTree);
     
     B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
 
@@ -129,7 +129,7 @@ void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
 {
-    D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "NODE: " << node->getName();
+    D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "NODE: " << node->getName() << ", " << node->_getDerivedPosition();
     Ogre::SceneNode* sc = static_cast<Ogre::SceneNode*>(node);
     const auto& objs = sc->getAttachedObjects();
     for (auto obj : objs)
@@ -171,7 +171,8 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "ac_1512_scene_node";
+    const char* node_name = "ap_AirportVyshka_clone_scene_node_17";
+
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);

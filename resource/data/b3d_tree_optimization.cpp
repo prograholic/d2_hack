@@ -13,7 +13,7 @@ namespace data
 {
 namespace b3d
 {
-namespace optimization
+namespace transformation
 {
 namespace predicates
 {
@@ -32,6 +32,7 @@ static bool IsNodeOfType(NodePtr node, const std::uint32_t* begin, const std::ui
 
     return false;
 }
+
 static bool IsUnusedNode(NodePtr node)
 {
     static const std::uint32_t unusedNodeTypes[] =
@@ -53,6 +54,17 @@ static bool IsVertexNode(NodePtr node)
     };
 
     return IsNodeOfType(node, std::begin(vertexNodeTypes), std::end(vertexNodeTypes));
+}
+
+static bool IsUnusedTopLevelNode(NodePtr node)
+{
+    static const std::uint32_t unusedTopLevelNodeTypes[] =
+    {
+        block_data::GroupRoadInfraObjectsBlock4,
+        block_data::GroupObjectsBlock5
+    };
+
+    return IsNodeOfType(node, std::begin(unusedTopLevelNodeTypes), std::end(unusedTopLevelNodeTypes));
 }
 
 } // namespace predicates
@@ -462,20 +474,92 @@ static void RemoveEmptyNodes(B3dTree& tree)
     }
 }
 
+static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &name)
+{
+    for (const auto& node : nodes)
+    {
+        if (node->GetName() == name)
+        {
+            return node;
+        }
+    }
+
+    return NodePtr{};
+}
+
+static void ProcessObjectConnectors(const B3dTree& tree, const NodePtr& node)
+{
+    if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
+    {
+        NodeSimpleObjectConnector18* typedNode = node->NodeCast<NodeSimpleObjectConnector18>();
+        NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, common::ResourceNameToString(typedNode->GetBlockData().object));
+        if (newChildNode)
+        {
+            NodeList newChildNodes;
+            newChildNodes.push_back(newChildNode);
+            typedNode->SetChildNodes(std::move(newChildNodes));
+        }
+    }
+    else
+    {
+        for (const auto& child : node->GetChildNodeList())
+        {
+            ProcessObjectConnectors(tree, child);
+        }
+    }
+}
+
+static void ProcessObjectConnectors(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        ProcessObjectConnectors(tree, node);
+    }
+}
+
+static void SkipTopLevelNodes(B3dTree& tree)
+{
+    NodeList newRoots;
+    const uint32_t unusedTopLevelNodeTypes [] = {block_data::GroupRoadInfraObjectsBlock4, block_data::GroupObjectsBlock5};
+    for (const auto& node : tree.rootNodes)
+    {
+        if (predicates::IsUnusedTopLevelNode(node))
+        {
+            /**
+             * На верхнем уровне эти узлы не нужны,
+             * они должны быть прицеплены к соотв. объектам с помощью SimpleObjectConnector18
+             */
+            continue;
+        }
+
+        newRoots.push_back(node);
+    }
+
+    std::swap(tree.rootNodes, newRoots);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
+
+void Transform(B3dTree& tree)
+{
+    /// TODO: Это не совсем оптимизация - без этого вызова вообще ни один объект на сцене не будет виден
+    /// Нужно разбить на две части - создание объектов, и последующая оптимизация
+    MergeFacesWithVertices(tree);
+    ProcessObjectConnectors(tree);
+}
 
 void Optimize(B3dTree& tree)
 {
+    SkipTopLevelNodes(tree);
     FilterUnusedNodes(tree);
     SkipLodParametersFor37(tree);
     OptimizeSequence37_10_5(tree);
     UseHalfChildFromSingleLod(tree);
     UseFirstLod(tree);
-    MergeFacesWithVertices(tree);
     RemoveEmptyNodes(tree);
 }
 
-} // namespace optimization
+} // namespace transformation
 } // namespace b3d
 } // namespace data
 } // namespace resource

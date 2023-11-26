@@ -105,22 +105,24 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        std::string sceneName = GetNameImpl(common::ResourceNameToString(block.object), "scene_node", false);
+        const std::string cloneName = GetNameImpl(common::ResourceNameToString(block.object) + "_clone", "scene_node", true);
+
+        Ogre::SceneNode* newSceneNode = m_sceneManager->createSceneNode(cloneName);
 
         Ogre::SceneNode* parentSceneNode = m_sceneNodes.top();
+        parentSceneNode->addChild(newSceneNode);
+        m_sceneNodes.push(newSceneNode);
 
-        Ogre::SceneNode* sceneNode = m_sceneManager->getSceneNode(sceneName, false);
-        if (sceneNode)
+        auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
+        for (const auto& transform : transformList)
         {
-            sceneNode->getParentSceneNode()->removeChild(sceneNode);
-            parentSceneNode->addChild(sceneNode);
-            auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
-            for (const auto& transform : transformList)
-            {
-                sceneNode->translate(transform.position);
-                sceneNode->rotate(Ogre::Quaternion{transform.matrix});
-            }
+            newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
+            newSceneNode->translate(transform.position);
         }
+    }
+    else
+    {
+        m_sceneNodes.pop();
     }
 }
 

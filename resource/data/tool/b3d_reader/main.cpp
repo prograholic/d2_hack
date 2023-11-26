@@ -230,7 +230,7 @@ public:
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
-        GetStream(1) << "soundname: " << common::ResourceNameToString(block.soundName) << "," << std::endl;
+        GetStream(1) << "soundname: \"" << common::ResourceNameToString(block.soundName) << "\"," << std::endl;
         GetStream(1) << "unknown3: {"
             << block.unknown3[0] << ", "
             << block.unknown3[1] << ", "
@@ -726,7 +726,8 @@ void PrintOnlyTypes(const std::string& baseDir, const std::string& subDir, const
 
     B3dTree tree = reader.Read(dataStream);
 
-    optimization::Optimize(tree);
+    transformation::Transform(tree);
+    transformation::Optimize(tree);
 
     PrintOnlyTypes(sequences, tree);
 }
@@ -868,9 +869,10 @@ int main(int argc, char* argv[])
             Ogre::FileStreamDataStream dataStream(&inputFile, false);
 
             B3dTree tree = reader.Read(dataStream);
+            transformation::Transform(tree);
             if (optimize)
             {
-                optimization::Optimize(tree);
+                transformation::Optimize(tree);
             }
 
             TracingVisitor visitor{printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo};

@@ -11,13 +11,18 @@ namespace data
 {
 namespace b3d
 {
-namespace optimization
+namespace transformation
 {
 
+/**
+ * Делает трансформацию узлов без изменения их количества
+ * 
+ */
+void Transform(B3dTree& tree);
 
 void Optimize(B3dTree& tree);
 
-} // namespace optimization
+} // namespace transformation
 } // namespace b3d
 } // namespace data
 } // namespace resource
