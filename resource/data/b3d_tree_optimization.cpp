@@ -273,7 +273,7 @@ static void UseFirstLod(NodePtr node, bool insideLod)
     NodeList newChildren;
     for (auto child : node->GetChildNodeList())
     {
-        if ((child->GetType() == block_data::GroupLodParametersBlock10) && insideLod)
+        if ((child->GetType() == block_data::GroupLodParametersBlock10) && insideLod && (node->GetChildNodeList().size() > 1))
         {
             D2_HACK_LOG(UseFirstLod) << "skipping LOD entry: " << child->GetName();
             continue;
@@ -281,7 +281,7 @@ static void UseFirstLod(NodePtr node, bool insideLod)
 
         newChildren.push_back(child);
 
-        UseFirstLod(child, insideLod);
+        UseFirstLod(child, false);
     }
 
     node->SetChildNodes(std::move(newChildren));
@@ -555,6 +555,7 @@ void Optimize(B3dTree& tree)
     SkipLodParametersFor37(tree);
     OptimizeSequence37_10_5(tree);
     UseHalfChildFromSingleLod(tree);
+    // TODO: переделать оптимизацию с LOD-ами
     UseFirstLod(tree);
     RemoveEmptyNodes(tree);
 }

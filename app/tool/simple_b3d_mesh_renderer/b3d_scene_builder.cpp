@@ -161,6 +161,7 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
     std::string group = "D2";
     if (m_meshManager->resourceExists(name, group))
     {
+        // TODO: deduplicate meshes!
         name = GetNameImpl(blockName, "mesh", true);
     }
 
