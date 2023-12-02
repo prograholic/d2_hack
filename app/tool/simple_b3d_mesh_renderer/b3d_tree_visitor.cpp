@@ -153,6 +153,11 @@ void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces35& b
     VisitFaces(name, block, visitMode);
 }
 
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown36& /* block */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
 void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertexData37& /* block */, VisitMode visitMode)
 {
     ProcessSceneNode(name, visitMode);

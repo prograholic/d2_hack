@@ -56,6 +56,7 @@ static const std::uint32_t SimplePortalBlock30 = 30;
 static const std::uint32_t GroupLightingObjectBlock33 = 33;
 static const std::uint32_t SimpleUnknownBlock34 = 34;
 static const std::uint32_t SimpleFacesBlock35 = 35;
+static const std::uint32_t GroupUnknownBlock36 = 36;
 static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
 static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
@@ -631,6 +632,35 @@ struct SimpleFaces35
     std::uint32_t materialIndex;
 
     Face35List faces;
+};
+
+struct GroupUnknown36
+{
+    static constexpr auto Value = GroupUnknownBlock36;
+    static constexpr char Name[] = "GroupUnknown36";
+
+    static const std::uint32_t Type2 = 2;
+    static const std::uint32_t Type3 = 3;
+
+    struct UnknownType2
+    {
+        std::array<std::uint32_t, 8> unknown;
+    };
+
+    struct UnknownType3
+    {
+        std::array<Ogre::Real, 6> unknown;
+    };
+
+    using UnknownType2List = std::vector<UnknownType2>;
+    using UnknownType3List = std::vector<UnknownType3>;
+
+    common::BoundingSphere boundingSphere;
+
+    std::array<std::uint8_t, 80> unknown0;
+    std::uint32_t type;
+    UnknownType2List unknownType2;
+    UnknownType3List unknownType3;
 };
 
 

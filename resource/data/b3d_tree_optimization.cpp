@@ -1,5 +1,6 @@
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
 
+#include <OgreException.h>
 
 #include <d2_hack/resource/data/b3d_utils.h>
 #include <d2_hack/common/log.h>
@@ -518,7 +519,7 @@ static void ProcessObjectConnectors(const B3dTree& tree, const NodePtr& node)
         }
         else
         {
-            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" << node_name << "\"";
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + node_name + "\"");
         }
     }
     else

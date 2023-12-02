@@ -271,6 +271,10 @@ private:
         {
             return ReadBlockData35(blockHeader);
         }
+        else if (blockHeader.type == block_data::GroupUnknownBlock36)
+        {
+            return ReadBlockData36(blockHeader);
+        }
         else if (blockHeader.type == block_data::GroupIndexAndTexturesBlock37)
         {
             return ReadBlockData37(blockHeader);
@@ -933,6 +937,30 @@ private:
         }
 
         return std::make_shared<NodeSimpleFaces35>(blockHeader, block);
+    }
+
+    NodePtr ReadBlockData36(const block_data::BlockHeader& blockHeader)
+    {
+        block_data::GroupUnknown36 block;
+
+        ReadBytes(block.unknown0.data(), block.unknown0.size());
+        block.type = ReadUint32();
+        const std::uint32_t count = ReadUint32();
+        if (block.type == block_data::GroupUnknown36::Type2)
+        {
+            ReadCount(block.unknownType2, count);
+        }
+        else if (block.type == block_data::GroupUnknown36::Type3)
+        {
+            ReadCount(block.unknownType3, count);
+        }
+        else
+        {
+            ThrowError("Unknown type " + std::to_string(block.type), "B3dReaderImpl::ReadBlockData36");
+        }
+
+        NodePtr res = std::make_shared<NodeGroupUnknown36>(blockHeader, block);
+        return ReadNestedBlocks(res);
     }
 
     void DispatchVertexData37(block_data::GroupVertexData37& block)

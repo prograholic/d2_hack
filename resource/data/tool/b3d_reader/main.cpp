@@ -334,6 +334,18 @@ public:
         PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
+    virtual void Visit(const std::string& name, block_data::GroupUnknown36& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
+        GetStream(1) << "unknown0: " << ToString(block.unknown0.data(), block.unknown0.data() + block.unknown0.size()) << std::endl;
+        GetStream(1) << "type: " << block.type << std::endl;
+        PrintVectorData(block.unknownType2, "unknownType2");
+        PrintVectorData(block.unknownType3, "unknownType3");
+        //TODO: нужно ли печатать закрывающую скобку?
+    }
+
     virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
     {
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
@@ -480,6 +492,22 @@ private:
         {
             GetStream(adjustOffset + 1) << "//..." << std::endl;
         }
+        GetStream(adjustOffset) << "}" << std::endl;
+    }
+
+    void PrintData(const block_data::GroupUnknown36::UnknownType2& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "GroupUnknown36::UnknownType2" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "unknown: {" << data.unknown[0] << ", " << data.unknown[1] << ", " << data.unknown[2] << ", " << data.unknown[3] << ", " << data.unknown[4] << ", " << data.unknown[5] << ", " << data.unknown[6] << ", " << data.unknown[7] << "}" << std::endl;
+        GetStream(adjustOffset) << "}" << std::endl;
+    }
+
+    void PrintData(const block_data::GroupUnknown36::UnknownType3& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "GroupUnknown36::UnknownType3" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "unknown: {" << data.unknown[0] << ", " << data.unknown[1] << ", " << data.unknown[2] << ", " << data.unknown[3] << ", " << data.unknown[4] << ", " << data.unknown[5] << "}" << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
