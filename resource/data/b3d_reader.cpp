@@ -56,14 +56,15 @@ public:
     {
     }
 
-    B3dTree Read(const B3dRegistryEntry& registryEntry)
+    B3dTree Read(const std::string& dir, const std::string& id)
     {
         FileHeader fileHeader;
         ReadFileHeader(fileHeader);
 
         B3dTree res;
 
-        res.registryEntry = registryEntry;
+        res.dir = dir;
+        res.id = id;
         res.materials = ReadMaterials(fileHeader.materials);
         res.rootNodes = ReadData(fileHeader.data);
 
@@ -1085,22 +1086,28 @@ private:
     }
 };
 
+static B3dTree ReadTree(const std::string& rootDir, const std::string& dir, const std::string& id)
+{
+    const std::string fullB3dName = rootDir + "/" + dir + "/" + id + ".b3d";
+    std::ifstream inputFile{ fullB3dName, std::ios_base::binary };
+    if (!inputFile)
+    {
+        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
+    }
+
+    Ogre::FileStreamDataStream dataStream(&inputFile, false);
+    B3dReaderImpl reader{ dataStream };
+    
+    return reader.Read(dir, id);
+}
+
 B3dForest ReadB3d(const B3dRegistry& registry)
 {
     B3dForest forest;
-    for (const auto& entry : registry.entries)
+    forest.common = ReadTree(registry.rootDir, "COMMON", "common");
+    for (const auto& id : registry.entries)
     {
-        const std::string fullB3dName = registry.rootDir + "/" + entry.dir + "/" + entry.id + ".b3d";
-        std::ifstream inputFile{ fullB3dName, std::ios_base::binary };
-        if (!inputFile)
-        {
-            OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
-        }
-
-        Ogre::FileStreamDataStream dataStream(&inputFile, false);
-        B3dReaderImpl reader{ dataStream };
-
-        forest.push_back(reader.Read(entry));
+        forest.forest.push_back(ReadTree(registry.rootDir, registry.dir, id));
     }
 
     return forest;

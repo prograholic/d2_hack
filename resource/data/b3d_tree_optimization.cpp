@@ -511,13 +511,18 @@ static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &n
     return NodePtr{};
 }
 
-static void ProcessObjectConnectors(const B3dTree& tree, const NodePtr& node)
+static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, const NodePtr& node)
 {
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
     {
         NodeSimpleObjectConnector18* typedNode = node->NodeCast<NodeSimpleObjectConnector18>();
-        auto node_name = common::ResourceNameToString(typedNode->GetBlockData().object);
-        NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, node_name);
+        auto nodeName = common::ResourceNameToString(typedNode->GetBlockData().object);
+        NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, nodeName);
+        if (!newChildNode)
+        {
+            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in common...";
+            newChildNode = GetTopLevelNodeByName(common.rootNodes, nodeName);
+        }
         if (newChildNode)
         {
             NodeList newChildNodes;
@@ -526,24 +531,23 @@ static void ProcessObjectConnectors(const B3dTree& tree, const NodePtr& node)
         }
         else
         {
-            //OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + node_name + "\"");
-            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + node_name + "\"";
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
         }
     }
     else
     {
         for (const auto& child : node->GetChildNodeList())
         {
-            ProcessObjectConnectors(tree, child);
+            ProcessObjectConnectors(tree, common, child);
         }
     }
 }
 
-static void ProcessObjectConnectors(B3dTree& tree)
+static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        ProcessObjectConnectors(tree, node);
+        ProcessObjectConnectors(tree, common, node);
     }
 }
 
@@ -573,16 +577,21 @@ static void SkipTopLevelNodes(B3dTree& tree)
 
 void Transform(B3dForest& forest)
 {
-    for (auto& tree : forest)
+    MergeFacesWithVertices(forest.common);
+    ProcessObjectConnectors(forest.common, forest.common);
+
+    for (auto& tree : forest.forest)
     {
         MergeFacesWithVertices(tree);
-        ProcessObjectConnectors(tree);
+        ProcessObjectConnectors(forest.common, tree);
     }
 }
 
+
 void Optimize(B3dForest& forest)
 {
-    for (auto& tree : forest)
+    // TODO: нужно ли оптимизировать common?  ажетс€ что нет, так как на этапе трансформации мы из common надергаем узлы в другие деревь€.
+    for (auto& tree : forest.forest)
     {
         SkipTopLevelNodes(tree);
         FilterUnusedNodes(tree);

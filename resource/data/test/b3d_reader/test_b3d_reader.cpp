@@ -7,29 +7,32 @@
 
 using namespace d2_hack::resource::data::b3d;
 
-void TestForestEntry(const B3dForest& forest, size_t pos, const std::string & dir, const std::string & id, size_t expectedMaterialCount)
+void TestTree(const B3dTree& tree, const std::string& dir, const std::string& id, size_t expectedMaterialCount)
 {
-    if (pos >= forest.size())
+    if (tree.dir != dir)
     {
-        throw std::runtime_error("Incorrect forest size, expected at least " + std::to_string(pos) + ", got " + std::to_string(forest.size()));
+        throw std::runtime_error("Incorrect tree dir, expected  \"" + dir + "\", got " + tree.dir + "\"");
     }
 
-    const auto& tree = forest[pos];
-
-    if (tree.registryEntry.dir != dir)
+    if (tree.id != id)
     {
-        throw std::runtime_error("Incorrect tree dir, expected  \"" + dir + "\", got " + tree.registryEntry.dir + "\"");
-    }
-
-    if (tree.registryEntry.id != id)
-    {
-        throw std::runtime_error("Incorrect tree id, expected  \"" + id + "\", got " + tree.registryEntry.id + "\"");
+        throw std::runtime_error("Incorrect tree id, expected  \"" + id + "\", got " + tree.id + "\"");
     }
 
     if (tree.materials.size() != expectedMaterialCount)
     {
         throw std::runtime_error("Incorrect tree materials count, expected " + std::to_string(expectedMaterialCount) + ", got " + std::to_string(tree.materials.size()));
     }
+}
+
+void TestForestEntry(const B3dForest& forest, size_t pos, const std::string & dir, const std::string & id, size_t expectedMaterialCount)
+{
+    if (pos >= forest.forest.size())
+    {
+        throw std::runtime_error("Incorrect forest size, expected at least " + std::to_string(pos) + ", got " + std::to_string(forest.forest.size()));
+    }
+
+    TestTree(forest.forest[pos], dir, id, expectedMaterialCount);
 }
 
 
@@ -40,20 +43,21 @@ int main()
         B3dRegistry registry
         {
             D2_ROOT_DIR,
+            "ENV",
             {
-                {"ENV", "aa"},
-                {"ENV", "ab"},
-                {"ENV", "ac"},
-                {"COMMON", "common"},
+                "aa",
+                "ab",
+                "ac",
             }
         };
 
         B3dForest forest = ReadB3d(registry);
 
+        TestTree(forest.common, "COMMON", "common", 171);
+
         TestForestEntry(forest, 0, "ENV", "aa", 114);
         TestForestEntry(forest, 1, "ENV", "ab", 53);
         TestForestEntry(forest, 2, "ENV", "ac", 85);
-        TestForestEntry(forest, 3, "COMMON", "common", 171);
     }
     catch (const std::exception& e)
     {

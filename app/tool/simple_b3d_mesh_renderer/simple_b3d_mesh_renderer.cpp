@@ -61,9 +61,9 @@ void SimpleB3dMeshRenderer::CreateScene()
     transformation::Transform(b3dForest);
     transformation::Optimize(b3dForest);
 
-    for (auto& tree : b3dForest)
+    for (auto& tree : b3dForest.forest)
     {
-        B3dTreeVisitor visitor{tree.registryEntry.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), tree.materials };
+        B3dTreeVisitor visitor{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), tree.materials};
 
         VisitTree(tree, visitor);
     }

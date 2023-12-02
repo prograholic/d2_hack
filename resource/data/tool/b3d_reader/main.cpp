@@ -740,7 +740,8 @@ void PrintOnlyTypes()
     std::set< std::vector<std::uint32_t>> sequences;
 
     B3dForest forest = ReadB3d(SinglePlayerRegistry);
-    for (const auto& tree : forest)
+    PrintOnlyTypes(forest.common, sequences);
+    for (const auto& tree : forest.forest)
     {
         PrintOnlyTypes(tree, sequences);
     }
@@ -828,8 +829,9 @@ int main(int argc, char* argv[])
             B3dRegistry registry
             {
                 D2_ROOT_DIR,
+                dir,
                 {
-                    {dir, id}
+                    id
                 }
             };
 
@@ -844,7 +846,7 @@ int main(int argc, char* argv[])
                 transformation::Optimize(forest);
             }
 
-            for (const auto& tree : forest)
+            for (const auto& tree : forest.forest)
             {
                 TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
                 VisitTree(tree, visitor);

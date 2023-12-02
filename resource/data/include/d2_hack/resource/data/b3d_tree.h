@@ -22,17 +22,12 @@ typedef std::shared_ptr<class Node> NodePtr;
 typedef std::weak_ptr<class Node> WeakNodePtr;
 typedef std::vector<NodePtr> NodeList;
 
-struct B3dRegistryEntry
-{
-    std::string dir;
-    std::string id;
-};
-
-typedef std::vector<B3dRegistryEntry> B3dRegistryEntries;
+typedef std::vector <std::string> B3dRegistryEntries;
 
 struct B3dRegistry
 {
     std::string rootDir;
+    std::string dir;
     B3dRegistryEntries entries;
 };
 
@@ -42,13 +37,17 @@ extern const B3dRegistry SinglePlayerRegistry;
 
 struct B3dTree
 {
-    B3dRegistryEntry registryEntry;
+    std::string dir;
+    std::string id;
     common::Materials materials;
     NodeList rootNodes;
 };
 
-typedef std::vector<B3dTree> B3dForest;
-
+struct B3dForest
+{
+    B3dTree common;
+    std::vector<B3dTree> forest;
+};
 
 class Node
 {
