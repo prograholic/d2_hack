@@ -239,9 +239,10 @@ static void UseHalfChildFromSingleLod(NodePtr node)
             NodeList newChildren = node->GetChildNodeList();
             if (std::all_of(newChildren.begin(), newChildren.end(), predicates::IsVertexNode) && (newChildren.size() >= 2))
             {
-                assert((newChildren.size() % 2) == 0);
-                newChildren.resize(newChildren.size() / 2);
-                node->SetChildNodes(std::move(newChildren));
+                // TODO: некорректно выбираются объекты для LOD - 
+                //assert((newChildren.size() % 2) == 0);
+                //newChildren.resize(newChildren.size() / 2);
+                //node->SetChildNodes(std::move(newChildren));
                 D2_HACK_LOG(UseHalfChildFromSingleLod) << "skip second half of child nodes for " << node->GetName();
             }
         }
@@ -598,7 +599,7 @@ void Optimize(B3dForest& forest)
         SkipLodParametersFor37(tree);
         OptimizeSequence37_10_5(tree);
         UseHalfChildFromSingleLod(tree);
-        // TODO: переделать оптимизацию с LOD-ами
+        // TODO: переделать оптимизацию с LOD-ами, кажется, что все три оптимизации с LOD-ами неправильные.
         UseFirstLod(tree);
         MergeFacesWithSameMaterial(tree);
         RemoveEmptyNodes(tree);
