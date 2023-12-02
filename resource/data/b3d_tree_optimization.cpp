@@ -352,40 +352,9 @@ static FacesVector MergeMeshInfoListForMaterial(const std::vector<common::Simple
     return res;
 }
 
-template <typename FacesVector>
-void MergeFacesWithSameMaterial(FacesVector& faces)
-{
-    std::map<std::uint32_t, std::vector<common::SimpleMeshInfo>> faceMapping;
-    for (const auto& face : faces)
-    {
-        faceMapping[face.materialIndex].push_back(face.meshInfo);
-    }
 
-    FacesVector tmp;
-    for (auto faceEntry : faceMapping)
-    {
-        auto merged = MergeMeshInfoListForMaterial<FacesVector>(faceEntry.second, faceEntry.first);
-        tmp.insert(tmp.end(), merged.begin(), merged.end());
-    }
-
-    faces = std::move(tmp);
-}
-
-template <typename BlockType>
-void DoMerge(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
-{
-    assert(parentMeshInfo);
-    assert(parentMeshInfo->indices.empty());
-
-    for (auto& mesh : blockData.faces)
-    {
-        mesh.meshInfo = PrepareStandaloneMeshInfo(blockData, mesh, *parentMeshInfo);
-    }
-
-    MergeFacesWithSameMaterial(blockData.faces);
-}
-
-static void MergeFacesWithVertices(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
+template <typename Visitor>
+void VisitFaces(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
 {
     if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
     {
@@ -402,30 +371,77 @@ static void MergeFacesWithVertices(NodePtr node, const common::SimpleMeshInfo* p
     else if (node->GetType() == block_data::SimpleFacesBlock8)
     {
         NodeSimpleFaces8* typedNode = node->NodeCast<NodeSimpleFaces8>();
-        DoMerge(typedNode->GetBlockData(), parentMeshInfo);
+        Visitor::Visit(typedNode->GetBlockData(), parentMeshInfo);
     }
     else if (node->GetType() == block_data::SimpleFacesBlock28)
     {
         NodeSimpleFaces28* typedNode = node->NodeCast<NodeSimpleFaces28>();
-        DoMerge(typedNode->GetBlockData(), parentMeshInfo);
+        Visitor::Visit(typedNode->GetBlockData(), parentMeshInfo);
     }
     else if (node->GetType() == block_data::SimpleFacesBlock35)
     {
         NodeSimpleFaces35* typedNode = node->NodeCast<NodeSimpleFaces35>();
-        DoMerge(typedNode->GetBlockData(), parentMeshInfo);
+        Visitor::Visit(typedNode->GetBlockData(), parentMeshInfo);
     }
 
     for (const auto& child : node->GetChildNodeList())
     {
-        MergeFacesWithVertices(child, parentMeshInfo);
+        VisitFaces<Visitor>(child, parentMeshInfo);
     }
 }
+
+struct PrepareStandaloneMeshInfoVisitor
+{
+    template <typename BlockType>
+    static void Visit(BlockType& blockData, const common::SimpleMeshInfo* parentMeshInfo)
+    {
+        assert(parentMeshInfo);
+        assert(parentMeshInfo->indices.empty());
+
+        for (auto& mesh : blockData.faces)
+        {
+            mesh.meshInfo = PrepareStandaloneMeshInfo(blockData, mesh, *parentMeshInfo);
+        }
+    }
+
+};
 
 static void MergeFacesWithVertices(const B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        MergeFacesWithVertices(node, nullptr);
+        VisitFaces<PrepareStandaloneMeshInfoVisitor>(node, nullptr);
+    }
+}
+
+struct MergeFacesWithSameMaterialVisitor
+{
+    template <typename BlockType>
+    static void Visit(BlockType& blockData, const common::SimpleMeshInfo* /* parentMeshInfo */)
+    {
+        std::map<std::uint32_t, std::vector<common::SimpleMeshInfo>> faceMapping;
+        for (const auto& face : blockData.faces)
+        {
+            faceMapping[face.materialIndex].push_back(face.meshInfo);
+        }
+
+        decltype(blockData.faces) tmp;
+        for (auto faceEntry : faceMapping)
+        {
+            auto merged = MergeMeshInfoListForMaterial<decltype(blockData.faces)>(faceEntry.second, faceEntry.first);
+            tmp.insert(tmp.end(), merged.begin(), merged.end());
+        }
+
+        blockData.faces = std::move(tmp);
+    }
+
+};
+
+static void MergeFacesWithSameMaterial(const B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        VisitFaces<MergeFacesWithSameMaterialVisitor>(node, nullptr);
     }
 }
 
@@ -542,8 +558,6 @@ static void SkipTopLevelNodes(B3dTree& tree)
 
 void Transform(B3dTree& tree)
 {
-    /// TODO: Это не совсем оптимизация - без этого вызова вообще ни один объект на сцене не будет виден
-    /// Нужно разбить на две части - создание объектов, и последующая оптимизация
     MergeFacesWithVertices(tree);
     ProcessObjectConnectors(tree);
 }
@@ -557,6 +571,7 @@ void Optimize(B3dTree& tree)
     UseHalfChildFromSingleLod(tree);
     // TODO: переделать оптимизацию с LOD-ами
     UseFirstLod(tree);
+    MergeFacesWithSameMaterial(tree);
     RemoveEmptyNodes(tree);
 }
 

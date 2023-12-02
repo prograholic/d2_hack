@@ -463,6 +463,7 @@ struct SimplePortal30
 
 /**
  * Освещение, не разбирался детально.
+ * TODO: разобраться с освещением
  */
 struct GroupLightingObjects33
 {
