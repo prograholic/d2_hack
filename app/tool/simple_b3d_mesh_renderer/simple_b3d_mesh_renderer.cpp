@@ -19,6 +19,27 @@ namespace app
 
 using namespace resource::data::b3d;
 
+static void VisitNode(const NodePtr& node, B3dTreeVisitor& visitor)
+{
+    node->Visit(visitor, VisitMode::PreOrder);
+
+    const auto& children = node->GetChildNodeList();
+    for (auto child : children)
+    {
+        VisitNode(child, visitor);
+    }
+
+    node->Visit(visitor, VisitMode::PostOrder);
+}
+
+static void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
+{
+    for (auto node : tree.rootNodes)
+    {
+        VisitNode(node, visitor);
+    }
+}
+
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseApplication()
 {
@@ -34,102 +55,20 @@ void SimpleB3dMeshRenderer::CreateScene()
     lightSceneNode->attachObject(light);
     lightSceneNode->setPosition(20.0f, 80.0f, 150.0f);
 
-
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-    LoadB3d("COMMON", "COMMON", b3dSceneNode);
+    B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
+    transformation::Transform(b3dForest);
+    transformation::Optimize(b3dForest);
 
-#if 0
-    LoadB3d("ENV", "aa", b3dSceneNode);
-    LoadB3d("ENV", "ab", b3dSceneNode);
-    LoadB3d("ENV", "ac", b3dSceneNode);
-    LoadB3d("ENV", "ad", b3dSceneNode);
-#endif //0
-    LoadB3d("ENV", "ae", b3dSceneNode);
-#if 0
-    LoadB3d("ENV", "af", b3dSceneNode);
-    LoadB3d("ENV", "ag", b3dSceneNode);
-    LoadB3d("ENV", "ah", b3dSceneNode);
-    LoadB3d("ENV", "aj", b3dSceneNode);
-    LoadB3d("ENV", "ak", b3dSceneNode);
-    LoadB3d("ENV", "al", b3dSceneNode);
-    LoadB3d("ENV", "am", b3dSceneNode);
-    LoadB3d("ENV", "ap", b3dSceneNode);
-    LoadB3d("ENV", "aq", b3dSceneNode);
-    LoadB3d("ENV", "ar", b3dSceneNode);
-    LoadB3d("ENV", "as", b3dSceneNode);
-    LoadB3d("ENV", "at", b3dSceneNode);
-    LoadB3d("ENV", "au", b3dSceneNode);
-    LoadB3d("ENV", "av", b3dSceneNode);
-    LoadB3d("ENV", "aw", b3dSceneNode);
-    LoadB3d("ENV", "ax", b3dSceneNode);
+    for (auto& tree : b3dForest)
+    {
+        B3dTreeVisitor visitor{tree.registryEntry.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), tree.materials };
 
-    LoadB3d("ENV", "ba", b3dSceneNode);
-    LoadB3d("ENV", "bb", b3dSceneNode);
-    LoadB3d("ENV", "bc", b3dSceneNode);
-    LoadB3d("ENV", "bd", b3dSceneNode);
-    LoadB3d("ENV", "be", b3dSceneNode);
-    LoadB3d("ENV", "bf", b3dSceneNode);
-    LoadB3d("ENV", "bg", b3dSceneNode);
-
-    LoadB3d("ENV", "ca", b3dSceneNode);
-    LoadB3d("ENV", "cb", b3dSceneNode);
-    LoadB3d("ENV", "cc", b3dSceneNode);
-    LoadB3d("ENV", "ce", b3dSceneNode);
-    LoadB3d("ENV", "cf", b3dSceneNode);
-    LoadB3d("ENV", "ch", b3dSceneNode);
-
-    LoadB3d("ENV", "da", b3dSceneNode);
-    LoadB3d("ENV", "db", b3dSceneNode);
-    LoadB3d("ENV", "dc", b3dSceneNode);
-    LoadB3d("ENV", "dq", b3dSceneNode);
-    LoadB3d("ENV", "dr", b3dSceneNode);
-#endif //0
+        VisitTree(tree, visitor);
+    }
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
-}
-
-
-void VisitNode(const NodePtr& node, B3dTreeVisitor& visitor)
-{
-    node->Visit(visitor, VisitMode::PreOrder);
-
-    const auto& children = node->GetChildNodeList();
-    for (auto child : children)
-    {
-        VisitNode(child, visitor);
-    }
-
-    node->Visit(visitor, VisitMode::PostOrder);
-}
-
-void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
-{
-    for (auto node : tree.rootNodes)
-    {
-        VisitNode(node, visitor);
-    }
-}
-
-void SimpleB3dMeshRenderer::LoadB3d(const std::string& subdirectory, const std::string& b3dId, Ogre::SceneNode* b3dSceneNode)
-{
-    std::string fullB3dName = D2_ROOT_DIR "/" + subdirectory + "/" + b3dId + ".b3d";
-    std::ifstream inputFile{fullB3dName, std::ios_base::binary};
-    if (!inputFile)
-    {
-        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
-    }
-
-    Ogre::FileStreamDataStream dataStream(&inputFile, false);
-    B3dReader reader;
-    B3dTree b3dTree = reader.Read(dataStream);
-
-    transformation::Transform(b3dTree);
-    transformation::Optimize(b3dTree);
-    
-    B3dTreeVisitor visitor{b3dId, fullB3dName, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), b3dTree.materials};
-
-    VisitTree(b3dTree, visitor);
 }
 
 

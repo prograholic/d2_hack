@@ -56,13 +56,14 @@ public:
     {
     }
 
-    B3dTree Read()
+    B3dTree Read(const B3dRegistryEntry& registryEntry)
     {
         FileHeader fileHeader;
         ReadFileHeader(fileHeader);
 
         B3dTree res;
 
+        res.registryEntry = registryEntry;
         res.materials = ReadMaterials(fileHeader.materials);
         res.rootNodes = ReadData(fileHeader.data);
 
@@ -1084,11 +1085,25 @@ private:
     }
 };
 
-B3dTree B3dReader::Read(Ogre::DataStream& input)
+B3dForest ReadB3d(const B3dRegistry& registry)
 {
-    B3dReaderImpl reader{input};
-    
-    return reader.Read();
+    B3dForest forest;
+    for (const auto& entry : registry.entries)
+    {
+        const std::string fullB3dName = registry.rootDir + "/" + entry.dir + "/" + entry.id + ".b3d";
+        std::ifstream inputFile{ fullB3dName, std::ios_base::binary };
+        if (!inputFile)
+        {
+            OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
+        }
+
+        Ogre::FileStreamDataStream dataStream(&inputFile, false);
+        B3dReaderImpl reader{ dataStream };
+
+        forest.push_back(reader.Read(entry));
+    }
+
+    return forest;
 }
 
 } // namespace b3d

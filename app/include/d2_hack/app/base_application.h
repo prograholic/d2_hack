@@ -68,62 +68,6 @@ protected:
     void CreateResourceListener();
 
     virtual void CreateScene() = 0;
-
-#if 0    
-
-    virtual ~BaseApplication();
-
-    virtual void go();
-
-    // Ogre::FrameListener
-
-
-protected:
-    virtual bool setup();
-    virtual bool configure();
-    virtual void chooseSceneManager(void);
-    virtual void createCamera(void);
-    virtual void createFrameListener(void);
-    virtual void createScene(void) = 0; // Override me!
-    virtual void destroyScene(void);
-    virtual void createViewports(void);
-    virtual void setupResources(void);
-    virtual void createResourceListener(void);
-    virtual void loadResources(void);
-
-    // OIS::KeyListener
-    virtual bool keyPressed(const OIS::KeyEvent &arg);
-    virtual bool keyReleased(const OIS::KeyEvent &arg);
-    // OIS::MouseListener
-    virtual bool mouseMoved(const OIS::MouseEvent &arg);
-    virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-    virtual bool mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-
-    // Ogre::WindowEventListener
-    //Adjust mouse clipping area
-    virtual void windowResized(Ogre::RenderWindow* rw);
-    //Unattach OIS before window shutdown (very important under Linux)
-    virtual void windowClosed(Ogre::RenderWindow* rw);
-
-
-    Ogre::Root *mRoot;
-    Ogre::Camera* mCamera;
-    Ogre::SceneManager* mSceneMgr;
-    Ogre::RenderWindow* mWindow;
-    Ogre::String mResourcesCfg;
-    Ogre::String mPluginsCfg;
-
-    // OgreBites
-    OgreBites::TrayManager* mTrayMgr;
-    OgreBites::CameraMan* mCameraMan;       // basic camera controller
-    OgreBites::ParamsPanel* mDetailsPanel;     // sample details panel
-    Ogre::OverlaySystem* mOverlaySystem;
-    bool mCursorWasVisible;                    // was cursor visible before dialog appeared
-    bool mShutDown;
-
-
-
-#endif//0
 };
 
 } // namespace app

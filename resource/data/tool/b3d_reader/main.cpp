@@ -727,7 +727,7 @@ void PrintSequences(const std::set< std::vector<std::uint32_t>>& sequences)
     }
 }
 
-void PrintOnlyTypes(std::set< std::vector<std::uint32_t>>& sequences, const B3dTree& tree)
+void PrintOnlyTypes(const B3dTree& tree, std::set< std::vector<std::uint32_t>>& sequences)
 {
     for (auto node : tree.rootNodes)
     {
@@ -735,82 +735,18 @@ void PrintOnlyTypes(std::set< std::vector<std::uint32_t>>& sequences, const B3dT
     }
 }
 
-void PrintOnlyTypes(const std::string& baseDir, const std::string& subDir, const std::string& prefix, std::set< std::vector<std::uint32_t>>& sequences)
-{
-    std::string fileName = baseDir + "/" + subDir + "/" + prefix + ".b3d";
-    std::cout << "processing " << prefix << " ..." << std::endl;
-
-    std::ifstream inputFile(fileName.c_str(), std::ios_base::binary);
-    if (!inputFile)
-    {
-        throw std::runtime_error("failed to open file [" + fileName + "]");
-    }
-
-    B3dReader reader;
-
-    Ogre::FileStreamDataStream dataStream(&inputFile, false);
-
-    B3dTree tree = reader.Read(dataStream);
-
-    transformation::Transform(tree);
-    transformation::Optimize(tree);
-
-    PrintOnlyTypes(sequences, tree);
-}
-
-
-void PrintOnlyTypes(const std::string& dir)
+void PrintOnlyTypes()
 {
     std::set< std::vector<std::uint32_t>> sequences;
 
-    PrintOnlyTypes(dir, "ENV", "aa", sequences);
-    PrintOnlyTypes(dir, "ENV", "ab", sequences);
-    PrintOnlyTypes(dir, "ENV", "ac", sequences);
-    PrintOnlyTypes(dir, "ENV", "ad", sequences);
-    PrintOnlyTypes(dir, "ENV", "ae", sequences);
-    PrintOnlyTypes(dir, "ENV", "af", sequences);
-    PrintOnlyTypes(dir, "ENV", "ag", sequences);
-    PrintOnlyTypes(dir, "ENV", "ah", sequences);
-    PrintOnlyTypes(dir, "ENV", "aj", sequences);
-    PrintOnlyTypes(dir, "ENV", "ak", sequences);
-    PrintOnlyTypes(dir, "ENV", "al", sequences);
-    PrintOnlyTypes(dir, "ENV", "am", sequences);
-    PrintOnlyTypes(dir, "ENV", "ap", sequences);
-    PrintOnlyTypes(dir, "ENV", "aq", sequences);
-    PrintOnlyTypes(dir, "ENV", "ar", sequences);
-    PrintOnlyTypes(dir, "ENV", "as", sequences);
-    PrintOnlyTypes(dir, "ENV", "at", sequences);
-    PrintOnlyTypes(dir, "ENV", "au", sequences);
-    PrintOnlyTypes(dir, "ENV", "av", sequences);
-    PrintOnlyTypes(dir, "ENV", "aw", sequences);
-    PrintOnlyTypes(dir, "ENV", "ax", sequences);
-    PrintOnlyTypes(dir, "ENV", "ba", sequences);
-    PrintOnlyTypes(dir, "ENV", "bb", sequences);
-    PrintOnlyTypes(dir, "ENV", "bc", sequences);
-    PrintOnlyTypes(dir, "ENV", "bd", sequences);
-    PrintOnlyTypes(dir, "ENV", "be", sequences);
-    PrintOnlyTypes(dir, "ENV", "bf", sequences);
-    PrintOnlyTypes(dir, "ENV", "bg", sequences);
-    PrintOnlyTypes(dir, "ENV", "ca", sequences);
-    PrintOnlyTypes(dir, "ENV", "cb", sequences);
-    PrintOnlyTypes(dir, "ENV", "cc", sequences);
-    PrintOnlyTypes(dir, "ENV", "ce", sequences);
-    PrintOnlyTypes(dir, "ENV", "cf", sequences);
-    PrintOnlyTypes(dir, "ENV", "ch", sequences);
-    PrintOnlyTypes(dir, "ENV", "da", sequences);
-    PrintOnlyTypes(dir, "ENV", "db", sequences);
-    PrintOnlyTypes(dir, "ENV", "dc", sequences);
-    PrintOnlyTypes(dir, "ENV", "dq", sequences);
-    PrintOnlyTypes(dir, "ENV", "dr", sequences);
-
-    PrintOnlyTypes(dir, "COMMON", "trucks", sequences);
-
+    B3dForest forest = ReadB3d(SinglePlayerRegistry);
+    for (const auto& tree : forest)
+    {
+        PrintOnlyTypes(tree, sequences);
+    }
 
     PrintSequences(sequences);
 }
-
-
-
 
 
 } // namespace b3d
@@ -827,13 +763,14 @@ void PrintOnlyTypes(const std::string& dir)
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2)
+    if (argc < 3)
     {
-        std::cerr << "usage: " << argv[0] << " <input_file> [--skip_vector_data]" << std::endl;
+        std::cerr << "usage: " << argv[0] << " <dir> <id> [--skip_vector_data]" << std::endl;
         return 1;
     }
 
-    std::string fileName = argv[1];
+    std::string dir = argv[1];
+    std::string id = argv[2];
 
     bool printVectorData = true;
     bool printBoundingSphere = true;
@@ -842,7 +779,7 @@ int main(int argc, char* argv[])
     bool optimize = true;
     bool transform = true;
     bool printOnlyTypes = false;
-    for (int i = 2; i != argc; ++i)
+    for (int i = 3; i != argc; ++i)
     {
         if (argv[i] == std::string("--skip_vector_data"))
         {
@@ -888,33 +825,34 @@ int main(int argc, char* argv[])
 
         if (!printOnlyTypes)
         {
-            std::ifstream inputFile(fileName.c_str(), std::ios_base::binary);
-            if (!inputFile)
+            B3dRegistry registry
             {
-                std::cerr << "failed to open file [" << fileName << "]" << std::endl;
-                return 2;
-            }
+                D2_ROOT_DIR,
+                {
+                    {dir, id}
+                }
+            };
 
-            B3dReader reader;
+            B3dForest forest = ReadB3d(registry);
 
-            Ogre::FileStreamDataStream dataStream(&inputFile, false);
-
-            B3dTree tree = reader.Read(dataStream);
             if (transform)
             {
-                transformation::Transform(tree);
+                transformation::Transform(forest);
             }
             if (optimize)
             {
-                transformation::Optimize(tree);
+                transformation::Optimize(forest);
             }
 
-            TracingVisitor visitor{printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo};
-            VisitTree(tree, visitor);
+            for (const auto& tree : forest)
+            {
+                TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
+                VisitTree(tree, visitor);
+            }
         }
         else
         {
-            PrintOnlyTypes(fileName);
+            PrintOnlyTypes();
         }
     }
     catch (const std::exception& e)

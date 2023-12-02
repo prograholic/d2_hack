@@ -571,23 +571,29 @@ static void SkipTopLevelNodes(B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void Transform(B3dTree& tree)
+void Transform(B3dForest& forest)
 {
-    MergeFacesWithVertices(tree);
-    ProcessObjectConnectors(tree);
+    for (auto& tree : forest)
+    {
+        MergeFacesWithVertices(tree);
+        ProcessObjectConnectors(tree);
+    }
 }
 
-void Optimize(B3dTree& tree)
+void Optimize(B3dForest& forest)
 {
-    SkipTopLevelNodes(tree);
-    FilterUnusedNodes(tree);
-    SkipLodParametersFor37(tree);
-    OptimizeSequence37_10_5(tree);
-    UseHalfChildFromSingleLod(tree);
-    // TODO: переделать оптимизацию с LOD-ами
-    UseFirstLod(tree);
-    MergeFacesWithSameMaterial(tree);
-    RemoveEmptyNodes(tree);
+    for (auto& tree : forest)
+    {
+        SkipTopLevelNodes(tree);
+        FilterUnusedNodes(tree);
+        SkipLodParametersFor37(tree);
+        OptimizeSequence37_10_5(tree);
+        UseHalfChildFromSingleLod(tree);
+        // TODO: переделать оптимизацию с LOD-ами
+        UseFirstLod(tree);
+        MergeFacesWithSameMaterial(tree);
+        RemoveEmptyNodes(tree);
+    }
 }
 
 } // namespace transformation

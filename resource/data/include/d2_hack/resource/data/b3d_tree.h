@@ -18,16 +18,36 @@ namespace data
 namespace b3d
 {
 
-
 typedef std::shared_ptr<class Node> NodePtr;
 typedef std::weak_ptr<class Node> WeakNodePtr;
 typedef std::vector<NodePtr> NodeList;
 
+struct B3dRegistryEntry
+{
+    std::string dir;
+    std::string id;
+};
+
+typedef std::vector<B3dRegistryEntry> B3dRegistryEntries;
+
+struct B3dRegistry
+{
+    std::string rootDir;
+    B3dRegistryEntries entries;
+};
+
+
+extern const B3dRegistry SinglePlayerRegistry;
+
+
 struct B3dTree
 {
+    B3dRegistryEntry registryEntry;
     common::Materials materials;
     NodeList rootNodes;
 };
+
+typedef std::vector<B3dTree> B3dForest;
 
 
 class Node

@@ -31,7 +31,6 @@ class B3dSceneBuilder
 {
 public:
     B3dSceneBuilder(const std::string& b3dId,
-                    const std::string& b3dName,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
                     Ogre::MeshManager* meshManager,
@@ -53,7 +52,6 @@ public:
 
 private:
     std::string m_b3dId;
-    std::string m_b3dName;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;

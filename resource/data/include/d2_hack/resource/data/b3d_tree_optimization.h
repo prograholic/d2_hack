@@ -18,9 +18,9 @@ namespace transformation
  * Делает трансформацию узлов без изменения их количества
  * 
  */
-void Transform(B3dTree& tree);
+void Transform(B3dForest& forest);
 
-void Optimize(B3dTree& tree);
+void Optimize(B3dForest& forest);
 
 } // namespace transformation
 } // namespace b3d

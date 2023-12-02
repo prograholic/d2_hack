@@ -19,12 +19,11 @@ using namespace resource::data::b3d;
 
 
 B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
-                               const std::string& b3dName,
                                Ogre::SceneManager* sceneManager,
                                Ogre::SceneNode* rootNode,
                                Ogre::MeshManager* meshManager,
                                const common::Materials& materials)
-    : B3dSceneBuilder(b3dId, b3dName, sceneManager, rootNode, meshManager, materials)
+    : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager, materials)
 {
 }
 
