@@ -50,8 +50,9 @@ static bool IsVertexNode(NodePtr node)
 {
     static const std::uint32_t vertexNodeTypes[] =
     {
-        block_data::GroupVertexBlock7,
-        block_data::GroupIndexAndTexturesBlock37
+        block_data::GroupVertexDataBlock7,
+        block_data::GroupVertexDataBlock36,
+        block_data::GroupVertexDataBlock37
     };
 
     return IsNodeOfType(node, std::begin(vertexNodeTypes), std::end(vertexNodeTypes));
@@ -126,7 +127,7 @@ static void SkipLodParametersFor37(NodePtr node, bool hasLod)
 
 static void SearchFor37(NodePtr node)
 {
-    if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
+    if (node->GetType() == block_data::GroupVertexDataBlock37)
     {
         SkipLodParametersFor37(node, false);
     }
@@ -182,7 +183,7 @@ static NodeList OptimizeSequence10_5(NodePtr node)
 
 static void OptimizeSequence37_10_5(NodePtr node)
 {
-    if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
+    if (node->GetType() == block_data::GroupVertexDataBlock37)
     {
         NodeList newChildren;
         for (const auto child : node->GetChildNodeList())
@@ -357,15 +358,21 @@ static FacesVector MergeMeshInfoListForMaterial(const std::vector<common::Simple
 template <typename Visitor>
 void VisitFaces(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
 {
-    if (node->GetType() == block_data::GroupIndexAndTexturesBlock37)
+    if (node->GetType() == block_data::GroupVertexDataBlock7)
     {
-        NodeGroupVertexData37* typedNode = node->NodeCast<NodeGroupVertexData37>();
+        NodeGroupVertexData7* typedNode = node->NodeCast<NodeGroupVertexData7>();
 
         parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
     }
-    else if (node->GetType() == block_data::GroupVertexBlock7)
+    else if (node->GetType() == block_data::GroupVertexDataBlock36)
     {
-        NodeGroupVertex7* typedNode = node->NodeCast<NodeGroupVertex7>();
+        NodeGroupVertexData36* typedNode = node->NodeCast<NodeGroupVertexData36>();
+
+        parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
+    }
+    else if (node->GetType() == block_data::GroupVertexDataBlock37)
+    {
+        NodeGroupVertexData37* typedNode = node->NodeCast<NodeGroupVertexData37>();
 
         parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
     }
@@ -519,7 +526,8 @@ static void ProcessObjectConnectors(const B3dTree& tree, const NodePtr& node)
         }
         else
         {
-            OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + node_name + "\"");
+            //OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + node_name + "\"");
+            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + node_name + "\"";
         }
     }
     else

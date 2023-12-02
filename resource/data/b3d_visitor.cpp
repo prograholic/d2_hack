@@ -25,7 +25,7 @@ void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupObje
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupVertex7& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupVertexData7& /* block */, VisitMode /* visitMode */)
 {
 }
 

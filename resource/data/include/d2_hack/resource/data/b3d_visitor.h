@@ -29,7 +29,7 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupObjects5& /* block */, VisitMode /* visitMode */) = 0;
 
-    virtual void Visit(const std::string& /* name */, block_data::GroupVertex7& /* block */, VisitMode /* visitMode */) = 0;
+    virtual void Visit(const std::string& /* name */, block_data::GroupVertexData7& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces8& /* block */, VisitMode /* visitMode */) = 0;
 
@@ -69,7 +69,7 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */) = 0;
 
-    virtual void Visit(const std::string& /* name */, block_data::GroupUnknown36& /* block */, VisitMode /* visitMode */) = 0;
+    virtual void Visit(const std::string& /* name */, block_data::GroupVertexData36& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */) = 0;
 
@@ -93,7 +93,7 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupObjects5& /* block */, VisitMode /* visitMode */) override;
 
-    virtual void Visit(const std::string& /* name */, block_data::GroupVertex7& /* block */, VisitMode /* visitMode */) override;
+    virtual void Visit(const std::string& /* name */, block_data::GroupVertexData7& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces8& /* block */, VisitMode /* visitMode */) override;
 
@@ -132,6 +132,8 @@ public:
     virtual void Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */) override;
+
+    virtual void Visit(const std::string& /* name */, block_data::GroupVertexData36& /* block */, VisitMode /* visitMode */) override;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */) override;
 

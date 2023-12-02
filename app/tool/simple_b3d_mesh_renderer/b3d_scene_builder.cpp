@@ -126,29 +126,9 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
     }
 }
 
-void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConnector1& block, VisitMode visitMode)
+void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConnector1& /* block */, VisitMode /* visitMode */)
 {
-    if (visitMode == VisitMode::PreOrder)
-    {
-        const std::string cloneName = GetNameImpl(common::ResourceNameToString(block.object) + "_clone", "scene_node", true);
-
-        Ogre::SceneNode* newSceneNode = m_sceneManager->createSceneNode(cloneName);
-
-        Ogre::SceneNode* parentSceneNode = m_sceneNodes.top();
-        parentSceneNode->addChild(newSceneNode);
-        m_sceneNodes.push(newSceneNode);
-
-        auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
-        for (const auto& transform : transformList)
-        {
-            newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
-            newSceneNode->translate(transform.position);
-        }
-    }
-    else
-    {
-        m_sceneNodes.pop();
-    }
+    B3D_NOT_IMPLEMENTED();
 }
 
 Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, VisitMode visitMode)

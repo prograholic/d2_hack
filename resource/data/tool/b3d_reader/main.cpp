@@ -103,7 +103,7 @@ public:
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupVertex7& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupVertexData7& block, VisitMode /* visitMode */) override
     {
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
@@ -334,16 +334,14 @@ public:
         PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupUnknown36& block, VisitMode /* visitMode */) override
+    virtual void Visit(const std::string& name, block_data::GroupVertexData36& block, VisitMode /* visitMode */) override
     {
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
         GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
         GetStream(1) << "unknown0: " << ToString(block.unknown0.data(), block.unknown0.data() + block.unknown0.size()) << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
-        PrintVectorData(block.unknownType2, "unknownType2");
-        PrintVectorData(block.unknownType3, "unknownType3");
-        //TODO: нужно ли печатать закрывающую скобку?
+        PrintData(block.meshInfo, 1);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
@@ -500,22 +498,6 @@ private:
         {
             GetStream(adjustOffset + 1) << "//..." << std::endl;
         }
-        GetStream(adjustOffset) << "}" << std::endl;
-    }
-
-    void PrintData(const block_data::GroupUnknown36::UnknownType2& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "GroupUnknown36::UnknownType2" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "unknown: {" << data.unknown[0] << ", " << data.unknown[1] << ", " << data.unknown[2] << ", " << data.unknown[3] << ", " << data.unknown[4] << ", " << data.unknown[5] << ", " << data.unknown[6] << ", " << data.unknown[7] << "}" << std::endl;
-        GetStream(adjustOffset) << "}" << std::endl;
-    }
-
-    void PrintData(const block_data::GroupUnknown36::UnknownType3& data, int adjustOffset)
-    {
-        GetStream(adjustOffset) << "GroupUnknown36::UnknownType3" << std::endl;
-        GetStream(adjustOffset) << "{" << std::endl;
-        GetStream(adjustOffset + 1) << "unknown: {" << data.unknown[0] << ", " << data.unknown[1] << ", " << data.unknown[2] << ", " << data.unknown[3] << ", " << data.unknown[4] << ", " << data.unknown[5] << "}" << std::endl;
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
@@ -858,6 +840,7 @@ int main(int argc, char* argv[])
     bool printFaceInfo = true;
     bool printMeshInfo = true;
     bool optimize = true;
+    bool transform = true;
     bool printOnlyTypes = false;
     for (int i = 2; i != argc; ++i)
     {
@@ -880,6 +863,10 @@ int main(int argc, char* argv[])
         else if (argv[i] == std::string("--skip_optimization"))
         {
             optimize = false;
+        }
+        else if (argv[i] == std::string("--skip_transformation"))
+        {
+            transform = false;
         }
         else if (argv[i] == std::string("--print_only_types"))
         {
@@ -913,7 +900,10 @@ int main(int argc, char* argv[])
             Ogre::FileStreamDataStream dataStream(&inputFile, false);
 
             B3dTree tree = reader.Read(dataStream);
-            transformation::Transform(tree);
+            if (transform)
+            {
+                transformation::Transform(tree);
+            }
             if (optimize)
             {
                 transformation::Optimize(tree);

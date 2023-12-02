@@ -36,7 +36,7 @@ static const std::uint32_t SimpleObjectConnectorBlock1 = 1;
 static const std::uint32_t GroupUnknownBlock2 = 2;
 static const std::uint32_t GroupRoadInfraObjectsBlock4 = 4;
 static const std::uint32_t GroupObjectsBlock5 = 5;
-static const std::uint32_t GroupVertexBlock7 = 7;
+static const std::uint32_t GroupVertexDataBlock7 = 7;
 static const std::uint32_t SimpleFacesBlock8 = 8;
 static const std::uint32_t GroupTriggerBlock9 = 9;
 static const std::uint32_t GroupLodParametersBlock10 = 10;
@@ -56,8 +56,8 @@ static const std::uint32_t SimplePortalBlock30 = 30;
 static const std::uint32_t GroupLightingObjectBlock33 = 33;
 static const std::uint32_t SimpleUnknownBlock34 = 34;
 static const std::uint32_t SimpleFacesBlock35 = 35;
-static const std::uint32_t GroupUnknownBlock36 = 36;
-static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
+static const std::uint32_t GroupVertexDataBlock36 = 36;
+static const std::uint32_t GroupVertexDataBlock37 = 37;
 static const std::uint32_t GroupUnknownBlock39 = 39;
 static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
@@ -150,14 +150,14 @@ struct GroupObjects5
 /**
  * Описание графического объекта.
  *
- * TODO - в чем отличие от GroupVertex37?
+ * TODO - в чем отличие от GroupVertexData37?
  *     Гипотеза - тут Face8 не только индексные, но еще и переопределяют текстурные координаты
- *     Возможно ли свести к GroupVertex37?
+ *     Возможно ли свести к GroupVertexData37?
  */
-struct GroupVertex7
+struct GroupVertexData7
 {
-    static constexpr auto Value = GroupVertexBlock7;
-    static constexpr char Name[] = "GroupVertex7";
+    static constexpr auto Value = GroupVertexDataBlock7;
+    static constexpr char Name[] = "GroupVertexData7";
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -635,33 +635,19 @@ struct SimpleFaces35
     Face35List faces;
 };
 
-struct GroupUnknown36
+struct GroupVertexData36
 {
-    static constexpr auto Value = GroupUnknownBlock36;
-    static constexpr char Name[] = "GroupUnknown36";
+    static constexpr auto Value = GroupVertexDataBlock36;
+    static constexpr char Name[] = "GroupVertexData36";
 
-    static const std::uint32_t Type2 = 2;
-    static const std::uint32_t Type3 = 3;
-
-    struct UnknownType2
-    {
-        std::array<std::uint32_t, 8> unknown;
-    };
-
-    struct UnknownType3
-    {
-        std::array<Ogre::Real, 6> unknown;
-    };
-
-    using UnknownType2List = std::vector<UnknownType2>;
-    using UnknownType3List = std::vector<UnknownType3>;
+    static const std::uint32_t Vertex2 = 2;
+    static const std::uint32_t Vertex3 = 3;
 
     common::BoundingSphere boundingSphere;
 
     std::array<std::uint8_t, 80> unknown0;
     std::uint32_t type;
-    UnknownType2List unknownType2;
-    UnknownType3List unknownType3;
+    common::SimpleMeshInfo meshInfo;
 };
 
 
@@ -700,7 +686,7 @@ struct GroupUnknown36
  */
 struct GroupVertexData37
 {
-    static constexpr auto Value = GroupIndexAndTexturesBlock37;
+    static constexpr auto Value = GroupVertexDataBlock37;
     static constexpr char Name[] = "GroupVertexData37";
 
     static const std::uint32_t Vertex2 = 2;

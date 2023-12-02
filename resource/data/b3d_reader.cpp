@@ -191,7 +191,7 @@ private:
         {
             return ReadBlockData5(blockHeader);
         }
-        else if (blockHeader.type == block_data::GroupVertexBlock7)
+        else if (blockHeader.type == block_data::GroupVertexDataBlock7)
         {
             return ReadBlockData7(blockHeader);
         }
@@ -271,11 +271,11 @@ private:
         {
             return ReadBlockData35(blockHeader);
         }
-        else if (blockHeader.type == block_data::GroupUnknownBlock36)
+        else if (blockHeader.type == block_data::GroupVertexDataBlock36)
         {
             return ReadBlockData36(blockHeader);
         }
-        else if (blockHeader.type == block_data::GroupIndexAndTexturesBlock37)
+        else if (blockHeader.type == block_data::GroupVertexDataBlock37)
         {
             return ReadBlockData37(blockHeader);
         }
@@ -421,7 +421,7 @@ private:
 
     NodePtr ReadBlockData7(const block_data::BlockHeader& blockHeader)
     {
-        block_data::GroupVertex7 block;
+        block_data::GroupVertexData7 block;
 
         block.boundingSphere = ReadBoundingSphere();
         ReadBytes(block.name.data(), block.name.size());
@@ -436,7 +436,7 @@ private:
             block.meshInfo.texCoords.push_back(texCoord);
         }
 
-        NodePtr res = std::make_shared<NodeGroupVertex7>(blockHeader, block);
+        NodePtr res = std::make_shared<NodeGroupVertexData7>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -945,25 +945,34 @@ private:
 
     NodePtr ReadBlockData36(const block_data::BlockHeader& blockHeader)
     {
-        block_data::GroupUnknown36 block;
+        block_data::GroupVertexData36 block;
 
         ReadBytes(block.unknown0.data(), block.unknown0.size());
         block.type = ReadUint32();
         const std::uint32_t count = ReadUint32();
-        if (block.type == block_data::GroupUnknown36::Type2)
+        if (block.type == block_data::GroupVertexData36::Vertex2)
         {
-            ReadCount(block.unknownType2, count);
+            for (std::uint32_t i = 0; i != count; ++i)
+            {
+                block.meshInfo.positions.push_back(ReadVector3());
+                block.meshInfo.texCoords.push_back(ReadVector2());
+                block.meshInfo.normals.push_back(ReadVector3());
+            }
         }
-        else if (block.type == block_data::GroupUnknown36::Type3)
+        else if (block.type == block_data::GroupVertexData36::Vertex3)
         {
-            ReadCount(block.unknownType3, count);
+            for (std::uint32_t i = 0; i != count; ++i)
+            {
+                block.meshInfo.positions.push_back(ReadVector3());
+                block.meshInfo.normals.push_back(ReadVector3());
+            }
         }
         else
         {
             ThrowError("Unknown type " + std::to_string(block.type), "B3dReaderImpl::ReadBlockData36");
         }
 
-        NodePtr res = std::make_shared<NodeGroupUnknown36>(blockHeader, block);
+        NodePtr res = std::make_shared<NodeGroupVertexData36>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
