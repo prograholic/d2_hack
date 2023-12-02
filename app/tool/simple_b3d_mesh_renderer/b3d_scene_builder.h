@@ -45,6 +45,8 @@ public:
 
     void ProcessObjectConnector(const resource::data::b3d::block_data::SimpleObjectConnector18& block, resource::data::b3d::VisitMode visitMode);
 
+    void ProcessObjectConnector(const resource::data::b3d::block_data::SimpleObjectConnector1& block, resource::data::b3d::VisitMode visitMode);
+
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
     void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);

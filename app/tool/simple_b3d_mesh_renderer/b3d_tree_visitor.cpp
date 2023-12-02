@@ -33,6 +33,11 @@ void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::Empty0& /*
     // no need to implement
 }
 
+void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleObjectConnector1& block, VisitMode visitMode)
+{
+    ProcessObjectConnector(block, visitMode);
+}
+
 void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();

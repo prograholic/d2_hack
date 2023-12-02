@@ -175,6 +175,10 @@ private:
         {
             return ReadBlockData0(blockHeader);
         }
+        else if (blockHeader.type == block_data::SimpleObjectConnectorBlock1)
+        {
+            return ReadBlockData1(blockHeader);
+        }
         else if (blockHeader.type == block_data::GroupUnknownBlock2)
         {
             return ReadBlockData2(blockHeader);
@@ -356,6 +360,16 @@ private:
         ReadBytes(block.emptyData1, sizeof(block.emptyData1));
 
         return std::make_shared<NodeEmpty0>(blockHeader, block);
+    }
+
+    NodePtr ReadBlockData1(const block_data::BlockHeader& blockHeader)
+    {
+        block_data::SimpleObjectConnector1 block;
+
+        ReadBytes(block.space.data(), block.space.size());
+        ReadBytes(block.object.data(), block.object.size());
+
+        return std::make_shared<NodeSimpleObjectConnector1>(blockHeader, block);
     }
 
     NodePtr ReadBlockData2(const block_data::BlockHeader& blockHeader)

@@ -21,6 +21,8 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::Empty0& /* block */, VisitMode /* visitMode */) = 0;
 
+    virtual void Visit(const std::string& /* name */, block_data::SimpleObjectConnector1& /* block */, VisitMode /* visitMode */) = 0;
+
     virtual void Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(const std::string& /* name */, block_data::GroupRoadInfraObjects4& /* block */, VisitMode /* visitMode */) = 0;

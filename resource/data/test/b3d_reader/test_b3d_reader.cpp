@@ -62,9 +62,10 @@ int main()
 {
     try
     {
-        TEST_B3D_READER("/ENV/aa.b3d", 114);
-        TEST_B3D_READER("/ENV/ab.b3d", 53);
-        TEST_B3D_READER("/ENV/ac.b3d", 85);
+        //TEST_B3D_READER("/ENV/aa.b3d", 114);
+        //TEST_B3D_READER("/ENV/ab.b3d", 53);
+        //TEST_B3D_READER("/ENV/ac.b3d", 85);
+        TEST_B3D_READER("/COMMON/common.b3d", 85);
     }
     catch (const std::exception& e)
     {

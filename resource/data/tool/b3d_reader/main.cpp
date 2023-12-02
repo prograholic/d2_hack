@@ -69,6 +69,14 @@ public:
         GetStream(1) << "emptyData1: " << ToString(std::begin(block.emptyData1), std::end(block.emptyData1)) << std::endl;
     }
 
+    virtual void Visit(const std::string& name, block_data::SimpleObjectConnector1& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
+        GetStream(1) << "object: " << ToString(block.object) << std::endl;
+    }
+
     virtual void Visit(const std::string& name, block_data::GroupUnknown2& block, VisitMode /* visitMode */) override
     {
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;

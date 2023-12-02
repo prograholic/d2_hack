@@ -37,11 +37,16 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
+    LoadB3d("COMMON", "COMMON", b3dSceneNode);
+
+#if 0
     LoadB3d("ENV", "aa", b3dSceneNode);
     LoadB3d("ENV", "ab", b3dSceneNode);
     LoadB3d("ENV", "ac", b3dSceneNode);
     LoadB3d("ENV", "ad", b3dSceneNode);
+#endif //0
     LoadB3d("ENV", "ae", b3dSceneNode);
+#if 0
     LoadB3d("ENV", "af", b3dSceneNode);
     LoadB3d("ENV", "ag", b3dSceneNode);
     LoadB3d("ENV", "ah", b3dSceneNode);
@@ -79,6 +84,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     LoadB3d("ENV", "dc", b3dSceneNode);
     LoadB3d("ENV", "dq", b3dSceneNode);
     LoadB3d("ENV", "dr", b3dSceneNode);
+#endif //0
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));
 }
@@ -171,7 +177,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "ap_AirportVyshka_clone_scene_node_17";
+    const char* node_name = "ae_show_ae_006_scene_node";
 
     if (evt.keysym.sym == '1')
     {

@@ -46,7 +46,7 @@ public:
 
     virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
-    virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
+    //virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
 
     virtual std::string GetTypeName() const = 0;
 
@@ -92,10 +92,10 @@ public:
         visitor.Visit(GetName(), m_block, visitMode);
     }
 
-    virtual const common::BoundingSphere& GetBoundingSphere() const override
-    {
-        return m_block.boundingSphere;
-    }
+    //virtual const common::BoundingSphere& GetBoundingSphere() const override
+    //{
+    //    return m_block.boundingSphere;
+    //}
 
     virtual std::string GetTypeName() const override
     {
@@ -118,6 +118,7 @@ private:
 
 
 using NodeEmpty0 = NodeWithData<block_data::Empty0>;
+using NodeSimpleObjectConnector1 = NodeWithData<block_data::SimpleObjectConnector1>;
 using NodeGroupUnknown2 = NodeWithData<block_data::GroupUnknown2>;
 using NodeGroupRoadInfraObjects4 = NodeWithData<block_data::GroupRoadInfraObjects4>;
 using NodeGroupObjects5 = NodeWithData<block_data::GroupObjects5>;

@@ -23,6 +23,8 @@ public:
 
     virtual void Visit(const std::string& name, resource::data::b3d::block_data::Empty0& block, resource::data::b3d::VisitMode visitMode) override;
 
+    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleObjectConnector1& block, resource::data::b3d::VisitMode visitMode) override;
+
     virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupUnknown2& block, resource::data::b3d::VisitMode visitMode) override;
 
     virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupRoadInfraObjects4& block, resource::data::b3d::VisitMode visitMode) override;

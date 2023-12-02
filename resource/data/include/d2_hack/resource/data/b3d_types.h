@@ -32,6 +32,7 @@ namespace block_data
 {
 
 static const std::uint32_t EmptyBlock0 = 0;
+static const std::uint32_t SimpleObjectConnectorBlock1 = 1;
 static const std::uint32_t GroupUnknownBlock2 = 2;
 static const std::uint32_t GroupRoadInfraObjectsBlock4 = 4;
 static const std::uint32_t GroupObjectsBlock5 = 5;
@@ -68,6 +69,9 @@ struct BlockHeader
 };
 
 
+
+
+
 /**
  * TODO - разобраться, что это.
  *
@@ -86,6 +90,15 @@ struct Empty0
     std::uint8_t emptyData0[EmptyDataSize0];
     Ogre::Real unknown;
     std::uint8_t emptyData1[EmptyDataSize1];
+};
+
+struct SimpleObjectConnector1
+{
+    static constexpr auto Value = SimpleObjectConnectorBlock1;
+    static constexpr char Name[] = "SimpleObjectConnector1";
+
+    common::ResourceName space;
+    common::ResourceName object;
 };
 
 struct GroupUnknown2
@@ -314,6 +327,8 @@ struct SimpleObjectConnector18
     common::ResourceName space;
     common::ResourceName object;
 };
+
+
 
 struct GroupObjects19
 {

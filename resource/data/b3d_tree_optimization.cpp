@@ -138,7 +138,7 @@ static void SearchFor37(NodePtr node)
     }
 }
 
-static void SkipLodParametersFor37(B3dTree& tree)
+ void SkipLodParametersFor37(B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
@@ -508,12 +508,17 @@ static void ProcessObjectConnectors(const B3dTree& tree, const NodePtr& node)
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
     {
         NodeSimpleObjectConnector18* typedNode = node->NodeCast<NodeSimpleObjectConnector18>();
-        NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, common::ResourceNameToString(typedNode->GetBlockData().object));
+        auto node_name = common::ResourceNameToString(typedNode->GetBlockData().object);
+        NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, node_name);
         if (newChildNode)
         {
             NodeList newChildNodes;
             newChildNodes.push_back(newChildNode);
             typedNode->SetChildNodes(std::move(newChildNodes));
+        }
+        else
+        {
+            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" << node_name << "\"";
         }
     }
     else
@@ -544,6 +549,7 @@ static void SkipTopLevelNodes(B3dTree& tree)
             /**
              * На верхнем уровне эти узлы не нужны,
              * они должны быть прицеплены к соотв. объектам с помощью SimpleObjectConnector18
+             * с помощью ProcessObjectConnectors
              */
             continue;
         }
