@@ -73,6 +73,8 @@ public:
 
     virtual void Visit(const std::string& /* name */, block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */) = 0;
 
+    virtual void Visit(const std::string& /* name */, block_data::GroupUnknown39& /* block */, VisitMode /* visitMode */) = 0;
+
     virtual void Visit(const std::string& /* name */, block_data::SimpleGeneratedObjects40& /* block */, VisitMode /* visitMode */) = 0;
 };
 

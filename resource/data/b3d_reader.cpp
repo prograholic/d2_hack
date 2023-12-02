@@ -279,6 +279,10 @@ private:
         {
             return ReadBlockData37(blockHeader);
         }
+        else if (blockHeader.type == block_data::GroupUnknownBlock39)
+        {
+        return ReadBlockData39(blockHeader);
+        }
         else if (blockHeader.type == block_data::SimpleGeneratedObjectsBlock40)
         {
             return ReadBlockData40(blockHeader);
@@ -1040,6 +1044,16 @@ private:
         DispatchVertexData37(block);
 
         NodePtr res = std::make_shared<NodeGroupVertexData37>(blockHeader, block);
+        return ReadNestedBlocks(res);
+    }
+
+    NodePtr ReadBlockData39(const block_data::BlockHeader& blockHeader)
+    {
+        block_data::GroupUnknown39 block;
+
+        ReadBytes(block.unknown.data(), block.unknown.size());
+
+        NodePtr res = std::make_shared<NodeGroupUnknown39>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 

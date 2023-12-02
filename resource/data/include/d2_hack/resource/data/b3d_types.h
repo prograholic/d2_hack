@@ -58,6 +58,7 @@ static const std::uint32_t SimpleUnknownBlock34 = 34;
 static const std::uint32_t SimpleFacesBlock35 = 35;
 static const std::uint32_t GroupUnknownBlock36 = 36;
 static const std::uint32_t GroupIndexAndTexturesBlock37 = 37;
+static const std::uint32_t GroupUnknownBlock39 = 39;
 static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
 static const std::uint32_t MaxBlockId = 40;
@@ -115,7 +116,7 @@ struct GroupUnknown2
 
 /**
  * Контейнер для объектов
- * 
+ *
  * Скорее всего тут есть какая-то классификация типов объектов, по ощущениям не влияет на отрисовку
  */
 struct GroupRoadInfraObjects4
@@ -131,9 +132,9 @@ struct GroupRoadInfraObjects4
 
 /**
  * Контейнер для объектов
- * 
+ *
  * Скорее всего тут есть какая-то классификация типов объектов, по ощущениям не влияет на отрисовку
- * 
+ *
  * TODO - разобраться, для чего нужны разные типы контейнеров для объектов
  */
 struct GroupObjects5
@@ -148,7 +149,7 @@ struct GroupObjects5
 
 /**
  * Описание графического объекта.
- * 
+ *
  * TODO - в чем отличие от GroupVertex37?
  *     Гипотеза - тут Face8 не только индексные, но еще и переопределяют текстурные координаты
  *     Возможно ли свести к GroupVertex37?
@@ -238,7 +239,7 @@ struct GroupTrigger9
 
 /**
  * Группа объектов, группирует по Level Of Details.
- * 
+ *
  * Алгоритм группировки неясен, вероятно, поле distanceToPlayer должно влиять на выбор нужного LoD
  */
 struct GroupLodParameters10
@@ -383,7 +384,7 @@ struct SimpleVolumeCollision23
 
 /**
  * Описывает трансформацию узла, клиент использует соотв. трансформацию по имени.
- * 
+ *
  * Могут быть вложенные трансформации (TODO - уточнить, как именно они применяются)
  */
 struct GroupTransformMatrix24
@@ -518,10 +519,10 @@ struct SimpleUnknown34
 
 /**
  * Описание одной грани
- * 
+ *
  * Содержит индекс материала
  *   скорее всего, значение из этой структуры должно переопределять значение из SimpleFaces35
- * 
+ *
  * В зависимости от типа верхнеуровневой структуры (SimpleFaces35::type) и текущего поля type имеет разное содержимое:
  * - SimpleFaces35::type == SimpleFaces35::Unknown1
  *     Indices0
@@ -530,16 +531,16 @@ struct SimpleUnknown34
  *     Unknown2
  *       индекс (i32)
  *       текстурные координаты (V2)
- * 
+ *
  *     UnknownType48
  *       индекс (i32)
  *       нормаль (V3)
- * 
+ *
  *     UnknownType50
  *       индекс (i32)
  *       текстурные координаты (V2)
  *       нормаль (V3)
- * 
+ *
  * - SimpleFaces35::type == SimpleFaces35::Unknown2
  *     Indices1
  *       индекс (i32)
@@ -551,7 +552,7 @@ struct SimpleUnknown34
  *     UnknownType49
  *       индекс (i32)
  *       unknown49 (F32) <-- TODO хз, что это
- * 
+ *
  *     UnknownType51
  *       индекс (i32)
  *       нормаль (V3)
@@ -594,7 +595,7 @@ struct Face35
     Ogre::Real unknown0;
     std::uint32_t unknown1;
     std::uint32_t materialIndex;
-    
+
     common::SimpleMeshInfo meshInfo;
     Unknown49List unknown49;
 };
@@ -604,16 +605,16 @@ typedef std::vector<Face35> Face35List;
 
 /**
  * Описание граней графического объекта
- * 
+ *
  * Содержит индекс материала
  * В зависимости от типа, содержит:
- * 
+ *
  * - Unknown1
  *     Пока хз, что это
- * 
+ *
  * - Unknown2
  *     Пока хз, что это
- * 
+ *
  * - IndicesOnly3
  *     Содержит только целочисленные индексы для порядка передачи вертексов
  */
@@ -664,11 +665,11 @@ struct GroupUnknown36
 };
 
 
-/** 
+/**
  * Описание графического объекта.
- * 
+ *
  * Содержит набор координат, нормалей, текстурных координат (возможно, что-то еще)
- * 
+ *
  * Бывает нескольких подтипов:
  * - Vertex2
  *     позиция (V3)
@@ -729,6 +730,16 @@ struct GroupVertexData37
     common::SimpleMeshInfo meshInfo;
     Unknown258Or515List unknown258Or515;
     Unknown514List unknown514;
+};
+
+struct GroupUnknown39
+{
+    static constexpr auto Value = GroupUnknownBlock39;
+    static constexpr char Name[] = "GroupUnknown39";
+
+    common::BoundingSphere boundingSphere;
+
+    std::array<std::uint8_t, 36> unknown;
 };
 
 struct SimpleGeneratedObjects40

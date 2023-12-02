@@ -144,6 +144,7 @@ using NodeSimpleUnknown34 = NodeWithData<block_data::SimpleUnknown34>;
 using NodeSimpleFaces35 = NodeWithData<block_data::SimpleFaces35>;
 using NodeGroupUnknown36 = NodeWithData<block_data::GroupUnknown36>;
 using NodeGroupVertexData37 = NodeWithData<block_data::GroupVertexData37>;
+using NodeGroupUnknown39 = NodeWithData<block_data::GroupUnknown39>;
 using NodeSimpleGeneratedObjects40 = NodeWithData<block_data::SimpleGeneratedObjects40>;
 
 } // namespace b3d

@@ -358,6 +358,14 @@ public:
         PrintVectorData(block.unknown514, "unknown514", 1);
     }
 
+    virtual void Visit(const std::string& name, block_data::GroupUnknown39& block, VisitMode /* visitMode */) override
+    {
+        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "unknown: " << ToString(block.unknown.data(), block.unknown.data() + block.unknown.size()) << std::endl;
+    }
+
     virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
     {
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
