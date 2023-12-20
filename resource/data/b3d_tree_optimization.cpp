@@ -429,6 +429,7 @@ struct MergeFacesWithSameMaterialVisitor
     static void Visit(BlockType& blockData, const common::SimpleMeshInfo* /* parentMeshInfo */)
     {
         std::map<std::uint32_t, std::vector<common::SimpleMeshInfo>> faceMapping;
+
         for (const auto& face : blockData.faces)
         {
             faceMapping[face.materialIndex].push_back(face.meshInfo);
@@ -578,13 +579,13 @@ static void SkipTopLevelNodes(B3dTree& tree)
 
 void Transform(B3dForest& forest)
 {
-    MergeFacesWithVertices(forest.common);
-    ProcessObjectConnectors(forest.common, forest.common);
+    MergeFacesWithVertices(*forest.common);
+    ProcessObjectConnectors(*forest.common, *forest.common);
 
     for (auto& tree : forest.forest)
     {
-        MergeFacesWithVertices(tree);
-        ProcessObjectConnectors(forest.common, tree);
+        MergeFacesWithVertices(*tree);
+        ProcessObjectConnectors(*forest.common, *tree);
     }
 }
 
@@ -594,15 +595,15 @@ void Optimize(B3dForest& forest)
     // TODO: нужно ли оптимизировать common?  ажетс€ что нет, так как на этапе трансформации мы из common надергаем узлы в другие деревь€.
     for (auto& tree : forest.forest)
     {
-        SkipTopLevelNodes(tree);
-        FilterUnusedNodes(tree);
-        SkipLodParametersFor37(tree);
-        OptimizeSequence37_10_5(tree);
-        UseHalfChildFromSingleLod(tree);
+        SkipTopLevelNodes(*tree);
+        FilterUnusedNodes(*tree);
+        SkipLodParametersFor37(*tree);
+        OptimizeSequence37_10_5(*tree);
+        UseHalfChildFromSingleLod(*tree);
         // TODO: переделать оптимизацию с LOD-ами, кажетс€, что все три оптимизации с LOD-ами неправильные.
-        UseFirstLod(tree);
-        MergeFacesWithSameMaterial(tree);
-        RemoveEmptyNodes(tree);
+        UseFirstLod(*tree);
+        MergeFacesWithSameMaterial(*tree);
+        RemoveEmptyNodes(*tree);
     }
 }
 

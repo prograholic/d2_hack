@@ -43,12 +43,17 @@ struct B3dTree
     std::string id;
     common::Materials materials;
     NodeList rootNodes;
+
+    std::string GetMaterialNameByIndex(std::uint32_t materialIndex) const;
 };
+
+typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;
+typedef std::shared_ptr<B3dTree> B3dTreePtr;
 
 struct B3dForest
 {
-    B3dTree common;
-    std::vector<B3dTree> forest;
+    B3dTreePtr common;
+    std::vector<B3dTreePtr> forest;
 };
 
 class Node
@@ -56,7 +61,7 @@ class Node
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
 public:
-    Node(const block_data::BlockHeader& blockHeader);
+    Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
 
     const std::string& GetName() const;
     std::uint32_t GetType() const;
@@ -87,11 +92,18 @@ public:
         return static_cast<const TypedNode*>(this);
     }
 
+    B3dTreePtr GetOriginalRoot() const
+    {
+        return m_originalRoot.lock();
+    }
+
+
 private:
     const std::string m_name;
     const std::uint32_t m_type;
 
     NodeList m_childNodeList;
+    B3dTreeWeakPtr m_originalRoot;
 };
 
 
@@ -102,8 +114,8 @@ public:
 
     static constexpr auto Value = BlockType::Value;
 
-    NodeWithData(const block_data::BlockHeader& blockHeader, const BlockType& block)
-        : Node(blockHeader)
+    NodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
+        : Node(originalRoot, blockHeader)
         , m_block(block)
     {
     }

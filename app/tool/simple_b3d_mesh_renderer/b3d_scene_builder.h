@@ -33,8 +33,7 @@ public:
     B3dSceneBuilder(const std::string& b3dId,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
-                    Ogre::MeshManager* meshManager,
-                    const common::Materials& materials);
+                    Ogre::MeshManager* meshManager);
 
     ~B3dSceneBuilder();
 
@@ -48,14 +47,13 @@ public:
 
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
-    void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);
+    void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
 
 private:
     std::string m_b3dId;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
-    const common::Materials m_materials;
 
     std::stack<Ogre::SceneNode*> m_sceneNodes;
     std::list<resource::data::b3d::block_data::GroupTransformMatrix24> m_transformQueue;
@@ -67,13 +65,11 @@ private:
 
     std::string GetB3dResourceId(const common::ResourceName& name) const;
 
-    std::string GetMaterialName(const std::uint32_t materialIndex) const;
-
     std::string GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const;
 
-    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, std::uint32_t materialIndex);
+    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const std::string& materialName);
 
-    void SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex);
+    void SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
 
     void ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex);
 

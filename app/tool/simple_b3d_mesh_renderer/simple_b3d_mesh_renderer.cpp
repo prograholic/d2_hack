@@ -63,9 +63,9 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     for (auto& tree : b3dForest.forest)
     {
-        B3dTreeVisitor visitor{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), tree.materials};
+        B3dTreeVisitor visitor{tree->id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
 
-        VisitTree(tree, visitor);
+        VisitTree(*tree, visitor);
     }
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));

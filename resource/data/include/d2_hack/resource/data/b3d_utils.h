@@ -19,6 +19,7 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces28
 
 common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces35& block, const block_data::Face35& face, const common::SimpleMeshInfo& parentMeshInfo);
 
+
 } // namespace b3d
 } // namespace data
 } // namespace resource

@@ -752,10 +752,10 @@ void PrintOnlyTypes()
     std::set< std::vector<std::uint32_t>> sequences;
 
     B3dForest forest = ReadB3d(SinglePlayerRegistry);
-    PrintOnlyTypes(forest.common, sequences);
+    PrintOnlyTypes(*forest.common, sequences);
     for (const auto& tree : forest.forest)
     {
-        PrintOnlyTypes(tree, sequences);
+        PrintOnlyTypes(*tree, sequences);
     }
 
     PrintSequences(sequences);
@@ -861,7 +861,7 @@ int main(int argc, char* argv[])
             for (const auto& tree : forest.forest)
             {
                 TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
-                VisitTree(tree, visitor);
+                VisitTree(*tree, visitor);
             }
         }
         else

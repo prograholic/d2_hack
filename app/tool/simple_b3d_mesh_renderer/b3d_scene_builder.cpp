@@ -35,13 +35,11 @@ using namespace resource::data::b3d;
 B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,
-                                 Ogre::MeshManager* meshManager,
-                                 const common::Materials& materials)
+                                 Ogre::MeshManager* meshManager)
     : m_b3dId(b3dId)
     , m_sceneManager(sceneManager)
     , m_rootNode(rootNode)
     , m_meshManager(meshManager)
-    , m_materials(materials)
 {
 }
 
@@ -158,7 +156,7 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
     }
 }
 
-void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex)
+void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
 {
     std::string name = GetNameImpl(blockName, "mesh", false);
     std::string group = "D2";
@@ -172,7 +170,7 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
 
     Ogre::MeshPtr mesh = m_meshManager->createManual(name, group);
 
-    SetMeshInfo(mesh, meshInfo, materialIndex);
+    SetMeshInfo(mesh, meshInfo, materialName);
 
     const std::string entityName = mesh->getName() + ".entity";
     Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
@@ -190,11 +188,6 @@ std::string B3dSceneBuilder::GetB3dResourceId(const common::ResourceName& name) 
     return GetB3dResourceId(common::ResourceNameToString(name));
 }
 
-std::string B3dSceneBuilder::GetMaterialName(const std::uint32_t materialIndex) const
-{
-    return GetB3dResourceId(common::ResourceNameToString(m_materials[materialIndex]));
-}
-
 std::string B3dSceneBuilder::GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const
 {
     std::string name = GetB3dResourceId(blockName) + "_" + subName;
@@ -209,10 +202,8 @@ std::string B3dSceneBuilder::GetNameImpl(const std::string& blockName, const std
     return name;
 }
 
-Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, std::uint32_t materialIndex)
+Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, const std::string& materialName)
 {
-    const std::string materialName = GetMaterialName(materialIndex);
-
     Ogre::SubMesh* subMesh = mesh->createSubMesh();
     subMesh->useSharedVertices = true;
     subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
@@ -224,11 +215,11 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, std::ui
     return subMesh;
 }
 
-void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, std::uint32_t materialIndex)
+void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
 {
     mesh->sharedVertexData = new Ogre::VertexData{};
 
-    CreateSubMesh(mesh, materialIndex);
+    CreateSubMesh(mesh, materialName);
 
     unsigned short bufferIndex = 0;
     if (!meshInfo.positions.empty())

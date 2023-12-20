@@ -32,7 +32,7 @@ void TestForestEntry(const B3dForest& forest, size_t pos, const std::string & di
         throw std::runtime_error("Incorrect forest size, expected at least " + std::to_string(pos) + ", got " + std::to_string(forest.forest.size()));
     }
 
-    TestTree(forest.forest[pos], dir, id, expectedMaterialCount);
+    TestTree(*forest.forest[pos], dir, id, expectedMaterialCount);
 }
 
 
@@ -53,7 +53,7 @@ int main()
 
         B3dForest forest = ReadB3d(registry);
 
-        TestTree(forest.common, "COMMON", "common", 171);
+        TestTree(*forest.common, "COMMON", "common", 171);
 
         TestForestEntry(forest, 0, "ENV", "aa", 114);
         TestForestEntry(forest, 1, "ENV", "ab", 53);

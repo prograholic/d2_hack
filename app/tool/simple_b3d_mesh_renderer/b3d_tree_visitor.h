@@ -17,8 +17,7 @@ public:
     B3dTreeVisitor(const std::string& b3dId,
                    Ogre::SceneManager* sceneManager,
                    Ogre::SceneNode* rootNode,
-                   Ogre::MeshManager* meshManager,
-                   const common::Materials& materials);
+                   Ogre::MeshManager* meshManager);
 
     virtual void Visit(resource::data::b3d::NodeEmpty0& node, resource::data::b3d::VisitMode visitMode) override;
 

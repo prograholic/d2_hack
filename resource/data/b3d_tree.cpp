@@ -1,6 +1,7 @@
 #include <d2_hack/resource/data/b3d_tree.h>
 
 #include <d2_hack/common/utils.h>
+#include <d2_hack/common/resource_mgmt.h>
 
 namespace d2_hack
 {
@@ -17,6 +18,7 @@ const B3dRegistry SinglePlayerRegistry
 	"ENV",
 	{
 		"aa",
+#if 1
 		"ab",
 		"ac",
 		"ad",
@@ -55,12 +57,19 @@ const B3dRegistry SinglePlayerRegistry
 		"dc",
 		"dq",
 		"dr"
+#endif //0
 	}
 };
 
-Node::Node(const block_data::BlockHeader& blockHeader)
+std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
+{
+	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
+}
+
+Node::Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
 	: m_name(common::ResourceNameToString(blockHeader.name))
 	, m_type(blockHeader.type)
+	, m_originalRoot(originalRoot)
 {
 }
 

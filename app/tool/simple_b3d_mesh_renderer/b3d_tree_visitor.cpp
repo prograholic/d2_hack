@@ -21,9 +21,8 @@ using namespace resource::data::b3d;
 B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
                                Ogre::SceneManager* sceneManager,
                                Ogre::SceneNode* rootNode,
-                               Ogre::MeshManager* meshManager,
-                               const common::Materials& materials)
-    : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager, materials)
+                               Ogre::MeshManager* meshManager)
+    : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager)
 {
 }
 
@@ -180,7 +179,7 @@ void B3dTreeVisitor::VisitFaces(FacesNode& node, resource::data::b3d::VisitMode 
         const auto& block = node.GetBlockData();
         for (const auto& face : block.faces)
         {
-            CreateMesh(node.GetName(), face.meshInfo, face.materialIndex);
+            CreateMesh(node.GetName(), face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
         }
     }
 }
