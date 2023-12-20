@@ -52,11 +52,11 @@ B3dSceneBuilder::~B3dSceneBuilder()
     assert(m_sceneNodes.empty());
 }
 
-void B3dSceneBuilder::ProcessTransformQueue(const std::string& name, const block_data::GroupTransformMatrix24& block, VisitMode visitMode)
+void B3dSceneBuilder::ProcessTransformQueue(const resource::data::b3d::NodeGroupTransformMatrix24& node, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        m_transformQueue.push_back(block);
+        m_transformQueue.push_back(node.GetBlockData());
     }
     else
     {
@@ -71,26 +71,26 @@ void B3dSceneBuilder::ProcessTransformQueue(const std::string& name, const block
             transformList.push_back(transform);
         }
 
-        m_transformMap[name] = transformList;
+        m_transformMap[node.GetName()] = transformList;
         m_transformQueue.pop_back();
     }
 }
 
-void B3dSceneBuilder::ProcessLight(const std::string& name, const block_data::GroupLightingObjects33& block, VisitMode visitMode)
+void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode)
 {
-    Ogre::SceneNode* sceneNode = ProcessSceneNode(name, visitMode);
+    Ogre::SceneNode* sceneNode = ProcessSceneNode(node.GetName(), visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
-        std::string full_name = GetNameImpl(name, "light", false);
+        std::string full_name = GetNameImpl(node.GetName(), "light", false);
         if (m_sceneManager->hasLight(full_name))
         {
-            full_name = GetNameImpl(name, "light", true);
+            full_name = GetNameImpl(node.GetName(), "light", true);
         }
 
         Ogre::Light* light = m_sceneManager->createLight(full_name);
         Ogre::SceneNode* lightNode = m_sceneManager->createSceneNode(full_name + "_scene_node");
         lightNode->attachObject(light);
-        lightNode->setPosition(block.position);
+        lightNode->setPosition(node.GetBlockData().position);
         sceneNode->addChild(lightNode);
 
         // TODO: setup light
@@ -99,11 +99,11 @@ void B3dSceneBuilder::ProcessLight(const std::string& name, const block_data::Gr
 }
 
 
-void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConnector18& block, VisitMode visitMode)
+void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        const std::string cloneName = GetNameImpl(common::ResourceNameToString(block.object) + "_clone", "scene_node", true);
+        const std::string cloneName = GetNameImpl(common::ResourceNameToString(node.GetBlockData().object) + "_clone", "scene_node", true);
 
         Ogre::SceneNode* newSceneNode = m_sceneManager->createSceneNode(cloneName);
 
@@ -111,7 +111,7 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
         parentSceneNode->addChild(newSceneNode);
         m_sceneNodes.push(newSceneNode);
 
-        auto transformList = m_transformMap[common::ResourceNameToString(block.space)];
+        auto transformList = m_transformMap[common::ResourceNameToString(node.GetBlockData().space)];
         for (const auto& transform : transformList)
         {
             newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
@@ -124,7 +124,7 @@ void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConne
     }
 }
 
-void B3dSceneBuilder::ProcessObjectConnector(const block_data::SimpleObjectConnector1& /* block */, VisitMode /* visitMode */)
+void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }

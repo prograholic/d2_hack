@@ -9,107 +9,107 @@ namespace data
 namespace b3d
 {
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::Empty0& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupRoadInfraObjects4& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupObjects5& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupVertexData7& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupVertexData7& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaces8& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleFaces8& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupTrigger9& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupTrigger9& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupLodParameters10& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown12& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupUnknown12& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleTrigger13& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown14& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleObjectConnector18& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupObjects19& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupObjects19& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFlatCollision20& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupObjects21& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleVolumeCollision23& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupTransformMatrix24& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown25& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaces28& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleFaces28& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown29& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupUnknown29& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimplePortal30& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimplePortal30& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupLightingObjects33& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleFaces35& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleFaces35& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::GroupVertexData37& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */)
 {
 }
 
-void NoOpNodeVisitor::Visit(const std::string& /* name */, block_data::SimpleGeneratedObjects40& /* block */, VisitMode /* visitMode */)
+void NoOpNodeVisitor::Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */)
 {
 }
 

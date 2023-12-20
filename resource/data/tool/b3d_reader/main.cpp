@@ -7,7 +7,7 @@
 #include <OgreLogManager.h>
 
 #include <d2_hack/resource/data/b3d_reader.h>
-#include <d2_hack/resource/data/b3d_tree.h>
+#include <d2_hack/resource/data/b3d_visitor.h>
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
 #include <d2_hack/common/utils.h>
 
@@ -60,79 +60,99 @@ public:
         return std::string(BlockType::Name) + ": ";
     }
 
-    template <typename BlockType>
-    void ProcessBlockHeader(const BlockType& block, const std::string& name)
+    template <typename NodeType>
+    void ProcessBlockHeader(const NodeType& node)
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
+        GetStream() << GetBlockNamePrefix(node.GetBlockData()) << ToString(node.GetName()) << std::endl;
         GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::Empty0& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeEmpty0& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "emptyData0: " << ToString(std::begin(block.emptyData0), std::end(block.emptyData0)) << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
         GetStream(1) << "emptyData1: " << ToString(std::begin(block.emptyData1), std::end(block.emptyData1)) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleObjectConnector1& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleObjectConnector1& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupUnknown2& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupUnknown2& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupRoadInfraObjects4& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupRoadInfraObjects4& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "data: " << ToString(block.data) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupObjects5& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupObjects5& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupVertexData7& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupVertexData7& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
         PrintData(block.meshInfo, 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleFaces8& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupTrigger9& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
         GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupLodParameters10& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupLodParameters10& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown: " << ToString(block.unknown) << "," << std::endl;
         GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupUnknown12& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupUnknown12& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
         GetStream(1) << "unknown1: " << ToString(block.unknown1) << "," << std::endl;
         GetStream(1) << "unknown2: " << ToString(block.unknown2) << "," << std::endl;
@@ -141,17 +161,21 @@ public:
         GetStream(1) << "unknown5: " << ToString(block.unknown5) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleTrigger13& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleTrigger13& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << std::endl;
         PrintVectorData(block.unknown2, "unknown2", 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleUnknown14& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleUnknown14& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
@@ -161,47 +185,56 @@ public:
         GetStream(1) << "unknown6: " << block.unknown6 << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleObjectConnector18& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleObjectConnector18& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupObjects19& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupObjects19& node, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
+        ProcessBlockHeader(node);
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleFlatCollision20& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleFlatCollision20& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << std::endl;
         PrintVectorData(block.unknown2, "unknown2", 1);
         PrintVectorData(block.unknown3, "unknown3", 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupObjects21& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupObjects21& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "count: " << block.count << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleVolumeCollision23& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleVolumeCollision23& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "surfaceType: " << block.surfaceType << "," << std::endl;
         PrintVectorData(block.unknown1, "unknown1", 1);
         PrintVectorData(block.polygons, "polygons", 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupTransformMatrix24& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupTransformMatrix24& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "x: " << block.x << "," << std::endl;
         GetStream(1) << "y: " << block.y << "," << std::endl;
         GetStream(1) << "z: " << block.z << "," << std::endl;
@@ -209,9 +242,11 @@ public:
         GetStream(1) << "unknown: " << block.unknown << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleUnknown25& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleUnknown25& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
@@ -230,16 +265,20 @@ public:
             << block.unknown3[10] << "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleFaces28& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown: " << ToString(block.unknown) << std::endl;
         PrintVectorData(block.faces, "faces", 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupUnknown29& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "type: " << ToString(block.type) << "," << std::endl;
         GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
         GetStream(1) << "unknown1: "
@@ -254,17 +293,21 @@ public:
             "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimplePortal30& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimplePortal30& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "connectedRoom: " << ToString(block.connectedRoom) << "," << std::endl;
         GetStream(1) << "leftDown: " << ToString(block.leftDown) << "," << std::endl;
         GetStream(1) << "upRight: " << ToString(block.upRight) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupLightingObjects33& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupLightingObjects33& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
@@ -284,32 +327,40 @@ public:
             << block.color[11] << "}" << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleUnknown34& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleUnknown34& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         PrintVectorData(block.data, "data", 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleFaces35& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "type: " << block.type << "," << std::endl;
         GetStream(1) << "materialIndex: " << block.materialIndex << std::endl;
         PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupVertexData36& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupVertexData36& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown0: " << ToString(block.unknown0.data(), block.unknown0.data() + block.unknown0.size()) << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
         PrintData(block.meshInfo, 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupVertexData37& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
         PrintData(block.meshInfo, 1);
@@ -317,15 +368,19 @@ public:
         PrintVectorData(block.unknown514, "unknown514", 1);
     }
 
-    virtual void Visit(const std::string& name, block_data::GroupUnknown39& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeGroupUnknown39& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "unknown: " << ToString(block.unknown.data(), block.unknown.data() + block.unknown.size()) << std::endl;
     }
 
-    virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
+    virtual void Visit(NodeSimpleGeneratedObjects40& node, VisitMode /* visitMode */) override
     {
-        ProcessBlockHeader(block, name);
+        ProcessBlockHeader(node);
+        const auto& block = node.GetBlockData();
+
         GetStream(1) << "empty: " << ToString(block.empty) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "type: " << block.type << "," << std::endl;

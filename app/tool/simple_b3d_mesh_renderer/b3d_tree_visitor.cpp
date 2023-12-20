@@ -27,159 +27,160 @@ B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
 {
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::Empty0& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeEmpty0& /* node */, VisitMode /* visitMode */)
 {
     // no need to implement
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleObjectConnector1& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleObjectConnector1& node, VisitMode visitMode)
 {
-    ProcessObjectConnector(block, visitMode);
+    ProcessObjectConnector(node, visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown2& /* block */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupRoadInfraObjects4& /* block */, VisitMode visitMode)
-{
-    ProcessSceneNode(name, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupObjects5& /* block */, VisitMode visitMode)
-{
-    ProcessSceneNode(name, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertexData7& /* block */, VisitMode visitMode)
-{
-    ProcessSceneNode(name, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode visitMode)
-{
-    VisitFaces(name, block, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupTrigger9& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown2& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupLodParameters10& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupRoadInfraObjects4& node, VisitMode visitMode)
+{
+    ProcessSceneNode(node.GetName(), visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupObjects5& node, VisitMode visitMode)
+{
+    ProcessSceneNode(node.GetName(), visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData7& node, VisitMode visitMode)
+{
+    ProcessSceneNode(node.GetName(), visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFaces8& node, VisitMode visitMode)
+{
+    VisitFaces(node, visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupTrigger9& /* node */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */)
 {
     // no need to implement
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown12& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown12& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleTrigger13& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown14& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleObjectConnector18& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleObjectConnector18& node, VisitMode visitMode)
 {
-    ProcessObjectConnector(block, visitMode);
+    ProcessObjectConnector(node, visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupObjects19& /* block */, VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupObjects19& node, VisitMode visitMode)
 {
-    ProcessSceneNode(name, visitMode);
+    ProcessSceneNode(node.GetName(), visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleFlatCollision20& /* block */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupObjects21& /* block */, VisitMode visitMode)
-{
-    ProcessSceneNode(name, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleVolumeCollision23& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupTransformMatrix24& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupObjects21& node, VisitMode visitMode)
 {
-    ProcessTransformQueue(name, block, visitMode);
+    ProcessSceneNode(node.GetName(), visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown25& /* block */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode visitMode)
-{
-    VisitFaces(name, block, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown29& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimplePortal30& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupTransformMatrix24& node, VisitMode visitMode)
+{
+    ProcessTransformQueue(node, visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupLightingObjects33& block, VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFaces28& node, VisitMode visitMode)
 {
-    ProcessLight(name, block, visitMode);
+    VisitFaces(node, visitMode);
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleUnknown34& /* block */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode visitMode)
-{
-    VisitFaces(name, block, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertexData36& /* block */, VisitMode visitMode)
-{
-    ProcessSceneNode(name, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& name, block_data::GroupVertexData37& /* block */, VisitMode visitMode)
-{
-    ProcessSceneNode(name, visitMode);
-}
-
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::GroupUnknown39& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown29& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(const std::string& /* name */, block_data::SimpleGeneratedObjects40& /* block */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimplePortal30& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
 }
 
-template <typename Faces>
-void B3dTreeVisitor::VisitFaces(const std::string& name, Faces& block, resource::data::b3d::VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode)
+{
+    ProcessLight(node, visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFaces35& node, VisitMode visitMode)
+{
+    VisitFaces(node, visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData36& node, VisitMode visitMode)
+{
+    ProcessSceneNode(node.GetName(), visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData37& node, VisitMode visitMode)
+{
+    ProcessSceneNode(node.GetName(), visitMode);
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown39& /* node */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */)
+{
+    B3D_NOT_IMPLEMENTED();
+}
+
+template <typename FacesNode>
+void B3dTreeVisitor::VisitFaces(FacesNode& node, resource::data::b3d::VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
+        const auto& block = node.GetBlockData();
         for (const auto& face : block.faces)
         {
-            CreateMesh(name, face.meshInfo, face.materialIndex);
+            CreateMesh(node.GetName(), face.meshInfo, face.materialIndex);
         }
     }
 }

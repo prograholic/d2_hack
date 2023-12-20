@@ -12,7 +12,7 @@ D2_HACK_DISABLE_WARNING_BEGIN(4251)
 D2_HACK_DISABLE_WARNING_END() // 4251
 
 #include <d2_hack/common/types.h>
-#include <d2_hack/resource/data/b3d_types.h>
+#include <d2_hack/resource/data/b3d_tree.h>
 
 namespace d2_hack
 {
@@ -38,13 +38,13 @@ public:
 
     ~B3dSceneBuilder();
 
-    void ProcessTransformQueue(const std::string& name, const resource::data::b3d::block_data::GroupTransformMatrix24& block, resource::data::b3d::VisitMode visitMode);
+    void ProcessTransformQueue(const resource::data::b3d::NodeGroupTransformMatrix24& node, resource::data::b3d::VisitMode visitMode);
 
-    void ProcessLight(const std::string& name, const resource::data::b3d::block_data::GroupLightingObjects33& block, resource::data::b3d::VisitMode visitMode);
+    void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, resource::data::b3d::VisitMode visitMode);
 
-    void ProcessObjectConnector(const resource::data::b3d::block_data::SimpleObjectConnector18& block, resource::data::b3d::VisitMode visitMode);
+    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, resource::data::b3d::VisitMode visitMode);
 
-    void ProcessObjectConnector(const resource::data::b3d::block_data::SimpleObjectConnector1& block, resource::data::b3d::VisitMode visitMode);
+    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& node, resource::data::b3d::VisitMode visitMode);
 
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 

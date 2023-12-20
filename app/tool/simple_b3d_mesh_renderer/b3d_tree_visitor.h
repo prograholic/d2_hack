@@ -1,7 +1,7 @@
 #ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_TREE_VISITOR_H
 #define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_TREE_VISITOR_H
 
-#include <d2_hack/resource/data/b3d_tree.h>
+#include <d2_hack/resource/data/b3d_visitor.h>
 
 #include "b3d_scene_builder.h"
 
@@ -20,67 +20,67 @@ public:
                    Ogre::MeshManager* meshManager,
                    const common::Materials& materials);
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::Empty0& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeEmpty0& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleObjectConnector1& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleObjectConnector1& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupUnknown2& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupUnknown2& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupRoadInfraObjects4& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupRoadInfraObjects4& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupObjects5& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupObjects5& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupVertexData7& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupVertexData7& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleFaces8& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleFaces8& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupTrigger9& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupTrigger9& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupLodParameters10& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupLodParameters10& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupUnknown12& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupUnknown12& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleTrigger13& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleTrigger13& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleUnknown14& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleUnknown14& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleObjectConnector18& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleObjectConnector18& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupObjects19& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupObjects19& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleFlatCollision20& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleFlatCollision20& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupObjects21& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupObjects21& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleVolumeCollision23& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleVolumeCollision23& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupTransformMatrix24& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupTransformMatrix24& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleUnknown25& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleUnknown25& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleFaces28& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleFaces28& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupUnknown29& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupUnknown29& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimplePortal30& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimplePortal30& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupLightingObjects33& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupLightingObjects33& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleUnknown34& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleUnknown34& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleFaces35& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleFaces35& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupVertexData36& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupVertexData36& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupVertexData37& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupVertexData37& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::GroupUnknown39& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeGroupUnknown39& node, resource::data::b3d::VisitMode visitMode) override;
 
-    virtual void Visit(const std::string& name, resource::data::b3d::block_data::SimpleGeneratedObjects40& block, resource::data::b3d::VisitMode visitMode) override;
+    virtual void Visit(resource::data::b3d::NodeSimpleGeneratedObjects40& node, resource::data::b3d::VisitMode visitMode) override;
 
 private:
-    template <typename Faces>
-    void VisitFaces(const std::string& name, Faces& block, resource::data::b3d::VisitMode visitMode);
+    template <typename FacesNode>
+    void VisitFaces(FacesNode& block, resource::data::b3d::VisitMode visitMode);
 };
 
 

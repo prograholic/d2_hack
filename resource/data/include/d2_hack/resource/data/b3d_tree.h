@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include <d2_hack/resource/data/b3d_visitor.h>
+#include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
 {
@@ -23,6 +23,8 @@ typedef std::weak_ptr<class Node> WeakNodePtr;
 typedef std::vector<NodePtr> NodeList;
 
 typedef std::vector <std::string> B3dRegistryEntries;
+
+class NodeVisitorInterface;
 
 struct B3dRegistry
 {
@@ -104,11 +106,6 @@ public:
         : Node(blockHeader)
         , m_block(block)
     {
-    }
-
-    virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) override
-    {
-        visitor.Visit(GetName(), m_block, visitMode);
     }
 
     virtual const common::BoundingSphere& GetBoundingSphere() const override

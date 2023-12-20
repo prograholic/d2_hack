@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include <d2_hack/common/reader.h>
+#include <d2_hack/resource/data/b3d_visitor.h>
 
 namespace d2_hack
 {
@@ -369,7 +370,7 @@ private:
         block.unknown = ReadFloat();
         ReadBytes(block.emptyData1, sizeof(block.emptyData1));
 
-        return std::make_shared<NodeEmpty0>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::Empty0>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData1(const block_data::BlockHeader& blockHeader)
@@ -379,7 +380,7 @@ private:
         ReadBytes(block.space.data(), block.space.size());
         ReadBytes(block.object.data(), block.object.size());
 
-        return std::make_shared<NodeSimpleObjectConnector1>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleObjectConnector1>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData2(const block_data::BlockHeader& blockHeader)
@@ -390,7 +391,7 @@ private:
         block.unknown0 = ReadVector3();
         block.unknown1 = ReadFloat();
 
-        NodePtr res = std::make_shared<NodeGroupUnknown2>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupUnknown2>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -404,7 +405,7 @@ private:
         ReadBytes(block.name.data(), block.name.size());
         ReadBytes(block.data.data(), block.data.size());
 
-        NodePtr res = std::make_shared<NodeGroupRoadInfraObjects4>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupRoadInfraObjects4>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -416,7 +417,7 @@ private:
         block.boundingSphere = ReadBoundingSphere();
         ReadBytes(block.name.data(), block.name.size());
 
-        NodePtr res = std::make_shared<NodeGroupObjects5>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupObjects5>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -438,7 +439,7 @@ private:
             block.meshInfo.texCoords.push_back(texCoord);
         }
 
-        NodePtr res = std::make_shared<NodeGroupVertexData7>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupVertexData7>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -532,7 +533,7 @@ private:
             block.faces.push_back(face);
         }
 
-        return std::make_shared<NodeSimpleFaces8>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleFaces8>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData9(const block_data::BlockHeader& blockHeader)
@@ -543,7 +544,7 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        NodePtr res = std::make_shared<NodeGroupTrigger9>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupTrigger9>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -556,7 +557,7 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        NodePtr res = std::make_shared<NodeGroupLodParameters10>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupLodParameters10>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -573,7 +574,7 @@ private:
         block.unknown4 = ReadUint32();
         block.unknown5 = ReadUint32();
 
-        NodePtr res = std::make_shared<NodeGroupUnknown12>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupUnknown12>>(blockHeader, block);
 
         return ReadNestedBlocks(res);
     }
@@ -589,7 +590,7 @@ private:
         const std::uint32_t unknown2Count = ReadUint32();
         ReadCount(block.unknown2, unknown2Count);
         
-        return std::make_shared<NodeSimpleTrigger13>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleTrigger13>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData14(const block_data::BlockHeader& blockHeader)
@@ -606,7 +607,7 @@ private:
         block.unknown5 = ReadFloat();
         block.unknown6 = ReadFloat();
         
-        return std::make_shared<NodeSimpleUnknown14>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleUnknown14>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData18(const block_data::BlockHeader& blockHeader)
@@ -617,14 +618,14 @@ private:
         ReadBytes(block.space.data(), block.space.size());
         ReadBytes(block.object.data(), block.object.size());
 
-        return std::make_shared<NodeSimpleObjectConnector18>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleObjectConnector18>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData19(const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupObjects19 block;
 
-        NodePtr res = std::make_shared<NodeGroupObjects19>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupObjects19>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -643,7 +644,7 @@ private:
         ReadCount(block.unknown2, countUnknown2);
         ReadCount(block.unknown3, countUnknown3);
 
-        return std::make_shared<NodeSimpleFlatCollision20>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleFlatCollision20>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData21(const block_data::BlockHeader& blockHeader)
@@ -654,7 +655,7 @@ private:
         block.count = ReadUint32();
         block.unknown = ReadUint32();
 
-        NodePtr res = std::make_shared<NodeGroupObjects21>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupObjects21>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -678,7 +679,7 @@ private:
             block.polygons.push_back(polygon);
         }
 
-        return std::make_shared<NodeSimpleVolumeCollision23>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleVolumeCollision23>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData24(const block_data::BlockHeader& blockHeader)
@@ -692,7 +693,7 @@ private:
         block.position = ReadVector3();
         block.unknown = ReadUint32();
 
-        NodePtr res = std::make_shared<NodeGroupTransformMatrix24>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupTransformMatrix24>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -709,7 +710,7 @@ private:
             unknown = ReadFloat();
         }
 
-        return std::make_shared<NodeSimpleUnknown25>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleUnknown25>>(blockHeader, block);
     }
 
     void DispatchFace28(block_data::Face28& face)
@@ -751,7 +752,7 @@ private:
             block.faces.push_back(data);
         }
 
-        return std::make_shared<NodeSimpleFaces28>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleFaces28>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData29(const block_data::BlockHeader& blockHeader)
@@ -764,7 +765,7 @@ private:
 
         ReadBytes(block.unknown1.data(), (block.type == 3 ? 7 : 8) * sizeof(block.unknown1[0]));
 
-        NodePtr res = std::make_shared<NodeGroupUnknown29>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupUnknown29>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -778,7 +779,7 @@ private:
         block.leftDown = ReadVector3();
         block.upRight = ReadVector3();
 
-        return std::make_shared<NodeSimplePortal30>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimplePortal30>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData33(const block_data::BlockHeader& blockHeader)
@@ -795,7 +796,7 @@ private:
             colorEntry = ReadFloat();
         }
 
-        NodePtr res = std::make_shared<NodeGroupLightingObjects33>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupLightingObjects33>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -809,7 +810,7 @@ private:
         std::uint32_t dataCount = ReadUint32();
         ReadCount(block.data, dataCount);
 
-        return std::make_shared<NodeSimpleUnknown34>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleUnknown34>>(blockHeader, block);
     }
 
     void DispatchReadFace35(const std::uint32_t blockType, block_data::Face35& face)
@@ -942,7 +943,7 @@ private:
             block.faces.push_back(face);
         }
 
-        return std::make_shared<NodeSimpleFaces35>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleFaces35>>(blockHeader, block);
     }
 
     NodePtr ReadBlockData36(const block_data::BlockHeader& blockHeader)
@@ -974,7 +975,7 @@ private:
             ThrowError("Unknown type " + std::to_string(block.type), "B3dReaderImpl::ReadBlockData36");
         }
 
-        NodePtr res = std::make_shared<NodeGroupVertexData36>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupVertexData36>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -1054,7 +1055,7 @@ private:
 
         DispatchVertexData37(block);
 
-        NodePtr res = std::make_shared<NodeGroupVertexData37>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupVertexData37>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -1064,7 +1065,7 @@ private:
 
         ReadBytes(block.unknown.data(), block.unknown.size());
 
-        NodePtr res = std::make_shared<NodeGroupUnknown39>(blockHeader, block);
+        NodePtr res = std::make_shared<VisitableNodeWithData<block_data::GroupUnknown39>>(blockHeader, block);
         return ReadNestedBlocks(res);
     }
 
@@ -1082,7 +1083,7 @@ private:
         const std::uint32_t unknown1Size = ReadUint32();
         ReadCount(block.unknown1, unknown1Size);
 
-        return std::make_shared<NodeSimpleGeneratedObjects40>(blockHeader, block);
+        return std::make_shared<VisitableNodeWithData<block_data::SimpleGeneratedObjects40>>(blockHeader, block);
     }
 };
 
