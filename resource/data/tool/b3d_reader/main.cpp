@@ -60,10 +60,17 @@ public:
         return std::string(BlockType::Name) + ": ";
     }
 
-    virtual void Visit(const std::string& name, block_data::Empty0& block, VisitMode /* visitMode */) override
+    template <typename BlockType>
+    void ProcessBlockHeader(const BlockType& block, const std::string& name)
     {
         GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
         GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+    }
+
+    virtual void Visit(const std::string& name, block_data::Empty0& block, VisitMode /* visitMode */) override
+    {
+        ProcessBlockHeader(block, name);
         GetStream(1) << "emptyData0: " << ToString(std::begin(block.emptyData0), std::end(block.emptyData0)) << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
         GetStream(1) << "emptyData1: " << ToString(std::begin(block.emptyData1), std::end(block.emptyData1)) << std::endl;
@@ -71,78 +78,61 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleObjectConnector1& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown2& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::GroupRoadInfraObjects4& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "data: " << ToString(block.data) << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::GroupObjects5& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData7& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "name: " << ToString(block.name) << std::endl;
         PrintData(block.meshInfo, 1);
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces8& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
+        ProcessBlockHeader(block, name);
         PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupTrigger9& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
         GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::GroupLodParameters10& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown: " << ToString(block.unknown) << "," << std::endl;
         GetStream(1) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown12& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
         GetStream(1) << "unknown1: " << ToString(block.unknown1) << "," << std::endl;
         GetStream(1) << "unknown2: " << ToString(block.unknown2) << "," << std::endl;
@@ -153,9 +143,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleTrigger13& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << std::endl;
         PrintVectorData(block.unknown2, "unknown2", 1);
@@ -163,9 +151,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleUnknown14& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
@@ -177,9 +163,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleObjectConnector18& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
@@ -192,9 +176,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleFlatCollision20& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << std::endl;
         PrintVectorData(block.unknown2, "unknown2", 1);
@@ -203,17 +185,14 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupObjects21& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "count: " << block.count << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleVolumeCollision23& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "surfaceType: " << block.surfaceType << "," << std::endl;
         PrintVectorData(block.unknown1, "unknown1", 1);
@@ -222,8 +201,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupTransformMatrix24& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "x: " << block.x << "," << std::endl;
         GetStream(1) << "y: " << block.y << "," << std::endl;
         GetStream(1) << "z: " << block.z << "," << std::endl;
@@ -233,8 +211,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleUnknown25& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
@@ -255,18 +232,14 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces28& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown: " << ToString(block.unknown) << std::endl;
         PrintVectorData(block.faces, "faces", 1);
     }
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown29& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "type: " << ToString(block.type) << "," << std::endl;
         GetStream(1) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
         GetStream(1) << "unknown1: "
@@ -283,9 +256,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimplePortal30& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "connectedRoom: " << ToString(block.connectedRoom) << "," << std::endl;
         GetStream(1) << "leftDown: " << ToString(block.leftDown) << "," << std::endl;
         GetStream(1) << "upRight: " << ToString(block.upRight) << std::endl;
@@ -293,9 +264,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupLightingObjects33& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(1) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(1) << "unknown2: " << block.unknown2 << "," << std::endl;
@@ -317,18 +286,14 @@ public:
 
     virtual void Visit(const std::string& name, block_data::SimpleUnknown34& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << block.unknown0 << "," << std::endl;
         PrintVectorData(block.data, "data", 1);
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleFaces35& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "type: " << block.type << "," << std::endl;
         GetStream(1) << "materialIndex: " << block.materialIndex << std::endl;
         PrintVectorData(block.faces, "faces", 1, m_printFaceInfo);
@@ -336,9 +301,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData36& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown0: " << ToString(block.unknown0.data(), block.unknown0.data() + block.unknown0.size()) << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
         PrintData(block.meshInfo, 1);
@@ -346,9 +309,7 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupVertexData37& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "type: " << block.type << std::endl;
         PrintData(block.meshInfo, 1);
@@ -358,17 +319,13 @@ public:
 
     virtual void Visit(const std::string& name, block_data::GroupUnknown39& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "unknown: " << ToString(block.unknown.data(), block.unknown.data() + block.unknown.size()) << std::endl;
     }
 
     virtual void Visit(const std::string& name, block_data::SimpleGeneratedObjects40& block, VisitMode /* visitMode */) override
     {
-        GetStream() << GetBlockNamePrefix(block) << ToString(name) << std::endl;
-        GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(block.boundingSphere) << "," << std::endl;
+        ProcessBlockHeader(block, name);
         GetStream(1) << "empty: " << ToString(block.empty) << "," << std::endl;
         GetStream(1) << "name: " << ToString(block.name) << "," << std::endl;
         GetStream(1) << "type: " << block.type << "," << std::endl;

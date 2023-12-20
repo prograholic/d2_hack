@@ -99,6 +99,8 @@ struct SimpleObjectConnector1
     static constexpr auto Value = SimpleObjectConnectorBlock1;
     static constexpr char Name[] = "SimpleObjectConnector1";
 
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
+
     common::ResourceName space;
     common::ResourceName object;
 };
