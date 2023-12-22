@@ -79,15 +79,15 @@ static void PrintSceneNode(Ogre::Node* node, int indent)
     const auto& objs = sc->getAttachedObjects();
     for (auto obj : objs)
     {
-        D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "OBJECT: " << obj->getName();
+        D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << " OBJECT: " << obj->getName();
         Ogre::Entity* e = dynamic_cast<Ogre::Entity*>(obj);
         if (e)
         {
-            D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << " MESH: " << e->getMesh()->getName();
+            D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "  MESH: " << e->getMesh()->getName();
             const auto& submeshes = e->getMesh()->getSubMeshes();
             for (auto submesh : submeshes)
             {
-                D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "  SUBMESH: " << submesh->getMaterialName();
+                D2_HACK_LOG(PrintSceneNode) << std::string(indent, ' ') << "   SUBMESH: " << submesh->getMaterialName();
             }
         }
     }
@@ -102,21 +102,24 @@ static void PrintSceneNode(Ogre::Node* node, int indent)
 
 void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
 {
-    const auto& children = node->getAttachedObjects();
+    const auto children = node->getAttachedObjects();
     if (!children.empty())
     {
         auto obj = children[cnt % children.size()];
-        obj->setVisible(!obj->getVisible());
+
+        //obj->setVisible(!obj->getVisible());
         D2_HACK_LOG(XXX) << node->getName() << " -> " << obj->getName();
         cnt += 1;
     }
 }
 
+const char* node_name = "b3d.scene_node";
+
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
 
-    const char* node_name = "ae_show_ae_006_scene_node";
+    
 
     if (evt.keysym.sym == '1')
     {
@@ -136,7 +139,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         static int cnt = 0;
 
-        const auto& children = m_sceneManager->getSceneNode(node_name, false)->getChildren();
+        const auto& children = m_sceneManager->getSceneNode(node_name)->getChildren();
         if (!children.empty())
         {
             Ogre::Node* node = children[cnt % children.size()];
@@ -153,7 +156,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
         cnt += 1;
         int dir = ((cnt % 2) * 2) - 1; // [-1, 1]
 
-        auto children = m_sceneManager->getRootSceneNode()->getChild("b3d.scene_node")->getChildren();
+        auto children = m_sceneManager->getSceneNode(node_name)->getChildren();
 
         int i = 0;
         while (!children.empty())
@@ -171,7 +174,11 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     }
     else if (evt.keysym.sym == 'b')
     {
-        D2_HACK_LOG(BREAK) << "BREAK";
+        D2_HACK_LOG(BREAK) << "BAAD";
+    }
+    else if (evt.keysym.sym == 'g')
+    {
+        D2_HACK_LOG(BREAK) << "GOOD";
     }
     else if (evt.keysym.sym == '=')
     {

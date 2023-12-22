@@ -175,7 +175,7 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
     const std::string entityName = mesh->getName() + ".entity";
     Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
 
-    m_sceneNodes.top()->attachObject(entity);
+    m_sceneNodes.top()->createChildSceneNode(entityName + "_node_for_entity")->attachObject(entity);
 }
 
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const

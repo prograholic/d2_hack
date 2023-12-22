@@ -69,6 +69,22 @@ static bool IsUnusedTopLevelNode(NodePtr node)
     return IsNodeOfType(node, std::begin(unusedTopLevelNodeTypes), std::end(unusedTopLevelNodeTypes));
 }
 
+template <typename Iterator>
+static bool IsAllNodesOfType(Iterator first, Iterator last, const std::uint32_t* firstType, const std::uint32_t* lastType)
+{
+    while (first != last)
+    {
+        if (!IsNodeOfType(*first, firstType, lastType))
+        {
+            return false;
+        }
+
+        ++first;
+    }
+
+    return true;
+}
+
 } // namespace predicates
 
 static void FilterUnusedNodes(NodePtr node)
@@ -297,6 +313,89 @@ static void UseFirstLod(B3dTree& tree)
         UseFirstLod(node, false);
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+static void SelectLodForPattern37_10_10(NodePtr node)
+{
+    if (node->GetType() == block_data::GroupVertexDataBlock37)
+    {
+        auto children = node->GetChildNodeList();
+        if (children.size() == 1)
+        {
+            if (children[0]->GetType() == block_data::GroupLodParametersBlock10)
+            {
+                D2_HACK_LOG(SelectLodForPattern37_10_10) << "Found child Log for 37 block: " << node->GetName();
+
+                auto childsLevel2 = children[0]->GetChildNodeList();
+                if (!childsLevel2.empty())
+                {
+                    static const std::uint32_t lod_nodes[] = { block_data::GroupLodParametersBlock10 };
+                    if (predicates::IsAllNodesOfType(childsLevel2.begin(), childsLevel2.end(), std::begin(lod_nodes), std::end(lod_nodes)))
+                    {
+                        NodeGroupLodParameters10* closestLod = childsLevel2[0]->NodeCast<NodeGroupLodParameters10>();
+                        for (auto lod2 : childsLevel2)
+                        {
+                            NodeGroupLodParameters10* typedNode = lod2->NodeCast<NodeGroupLodParameters10>();
+                            if (typedNode->GetBlockData().distanceToPlayer < closestLod->GetBlockData().distanceToPlayer)
+                            {
+                                closestLod = typedNode;
+                            }
+                        }
+
+                        NodeList newChildren;
+                        for (auto face : closestLod->GetChildNodeList())
+                        {
+                            if (face->GetType() == block_data::SimpleFacesBlock8)
+                            {
+                                D2_HACK_LOG(SelectLodForPattern37_10_10) << "skipping Face8 node: " << face->GetName();
+                                continue;
+                            }
+                            newChildren.push_back(face);
+                        }
+                        node->SetChildNodes(std::move(newChildren));
+                        return;
+                    }
+                }
+            }
+        }
+
+    }
+
+    for (auto child : node->GetChildNodeList())
+    {
+        SelectLodForPattern37_10_10(child);
+    }
+}
+
+/**
+ * ѕаттерн основан на том, что если у GroupVertexData37 есть один дочерний узел типа Lod,
+ * а у того, в свою очередь, тоже только Lod в кач-ве дочерних, то выбираем Lod с наиболее близкой дистанцией,
+ * а остальные пропускаем.
+ * “акже, нужно выкинуть Face8, так как они дают Lod
+ * 
+ * ѕример иерархии:
+ * GroupVertexData37(AnmObj0203)
+ *   GroupLodParameters10(176)
+ *       GroupLodParameters10(177)
+ *           SimpleFaces35(178)37 -> 10 -> 10 -> 35
+ *           SimpleFaces35(179)37 -> 10 -> 10 -> 35
+ *           SimpleFaces8(180)37 -> 10 -> 10 -> 8
+ *       GroupLodParameters10(181)
+ *           SimpleFaces8(182)37 -> 10 -> 10 -> 8
+ *           SimpleFaces8(183)37 -> 10 -> 10 -> 8
+ * 
+ * ќтлаживал на ad_AnmObj0203_scene_node
+ */
+static void SelectLodForPattern37_10_10(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        SelectLodForPattern37_10_10(node);
+    }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -597,11 +696,15 @@ void Optimize(B3dForest& forest)
     {
         SkipTopLevelNodes(*tree);
         FilterUnusedNodes(*tree);
-        SkipLodParametersFor37(*tree);
-        OptimizeSequence37_10_5(*tree);
-        UseHalfChildFromSingleLod(*tree);
-        // TODO: переделать оптимизацию с LOD-ами, кажетс€, что все три оптимизации с LOD-ами неправильные.
-        UseFirstLod(*tree);
+        if (!tree)
+        {
+            // TODO: переделать оптимизацию с LOD-ами, кажетс€, что все оптимизации с LOD-ами неправильные.
+            SkipLodParametersFor37(*tree);
+            OptimizeSequence37_10_5(*tree);
+            UseHalfChildFromSingleLod(*tree);
+            UseFirstLod(*tree);
+        }
+        SelectLodForPattern37_10_10(*tree);
         MergeFacesWithSameMaterial(*tree);
         RemoveEmptyNodes(*tree);
     }

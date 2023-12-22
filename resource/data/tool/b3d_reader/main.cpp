@@ -747,12 +747,23 @@ void PrintOnlyTypes(const B3dTree& tree, std::set< std::vector<std::uint32_t>>& 
     }
 }
 
-void PrintOnlyTypes()
+void PrintOnlyTypes(bool transform, bool optimize)
 {
     std::set< std::vector<std::uint32_t>> sequences;
 
     B3dForest forest = ReadB3d(SinglePlayerRegistry);
-    PrintOnlyTypes(*forest.common, sequences);
+
+    if (transform)
+    {
+        transformation::Transform(forest);
+    }
+    if (optimize)
+    {
+        transformation::Optimize(forest);
+    }
+
+
+    //PrintOnlyTypes(*forest.common, sequences);
     for (const auto& tree : forest.forest)
     {
         PrintOnlyTypes(*tree, sequences);
@@ -866,7 +877,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            PrintOnlyTypes();
+            PrintOnlyTypes(transform, optimize);
         }
     }
     catch (const std::exception& e)

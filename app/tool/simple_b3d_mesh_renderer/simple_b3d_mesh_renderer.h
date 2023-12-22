@@ -20,6 +20,9 @@ private:
     bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 };
 
+
+extern const char* node_name;
+
 } // namespace app
 } // namespace d2_hack
 
