@@ -56,25 +56,28 @@ struct B3dForest
     std::vector<B3dTreePtr> forest;
 };
 
-class Node
+class Node : private std::enable_shared_from_this<Node>
 {
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
 public:
-    Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
+    Node(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader);
 
     const std::string& GetName() const;
+
     std::uint32_t GetType() const;
 
     const NodeList& GetChildNodeList() const;
 
     void SetChildNodes(NodeList&& childNodes);
 
-    virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
+    void AddChildNode(const NodePtr& node);
 
-    virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
+    NodePtr GetParent();
 
-    virtual std::string GetTypeName() const = 0;
+    void SetParent(const WeakNodePtr& parent);
+
+    B3dTreePtr GetOriginalRoot() const;
 
     template <typename TypedNode>
     TypedNode* NodeCast()
@@ -92,10 +95,11 @@ public:
         return static_cast<const TypedNode*>(this);
     }
 
-    B3dTreePtr GetOriginalRoot() const
-    {
-        return m_originalRoot.lock();
-    }
+    virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
+
+    virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
+
+    virtual std::string GetTypeName() const = 0;
 
 
 private:
@@ -103,7 +107,8 @@ private:
     const std::uint32_t m_type;
 
     NodeList m_childNodeList;
-    B3dTreeWeakPtr m_originalRoot;
+    const B3dTreeWeakPtr m_originalRoot;
+    WeakNodePtr m_parent;
 };
 
 
@@ -114,8 +119,8 @@ public:
 
     static constexpr auto Value = BlockType::Value;
 
-    NodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
-        : Node(originalRoot, blockHeader)
+    NodeWithData(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
+        : Node(originalRoot, parent, blockHeader)
         , m_block(block)
     {
     }

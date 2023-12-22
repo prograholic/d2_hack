@@ -84,8 +84,8 @@ class VisitableNodeWithData : public NodeWithData<BlockType>
 {
 public:
 
-    VisitableNodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
-        : NodeWithData<BlockType>(originalRoot, blockHeader, block)
+    VisitableNodeWithData(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
+        : NodeWithData<BlockType>(originalRoot, parent, blockHeader, block)
     {
     }
 

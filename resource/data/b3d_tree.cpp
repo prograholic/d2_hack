@@ -69,10 +69,11 @@ std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
 }
 
-Node::Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
+Node::Node(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader)
 	: m_name(common::ResourceNameToString(blockHeader.name))
 	, m_type(blockHeader.type)
 	, m_originalRoot(originalRoot)
+	, m_parent(parent)
 {
 }
 
@@ -94,8 +95,32 @@ const NodeList& Node::GetChildNodeList() const
 void Node::SetChildNodes(NodeList&& childNodes)
 {
 	m_childNodeList = std::move(childNodes);
+	for (auto child : m_childNodeList)
+	{
+		child->SetParent(shared_from_this());
+	}
 }
 
+void Node::AddChildNode(const NodePtr& node)
+{
+	m_childNodeList.push_back(node);
+	node->SetParent(shared_from_this());
+}
+
+NodePtr Node::GetParent()
+{
+	return m_parent.lock();
+}
+
+void Node::SetParent(const WeakNodePtr& parent)
+{
+	m_parent = parent;
+}
+
+B3dTreePtr Node::GetOriginalRoot() const
+{
+	return m_originalRoot.lock();
+}
 
 } // namespace b3d
 } // namespace data
