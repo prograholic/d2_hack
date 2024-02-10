@@ -6,63 +6,46 @@ def printi(line):
     prefix = ' ' * (indent * 4)
     print(prefix + line)
     
-def update_counter(counter, field):
-    counter[field] = counter.get(field, 0) + 1
-    
-    return counter
+
     
 def read_naive():
     global indent
-    got_file = False
-    prev = None
-    counter = dict()
-    with open('sep.log') as f:
+
+    count_333 = 0
+    with open('sep2.txt') as f:
         for line in f:
             line = line.strip()
             if line.startswith('FILE:'):
-                print_counter(counter)
-                counter = dict()
+                count_333 = 0
+                indent = 0
+                printi(line)
 
             elif line.startswith('BH:'):
-                counter = update_counter(counter, 'Block')
-            elif line == 'NESTED: begin':
-                counter['nested begin'] = counter.get('BH', 0) + 1
-                printi('{')
-                indent += 1
-            elif line == 'NESTED: end':
-                indent -= 1
-                printi('}')
-                
+                printi(line)
             elif line == '111':
-                prev = line
                 printi('{')
                 indent += 1
             elif line == '333':
-                prev = line
+                count_333 += 1
                 printi('{')
                 indent += 1
             elif line == '222':
-                prev = line
                 indent -= 1
                 printi('}')
             elif line == '555':
-                prev = line
                 indent -= 1
                 printi('}')
             elif line == '444':
-                indent -= 1
-                #if count_444 % 2 == 0:
-                #    printi('[')
-                #    indent += 1
-                #else:
-                #    indent -= 1
-                #    printi(']')
-                    
-                count_444 += 1
+                if count_333 == 1:
+                    indent -= 1
+                    printi('}')
+                printi(line)
+            
+def update_counter(counter, field):
+    counter[field] = counter.get(field, 0) + 1
+    return counter
 
-        print_counter(counter)
-            
-            
+
 def print_counter(counter, line):
     print(line)
     pprint.pprint(counter)
@@ -88,5 +71,6 @@ def read_naive2():
 
         print_counter(counter, prev_file)
 
-read_naive2()
+#read_naive2()
+read_naive()
 

@@ -11,7 +11,7 @@ namespace data
 {
 namespace b3d
 {
-#define USE_ALL
+//#define USE_ALL
 
 const B3dRegistry SinglePlayerRegistry
 {
@@ -97,14 +97,14 @@ void Node::SetChildNodes(NodeList&& childNodes)
 	m_childNodeList = std::move(childNodes);
 	for (auto child : m_childNodeList)
 	{
-		child->SetParent(shared_from_this());
+		child->SetParent(weak_from_this());
 	}
 }
 
 void Node::AddChildNode(const NodePtr& node)
 {
 	m_childNodeList.push_back(node);
-	node->SetParent(shared_from_this());
+	node->SetParent(weak_from_this());
 }
 
 NodePtr Node::GetParent()

@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include <iostream>
+
 #include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
@@ -56,7 +58,7 @@ struct B3dForest
     std::vector<B3dTreePtr> forest;
 };
 
-class Node : private std::enable_shared_from_this<Node>
+class Node : public std::enable_shared_from_this<Node>
 {
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
@@ -123,6 +125,7 @@ public:
         : Node(originalRoot, parent, blockHeader)
         , m_block(block)
     {
+        std::cerr << "Block: " << blockHeader.type << ", \"" << std::string(blockHeader.name.begin(), blockHeader.name.end()).c_str() << "\"" << std::endl;
     }
 
     virtual const common::BoundingSphere& GetBoundingSphere() const override
