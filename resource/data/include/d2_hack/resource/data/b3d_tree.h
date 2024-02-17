@@ -62,9 +62,11 @@ class Node : public std::enable_shared_from_this<Node>
 {
     Node(const Node&) = delete;
     Node& operator=(const Node&) = delete;
-public:
+
+protected:
     Node(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader);
 
+public:
     const std::string& GetName() const;
 
     std::uint32_t GetType() const;
@@ -74,6 +76,8 @@ public:
     void SetChildNodes(NodeList&& childNodes);
 
     void AddChildNode(const NodePtr& node);
+
+    bool HasParent() const;
 
     NodePtr GetParent();
 
@@ -159,6 +163,7 @@ private:
 };
 
 
+using NodeHierarchyBreaker = NodeWithData<block_data::HierarchyBreaker>;
 using NodeEmpty0 = NodeWithData<block_data::Empty0>;
 using NodeSimpleObjectConnector1 = NodeWithData<block_data::SimpleObjectConnector1>;
 using NodeGroupUnknown2 = NodeWithData<block_data::GroupUnknown2>;

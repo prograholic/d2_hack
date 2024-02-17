@@ -26,6 +26,11 @@ B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
 {
 }
 
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeHierarchyBreaker& /* node */, VisitMode /* visitMode */)
+{
+    // no need to implement
+}
+
 void B3dTreeVisitor::Visit(resource::data::b3d::NodeEmpty0& /* node */, VisitMode /* visitMode */)
 {
     // no need to implement

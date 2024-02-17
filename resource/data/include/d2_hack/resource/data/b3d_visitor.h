@@ -19,6 +19,8 @@ class NodeVisitorInterface
 public:
     virtual ~NodeVisitorInterface() = default;
 
+    virtual void Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) = 0;
+    
     virtual void Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) = 0;
@@ -80,11 +82,24 @@ public:
 
 
 template <typename BlockType>
+class VisitableNodeWithData;
+
+template <typename BlockType>
+NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block);
+
+
+template <typename BlockType>
 class VisitableNodeWithData : public NodeWithData<BlockType>
 {
+    struct PrivateTag
+    {
+    };
+
+    template <typename BlockType2>
+    friend NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType2& block);
 public:
 
-    VisitableNodeWithData(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
+    VisitableNodeWithData(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block, const PrivateTag& /* unused */)
         : NodeWithData<BlockType>(originalRoot, parent, blockHeader, block)
     {
     }
@@ -94,6 +109,19 @@ public:
         visitor.Visit(*this, visitMode);
     }
 };
+
+template <typename BlockType>
+NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
+{
+    auto res = std::make_shared<VisitableNodeWithData<BlockType>>(originalRoot, parent, blockHeader, block, VisitableNodeWithData<BlockType>::PrivateTag{});
+
+    auto p = parent.lock();
+    if (p)
+    {
+        p->AddChildNode(res);
+    }
+    return res;
+}
 
 
 class NoOpNodeVisitor: public NodeVisitorInterface

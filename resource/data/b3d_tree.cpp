@@ -107,6 +107,11 @@ void Node::AddChildNode(const NodePtr& node)
 	node->SetParent(weak_from_this());
 }
 
+bool Node::HasParent() const
+{
+	return !m_parent.expired();
+}
+
 NodePtr Node::GetParent()
 {
 	return m_parent.lock();

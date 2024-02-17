@@ -19,6 +19,8 @@ public:
                    Ogre::SceneNode* rootNode,
                    Ogre::MeshManager* meshManager);
 
+    virtual void Visit(resource::data::b3d::NodeHierarchyBreaker& node, resource::data::b3d::VisitMode visitMode) override;
+    
     virtual void Visit(resource::data::b3d::NodeEmpty0& node, resource::data::b3d::VisitMode visitMode) override;
 
     virtual void Visit(resource::data::b3d::NodeSimpleObjectConnector1& node, resource::data::b3d::VisitMode visitMode) override;

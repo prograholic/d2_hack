@@ -61,7 +61,9 @@ static const std::uint32_t GroupVertexDataBlock37 = 37;
 static const std::uint32_t GroupUnknownBlock39 = 39;
 static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
-static const std::uint32_t MaxBlockId = 40;
+// should not intersect with other block IDs
+static const std::uint32_t HierarchyBreakerBlockXxx = 41;
+static const std::uint32_t MaxBlockId = 41;
 
 
 struct BlockHeader
@@ -72,7 +74,21 @@ struct BlockHeader
 
 
 
+struct HierarchyBreaker
+{
+    static constexpr auto Value = HierarchyBreakerBlockXxx;
+    static constexpr char Name[] = "HierarchyBreaker";
+    static constexpr bool HasNestedCount = false;
 
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
+
+    static const size_t EmptyDataSize0 = 40;
+    static const size_t EmptyDataSize1 = 4;
+
+    std::uint8_t emptyData0[EmptyDataSize0];
+    Ogre::Real unknown;
+    std::uint8_t emptyData1[EmptyDataSize1];
+};
 
 /**
  * TODO - разобраться, что это.
@@ -88,11 +104,9 @@ struct Empty0
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
     static const size_t EmptyDataSize0 = 40;
-    static const size_t EmptyDataSize1 = 4;
 
     std::uint8_t emptyData0[EmptyDataSize0];
     Ogre::Real unknown;
-    std::uint8_t emptyData1[EmptyDataSize1];
 };
 
 struct SimpleObjectConnector1

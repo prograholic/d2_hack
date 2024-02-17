@@ -68,6 +68,13 @@ public:
         GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
     }
 
+    virtual void Visit(NodeHierarchyBreaker& node, VisitMode /* visitMode */) override
+    {
+        GetStream() << GetBlockNamePrefix(node.GetBlockData()) << ToString(node.GetName()) << std::endl;
+        GetStream() << "{" << std::endl;
+        GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
+    }
+
     virtual void Visit(NodeEmpty0& node, VisitMode /* visitMode */) override
     {
         ProcessBlockHeader(node);
@@ -75,7 +82,6 @@ public:
 
         GetStream(1) << "emptyData0: " << ToString(std::begin(block.emptyData0), std::end(block.emptyData0)) << "," << std::endl;
         GetStream(1) << "unknown: " << block.unknown << "," << std::endl;
-        GetStream(1) << "emptyData1: " << ToString(std::begin(block.emptyData1), std::end(block.emptyData1)) << std::endl;
     }
 
     virtual void Visit(NodeSimpleObjectConnector1& node, VisitMode /* visitMode */) override

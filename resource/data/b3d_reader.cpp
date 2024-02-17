@@ -45,11 +45,6 @@ static const std::uint32_t BlockHierarchyBreaker = 444;    // 0x01BC, BC 01 00 0
 static const std::uint32_t BlockEndMagic = 555;            // 0x022B, 2B 02 00 00
 
 
-
-
-
-
-
 class B3dReaderImpl : private common::Reader
 {
 public:
@@ -60,6 +55,7 @@ public:
 
     B3dTreePtr Read(const std::string& dir, const std::string& id)
     {
+        std::cerr << "FILE: " << id << std::endl;
         FileHeader fileHeader;
         ReadFileHeader(fileHeader);
 
@@ -135,13 +131,12 @@ private:
         return materials;
     }
 
-    block_data::BlockHeader ReadBlockHeader()
+    block_data::BlockHeader MakeBlockHeader(const common::ResourceName& name, std::uint32_t type)
     {
         block_data::BlockHeader blockHeader{ 0 };
-        ReadBytes(blockHeader.name.data(), blockHeader.name.size());
         // Rename all unnammed objects
-        blockHeader.name = GetProperResourceName(blockHeader.name);
-        blockHeader.type = ReadUint32();
+        blockHeader.name = GetProperResourceName(name);
+        blockHeader.type = type;
 
         if (blockHeader.type > block_data::MaxBlockId)
         {
@@ -149,6 +144,15 @@ private:
         }
 
         return blockHeader;
+    }
+
+    block_data::BlockHeader ReadBlockHeader()
+    {
+        common::ResourceName name;
+        ReadBytes(name.data(), name.size());
+        std::uint32_t type = ReadUint32();
+
+        return MakeBlockHeader(name, type);
     }
 
     NodeList ReadData(const FileHeader::Section& sectionInfo)
@@ -159,33 +163,14 @@ private:
             ThrowError("Incorrect data offset", "B3dReaderImpl::ReadData");
         }
 
-        std::uint32_t blockSeparator = ReadUint32();
-        if (blockSeparator != DataBeginMagic)
-        {
-            ThrowError("Incorrect data begin magic: " + std::to_string(blockSeparator), "B3dReaderImpl::ReadData");
-        }
-
-        blockSeparator = ReadUint32();
-        if (blockSeparator != BlockBeginMagic)
-        {
-            ThrowError("Incorrect block begin magic: " + std::to_string(blockSeparator), "B3dReaderImpl::ReadData");
-        }
-
         NodeList res;
-        res.push_back(ReadBlockData0());
-
-        blockSeparator = ReadUint32();
-        if (blockSeparator != BlockHierarchyBreaker)
-        {
-            ThrowError("Expected hierarchy breaker, got: " + std::to_string(blockSeparator), "B3dReaderImpl::ReadData");
-        }
-        res.push_back(NodeHierarchyBreaker::MakeHierarhyBreaker(m_originalRoot, NodePtr{}));
-
         NodePtr current;
+        NodePtr parent;
 
         for ( ; ; )
         {
             std::uint32_t separator = ReadUint32();
+            std::cerr << "SEP: " << separator << std::endl;
             if (separator == DataEndMagic)
             {
                 break;
@@ -193,37 +178,30 @@ private:
             else if (separator == BlockBeginMagic)
             {
                 block_data::BlockHeader blockHeader = ReadBlockHeader();
-                current = DispatchBlock(current, blockHeader);
+                current = DispatchBlock(parent, blockHeader);
+                if (!parent)
+                {
+                    res.push_back(current);
+                    parent = current;
+                }
                 if (current->HasNestedCount())
                 {
-                    std::uint32_t nestedCount = ReadUint32(); // TODO: do we need this???
+                    std::uint32_t nestedCount = ReadUint32(); // TODO: do we need this, or can simply ignore this value???
+                    std::cerr << "NESTED: " << nestedCount << std::endl;
                     (void)nestedCount;
                 }
             }
             else if (separator == BlockHierarchyBreaker)
             {
-
+                current = MakeHierarhyBreaker(parent);
             }
-        }
-
-        bool gotEndOfData = false;
-        bool gotHierarchyBreaker = false;
-        for ( ; ; )
-        {
-            NodeList nodes = ReadBlock(NodePtr{}, false, gotEndOfData, gotHierarchyBreaker);
-            res.insert(res.end(), nodes.begin(), nodes.end());
-            if (gotEndOfData)
+            else if (separator == BlockEndMagic)
             {
-                break;
+                if (parent->HasParent())
+                {
+                    parent = parent->GetParent();
+                }
             }
-        }
-
-        const size_t dataEndOffset = GetStream().tell();
-        assert(dataEndOffset > dataStartOffset);
-        // check postconditions
-        if ((dataEndOffset - dataStartOffset) != sectionInfo.size)
-        {
-            ThrowError("Incorrect data size", "B3dReaderImpl::ReadData");
         }
 
         return res;
@@ -231,6 +209,10 @@ private:
 
     NodePtr DispatchBlock(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
+        if (blockHeader.type == block_data::EmptyBlock0)
+        {
+            return ReadBlockData0(parent, blockHeader);
+        }
         if (blockHeader.type == block_data::SimpleObjectConnectorBlock1)
         {
             return ReadBlockData1(parent, blockHeader);
@@ -347,143 +329,22 @@ private:
         ThrowError("Unknown block id: " + std::to_string(blockHeader.type), "B3dReaderImpl::ReadBlock");
     }
 
-    struct NodeHierarchyBreaker : public Node
+    NodePtr MakeHierarhyBreaker(const WeakNodePtr& parent)
     {
-        NodeHierarchyBreaker(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader)
-            : Node(originalRoot, parent, blockHeader)
-        {
-        }
+        block_data::BlockHeader blockHeader = MakeBlockHeader(common::ResourceName{}, block_data::HierarchyBreakerBlockXxx);
 
-        virtual void Visit(NodeVisitorInterface& /* visitor */, VisitMode /* visitMode */) override
-        {
-        }
-
-        virtual const common::BoundingSphere& GetBoundingSphere() const override
-        {
-            return common::InvalidBoundingSphere;
-        }
-
-        virtual std::string GetTypeName() const override
-        {
-            return "";
-        }
-
-        virtual bool HasNestedCount() const override
-        {
-            return false;
-        }
-
-        static NodePtr MakeHierarhyBreaker(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent)
-        {
-            block_data::BlockHeader blockHeader{ 0 };
-
-            return std::make_shared<NodeHierarchyBreaker>(originalRoot, parent, blockHeader);
-        }
-    };
-
-    NodeList ReadBlock(const NodePtr& parent, bool checkBlockStart, bool& gotEndOfData, bool& gotHierarchyBreaker)
-    {
-        gotEndOfData = false;
-        gotHierarchyBreaker = false;
-
-        NodeList res;
-
-        std::uint32_t blockSeparator;
-        if (checkBlockStart)
-        {
-            blockSeparator = ReadUint32();
-            //if (blockSeparator == BlockHierarchyBreaker)
-            {
-                //res.push_back(std::make_shared<NodeHierarchyBreaker>());
-
-                //blockSeparator = ReadUint32();
-            }
-
-            if (blockSeparator == DataEndMagic)
-            {
-                gotEndOfData = true;
-                return res;
-            }
-
-            if (blockSeparator != BlockBeginMagic)
-            {
-                ThrowError("Incorrect block begin magic: " + std::to_string(blockSeparator), "B3dReaderImpl::ReadBlock");
-            }
-        }
-
-        block_data::BlockHeader blockHeader = ReadBlockHeader();
-        NodePtr block = DispatchBlock(parent, blockHeader);
-        res.push_back(block);
-
-
-
-        blockSeparator = ReadUint32();
-        while (blockSeparator == BlockHierarchyBreaker)
-        {
-            blockSeparator = ReadUint32();
-            res.push_back(NodeHierarchyBreaker::MakeHierarhyBreaker(m_originalRoot, parent));
-        }
-
-        while (blockSeparator == BlockBeginMagic)
-        {
-            NodeList nodes = ReadBlock(parent, false, gotEndOfData, gotHierarchyBreaker);
-            res.insert(res.end(), nodes.begin(), nodes.end());
-            blockSeparator = ReadUint32();
-        }
-
-        if (blockSeparator != BlockEndMagic)
-        {
-            ThrowError("Incorrect block end magic: " + std::to_string(blockSeparator), "B3dReaderImpl::ReadBlock");
-        }
-
-        return res;
+        block_data::HierarchyBreaker block{};
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    void ReadNestedBlocks(NodePtr parent)
+    NodePtr ReadBlockData0(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
-        const std::uint32_t nestedBlocksCount = ReadUint32();
-        if (nestedBlocksCount > 1000)
-        {
-            __debugbreak();
-            ThrowError("Unexpectedly big nested size", "B3dReaderImpl::ReadNestedBlocks");
-        }
-
-        for (std::uint32_t nestedBlockNumber = 0; nestedBlockNumber != nestedBlocksCount; ++nestedBlockNumber)
-        {
-            bool gotEndOfData = false;
-            bool gotHierarchyBreaker = false;
-            NodeList children = ReadBlock(parent, true, gotEndOfData, gotHierarchyBreaker);
-            if (gotEndOfData)
-            {
-                ThrowError("Unexpected end of data", "B3dReaderImpl::ReadNestedBlocks");
-            }
-            for (auto child: children)
-            {
-                parent->AddChildNode(child);
-            }
-            if (gotHierarchyBreaker)
-            {
-                parent = parent->GetParent();
-            }
-        }
-    }
-
-    NodePtr ReadBlockData0()
-    {
-        const block_data::BlockHeader blockHeader = ReadBlockHeader();
-
-        if (blockHeader.type != block_data::EmptyBlock0)
-        {
-            ThrowError("Expected Empty block id, got: " + std::to_string(blockHeader.type), "ReadBlockData0");
-        }
-
         block_data::Empty0 block;
 
         ReadBytes(block.emptyData0, sizeof(block.emptyData0));
         block.unknown = ReadFloat();
-        ReadBytes(block.emptyData1, sizeof(block.emptyData1));
 
-        return std::make_shared<VisitableNodeWithData<block_data::Empty0>>(m_originalRoot, NodePtr{}, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData1(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -493,7 +354,7 @@ private:
         ReadBytes(block.space.data(), block.space.size());
         ReadBytes(block.object.data(), block.object.size());
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleObjectConnector1>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData2(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -504,7 +365,7 @@ private:
         block.unknown0 = ReadVector3();
         block.unknown1 = ReadFloat();
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupUnknown2>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData4(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -516,7 +377,7 @@ private:
         ReadBytes(block.name.data(), block.name.size());
         ReadBytes(block.data.data(), block.data.size());
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupRoadInfraObjects4>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData5(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -526,7 +387,7 @@ private:
         block.boundingSphere = ReadBoundingSphere();
         ReadBytes(block.name.data(), block.name.size());
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupObjects5>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData7(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -546,7 +407,7 @@ private:
             block.meshInfo.texCoords.push_back(texCoord);
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupVertexData7>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     void DispatchReadFaceData8(const std::uint32_t itemsInFace, block_data::Face8& face)
@@ -638,7 +499,7 @@ private:
             block.faces.push_back(face);
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleFaces8>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData9(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -649,7 +510,7 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupTrigger9>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData10(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -660,7 +521,7 @@ private:
         block.unknown = ReadVector3();
         block.distanceToPlayer = ReadFloat();
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupLodParameters10>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData12(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -675,7 +536,7 @@ private:
         block.unknown4 = ReadUint32();
         block.unknown5 = ReadUint32();
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupUnknown12>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData13(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -689,7 +550,7 @@ private:
         const std::uint32_t unknown2Count = ReadUint32();
         ReadCount(block.unknown2, unknown2Count);
         
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleTrigger13>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData14(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -706,7 +567,7 @@ private:
         block.unknown5 = ReadFloat();
         block.unknown6 = ReadFloat();
         
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleUnknown14>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData18(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -717,14 +578,14 @@ private:
         ReadBytes(block.space.data(), block.space.size());
         ReadBytes(block.object.data(), block.object.size());
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleObjectConnector18>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData19(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupObjects19 block;
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupObjects19>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData20(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -742,7 +603,7 @@ private:
         ReadCount(block.unknown2, countUnknown2);
         ReadCount(block.unknown3, countUnknown3);
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleFlatCollision20>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData21(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -753,7 +614,7 @@ private:
         block.count = ReadUint32();
         block.unknown = ReadUint32();
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupObjects21>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData23(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -776,7 +637,7 @@ private:
             block.polygons.push_back(polygon);
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleVolumeCollision23>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData24(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -790,7 +651,7 @@ private:
         block.position = ReadVector3();
         block.unknown = ReadUint32();
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupTransformMatrix24>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData25(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -806,7 +667,7 @@ private:
             unknown = ReadFloat();
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleUnknown25>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     void DispatchFace28(block_data::Face28& face)
@@ -848,7 +709,7 @@ private:
             block.faces.push_back(data);
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleFaces28>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData29(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -861,7 +722,7 @@ private:
 
         ReadBytes(block.unknown1.data(), (block.type == 3 ? 7 : 8) * sizeof(block.unknown1[0]));
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupUnknown29>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData30(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -874,7 +735,7 @@ private:
         block.leftDown = ReadVector3();
         block.upRight = ReadVector3();
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimplePortal30>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData33(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -891,7 +752,7 @@ private:
             colorEntry = ReadFloat();
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupLightingObjects33>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData34(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -904,7 +765,7 @@ private:
         std::uint32_t dataCount = ReadUint32();
         ReadCount(block.data, dataCount);
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleUnknown34>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     void DispatchReadFace35(const std::uint32_t blockType, block_data::Face35& face)
@@ -1037,7 +898,7 @@ private:
             block.faces.push_back(face);
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleFaces35>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData36(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -1069,7 +930,7 @@ private:
             ThrowError("Unknown type " + std::to_string(block.type), "B3dReaderImpl::ReadBlockData36");
         }
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupVertexData36>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     void DispatchVertexData37(block_data::GroupVertexData37& block)
@@ -1148,7 +1009,7 @@ private:
 
         DispatchVertexData37(block);
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupVertexData37>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData39(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -1157,7 +1018,7 @@ private:
 
         ReadBytes(block.unknown.data(), block.unknown.size());
 
-        return std::make_shared<VisitableNodeWithData<block_data::GroupUnknown39>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     NodePtr ReadBlockData40(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
@@ -1174,7 +1035,7 @@ private:
         const std::uint32_t unknown1Size = ReadUint32();
         ReadCount(block.unknown1, unknown1Size);
 
-        return std::make_shared<VisitableNodeWithData<block_data::SimpleGeneratedObjects40>>(m_originalRoot, parent, blockHeader, block);
+        return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 };
 

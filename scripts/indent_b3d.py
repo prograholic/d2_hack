@@ -12,33 +12,25 @@ def read_naive():
     global indent
 
     count_333 = 0
-    with open('sep2.txt') as f:
+    with open('cerr.log') as f:
         for line in f:
             line = line.strip()
             if line.startswith('FILE:'):
-                count_333 = 0
                 indent = 0
                 printi(line)
-
-            elif line.startswith('BH:'):
-                printi(line)
-            elif line == '111':
-                printi('{')
+            elif line.startswith('SEP: 111'):
+                printi('{ // 111')
                 indent += 1
-            elif line == '333':
-                count_333 += 1
-                printi('{')
+            elif line.startswith('SEP: 333'):
+                printi('{ // 333')
                 indent += 1
-            elif line == '222':
+            elif line.startswith('SEP: 222'):
                 indent -= 1
-                printi('}')
-            elif line == '555':
+                printi('} // 222')
+            elif line.startswith('SEP: 555'):
                 indent -= 1
-                printi('}')
-            elif line == '444':
-                if count_333 == 1:
-                    indent -= 1
-                    printi('}')
+                printi('} // 555')
+            else:
                 printi(line)
             
 def update_counter(counter, field):
@@ -53,7 +45,7 @@ def print_counter(counter, line):
             
 def read_naive2():
     counter = dict()
-    with open('sep.log') as f:
+    with open('cerr.log') as f:
         prev_file = None
         for line in f:
             line = line.strip()
