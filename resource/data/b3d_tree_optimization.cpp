@@ -40,8 +40,7 @@ static bool IsUnusedNode(NodePtr node)
     {
         block_data::SimpleTriggerBlock13,
         block_data::SimpleFlatCollisionBlock20,
-        block_data::SimpleVolumeCollisionBlock23,
-        block_data::HierarchyBreakerBlockXxx
+        block_data::SimpleVolumeCollisionBlock23
     };
 
     return IsNodeOfType(node, std::begin(unusedNodeTypes), std::end(unusedNodeTypes));
@@ -284,35 +283,40 @@ static void UseHalfChildFromSingleLod(B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static void UseFirstLod(NodePtr node, bool insideLod)
+static void UseFirstLod(NodePtr node)
 {
     if (node->GetType() == block_data::GroupLodParametersBlock10)
     {
-        insideLod = true;
-    }
-
-    NodeList newChildren;
-    for (auto child : node->GetChildNodeList())
-    {
-        if ((child->GetType() == block_data::GroupLodParametersBlock10) && insideLod && (node->GetChildNodeList().size() > 1))
+        D2_HACK_LOG(UseFirstLod) << "Got LOD node: " << node->GetName();
+        auto& childs = node->GetChildNodeList();
+        auto pos = childs.begin();
+        while (pos != childs.end())
         {
-            D2_HACK_LOG(UseFirstLod) << "skipping LOD entry: " << child->GetName();
-            continue;
+            D2_HACK_LOG(UseFirstLod) << "child node " << (*pos)->GetName() << ", with type: " << (*pos)->GetType();
+            if ((*pos)->GetType() == block_data::HierarchyBreakerBlockXxx)
+            {
+                D2_HACK_LOG(UseFirstLod) << "  Got breaker node: " << (*pos)->GetName();
+                break;
+            }
+            ++pos;
         }
 
-        newChildren.push_back(child);
-
-        UseFirstLod(child, false);
+        D2_HACK_LOG(UseFirstLod) << "before: " << childs.size();
+        childs.erase(pos, childs.end());
+        D2_HACK_LOG(UseFirstLod) << "after: " << childs.size();
     }
 
-    node->SetChildNodes(std::move(newChildren));
+    for (auto child : node->GetChildNodeList())
+    {
+        UseFirstLod(child);
+    }
 }
 
 static void UseFirstLod(B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        UseFirstLod(node, false);
+        UseFirstLod(node);
     }
 }
 
@@ -657,7 +661,6 @@ static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& tree)
 static void SkipTopLevelNodes(B3dTree& tree)
 {
     NodeList newRoots;
-    const uint32_t unusedTopLevelNodeTypes [] = {block_data::GroupRoadInfraObjectsBlock4, block_data::GroupObjectsBlock5};
     for (const auto& node : tree.rootNodes)
     {
         if (predicates::IsUnusedTopLevelNode(node))
@@ -698,6 +701,11 @@ void Optimize(B3dForest& forest)
     {
         SkipTopLevelNodes(*tree);
         FilterUnusedNodes(*tree);
+        UseFirstLod(*tree);
+        MergeFacesWithSameMaterial(*tree);
+        RemoveEmptyNodes(*tree);
+
+
         if (!tree) //always false at runtime, remove in prod
         {
             // TODO: переделать оптимизацию с LOD-ами, кажется, что все оптимизации с LOD-ами неправильные.
@@ -707,10 +715,6 @@ void Optimize(B3dForest& forest)
             //UseFirstLod(*tree);
             SelectLodForPattern37_10_10(*tree);
         }
-        
-        UseFirstLod(*tree);
-        MergeFacesWithSameMaterial(*tree);
-        RemoveEmptyNodes(*tree);
     }
 }
 

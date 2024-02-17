@@ -64,6 +64,7 @@ class Node : public std::enable_shared_from_this<Node>
     Node& operator=(const Node&) = delete;
 
 protected:
+    // @TODO: need to remove `parent` parameter because of using `MakeVistiableNode`
     Node(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader);
 
 public:
@@ -71,7 +72,7 @@ public:
 
     std::uint32_t GetType() const;
 
-    const NodeList& GetChildNodeList() const;
+    NodeList& GetChildNodeList();
 
     void SetChildNodes(NodeList&& childNodes);
 

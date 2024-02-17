@@ -19,17 +19,17 @@ def read_naive():
                 indent = 0
                 printi(line)
             elif line.startswith('SEP: 111'):
-                printi('{ // 111')
+                printi('{')
                 indent += 1
             elif line.startswith('SEP: 333'):
-                printi('{ // 333')
+                printi('{')
                 indent += 1
             elif line.startswith('SEP: 222'):
                 indent -= 1
-                printi('} // 222')
+                printi('}')
             elif line.startswith('SEP: 555'):
                 indent -= 1
-                printi('} // 555')
+                printi('}')
             else:
                 printi(line)
             
