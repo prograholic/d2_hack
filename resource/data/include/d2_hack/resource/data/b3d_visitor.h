@@ -99,8 +99,8 @@ class VisitableNodeWithData : public NodeWithData<BlockType>
     friend NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType2& block);
 public:
 
-    VisitableNodeWithData(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block, const PrivateTag& /* unused */)
-        : NodeWithData<BlockType>(originalRoot, parent, blockHeader, block)
+    VisitableNodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block, const PrivateTag& /* unused */)
+        : NodeWithData<BlockType>(originalRoot, blockHeader, block)
     {
     }
 
@@ -113,7 +113,7 @@ public:
 template <typename BlockType>
 NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
 {
-    auto res = std::make_shared<VisitableNodeWithData<BlockType>>(originalRoot, parent, blockHeader, block, VisitableNodeWithData<BlockType>::PrivateTag{});
+    auto res = std::make_shared<VisitableNodeWithData<BlockType>>(originalRoot, blockHeader, block, VisitableNodeWithData<BlockType>::PrivateTag{});
 
     auto p = parent.lock();
     if (p)

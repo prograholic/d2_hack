@@ -69,11 +69,11 @@ std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
 }
 
-Node::Node(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader)
+Node::Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
 	: m_name(common::ResourceNameToString(blockHeader.name))
 	, m_type(blockHeader.type)
 	, m_originalRoot(originalRoot)
-	, m_parent(parent)
+	, m_parent()
 {
 }
 

@@ -7,8 +7,6 @@
 #include <vector>
 #include <string>
 
-#include <iostream>
-
 #include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
@@ -64,8 +62,7 @@ class Node : public std::enable_shared_from_this<Node>
     Node& operator=(const Node&) = delete;
 
 protected:
-    // @TODO: need to remove `parent` parameter because of using `MakeVistiableNode`
-    Node(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader);
+    Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
 
 public:
     const std::string& GetName() const;
@@ -123,16 +120,15 @@ private:
 template <typename BlockType>
 class NodeWithData : public Node
 {
+protected:
+    NodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
+        : Node(originalRoot, blockHeader)
+        , m_block(block)
+    {
+    }
 public:
 
     static constexpr auto Value = BlockType::Value;
-
-    NodeWithData(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
-        : Node(originalRoot, parent, blockHeader)
-        , m_block(block)
-    {
-        std::cerr << "Block: " << blockHeader.type << ", \"" << std::string(blockHeader.name.begin(), blockHeader.name.end()).c_str() << "\"" << std::endl;
-    }
 
     virtual const common::BoundingSphere& GetBoundingSphere() const override
     {

@@ -56,7 +56,6 @@ public:
 
     B3dTreePtr Read(const std::string& dir, const std::string& id)
     {
-        std::cerr << "FILE: " << id << std::endl;
         FileHeader fileHeader;
         ReadFileHeader(fileHeader);
 
@@ -170,7 +169,6 @@ private:
         for ( ; ; )
         {
             std::uint32_t separator = ReadUint32();
-            std::cerr << "SEP: " << separator << std::endl;
             if (separator == DataEndMagic)
             {
                 break;
@@ -187,8 +185,8 @@ private:
                 roots.push(current);
                 if (current->HasNestedCount())
                 {
-                    std::uint32_t nestedCount = ReadUint32(); // TODO: do we need this, or can simply ignore this value???
-                    std::cerr << "NESTED: " << nestedCount << std::endl;
+                    // NOTE: do we need this field (nested count)
+                    std::uint32_t nestedCount = ReadUint32();
                     (void)nestedCount;
                 }
             }
