@@ -46,18 +46,6 @@ static bool IsUnusedNode(NodePtr node)
     return IsNodeOfType(node, std::begin(unusedNodeTypes), std::end(unusedNodeTypes));
 }
 
-static bool IsVertexNode(NodePtr node)
-{
-    static const std::uint32_t vertexNodeTypes[] =
-    {
-        block_data::GroupVertexDataBlock7,
-        block_data::GroupVertexDataBlock36,
-        block_data::GroupVertexDataBlock37
-    };
-
-    return IsNodeOfType(node, std::begin(vertexNodeTypes), std::end(vertexNodeTypes));
-}
-
 static bool IsUnusedTopLevelNode(NodePtr node)
 {
     static const std::uint32_t unusedTopLevelNodeTypes[] =
@@ -117,172 +105,6 @@ static void FilterUnusedNodes(B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static void SkipLodParametersFor37(NodePtr node, bool hasLod)
-{
-    if (hasLod)
-    {
-        NodeList newChildren;
-        for (auto child : node->GetChildNodeList())
-        {
-            if (child->GetType() == block_data::GroupLodParametersBlock10)
-            {
-                D2_HACK_LOG(SkipLodParametersFor37) << "skipping node " << child->GetName();
-                continue;
-            }
-            newChildren.push_back(child);
-        }
-        node->SetChildNodes(std::move(newChildren));
-    }
-    else
-    {
-        for (auto child : node->GetChildNodeList())
-        {
-            SkipLodParametersFor37(child, child->GetType() == block_data::GroupLodParametersBlock10);
-        }
-    }
-}
-
-static void SearchFor37(NodePtr node)
-{
-    if (node->GetType() == block_data::GroupVertexDataBlock37)
-    {
-        SkipLodParametersFor37(node, false);
-    }
-    else
-    {
-        for (auto child : node->GetChildNodeList())
-        {
-            SearchFor37(child);
-        }
-    }
-}
-
- void SkipLodParametersFor37(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        SearchFor37(node);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-static NodeList OptimizeSequence5(NodePtr node)
-{
-    if (node->GetType() != block_data::GroupObjectsBlock5)
-    {
-        NodeList res;
-        res.push_back(node);
-        return res;
-    }
-
-    return node->GetChildNodeList();
-}
-
-static NodeList OptimizeSequence10_5(NodePtr node)
-{
-    if (node->GetType() != block_data::GroupLodParametersBlock10)
-    {
-        NodeList res;
-        res.push_back(node);
-        return res;
-    }
-
-    NodeList res;
-    for (auto child : node->GetChildNodeList())
-    {
-        NodeList tmp = OptimizeSequence5(child);
-        res.insert(res.end(), tmp.begin(), tmp.end());
-    }
-    
-    return res;
-}
-
-static void OptimizeSequence37_10_5(NodePtr node)
-{
-    if (node->GetType() == block_data::GroupVertexDataBlock37)
-    {
-        NodeList newChildren;
-        for (const auto child : node->GetChildNodeList())
-        {
-            auto newChild = OptimizeSequence10_5(child);
-            newChildren.insert(newChildren.end(), newChild.begin(), newChild.end());
-        }
-
-        node->SetChildNodes(std::move(newChildren));
-    }
-    else
-    {
-        for (const auto child : node->GetChildNodeList())
-        {
-            OptimizeSequence37_10_5(child);
-        }
-    }
-}
-
-
-static void OptimizeSequence37_10_5(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        OptimizeSequence37_10_5(node);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-static size_t GetLodCount(NodePtr node)
-{
-    size_t count = 0;
-    if (node->GetType() == block_data::GroupLodParametersBlock10)
-    {
-        count += 1;
-    }
-
-    for (auto child : node->GetChildNodeList())
-    {
-        count += GetLodCount(child);
-    }
-
-    return count;
-}
-
-static void UseHalfChildFromSingleLod(NodePtr node)
-{
-    if (node->GetType() == block_data::GroupLodParametersBlock10)
-    {
-        if (GetLodCount(node) == 1)
-        {
-            NodeList newChildren = node->GetChildNodeList();
-            if (std::all_of(newChildren.begin(), newChildren.end(), predicates::IsVertexNode) && (newChildren.size() >= 2))
-            {
-                // TODO: некорректно выбираются объекты для LOD - 
-                //assert((newChildren.size() % 2) == 0);
-                //newChildren.resize(newChildren.size() / 2);
-                //node->SetChildNodes(std::move(newChildren));
-                D2_HACK_LOG(UseHalfChildFromSingleLod) << "skip second half of child nodes for " << node->GetName();
-            }
-        }
-    }
-    else
-    {
-        for (auto child : node->GetChildNodeList())
-        {
-            UseHalfChildFromSingleLod(child);
-        }
-    }
-}
-
-static void UseHalfChildFromSingleLod(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        UseHalfChildFromSingleLod(node);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 static void UseFirstLod(NodePtr node)
 {
     if (node->GetType() == block_data::GroupLodParametersBlock10)
@@ -319,89 +141,6 @@ static void UseFirstLod(B3dTree& tree)
         UseFirstLod(node);
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-static void SelectLodForPattern37_10_10(NodePtr node)
-{
-    if (node->GetType() == block_data::GroupVertexDataBlock37)
-    {
-        auto children = node->GetChildNodeList();
-        if (children.size() == 1)
-        {
-            if (children[0]->GetType() == block_data::GroupLodParametersBlock10)
-            {
-                D2_HACK_LOG(SelectLodForPattern37_10_10) << "Found child Log for 37 block: " << node->GetName();
-
-                auto childsLevel2 = children[0]->GetChildNodeList();
-                if (!childsLevel2.empty())
-                {
-                    static const std::uint32_t lod_nodes[] = { block_data::GroupLodParametersBlock10 };
-                    if (predicates::IsAllNodesOfType(childsLevel2.begin(), childsLevel2.end(), std::begin(lod_nodes), std::end(lod_nodes)))
-                    {
-                        NodeGroupLodParameters10* closestLod = childsLevel2[0]->NodeCast<NodeGroupLodParameters10>();
-                        for (auto lod2 : childsLevel2)
-                        {
-                            NodeGroupLodParameters10* typedNode = lod2->NodeCast<NodeGroupLodParameters10>();
-                            if (typedNode->GetBlockData().distanceToPlayer < closestLod->GetBlockData().distanceToPlayer)
-                            {
-                                closestLod = typedNode;
-                            }
-                        }
-
-                        NodeList newChildren;
-                        for (auto face : closestLod->GetChildNodeList())
-                        {
-                            if (face->GetType() == block_data::SimpleFacesBlock8)
-                            {
-                                D2_HACK_LOG(SelectLodForPattern37_10_10) << "skipping Face8 node: " << face->GetName();
-                                continue;
-                            }
-                            newChildren.push_back(face);
-                        }
-                        node->SetChildNodes(std::move(newChildren));
-                        return;
-                    }
-                }
-            }
-        }
-
-    }
-
-    for (auto child : node->GetChildNodeList())
-    {
-        SelectLodForPattern37_10_10(child);
-    }
-}
-
-/**
- * Паттерн основан на том, что если у GroupVertexData37 есть один дочерний узел типа Lod,
- * а у того, в свою очередь, тоже только Lod в кач-ве дочерних, то выбираем Lod с наиболее близкой дистанцией,
- * а остальные пропускаем.
- * Также, нужно выкинуть Face8, так как они дают Lod
- * 
- * Пример иерархии:
- * GroupVertexData37(AnmObj0203)
- *   GroupLodParameters10(176)
- *       GroupLodParameters10(177)
- *           SimpleFaces35(178)37 -> 10 -> 10 -> 35
- *           SimpleFaces35(179)37 -> 10 -> 10 -> 35
- *           SimpleFaces8(180)37 -> 10 -> 10 -> 8
- *       GroupLodParameters10(181)
- *           SimpleFaces8(182)37 -> 10 -> 10 -> 8
- *           SimpleFaces8(183)37 -> 10 -> 10 -> 8
- * 
- * Отлаживал на ad_AnmObj0203_scene_node
- */
-static void SelectLodForPattern37_10_10(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        SelectLodForPattern37_10_10(node);
-    }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -562,21 +301,21 @@ static void MergeFacesWithSameMaterial(const B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static bool NeedToRemove(const NodePtr& node)
+static bool RemoveEmptyNodes(const NodePtr& node)
 {
     const auto& children = node->GetChildNodeList();
 
     NodeList newChildList;
     for (auto child : children)
     {
-        bool needToRemove = NeedToRemove(child);
+        bool needToRemove = RemoveEmptyNodes(child);
         if (!needToRemove)
         {
             newChildList.push_back(child);
         }
         else
         {
-            D2_HACK_LOG(NeedToRemove) << "removed node: " << child->GetName() << " with type: " << child->GetType();
+            D2_HACK_LOG(RemoveEmptyNodes) << "removed node: " << child->GetName() << " with type: " << child->GetType();
         }
     }
 
@@ -601,7 +340,7 @@ static void RemoveEmptyNodes(B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        NeedToRemove(node);
+        RemoveEmptyNodes(node);
     }
 }
 
@@ -704,17 +443,6 @@ void Optimize(B3dForest& forest)
         UseFirstLod(*tree);
         MergeFacesWithSameMaterial(*tree);
         RemoveEmptyNodes(*tree);
-
-
-        if (!tree) //always false at runtime, remove in prod
-        {
-            // TODO: переделать оптимизацию с LOD-ами, кажется, что все оптимизации с LOD-ами неправильные.
-            SkipLodParametersFor37(*tree);
-            OptimizeSequence37_10_5(*tree);
-            UseHalfChildFromSingleLod(*tree);
-            //UseFirstLod(*tree);
-            SelectLodForPattern37_10_10(*tree);
-        }
     }
 }
 
