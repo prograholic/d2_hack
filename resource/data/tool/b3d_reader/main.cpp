@@ -51,6 +51,10 @@ public:
     void EndNested()
     {
         GetStream(1) << "}" << std::endl;
+    }
+
+    void EndNode()
+    {
         GetStream() << "}" << std::endl;
     }
 
@@ -659,16 +663,21 @@ void VisitNode(const NodePtr& node, TracingVisitor& visitor, int level)
 {
     visitor.SetLevel(level);
     node->Visit(visitor, VisitMode::PreOrder);
-    visitor.BeginNested();
 
     const auto& childNodes = node->GetChildNodeList();
-    for (auto child : childNodes)
+    if (!childNodes.empty())
     {
-        VisitNode(child, visitor, level + 2);
-    }
+        visitor.BeginNested();
 
-    visitor.SetLevel(level);
-    visitor.EndNested();
+        for (auto child : childNodes)
+        {
+            VisitNode(child, visitor, level + 2);
+        }
+
+        visitor.SetLevel(level);
+        visitor.EndNested();
+    }
+    visitor.EndNode();
 }
 
 void VisitTree(const B3dTree& tree, TracingVisitor& visitor)

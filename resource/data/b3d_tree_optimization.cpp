@@ -40,7 +40,8 @@ static bool IsUnusedNode(NodePtr node)
     {
         block_data::SimpleTriggerBlock13,
         block_data::SimpleFlatCollisionBlock20,
-        block_data::SimpleVolumeCollisionBlock23
+        block_data::SimpleVolumeCollisionBlock23,
+        block_data::HierarchyBreakerBlockXxx
     };
 
     return IsNodeOfType(node, std::begin(unusedNodeTypes), std::end(unusedNodeTypes));
@@ -63,7 +64,8 @@ static bool IsUnusedTopLevelNode(NodePtr node)
     static const std::uint32_t unusedTopLevelNodeTypes[] =
     {
         block_data::GroupRoadInfraObjectsBlock4,
-        block_data::GroupObjectsBlock5
+        block_data::GroupObjectsBlock5,
+        block_data::HierarchyBreakerBlockXxx
     };
 
     return IsNodeOfType(node, std::begin(unusedTopLevelNodeTypes), std::end(unusedTopLevelNodeTypes));
@@ -696,15 +698,17 @@ void Optimize(B3dForest& forest)
     {
         SkipTopLevelNodes(*tree);
         FilterUnusedNodes(*tree);
-        if (!tree)
+        if (!tree) //always false at runtime, remove in prod
         {
             // TODO: переделать оптимизацию с LOD-ами, кажется, что все оптимизации с LOD-ами неправильные.
             SkipLodParametersFor37(*tree);
             OptimizeSequence37_10_5(*tree);
             UseHalfChildFromSingleLod(*tree);
-            UseFirstLod(*tree);
+            //UseFirstLod(*tree);
+            SelectLodForPattern37_10_10(*tree);
         }
-        SelectLodForPattern37_10_10(*tree);
+        
+        UseFirstLod(*tree);
         MergeFacesWithSameMaterial(*tree);
         RemoveEmptyNodes(*tree);
     }

@@ -3,6 +3,7 @@
 #include <d2_hack/resource/data/b3d_reader.h>
 
 #include <cstring>
+#include <stack>
 
 #include <d2_hack/common/reader.h>
 #include <d2_hack/resource/data/b3d_visitor.h>
@@ -164,8 +165,7 @@ private:
         }
 
         NodeList res;
-        NodePtr current;
-        NodePtr parent;
+        std::stack<NodePtr> roots;
 
         for ( ; ; )
         {
@@ -178,12 +178,13 @@ private:
             else if (separator == BlockBeginMagic)
             {
                 block_data::BlockHeader blockHeader = ReadBlockHeader();
-                current = DispatchBlock(parent, blockHeader);
-                if (!parent)
+                bool noRoots = roots.empty();
+                NodePtr current = DispatchBlock(noRoots ? NodePtr{} : roots.top(), blockHeader);
+                if (noRoots)
                 {
                     res.push_back(current);
-                    parent = current;
                 }
+                roots.push(current);
                 if (current->HasNestedCount())
                 {
                     std::uint32_t nestedCount = ReadUint32(); // TODO: do we need this, or can simply ignore this value???
@@ -193,14 +194,16 @@ private:
             }
             else if (separator == BlockHierarchyBreaker)
             {
-                current = MakeHierarhyBreaker(parent);
+                bool noRoots = roots.empty();
+                NodePtr current = MakeHierarhyBreaker(noRoots ? NodePtr{} : roots.top());
+                if (noRoots)
+                {
+                    res.push_back(current);
+                }
             }
             else if (separator == BlockEndMagic)
             {
-                if (parent->HasParent())
-                {
-                    parent = parent->GetParent();
-                }
+                roots.pop();
             }
         }
 

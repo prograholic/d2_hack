@@ -58,8 +58,8 @@ void SimpleB3dMeshRenderer::CreateScene()
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
     B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
-    //transformation::Transform(b3dForest);
-    //transformation::Optimize(b3dForest);
+    transformation::Transform(b3dForest);
+    transformation::Optimize(b3dForest);
 
     for (auto& tree : b3dForest.forest)
     {
