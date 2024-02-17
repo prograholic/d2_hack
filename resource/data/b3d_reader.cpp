@@ -38,12 +38,11 @@ struct FileHeader
 
 static const std::uint8_t Signature[FileHeader::SignatureSize] = { 'b', '3', 'd', '\0' };
 
-static const std::uint32_t DataBeginMagic = 111;
-static const std::uint32_t DataEndMagic = 222;
-
-static const std::uint32_t BlockBeginMagic = 333;
-static const std::uint32_t BlockHierarchyBreaker = 444;
-static const std::uint32_t BlockEndMagic = 555;
+static const std::uint32_t DataBeginMagic = 111;           // 0x006F, 6F 00 00 00
+static const std::uint32_t DataEndMagic = 222;             // 0x00DE, DE 00 00 00
+static const std::uint32_t BlockBeginMagic = 333;          // 0x014D, 4D 01 00 00
+static const std::uint32_t BlockHierarchyBreaker = 444;    // 0x01BC, BC 01 00 00
+static const std::uint32_t BlockEndMagic = 555;            // 0x022B, 2B 02 00 00
 
 
 
