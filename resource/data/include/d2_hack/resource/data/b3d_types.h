@@ -83,6 +83,7 @@ struct Empty0
 {
     static constexpr auto Value = EmptyBlock0;
     static constexpr char Name[] = "Empty0";
+    static constexpr bool HasNestedCount = false;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
@@ -98,6 +99,7 @@ struct SimpleObjectConnector1
 {
     static constexpr auto Value = SimpleObjectConnectorBlock1;
     static constexpr char Name[] = "SimpleObjectConnector1";
+    static constexpr bool HasNestedCount = false;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
@@ -109,6 +111,7 @@ struct GroupUnknown2
 {
     static constexpr auto Value = GroupUnknownBlock2;
     static constexpr char Name[] = "GroupUnknown2";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
     common::Position unknown0;
@@ -125,6 +128,7 @@ struct GroupRoadInfraObjects4
 {
     static constexpr auto Value = GroupRoadInfraObjectsBlock4;
     static constexpr char Name[] = "GroupRoadInfraObjects4";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -143,6 +147,7 @@ struct GroupObjects5
 {
     static constexpr auto Value = GroupObjectsBlock5;
     static constexpr char Name[] = "GroupObjects5";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -160,6 +165,7 @@ struct GroupVertexData7
 {
     static constexpr auto Value = GroupVertexDataBlock7;
     static constexpr char Name[] = "GroupVertexData7";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
     common::ResourceName name;
@@ -221,6 +227,7 @@ struct SimpleFaces8
 {
     static constexpr auto Value = SimpleFacesBlock8;
     static constexpr char Name[] = "SimpleFaces8";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -231,6 +238,7 @@ struct GroupTrigger9
 {
     static constexpr auto Value = GroupTriggerBlock9;
     static constexpr char Name[] = "GroupTrigger9";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
 
@@ -248,6 +256,7 @@ struct GroupLodParameters10
 {
     static constexpr auto Value = GroupLodParametersBlock10;
     static constexpr char Name[] = "GroupLodParameters10";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
 
@@ -260,6 +269,7 @@ struct GroupUnknown12
 {
     static constexpr auto Value = GroupUnknownBlock12;
     static constexpr char Name[] = "GroupUnknown12";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
 
@@ -276,6 +286,7 @@ struct SimpleTrigger13
 {
     static constexpr auto Value = SimpleTriggerBlock13;
     static constexpr char Name[] = "SimpleTrigger13";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -289,6 +300,7 @@ struct SimpleUnknown14
 {
     static constexpr auto Value = SimpleUnknownBlock14;
     static constexpr char Name[] = "SimpleUnknown14";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -325,6 +337,7 @@ struct SimpleObjectConnector18
 {
     static constexpr auto Value = SimpleObjectConnectorBlock18;
     static constexpr char Name[] = "SimpleObjectConnector18";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -338,6 +351,7 @@ struct GroupObjects19
 {
     static constexpr auto Value = GroupObjectsBlock19;
     static constexpr char Name[] = "GroupObjects19";
+    static constexpr bool HasNestedCount = true;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 };
@@ -346,6 +360,7 @@ struct SimpleFlatCollision20
 {
     static constexpr auto Value = SimpleFlatCollisionBlock20;
     static constexpr char Name[] = "SimpleFlatCollision20";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -360,6 +375,7 @@ struct GroupObjects21
 {
     static constexpr auto Value = GroupObjectsBlock21;
     static constexpr char Name[] = "GroupObjects21";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
 
@@ -371,6 +387,7 @@ struct SimpleVolumeCollision23
 {
     static constexpr auto Value = SimpleVolumeCollisionBlock23;
     static constexpr char Name[] = "SimpleVolumeCollision23";
+    static constexpr bool HasNestedCount = false;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
@@ -393,6 +410,7 @@ struct GroupTransformMatrix24
 {
     static constexpr auto Value = GroupTransformMatrixBlock24;
     static constexpr char Name[] = "GroupTransformMatrix24";
+    static constexpr bool HasNestedCount = true;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
@@ -409,6 +427,7 @@ struct SimpleUnknown25
 {
     static constexpr auto Value = SimpleUnknownBlock25;
     static constexpr char Name[] = "SimpleUnknown25";
+    static constexpr bool HasNestedCount = false;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
@@ -446,6 +465,7 @@ struct SimpleFaces28
 {
     static constexpr auto Value = SimpleFacesBlock28;
     static constexpr char Name[] = "SimpleFaces28";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -458,6 +478,7 @@ struct GroupUnknown29
 {
     static constexpr auto Value = GroupUnknownBlock29;
     static constexpr char Name[] = "GroupUnknown29";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
     std::uint32_t type;
@@ -470,6 +491,7 @@ struct SimplePortal30
 {
     static constexpr auto Value = SimplePortalBlock30;
     static constexpr char Name[] = "SimplePortal30";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 
@@ -488,6 +510,7 @@ struct GroupLightingObjects33
 {
     static constexpr auto Value = GroupLightingObjectBlock33;
     static constexpr char Name[] = "GroupLightingObjects33";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
 
@@ -504,6 +527,7 @@ struct SimpleUnknown34
 {
     static constexpr auto Value = SimpleUnknownBlock34;
     static constexpr char Name[] = "SimpleUnknown34";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
     Ogre::Real unknown0;
@@ -624,6 +648,7 @@ struct SimpleFaces35
 {
     static constexpr auto Value = SimpleFacesBlock35;
     static constexpr char Name[] = "SimpleFaces35";
+    static constexpr bool HasNestedCount = false;
 
     static const std::uint32_t Unknown1 = 1;
     static const std::uint32_t Unknown2 = 2;
@@ -641,6 +666,7 @@ struct GroupVertexData36
 {
     static constexpr auto Value = GroupVertexDataBlock36;
     static constexpr char Name[] = "GroupVertexData36";
+    static constexpr bool HasNestedCount = true;
 
     static const std::uint32_t Vertex2 = 2;
     static const std::uint32_t Vertex3 = 3;
@@ -690,6 +716,7 @@ struct GroupVertexData37
 {
     static constexpr auto Value = GroupVertexDataBlock37;
     static constexpr char Name[] = "GroupVertexData37";
+    static constexpr bool HasNestedCount = true;
 
     static const std::uint32_t Vertex2 = 2;
     static const std::uint32_t Vertex3 = 3;
@@ -724,6 +751,7 @@ struct GroupUnknown39
 {
     static constexpr auto Value = GroupUnknownBlock39;
     static constexpr char Name[] = "GroupUnknown39";
+    static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
 
@@ -734,6 +762,7 @@ struct SimpleGeneratedObjects40
 {
     static constexpr auto Value = SimpleGeneratedObjectsBlock40;
     static constexpr char Name[] = "SimpleGeneratedObjects40";
+    static constexpr bool HasNestedCount = false;
 
     common::BoundingSphere boundingSphere;
 

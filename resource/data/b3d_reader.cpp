@@ -197,6 +197,7 @@ private:
                 if (current->HasNestedCount())
                 {
                     std::uint32_t nestedCount = ReadUint32(); // TODO: do we need this???
+                    (void)nestedCount;
                 }
             }
             else if (separator == BlockHierarchyBreaker)
@@ -367,6 +368,11 @@ private:
             return "";
         }
 
+        virtual bool HasNestedCount() const override
+        {
+            return false;
+        }
+
         static NodePtr MakeHierarhyBreaker(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent)
         {
             block_data::BlockHeader blockHeader{ 0 };
@@ -476,9 +482,6 @@ private:
         ReadBytes(block.emptyData0, sizeof(block.emptyData0));
         block.unknown = ReadFloat();
         ReadBytes(block.emptyData1, sizeof(block.emptyData1));
-
-        using namespace std;
-        static_assert(conjunction_v<negation<is_array<Node>>, negation<is_volatile<VisitableNodeWithData<block_data::Empty0>>>, _Can_enable_shared<VisitableNodeWithData<block_data::Empty0>>>, "oops?");
 
         return std::make_shared<VisitableNodeWithData<block_data::Empty0>>(m_originalRoot, NodePtr{}, blockHeader, block);
     }

@@ -103,6 +103,7 @@ public:
 
     virtual std::string GetTypeName() const = 0;
 
+    virtual bool HasNestedCount() const = 0;
 
 private:
     const std::string m_name;
@@ -136,6 +137,11 @@ public:
     virtual std::string GetTypeName() const override
     {
         return BlockType::Name;
+    }
+
+    virtual bool HasNestedCount() const override
+    {
+        return BlockType::HasNestedCount;
     }
 
     const BlockType& GetBlockData() const
