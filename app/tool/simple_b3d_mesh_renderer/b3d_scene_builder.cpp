@@ -33,10 +33,12 @@ namespace app
 using namespace resource::data::b3d;
 
 B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
+                                 const resource::data::b3d::TransformationMap& transformMap,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,
                                  Ogre::MeshManager* meshManager)
     : m_b3dId(b3dId)
+    , m_transformMap(transformMap)
     , m_sceneManager(sceneManager)
     , m_rootNode(rootNode)
     , m_meshManager(meshManager)
@@ -46,32 +48,7 @@ B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
 
 B3dSceneBuilder::~B3dSceneBuilder()
 {
-    assert(m_transformQueue.empty());
     assert(m_sceneNodes.empty());
-}
-
-void B3dSceneBuilder::ProcessTransformQueue(const resource::data::b3d::NodeGroupTransformMatrix24& node, VisitMode visitMode)
-{
-    if (visitMode == VisitMode::PreOrder)
-    {
-        m_transformQueue.push_back(node.GetBlockData());
-    }
-    else
-    {
-        TransformList transformList;
-        for (const auto& item : m_transformQueue)
-        {
-            Transform transform;
-
-            transform.matrix.FromAxes(item.x, item.y, item.z);
-            transform.position = item.position;
-
-            transformList.push_back(transform);
-        }
-
-        m_transformMap[node.GetName()] = transformList;
-        m_transformQueue.pop_back();
-    }
 }
 
 void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode)
@@ -109,11 +86,22 @@ void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimp
         parentSceneNode->addChild(newSceneNode);
         m_sceneNodes.push(newSceneNode);
 
-        auto transformList = m_transformMap[common::ResourceNameToString(node.GetBlockData().space)];
-        for (const auto& transform : transformList)
+        auto space = common::ResourceNameToString(node.GetBlockData().space);
+        if (!space.empty())
         {
-            newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
-            newSceneNode->translate(transform.position);
+            auto transformListPos = m_transformMap.find(space);
+            if (transformListPos == m_transformMap.end())
+            {
+                D2_HACK_LOG(B3dSceneBuilder::ProcessObjectConnector) << "cannot find transform info for `" << space << "`";
+            }
+            else
+            {
+                for (const auto& transform : transformListPos->second)
+                {
+                    newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
+                    newSceneNode->translate(transform.position);
+                }
+            }
         }
     }
     else

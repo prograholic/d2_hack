@@ -19,10 +19,11 @@ using namespace resource::data::b3d;
 
 
 B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
+                               const resource::data::b3d::TransformationMap& transformMap,
                                Ogre::SceneManager* sceneManager,
                                Ogre::SceneNode* rootNode,
                                Ogre::MeshManager* meshManager)
-    : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager)
+    : B3dSceneBuilder(b3dId, transformMap, sceneManager, rootNode, meshManager)
 {
 }
 
@@ -116,9 +117,9 @@ void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleVolumeCollision23& /* 
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupTransformMatrix24& node, VisitMode visitMode)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */)
 {
-    ProcessTransformQueue(node, visitMode);
+    // No need to implement
 }
 
 void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */)

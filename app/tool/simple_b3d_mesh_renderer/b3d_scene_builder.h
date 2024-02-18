@@ -19,25 +19,16 @@ namespace d2_hack
 namespace app
 {
 
-
-struct Transform
-{
-    Ogre::Matrix3 matrix;
-    Ogre::Vector3 position;
-};
-typedef std::vector<Transform> TransformList;
-
 class B3dSceneBuilder
 {
 public:
     B3dSceneBuilder(const std::string& b3dId,
+                    const resource::data::b3d::TransformationMap& transformMap,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
                     Ogre::MeshManager* meshManager);
 
     ~B3dSceneBuilder();
-
-    void ProcessTransformQueue(const resource::data::b3d::NodeGroupTransformMatrix24& node, resource::data::b3d::VisitMode visitMode);
 
     void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, resource::data::b3d::VisitMode visitMode);
 
@@ -50,15 +41,13 @@ public:
     void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
 
 private:
-    std::string m_b3dId;
+    const std::string m_b3dId;
+    const resource::data::b3d::TransformationMap m_transformMap;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
 
     std::stack<Ogre::SceneNode*> m_sceneNodes;
-    std::list<resource::data::b3d::block_data::GroupTransformMatrix24> m_transformQueue;
-
-    std::map<std::string, TransformList> m_transformMap;
 
 
     std::string GetB3dResourceId(const std::string& name) const;

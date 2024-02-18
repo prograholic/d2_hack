@@ -754,8 +754,29 @@ void PrintSequences(const std::set< std::vector<std::uint32_t>>& sequences)
     }
 }
 
+void PrintFirstElemsOfSequences(const std::set< std::vector<std::uint32_t>>& sequences)
+{
+    std::set<std::uint32_t> roots;
+    for (const auto& seq : sequences)
+    {
+        if (!seq.empty())
+        {
+            roots.insert(seq[0]);
+        }
+    }
+
+    std::cout << "Print root types: ";
+    for (auto root: roots)
+    {
+        std::cout << root << ", ";
+    }
+
+    std::cout << std::endl;
+}
+
 void PrintOnlyTypes(const B3dTree& tree, std::set< std::vector<std::uint32_t>>& sequences)
 {
+    std::cout << "Processing " << tree.dir << "/" << tree.id <<  "..." << std::endl;
     for (auto node : tree.rootNodes)
     {
         PrintOnlyTypes(node, {node->GetType()}, sequences);
@@ -784,7 +805,12 @@ void PrintOnlyTypes(bool transform, bool optimize)
         PrintOnlyTypes(*tree, sequences);
     }
 
+    PrintOnlyTypes(*forest.common, sequences);
+    PrintOnlyTypes(*forest.trucks, sequences);
+
     PrintSequences(sequences);
+
+    PrintFirstElemsOfSequences(sequences);
 }
 
 

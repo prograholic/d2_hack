@@ -3,6 +3,8 @@
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/resource_mgmt.h>
 
+#include "b3d_reader_visitors.h"
+
 namespace d2_hack
 {
 namespace resource
@@ -64,10 +66,45 @@ const B3dRegistry SinglePlayerRegistry
 	}
 };
 
+static void VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
+{
+	node->Visit(visitor, VisitMode::PreOrder);
+
+	const auto& children = node->GetChildNodeList();
+	for (auto child : children)
+	{
+		VisitNode(child, visitor);
+	}
+
+	node->Visit(visitor, VisitMode::PostOrder);
+}
+
 std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 {
 	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
 }
+
+void AddTransformMatrix(const NodePtr& root, TransformationMap& transformations)
+{
+	TransformVisitor visitor{transformations};
+	VisitNode(root, visitor);
+}
+
+void B3dTree::AddRootNode(const NodePtr& root)
+{
+	switch (root->GetType())
+	{
+	case block_data::GroupTransformMatrixBlock24:
+		AddTransformMatrix(root, transformations);
+		break;
+
+	default:
+		rootNodes.push_back(root);
+		//OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "unsupported root node type: " + std::to_string(root->GetType()), "B3dTree::AddRootNode");
+	}
+}
+
+
 
 Node::Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
 	: m_name(common::ResourceNameToString(blockHeader.name))

@@ -6,6 +6,11 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <map>
+
+D2_HACK_DISABLE_WARNING_BEGIN(4251)
+#include <OgreMatrix3.h>
+D2_HACK_DISABLE_WARNING_END() // 4251
 
 #include <d2_hack/resource/data/b3d_types.h>
 
@@ -38,14 +43,29 @@ struct B3dRegistry
 extern const B3dRegistry SinglePlayerRegistry;
 
 
+struct Transform
+{
+    Ogre::Matrix3 matrix;
+    Ogre::Vector3 position;
+};
+typedef std::vector<Transform> TransformList;
+typedef std::map<std::string, TransformList> TransformationMap;
+
+
+
 struct B3dTree
 {
     std::string dir;
     std::string id;
     common::Materials materials;
+
+    TransformationMap transformations;
+
     NodeList rootNodes;
 
     std::string GetMaterialNameByIndex(std::uint32_t materialIndex) const;
+
+    void AddRootNode(const NodePtr& node);
 };
 
 typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;

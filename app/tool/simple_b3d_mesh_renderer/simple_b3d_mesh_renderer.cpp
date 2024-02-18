@@ -53,7 +53,7 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
         auto object5 = MakeVisitableNode(tree, object19, MakeBlockHeader(common::ResourceName{}, block_data::GroupObjectsBlock5), object5data);
 
         block_data::SimpleObjectConnector18 object18Data{};
-        object18Data.space = GetProperResourceName(common::ResourceName{});
+        object18Data.space = common::ResourceName{}; // no need to transform
         object18Data.object = common::StringToResourceName(truckName);
         auto object18 = MakeVisitableNode(tree, object5, MakeBlockHeader(common::ResourceName{}, block_data::SimpleObjectConnectorBlock18), object18Data);
 
@@ -88,7 +88,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     for (auto& tree : b3dForest.forest)
     {
-        B3dTreeVisitor visitor{tree->id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
+        B3dTreeVisitor visitor{tree->id, tree->transformations, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
 
         VisitTree(*tree, visitor);
     }
@@ -132,7 +132,6 @@ void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
     {
         auto obj = children[cnt % children.size()];
 
-        //obj->setVisible(!obj->getVisible());
         D2_HACK_LOG(XXX) << node->getName() << " -> " << obj->getName();
         cnt += 1;
     }
@@ -143,8 +142,6 @@ const char* node_name = "b3d.scene_node";
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
-
-    
 
     if (evt.keysym.sym == '1')
     {

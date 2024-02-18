@@ -9,7 +9,15 @@ namespace data
 namespace b3d
 {
 
+void NoOpNodeVisitor::Visit(NodeHierarchyBreaker& /* node */, VisitMode /* visitMode */)
+{
+}
+
 void NoOpNodeVisitor::Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */)
+{
+}
+
+void NoOpNodeVisitor::Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */)
 {
 }
 
@@ -105,7 +113,15 @@ void NoOpNodeVisitor::Visit(NodeSimpleFaces35& /* node */, VisitMode /* visitMod
 {
 }
 
+void NoOpNodeVisitor::Visit(NodeGroupVertexData36& /* node */, VisitMode /* visitMode */)
+{
+}
+
 void NoOpNodeVisitor::Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */)
+{
+}
+
+void NoOpNodeVisitor::Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */)
 {
 }
 

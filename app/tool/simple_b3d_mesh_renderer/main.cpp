@@ -18,7 +18,7 @@ int main(int argc, char * argv [])
     }
     catch(const Ogre::Exception& e)
     {
-        std::cerr << "An OGRE exception has occured: " << e.getFullDescription().c_str() << std::endl;
+        std::cerr << "An OGRE exception has occured: " << e.getFullDescription() << std::endl;
     }
     catch (const std::exception& e)
     {

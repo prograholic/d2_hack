@@ -127,8 +127,13 @@ NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr&
 class NoOpNodeVisitor: public NodeVisitorInterface
 {
 public:
+
+    virtual void Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) override;
+
     virtual void Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) override;
 
+    virtual void Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) override;
+    
     virtual void Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */) override;
 
     virtual void Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */) override;
@@ -178,6 +183,8 @@ public:
     virtual void Visit(NodeGroupVertexData36& /* node */, VisitMode /* visitMode */) override;
 
     virtual void Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */) override;
+
+    virtual void Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */) override;
 
     virtual void Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */) override;
 };

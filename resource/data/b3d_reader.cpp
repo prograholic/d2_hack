@@ -6,9 +6,9 @@
 #include <stack>
 
 #include <d2_hack/common/reader.h>
-#include <d2_hack/resource/data/b3d_visitor.h>
-
 #include <d2_hack/common/utils.h>
+
+#include <d2_hack/resource/data/b3d_visitor.h>
 #include <d2_hack/resource/data/b3d_utils.h>
 
 namespace d2_hack
@@ -65,7 +65,7 @@ public:
         m_originalRoot->dir = dir;
         m_originalRoot->id = id;
         m_originalRoot->materials = ReadMaterials(fileHeader.materials);
-        m_originalRoot->rootNodes = ReadData(fileHeader.data);
+        ReadData(fileHeader.data, *m_originalRoot);
 
         return m_originalRoot;
     }
@@ -126,7 +126,7 @@ private:
         return MakeBlockHeader(name, type);
     }
 
-    NodeList ReadData(const FileHeader::Section& sectionInfo)
+    void ReadData(const FileHeader::Section& sectionInfo, B3dTree& tree)
     {
         const size_t dataStartOffset = GetStream().tell();
         if (dataStartOffset != sectionInfo.offset)
@@ -134,7 +134,6 @@ private:
             ThrowError("Incorrect data offset", "B3dReaderImpl::ReadData");
         }
 
-        NodeList res;
         std::stack<NodePtr> roots;
 
         for ( ; ; )
@@ -151,7 +150,7 @@ private:
                 NodePtr current = DispatchBlock(noRoots ? NodePtr{} : roots.top(), blockHeader);
                 if (noRoots)
                 {
-                    res.push_back(current);
+                    tree.AddRootNode(current);
                 }
                 roots.push(current);
                 if (current->HasNestedCount())
@@ -167,7 +166,7 @@ private:
                 NodePtr current = MakeHierarhyBreaker(noRoots ? NodePtr{} : roots.top());
                 if (noRoots)
                 {
-                    res.push_back(current);
+                    tree.AddRootNode(current);
                 }
             }
             else if (separator == BlockEndMagic)
@@ -175,8 +174,6 @@ private:
                 roots.pop();
             }
         }
-
-        return res;
     }
 
     NodePtr DispatchBlock(const NodePtr& parent, const block_data::BlockHeader& blockHeader)

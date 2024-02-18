@@ -354,32 +354,74 @@ static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &n
     return NodePtr{};
 }
 
-static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const NodePtr& node)
+static NodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string& name)
+{
+    NodePtr res = GetTopLevelNodeByName(tree.rootNodes, name);
+    if (!res)
+    {
+        res = GetTopLevelNodeByName(common.rootNodes, name);
+    }
+
+    if (!res)
+    {
+        res = GetTopLevelNodeByName(trucks.rootNodes, name);
+    }
+
+    return res;
+}
+
+static bool FindtransformationListByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string& name, TransformList& transformation)
+{
+    auto res = tree.transformations.find(name);
+    if (res != tree.transformations.end())
+    {
+        transformation = res->second;
+        return true;
+    }
+
+    res = common.transformations.find(name);
+    if (res != common.transformations.end())
+    {
+        transformation = res->second;
+        return true;
+    }
+
+    res = trucks.transformations.find(name);
+    if (res != trucks.transformations.end())
+    {
+        transformation = res->second;
+        return true;
+    }
+
+    return false;
+}
+
+static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const NodePtr& node)
 {
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
     {
         NodeSimpleObjectConnector18* typedNode = node->NodeCast<NodeSimpleObjectConnector18>();
         auto nodeName = common::ResourceNameToString(typedNode->GetBlockData().object);
-        NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, nodeName);
+        NodePtr newChildNode = FindTopLevelNodeByNameInTrees(tree, common, trucks, nodeName);
         if (!newChildNode)
-        {
-            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in `common`...";
-            newChildNode = GetTopLevelNodeByName(common.rootNodes, nodeName);
-        }
-        if (!newChildNode)
-        {
-            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in `trucks`...";
-            newChildNode = GetTopLevelNodeByName(trucks.rootNodes, nodeName);
-        }
-        if (newChildNode)
-        {
-            NodeList newChildNodes;
-            newChildNodes.push_back(newChildNode);
-            typedNode->SetChildNodes(std::move(newChildNodes));
-        }
-        else
         {
             OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
+        }
+
+        NodeList newChildNodes;
+        newChildNodes.push_back(newChildNode);
+        typedNode->SetChildNodes(std::move(newChildNodes));
+
+        auto spaceName = common::ResourceNameToString(typedNode->GetBlockData().space);
+        if (!spaceName.empty())
+        {
+            TransformList transformation;
+            if (!FindtransformationListByNameInTrees(tree, common, trucks, spaceName, transformation))
+            {
+                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find transform info by name \"" + spaceName + "\"");
+            }
+
+            tree.transformations[spaceName] = transformation;
         }
     }
     else
@@ -391,7 +433,7 @@ static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, 
     }
 }
 
-static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& trucks, const B3dTree& tree)
+static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& trucks, B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
