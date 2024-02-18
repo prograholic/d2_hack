@@ -1021,7 +1021,7 @@ static B3dTreePtr ReadTree(const std::string& rootDir, const std::string& dir, c
     std::ifstream inputFile{ fullB3dName, std::ios_base::binary };
     if (!inputFile)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file");
+        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file `" + fullB3dName + "`");
     }
 
     Ogre::FileStreamDataStream dataStream(&inputFile, false);

@@ -3,6 +3,7 @@ add_subdirectory(archive)
 add_subdirectory(data)
 add_subdirectory(manager)
 add_subdirectory(palette)
+add_subdirectory(tech)
 
 add_library(d2_hack.resource INTERFACE)
 
@@ -13,4 +14,5 @@ target_link_libraries(d2_hack.resource
         d2_hack.resource.data
         d2_hack.resource.manager
         d2_hack.resource.palette
+        d2_hack.resource.tech
 )
