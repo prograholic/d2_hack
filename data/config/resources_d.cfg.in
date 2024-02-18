@@ -4,7 +4,7 @@ FileSystem=${OGRE_MEDIA_DIR}
 [D2]
 FileSystem=${CMAKE_CURRENT_SOURCE_DIR}/materials/scripts
 FileSystem=${D2_ROOT_DIR}/ENV
-D2Res=${D2_ROOT_DIR}/COMMON/common.res
+D2Res=${D2_ROOT_DIR}/COMMON/COMMON.RES
 D2Res==${D2_ROOT_DIR}/COMMON/TRUCKS.RES
 
 D2Res=${D2_ROOT_DIR}/ENV/aa.res

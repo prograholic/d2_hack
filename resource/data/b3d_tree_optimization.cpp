@@ -363,12 +363,12 @@ static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, 
         NodePtr newChildNode = GetTopLevelNodeByName(tree.rootNodes, nodeName);
         if (!newChildNode)
         {
-            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in common...";
+            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in `common`...";
             newChildNode = GetTopLevelNodeByName(common.rootNodes, nodeName);
         }
         if (!newChildNode)
         {
-            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in trucks...";
+            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in `trucks`...";
             newChildNode = GetTopLevelNodeByName(trucks.rootNodes, nodeName);
         }
         if (newChildNode)
