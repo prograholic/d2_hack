@@ -10,6 +10,8 @@ namespace common
     
 std::string ResourceNameToString(const ResourceName& resName);
 
+ResourceName StringToResourceName(const std::string& name);
+
 
 bool IsValid(const BoundingSphere& boundingSphere);
 

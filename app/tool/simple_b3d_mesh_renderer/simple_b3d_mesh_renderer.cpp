@@ -7,8 +7,10 @@
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/types.h>
+#include <d2_hack/common/utils.h>
 #include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
+#include <d2_hack/resource/data/b3d_utils.h>
 
 #include "b3d_tree_visitor.h"
 
@@ -40,6 +42,26 @@ static void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
     }
 }
 
+static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName)
+{
+    for (auto& tree : forest.forest)
+    {
+        block_data::GroupObjects19 object19Data{};
+        auto object19 = MakeVisitableNode(tree, WeakNodePtr{}, MakeBlockHeader(common::ResourceName{}, block_data::GroupObjectsBlock19), object19Data);
+        
+        block_data::GroupObjects5 object5data{};
+        auto object5 = MakeVisitableNode(tree, object19, MakeBlockHeader(common::ResourceName{}, block_data::GroupObjectsBlock5), object5data);
+
+        block_data::SimpleObjectConnector18 object18Data{};
+        object18Data.space = GetProperResourceName(common::ResourceName{});
+        object18Data.object = common::StringToResourceName(truckName);
+        auto object18 = MakeVisitableNode(tree, object5, MakeBlockHeader(common::ResourceName{}, block_data::SimpleObjectConnectorBlock18), object18Data);
+
+        tree->rootNodes.push_back(object19);
+    }
+}
+
+
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseApplication()
 {
@@ -58,6 +80,9 @@ void SimpleB3dMeshRenderer::CreateScene()
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
     B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
+
+    ConnectTruckToScenes(b3dForest, "Zil");
+
     transformation::Transform(b3dForest);
     transformation::Optimize(b3dForest);
 

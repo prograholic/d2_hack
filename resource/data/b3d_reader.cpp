@@ -9,6 +9,7 @@
 #include <d2_hack/resource/data/b3d_visitor.h>
 
 #include <d2_hack/common/utils.h>
+#include <d2_hack/resource/data/b3d_utils.h>
 
 namespace d2_hack
 {
@@ -69,22 +70,7 @@ public:
         return m_originalRoot;
     }
 
-    common::ResourceName GetProperResourceName(const common::ResourceName& name)
-    {
-        if (name[0] == 0)
-        {
-            std::string uniqueName = std::to_string(m_unnamedObjectCounter++);
-
-            common::ResourceName res{ 0 };
-            std::copy(uniqueName.begin(), uniqueName.end(), res.begin());
-            return res;
-        }
-
-        return name;
-    }
-
 private:
-    int m_unnamedObjectCounter = 0;
     B3dTreePtr m_originalRoot;
 
     void ReadFileHeader(FileHeader& fileHeader)
@@ -129,21 +115,6 @@ private:
         }
 
         return materials;
-    }
-
-    block_data::BlockHeader MakeBlockHeader(const common::ResourceName& name, std::uint32_t type)
-    {
-        block_data::BlockHeader blockHeader{ 0 };
-        // Rename all unnammed objects
-        blockHeader.name = GetProperResourceName(name);
-        blockHeader.type = type;
-
-        if (blockHeader.type > block_data::MaxBlockId)
-        {
-            ThrowError("Incorrect block id: " + std::to_string(blockHeader.type) + ", possible b3d corruption?", "B3dReaderImpl::ReadBlockHeader");
-        }
-
-        return blockHeader;
     }
 
     block_data::BlockHeader ReadBlockHeader()
@@ -683,6 +654,10 @@ private:
                 face.unknown.push_back({ReadVector2()});
             }
         }
+        else if (face.type == block_data::Face28::UnknownMinus256)
+        {
+            face.meshInfo.texCoords.push_back(ReadVector2());
+        }
         else
         {
             ThrowError("Unknown type", "B3dReaderImpl::DispatchFaceEntry28");
@@ -1058,7 +1033,8 @@ static B3dTreePtr ReadTree(const std::string& rootDir, const std::string& dir, c
 B3dForest ReadB3d(const B3dRegistry& registry)
 {
     B3dForest forest;
-    forest.common = ReadTree(registry.rootDir, "COMMON", "common");
+    forest.common = ReadTree(registry.rootDir, "COMMON", "COMMON");
+    forest.trucks = ReadTree(registry.rootDir, "COMMON", "TRUCKS");
     for (const auto& id : registry.entries)
     {
         forest.forest.push_back(ReadTree(registry.rootDir, registry.dir, id));

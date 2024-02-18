@@ -143,7 +143,7 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
 
         m_sceneNodes.push(sceneNode);
 
-        D2_HACK_LOG(B3dTreeVisitor::ProcessSceneNode(PreOrder)) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
+        //D2_HACK_LOG(B3dTreeVisitor::ProcessSceneNode(PreOrder)) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
 
         return sceneNode;
     }
@@ -166,7 +166,7 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
         name = GetNameImpl(blockName, "mesh", true);
     }
 
-    D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Starting processing mesh with name: " << name;
+    //D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Starting processing mesh with name: " << name;
 
     Ogre::MeshPtr mesh = m_meshManager->createManual(name, group);
 
@@ -210,7 +210,7 @@ Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, const s
 
     subMesh->setMaterialName(materialName);
 
-    D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
+    //D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
 
     return subMesh;
 }

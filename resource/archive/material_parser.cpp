@@ -209,7 +209,25 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
         {
             tokens.pop_front();
             tokens.pop_front();
-            //assert(0 && "process `RotPoint` option");
+            //assert(0 && "process `rot` option");
+        }
+        else if (tokens.front() == "specular")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //assert(0 && "process `specular` option");
+        }
+        else if (tokens.front() == "power")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //assert(0 && "process `power` option");
+        }
+        else if (tokens.front() == "par")
+        {
+            tokens.pop_front();
+            tokens.pop_front();
+            //assert(0 && "process `par` option");
         }
         else
         {

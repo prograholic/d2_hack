@@ -114,7 +114,6 @@ static void UseFirstLod(NodePtr node)
         auto pos = childs.begin();
         while (pos != childs.end())
         {
-            D2_HACK_LOG(UseFirstLod) << "child node " << (*pos)->GetName() << ", with type: " << (*pos)->GetType();
             if ((*pos)->GetType() == block_data::HierarchyBreakerBlockXxx)
             {
                 D2_HACK_LOG(UseFirstLod) << "  Got breaker node: " << (*pos)->GetName();
@@ -123,9 +122,7 @@ static void UseFirstLod(NodePtr node)
             ++pos;
         }
 
-        D2_HACK_LOG(UseFirstLod) << "before: " << childs.size();
         childs.erase(pos, childs.end());
-        D2_HACK_LOG(UseFirstLod) << "after: " << childs.size();
     }
 
     for (auto child : node->GetChildNodeList())
@@ -357,7 +354,7 @@ static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &n
     return NodePtr{};
 }
 
-static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, const NodePtr& node)
+static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const NodePtr& node)
 {
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
     {
@@ -368,6 +365,11 @@ static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, 
         {
             D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in common...";
             newChildNode = GetTopLevelNodeByName(common.rootNodes, nodeName);
+        }
+        if (!newChildNode)
+        {
+            D2_HACK_LOG(ProcessObjectConnectors) << "cannot find node by name \"" + nodeName + "\", trying to find in trucks...";
+            newChildNode = GetTopLevelNodeByName(trucks.rootNodes, nodeName);
         }
         if (newChildNode)
         {
@@ -384,16 +386,16 @@ static void ProcessObjectConnectors(const B3dTree& tree, const B3dTree& common, 
     {
         for (const auto& child : node->GetChildNodeList())
         {
-            ProcessObjectConnectors(tree, common, child);
+            ProcessObjectConnectors(tree, common, trucks, child);
         }
     }
 }
 
-static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& tree)
+static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& trucks, const B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        ProcessObjectConnectors(tree, common, node);
+        ProcessObjectConnectors(tree, common, trucks, node);
     }
 }
 
@@ -423,26 +425,34 @@ static void SkipTopLevelNodes(B3dTree& tree)
 void Transform(B3dForest& forest)
 {
     MergeFacesWithVertices(*forest.common);
-    ProcessObjectConnectors(*forest.common, *forest.common);
+    ProcessObjectConnectors(*forest.common, *forest.trucks, *forest.common);
+
+    MergeFacesWithVertices(*forest.trucks);
+    ProcessObjectConnectors(*forest.common, *forest.trucks, *forest.trucks);
 
     for (auto& tree : forest.forest)
     {
         MergeFacesWithVertices(*tree);
-        ProcessObjectConnectors(*forest.common, *tree);
+        ProcessObjectConnectors(*forest.common, *forest.trucks, *tree);
     }
 }
 
 
+static void Optimize(B3dTree& tree)
+{
+    SkipTopLevelNodes(tree);
+    FilterUnusedNodes(tree);
+    UseFirstLod(tree);
+    MergeFacesWithSameMaterial(tree);
+    RemoveEmptyNodes(tree);
+}
+
 void Optimize(B3dForest& forest)
 {
-    // TODO: нужно ли оптимизировать common?  ажетс€ что нет, так как на этапе трансформации мы из common надергаем узлы в другие деревь€.
+    // TODO: нужно ли оптимизировать `common` и `trucks`?  ажетс€ что нет, так как на этапе трансформации мы из common надергаем узлы в другие деревь€.
     for (auto& tree : forest.forest)
     {
-        SkipTopLevelNodes(*tree);
-        FilterUnusedNodes(*tree);
-        UseFirstLod(*tree);
-        MergeFacesWithSameMaterial(*tree);
-        RemoveEmptyNodes(*tree);
+        Optimize(*tree);
     }
 }
 

@@ -215,6 +215,10 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfoForFace28(const common::SimpleMe
         {
             indices = { 0, 2, 1 };
         }
+        else if (meshInfo.texCoords.size() == 1)
+        {
+            indices = { 0 };
+        }
     }
     assert(!indices.empty() && "not implemented");
 
@@ -300,6 +304,7 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces28
     switch (face.type)
     {
     case block_data::Face28::Unknown2:
+    case block_data::Face28::UnknownMinus256:
         return PrepareStandaloneMeshInfoForFace28(parentMeshInfo, face.meshInfo);
 
     default:
@@ -383,6 +388,37 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces35
         assert(0 && "not implemented");
         return {};
     }
+}
+
+common::ResourceName GetProperResourceName(const common::ResourceName& name)
+{
+    static uint32_t unnamedObjectCounter = 0;
+    if (name[0] == 0)
+    {
+        std::string uniqueName = std::to_string(unnamedObjectCounter++);
+
+        common::ResourceName res{ 0 };
+        std::copy(uniqueName.begin(), uniqueName.end(), res.begin());
+        return res;
+    }
+
+    return name;
+}
+
+block_data::BlockHeader MakeBlockHeader(const common::ResourceName& name, std::uint32_t type)
+{
+    block_data::BlockHeader blockHeader{ 0 };
+    // Rename all unnammed objects
+    blockHeader.name = GetProperResourceName(name);
+    blockHeader.type = type;
+
+    if (blockHeader.type > block_data::MaxBlockId)
+    {
+        std::string msg = "Incorrect block id: " + std::to_string(blockHeader.type) + ", possible b3d corruption?";
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, msg, "MakeBlockHeader");
+    }
+
+    return blockHeader;
 }
 
 } // namespace b3d

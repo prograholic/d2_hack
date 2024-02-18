@@ -818,6 +818,8 @@ int main(int argc, char* argv[])
     bool optimize = true;
     bool transform = true;
     bool printOnlyTypes = false;
+    bool printTrucks = false;
+
     for (int i = 3; i != argc; ++i)
     {
         if (argv[i] == std::string("--skip_vector_data"))
@@ -848,6 +850,10 @@ int main(int argc, char* argv[])
         {
             printOnlyTypes = true;
         }
+        else if (argv[i] == std::string("--print_trucks"))
+        {
+            printTrucks = true;
+        }
         else
         {
             std::cerr << "Unknown argument: " << argv[i] << std::endl;
@@ -867,11 +873,16 @@ int main(int argc, char* argv[])
             B3dRegistry registry
             {
                 D2_ROOT_DIR,
-                dir,
+                "",
                 {
-                    id
                 }
             };
+
+            if (!printTrucks)
+            {
+                registry.dir = dir;
+                registry.entries.push_back(id);
+            }
 
             B3dForest forest = ReadB3d(registry);
 
@@ -884,10 +895,18 @@ int main(int argc, char* argv[])
                 transformation::Optimize(forest);
             }
 
-            for (const auto& tree : forest.forest)
+            if (!printTrucks)
+            {
+                for (const auto& tree : forest.forest)
+                {
+                    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
+                    VisitTree(*tree, visitor);
+                }
+            }
+            else
             {
                 TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
-                VisitTree(*tree, visitor);
+                VisitTree(*forest.trucks, visitor);
             }
         }
         else

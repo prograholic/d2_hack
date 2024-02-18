@@ -455,6 +455,7 @@ struct SimpleUnknown25
 struct Face28
 {
     static const std::uint32_t Unknown2 = 2;
+    static const std::uint32_t UnknownMinus256 = 4294967040;
 
     struct Unknown
     {

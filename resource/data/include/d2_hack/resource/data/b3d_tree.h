@@ -22,6 +22,7 @@ typedef std::shared_ptr<class Node> NodePtr;
 typedef std::weak_ptr<class Node> WeakNodePtr;
 typedef std::vector<NodePtr> NodeList;
 
+// LIst of file names without extension
 typedef std::vector <std::string> B3dRegistryEntries;
 
 class NodeVisitorInterface;
@@ -53,6 +54,7 @@ typedef std::shared_ptr<B3dTree> B3dTreePtr;
 struct B3dForest
 {
     B3dTreePtr common;
+    B3dTreePtr trucks;
     std::vector<B3dTreePtr> forest;
 };
 
@@ -125,6 +127,14 @@ protected:
         : Node(originalRoot, blockHeader)
         , m_block(block)
     {
+        if (blockHeader.type != block.Value)
+        {
+            OGRE_EXCEPT(
+                Ogre::Exception::ERR_INVALID_STATE,
+                "Inconsistent block header type (" + std::to_string(blockHeader.type) + ") and BlockType value (" + std::to_string(block.Value) + ")",
+                "NodeWithData::NodeWithData"
+            );
+        }
     }
 public:
 

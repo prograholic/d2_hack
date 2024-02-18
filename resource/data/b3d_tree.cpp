@@ -11,7 +11,7 @@ namespace data
 {
 namespace b3d
 {
-#define USE_ALL
+//#define USE_ALL
 
 const B3dRegistry SinglePlayerRegistry
 {

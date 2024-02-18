@@ -12,6 +12,19 @@ std::string ResourceNameToString(const ResourceName& resName)
     return std::string(data, data + strnlen(data, resName.size()));
 }
 
+ResourceName StringToResourceName(const std::string& name)
+{
+    ResourceName res{};
+    if (name.size() > res.size())
+    {
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "Incorrect string: \"" + name + "\"", "StringToResourceName");
+    }
+
+    std::copy(name.begin(), name.end(), res.begin());
+
+    return res;
+}
+
 bool IsValid(const BoundingSphere& boundingSphere)
 {
     return (boundingSphere.radius != 0.0f);
