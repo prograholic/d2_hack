@@ -8,10 +8,6 @@
 #include <string>
 #include <map>
 
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-#include <OgreMatrix3.h>
-D2_HACK_DISABLE_WARNING_END() // 4251
-
 #include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
@@ -41,16 +37,6 @@ struct B3dRegistry
 
 
 extern const B3dRegistry SinglePlayerRegistry;
-
-
-struct Transform
-{
-    Ogre::Matrix3 matrix;
-    Ogre::Vector3 position;
-};
-typedef std::vector<Transform> TransformList;
-typedef std::map<std::string, TransformList> TransformationMap;
-
 
 
 struct B3dTree

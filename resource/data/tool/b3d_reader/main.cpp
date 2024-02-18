@@ -200,7 +200,7 @@ public:
         ProcessBlockHeader(node);
         const auto& block = node.GetBlockData();
 
-        GetStream(1) << "space: " << ToString(block.space) << "," << std::endl;
+        PrintVectorData(block.transformation, "transformation", 1);
         GetStream(1) << "object: " << ToString(block.object) << std::endl;
     }
 
@@ -571,6 +571,15 @@ private:
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
+    void PrintData(const Transform& data, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "Transform" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+        GetStream(adjustOffset + 1) << "matrix: " << ToString(data.matrix) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "matrix: " << ToString(data.position) << "," << std::endl;
+        GetStream(adjustOffset) << "}" << std::endl;
+    }
+
 
     std::string ToString(const std::string& data)
     {
@@ -615,6 +624,14 @@ private:
     {
         std::ostringstream ostream;
         ostream << vector;
+
+        return ostream.str();
+    }
+
+    std::string ToString(const Ogre::Matrix3& matrix)
+    {
+        std::ostringstream ostream;
+        ostream << matrix;
 
         return ostream.str();
     }

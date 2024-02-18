@@ -86,22 +86,10 @@ void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimp
         parentSceneNode->addChild(newSceneNode);
         m_sceneNodes.push(newSceneNode);
 
-        auto space = common::ResourceNameToString(node.GetBlockData().space);
-        if (!space.empty())
+        for (const auto& transform : node.GetBlockData().transformation)
         {
-            auto transformListPos = m_transformMap.find(space);
-            if (transformListPos == m_transformMap.end())
-            {
-                D2_HACK_LOG(B3dSceneBuilder::ProcessObjectConnector) << "cannot find transform info for `" << space << "`";
-            }
-            else
-            {
-                for (const auto& transform : transformListPos->second)
-                {
-                    newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
-                    newSceneNode->translate(transform.position);
-                }
-            }
+            newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
+            newSceneNode->translate(transform.position);
         }
     }
     else

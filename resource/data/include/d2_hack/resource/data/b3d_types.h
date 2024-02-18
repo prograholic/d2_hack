@@ -8,6 +8,7 @@
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreVector3.h>
+#include <OgreMatrix3.h>
 D2_HACK_DISABLE_WARNING_END() // 4251
 
 #include <d2_hack/common/types.h>
@@ -26,6 +27,15 @@ enum class VisitMode
     PreOrder,
     PostOrder
 };
+
+struct Transform
+{
+    Ogre::Matrix3 matrix;
+    Ogre::Vector3 position;
+};
+typedef std::vector<Transform> TransformList;
+typedef std::map<std::string, TransformList> TransformationMap;
+
 
 
 namespace block_data
@@ -355,7 +365,7 @@ struct SimpleObjectConnector18
 
     common::BoundingSphere boundingSphere;
 
-    common::ResourceName space;
+    TransformList transformation;
     common::ResourceName object;
 };
 

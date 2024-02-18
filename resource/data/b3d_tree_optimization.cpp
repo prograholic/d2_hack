@@ -370,32 +370,6 @@ static NodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree&
     return res;
 }
 
-static bool FindtransformationListByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string& name, TransformList& transformation)
-{
-    auto res = tree.transformations.find(name);
-    if (res != tree.transformations.end())
-    {
-        transformation = res->second;
-        return true;
-    }
-
-    res = common.transformations.find(name);
-    if (res != common.transformations.end())
-    {
-        transformation = res->second;
-        return true;
-    }
-
-    res = trucks.transformations.find(name);
-    if (res != trucks.transformations.end())
-    {
-        transformation = res->second;
-        return true;
-    }
-
-    return false;
-}
-
 static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const NodePtr& node)
 {
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
@@ -411,18 +385,6 @@ static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const 
         NodeList newChildNodes;
         newChildNodes.push_back(newChildNode);
         typedNode->SetChildNodes(std::move(newChildNodes));
-
-        auto spaceName = common::ResourceNameToString(typedNode->GetBlockData().space);
-        if (!spaceName.empty())
-        {
-            TransformList transformation;
-            if (!FindtransformationListByNameInTrees(tree, common, trucks, spaceName, transformation))
-            {
-                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find transform info by name \"" + spaceName + "\"");
-            }
-
-            tree.transformations[spaceName] = transformation;
-        }
     }
     else
     {

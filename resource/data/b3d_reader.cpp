@@ -148,10 +148,6 @@ private:
                 block_data::BlockHeader blockHeader = ReadBlockHeader();
                 bool noRoots = roots.empty();
                 NodePtr current = DispatchBlock(noRoots ? NodePtr{} : roots.top(), blockHeader);
-                if (noRoots)
-                {
-                    tree.AddRootNode(current);
-                }
                 roots.push(current);
                 if (current->HasNestedCount())
                 {
@@ -171,6 +167,10 @@ private:
             }
             else if (separator == BlockEndMagic)
             {
+                if (roots.size() == 1)
+                {
+                    tree.AddRootNode(roots.top());
+                }
                 roots.pop();
             }
         }
@@ -544,7 +544,20 @@ private:
         block_data::SimpleObjectConnector18 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        ReadBytes(block.space.data(), block.space.size());
+        common::ResourceName space;
+        ReadBytes(space.data(), space.size());
+        std::string spaceName = common::ResourceNameToString(space);
+        if (!spaceName.empty())
+        {
+            auto transformPos = m_originalRoot->transformations.find(spaceName);
+            if (transformPos == m_originalRoot->transformations.end())
+            {
+                ThrowError("Cannot find transformation by name `" + spaceName + "`", "ReadBlockData18");
+            }
+            block.transformation = transformPos->second;
+        }
+
+
         ReadBytes(block.object.data(), block.object.size());
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
