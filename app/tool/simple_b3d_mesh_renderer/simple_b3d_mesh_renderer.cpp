@@ -21,7 +21,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
-static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName)
+static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName, const Ogre::Vector3& pos)
 {
     for (auto& tree : forest.forest)
     {
@@ -33,6 +33,10 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
 
         block_data::SimpleObjectConnector18 object18Data{};
         object18Data.object = common::StringToResourceName(truckName);
+
+        Transform tf{Ogre::Matrix3::IDENTITY, pos};
+
+        object18Data.transformation.push_back(tf);
         auto object18 = MakeVisitableNode(tree, object5, MakeBlockHeader(common::ResourceName{}, block_data::SimpleObjectConnectorBlock18), object18Data);
 
         tree->rootNodes.push_back(object19);
@@ -59,7 +63,75 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
 
-    ConnectTruckToScenes(b3dForest, "Zil");
+    const char* names[] =
+    {
+        "Zil",
+        "Kamaz",
+        "Freightliner",
+        "Scania",
+        "Renault",
+        "Kenworth",
+        "Mack",
+        "Peterbilt",
+        "Daf",
+        "Mercedes",
+        "Volvo",
+        "Storm",
+        "International",
+        "BmwM5police",
+        "BmwM5",
+        "Cayman",
+        "Offroad",
+        "Pickup",
+        "Patrol",
+        "Gazelle",
+        "Gazelle1C",
+        "Sobol",
+        "RenaultR",
+        "KamazR",
+        "ScaniaR",
+        "ZilR",
+        "MercedesR",
+        "VolvoR",
+        "DafR",
+        "StormR",
+        "STrailerP",
+        "STrailerT",
+        "STrailerM",
+        "STrailerStorm",
+        "k50",
+        "PBmwM5",
+        "POffroad",
+        "PPickup",
+        "PPatrol",
+        "PGazelle",
+        "PSobol",
+        "PMarera",
+        "PMegan",
+        "PMini",
+        "POka",
+        "PVan",
+        "PBus",
+        "PVolga",
+        "PFiat",
+        "PAvensis",
+        "Mini",
+        "Marera",
+        "Bus",
+        "Katok",
+        "Megan",
+        "Oka",
+        "Van",
+        "Avensis",
+        "Volga",
+        "Fiat",
+
+    };
+
+    for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)
+    {
+        ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{3.5f * i, 0, 0 });
+    }
 
     transformation::Transform(b3dForest);
     transformation::Optimize(b3dForest);
