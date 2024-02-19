@@ -105,37 +105,35 @@ static void FilterUnusedNodes(B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static void UseFirstLod(NodePtr node)
+static void UseFirstAlternative(const NodePtr& node)
 {
-    if (node->GetType() == block_data::GroupLodParametersBlock10)
+    auto& childs = node->GetChildNodeList();
+    auto pos = childs.begin();
+    while (pos != childs.end())
     {
-        D2_HACK_LOG(UseFirstLod) << "Got LOD node: " << node->GetName();
-        auto& childs = node->GetChildNodeList();
-        auto pos = childs.begin();
-        while (pos != childs.end())
+        if ((*pos)->GetType() == block_data::HierarchyBreakerBlockXxx)
         {
-            if ((*pos)->GetType() == block_data::HierarchyBreakerBlockXxx)
-            {
-                D2_HACK_LOG(UseFirstLod) << "  Got breaker node: " << (*pos)->GetName();
-                break;
-            }
-            ++pos;
+            D2_HACK_LOG(UseFirstAlternative) << "  Got breaker node: " << (*pos)->GetName();
+            break;
         }
-
-        childs.erase(pos, childs.end());
+        ++pos;
     }
 
-    for (auto child : node->GetChildNodeList())
+    D2_HACK_LOG(UseFirstAlternative) << "  childs size: " << childs.size();
+    childs.erase(pos, childs.end());
+    D2_HACK_LOG(UseFirstAlternative) << "  childs size: " << childs.size();
+
+    for (const auto& child : node->GetChildNodeList())
     {
-        UseFirstLod(child);
+        UseFirstAlternative(child);
     }
 }
 
-static void UseFirstLod(B3dTree& tree)
+static void UseFirstAlternative(B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        UseFirstLod(node);
+        UseFirstAlternative(node);
     }
 }
 
@@ -446,7 +444,7 @@ static void Optimize(B3dTree& tree)
 {
     SkipTopLevelNodes(tree);
     FilterUnusedNodes(tree);
-    UseFirstLod(tree);
+    UseFirstAlternative(tree);
     MergeFacesWithSameMaterial(tree);
     RemoveEmptyNodes(tree);
 }
