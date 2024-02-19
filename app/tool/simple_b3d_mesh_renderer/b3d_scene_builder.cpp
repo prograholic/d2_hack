@@ -33,12 +33,10 @@ namespace app
 using namespace resource::data::b3d;
 
 B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
-                                 const resource::data::b3d::TransformationMap& transformMap,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,
                                  Ogre::MeshManager* meshManager)
     : m_b3dId(b3dId)
-    , m_transformMap(transformMap)
     , m_sceneManager(sceneManager)
     , m_rootNode(rootNode)
     , m_meshManager(meshManager)

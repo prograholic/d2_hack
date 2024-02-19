@@ -1,6 +1,7 @@
 d2_hack_add_library(d2_hack.resource.data
     b3d_reader.cpp
     b3d_tree.cpp
+    b3d_node.cpp
     b3d_visitor.cpp
     b3d_tree_optimization.cpp
     b3d_utils.cpp

@@ -3,6 +3,9 @@
 
 #include <d2_hack/app/base_application.h>
 
+#include <d2_hack/resource/data/b3d_tree.h>
+
+#include "b3d_room.h"
 
 namespace d2_hack
 {
@@ -15,9 +18,14 @@ public:
     SimpleB3dMeshRenderer();
 
 private:
+
+    std::vector<B3dRoomPtr> m_rooms;
+
+    void CreateRooms(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+
     virtual void CreateScene() override;
 
-    bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
+    virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 };
 
 

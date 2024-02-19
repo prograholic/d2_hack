@@ -1,18 +1,17 @@
 #include "simple_b3d_mesh_renderer.h"
 
+#include <d2_hack/common/log.h>
+#include <d2_hack/common/utils.h>
+
+#include <d2_hack/resource/data/b3d_visitor.h>
+#include <d2_hack/resource/data/b3d_reader.h>
+#include <d2_hack/resource/data/b3d_utils.h>
+#include <d2_hack/resource/data/b3d_tree_optimization.h>
+
+
 #include <OgreEntity.h>
 #include <OgreMesh.h>
 #include <OgreSubMesh.h>
-
-#include <d2_hack/common/log.h>
-#include <d2_hack/common/log.h>
-#include <d2_hack/common/types.h>
-#include <d2_hack/common/utils.h>
-#include <d2_hack/resource/data/b3d_reader.h>
-#include <d2_hack/resource/data/b3d_tree_optimization.h>
-#include <d2_hack/resource/data/b3d_utils.h>
-
-#include "b3d_tree_visitor.h"
 
 namespace d2_hack
 {
@@ -47,6 +46,17 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseApplication()
 {
+}
+
+void SimpleB3dMeshRenderer::CreateRooms(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
+{
+    for (const auto& rootNode : tree.rootNodes)
+    {
+        if (rootNode->GetType() == resource::data::b3d::block_data::GroupObjectsBlock19)
+        {
+            m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
+        }
+    }
 }
 
 void SimpleB3dMeshRenderer::CreateScene()
@@ -139,9 +149,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     for (auto& tree : b3dForest.forest)
     {
-        B3dTreeVisitor visitor{tree->id, tree->transformations, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
-
-        VisitTree(*tree, visitor);
+        CreateRooms(*tree, b3dSceneNode);
     }
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)));

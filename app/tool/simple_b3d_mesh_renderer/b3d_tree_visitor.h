@@ -15,7 +15,6 @@ class B3dTreeVisitor : public resource::data::b3d::NodeVisitorInterface, private
 {
 public:
     B3dTreeVisitor(const std::string& b3dId,
-                   const resource::data::b3d::TransformationMap& transformMap,
                    Ogre::SceneManager* sceneManager,
                    Ogre::SceneNode* rootNode,
                    Ogre::MeshManager* meshManager);

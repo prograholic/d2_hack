@@ -3,6 +3,8 @@
 
 #include <d2_hack/common/platform.h>
 
+#include <memory>
+
 #include <OgreSceneNode.h>
 
 #include <d2_hack/resource/data/b3d_node.h>
@@ -15,13 +17,24 @@ namespace app
 class B3dRoom
 {
 public:
-    explicit B3dRoom(Ogre::SceneNode* rootNode);
+    B3dRoom(const std::string& b3dId,
+            const resource::data::b3d::NodePtr& b3dNode,
+            Ogre::SceneManager* sceneManager,
+            Ogre::MeshManager* meshManager,
+            Ogre::SceneNode* rootSceneNode);
 
+    void GetGasStations() const;
 
+    void GetServiceStations() const;
 
 private:
-    Ogre::SceneNode* m_rootNode;
+    resource::data::b3d::NodePtr m_b3dNode;
+    Ogre::SceneManager* m_sceneManager;
+    Ogre::MeshManager* m_meshManager;
+    Ogre::SceneNode* m_rootSceneNode;
 };
+
+typedef std::unique_ptr<B3dRoom> B3dRoomPtr;
 
 } // namespace app
 } // namespace d2_hack

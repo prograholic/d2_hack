@@ -12,7 +12,7 @@ D2_HACK_DISABLE_WARNING_BEGIN(4251)
 D2_HACK_DISABLE_WARNING_END() // 4251
 
 #include <d2_hack/common/types.h>
-#include <d2_hack/resource/data/b3d_tree.h>
+#include <d2_hack/resource/data/b3d_node.h>
 
 namespace d2_hack
 {
@@ -23,7 +23,6 @@ class B3dSceneBuilder
 {
 public:
     B3dSceneBuilder(const std::string& b3dId,
-                    const resource::data::b3d::TransformationMap& transformMap,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
                     Ogre::MeshManager* meshManager);
@@ -42,7 +41,6 @@ public:
 
 private:
     const std::string m_b3dId;
-    const resource::data::b3d::TransformationMap m_transformMap;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
