@@ -5,6 +5,8 @@ d2_hack_add_executable(d2_hack.app.simple_b3d_mesh_renderer
     b3d_tree_visitor.h
     b3d_scene_builder.cpp
     b3d_scene_builder.h
+    b3d_room.cpp
+    b3d_room.h
     
     main.cpp
 )
