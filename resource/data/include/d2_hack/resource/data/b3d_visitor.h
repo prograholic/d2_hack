@@ -81,6 +81,11 @@ public:
 };
 
 
+void VisitNode(const NodePtr& node, NodeVisitorInterface& visitor);
+
+void VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor);
+
+
 template <typename BlockType>
 class VisitableNodeWithData;
 

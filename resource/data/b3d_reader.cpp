@@ -557,7 +557,6 @@ private:
             block.transformation = transformPos->second;
         }
 
-
         ReadBytes(block.object.data(), block.object.size());
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);

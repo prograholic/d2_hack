@@ -21,27 +21,6 @@ namespace app
 
 using namespace resource::data::b3d;
 
-static void VisitNode(const NodePtr& node, B3dTreeVisitor& visitor)
-{
-    node->Visit(visitor, VisitMode::PreOrder);
-
-    const auto& children = node->GetChildNodeList();
-    for (auto child : children)
-    {
-        VisitNode(child, visitor);
-    }
-
-    node->Visit(visitor, VisitMode::PostOrder);
-}
-
-static void VisitTree(const B3dTree& tree, B3dTreeVisitor& visitor)
-{
-    for (auto node : tree.rootNodes)
-    {
-        VisitNode(node, visitor);
-    }
-}
-
 static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName)
 {
     for (auto& tree : forest.forest)

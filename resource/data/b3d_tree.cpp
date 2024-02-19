@@ -66,19 +66,6 @@ const B3dRegistry SinglePlayerRegistry
 	}
 };
 
-static void VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
-{
-	node->Visit(visitor, VisitMode::PreOrder);
-
-	const auto& children = node->GetChildNodeList();
-	for (auto child : children)
-	{
-		VisitNode(child, visitor);
-	}
-
-	node->Visit(visitor, VisitMode::PostOrder);
-}
-
 std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 {
 	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
@@ -94,13 +81,35 @@ void B3dTree::AddRootNode(const NodePtr& root)
 {
 	switch (root->GetType())
 	{
+	case block_data::EmptyBlock0:
+		// skip empty block
+		break;
+
+	case block_data::SimpleObjectConnectorBlock1:
+	case block_data::GroupRoadInfraObjectsBlock4:
+	case block_data::GroupObjectsBlock5:
+	case block_data::GroupVertexDataBlock7:
+	case block_data::GroupObjectsBlock19:
+	case block_data::GroupObjectsBlock21:
+	case block_data::GroupLightingObjectBlock33:
+	case block_data::GroupVertexDataBlock37:
+		rootNodes.push_back(root);
+		break;
+
+	case block_data::SimpleVolumeCollisionBlock23:
+		volumeCollisions.push_back(root->NodeCast<NodeSimpleVolumeCollision23>()->GetBlockData());
+		break;
+
+	case block_data::HierarchyBreakerBlockXxx:
+		// skip hierarchy breaker for root nodes
+		break;
+
 	case block_data::GroupTransformMatrixBlock24:
 		AddTransformMatrix(root, transformations);
 		break;
 
 	default:
-		rootNodes.push_back(root);
-		//OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "unsupported root node type: " + std::to_string(root->GetType()), "B3dTree::AddRootNode");
+		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "unsupported root node type: " + std::to_string(root->GetType()), "B3dTree::AddRootNode");
 	}
 }
 

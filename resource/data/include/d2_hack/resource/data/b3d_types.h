@@ -36,8 +36,6 @@ struct Transform
 typedef std::vector<Transform> TransformList;
 typedef std::map<std::string, TransformList> TransformationMap;
 
-
-
 namespace block_data
 {
 
@@ -421,8 +419,9 @@ struct SimpleVolumeCollision23
     std::vector<Ogre::Real> unknown1;
 
     std::vector<common::PositionList> polygons;
-
 };
+
+typedef std::vector<block_data::SimpleVolumeCollision23> VolumeCollisionList;
 
 
 /**

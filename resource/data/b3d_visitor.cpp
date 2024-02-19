@@ -9,6 +9,28 @@ namespace data
 namespace b3d
 {
 
+void VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
+{
+    node->Visit(visitor, VisitMode::PreOrder);
+
+    const auto& children = node->GetChildNodeList();
+    for (auto child : children)
+    {
+        VisitNode(child, visitor);
+    }
+
+    node->Visit(visitor, VisitMode::PostOrder);
+}
+
+void VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor)
+{
+    for (auto node : tree.rootNodes)
+    {
+        VisitNode(node, visitor);
+    }
+}
+
+
 void NoOpNodeVisitor::Visit(NodeHierarchyBreaker& /* node */, VisitMode /* visitMode */)
 {
 }

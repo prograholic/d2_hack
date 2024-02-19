@@ -45,6 +45,8 @@ struct B3dTree
     std::string id;
     common::Materials materials;
 
+    block_data::VolumeCollisionList volumeCollisions;
+
     TransformationMap transformations;
 
     NodeList rootNodes;
