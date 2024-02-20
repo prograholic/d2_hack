@@ -171,9 +171,20 @@ void B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown39& /* node */, 
     B3D_NOT_IMPLEMENTED();
 }
 
-void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */)
+void B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleGeneratedObjects40& node, VisitMode visitMode)
 {
-    B3D_NOT_IMPLEMENTED();
+    if (visitMode == VisitMode::PreOrder)
+    {
+        auto generatorName = common::ResourceNameToString(node.GetBlockData().name);
+        if (generatorName == "$$GeneratorOfTerrain")
+        {
+            CreateTerrain();
+        }
+        else
+        {
+            D2_HACK_LOG(Visit) << "unsupported generator `" << generatorName << "`";
+        }
+    }
 }
 
 template <typename FacesNode>

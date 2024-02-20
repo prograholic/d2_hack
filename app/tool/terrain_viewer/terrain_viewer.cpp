@@ -54,19 +54,17 @@ void TerrainViewer::CreateTerrain()
 
     ConfigureTerrainDefaults(light);
 
-    for (long x = 0; x <= 0; ++x)
-        for (long y = 0; y <= 0; ++y)
-            DefineTerrain(x, y);
+    DefineTerrain(0, 0);
 
     // sync load since we want everything in place when we start
     m_terrainGroup->loadAllTerrains(true);
 
-    Ogre::TerrainGroup::TerrainIterator ti = m_terrainGroup->getTerrainIterator();
-    while (ti.hasMoreElements())
-    {
-        Ogre::Terrain* t = ti.getNext()->instance;
-        InitBlendMaps(t);
-    }
+    //Ogre::TerrainGroup::TerrainIterator ti = m_terrainGroup->getTerrainIterator();
+    //while (ti.hasMoreElements())
+    //{
+        //Ogre::Terrain* t = ti.getNext()->instance;
+        //InitBlendMaps(t);
+    //}
 
     m_terrainGroup->freeTemporaryResources();
 }
@@ -156,12 +154,12 @@ void TerrainViewer::InitBlendMaps(Ogre::Terrain* /* terrain */)
 
 void TerrainViewer::DefineTerrain(long x, long y)
 {
-    Ogre::String filename = m_terrainGroup->generateFilename(x, y);
-    if (Ogre::ResourceGroupManager::getSingleton().resourceExists(m_terrainGroup->getResourceGroup(), filename))
-    {
-        m_terrainGroup->defineTerrain(x, y);
-    }
-    else
+    //Ogre::String filename = m_terrainGroup->generateFilename(x, y);
+    //if (Ogre::ResourceGroupManager::getSingleton().resourceExists(m_terrainGroup->getResourceGroup(), filename))
+    //{
+        //m_terrainGroup->defineTerrain(x, y);
+    //}
+    //else
     {
         Ogre::Image img;
         img.load("terrain0.raw2", "D2");

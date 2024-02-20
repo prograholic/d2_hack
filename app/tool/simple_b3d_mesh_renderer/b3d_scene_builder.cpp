@@ -21,6 +21,8 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/log.h>
 
+#include "terrain.h"
+
 //#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
 #define B3D_NOT_IMPLEMENTED()
 
@@ -150,6 +152,13 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
     Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
 
     m_sceneNodes.top()->createChildSceneNode(entityName + "_node_for_entity")->attachObject(entity);
+}
+
+void B3dSceneBuilder::CreateTerrain()
+{
+    std::unique_ptr<Terrain> t{ new Terrain(m_sceneManager) };
+    t.release();
+    // TODO: destroy properly
 }
 
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const

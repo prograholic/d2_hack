@@ -1,5 +1,7 @@
 #include "b3d_road.h"
 
+#include <d2_hack/common/log.h>
+
 #include "b3d_tree_visitor.h"
 
 namespace d2_hack
@@ -47,15 +49,18 @@ B3dRoad::B3dRoad(const std::string& b3dId,
                  Ogre::SceneNode* rootSceneNode)
     : m_b3dNode(b3dNode)
 {
-    auto hitB3dNode = b3dNode->ExtractNodeWithPrefix("hit_" + b3dId + "_");
+    auto hitB3dNode = b3dNode->ExtractNodeWithPrefix("hit_road_" + b3dId + "_");
     if (hitB3dNode)
     {
         m_hit = std::make_unique<B3dHit>(b3dId, hitB3dNode, sceneManager, meshManager, rootSceneNode);
     }
 
-    RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager};
+    if (!m_b3dNode->GetChildNodeList().empty())
+    {
+        RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager};
 
-    VisitNode(m_b3dNode, visitor);
+        VisitNode(m_b3dNode, visitor);
+    }
 }
 
 

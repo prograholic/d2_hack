@@ -39,6 +39,8 @@ public:
 
     void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
 
+    void CreateTerrain();
+
 private:
     const std::string m_b3dId;
     Ogre::SceneManager* m_sceneManager;
