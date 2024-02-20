@@ -42,20 +42,15 @@ static NodePtr ExtractRoadNodeWithPrefix(const resource::data::b3d::NodePtr& b3d
     {
         if ((*pos)->GetName().starts_with(prefix))
         {
-            break;
+            NodePtr res = *pos;
+            childNodes.erase(pos);
+
+            return res;
         }
         ++pos;
     }
 
-    if (pos == childNodes.end())
-    {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node with prefix " + prefix + ", node name: " + b3dNode->GetName(), "ExtractRoadNodeWithPrefix");
-    }
-
-    NodePtr res = *pos;
-    childNodes.erase(pos);
-
-    return res;
+    return NodePtr{};
 }
 
 B3dRoom::B3dRoom(const std::string& b3dId,
@@ -70,8 +65,11 @@ B3dRoom::B3dRoom(const std::string& b3dId,
     , m_rootSceneNode(rootSceneNode)
 {
     auto roadB3dNode = ExtractRoadNodeWithPrefix(b3dNode, "road_" + b3dId + "_");
-    m_road = std::make_unique<B3dRoad>(b3dId, roadB3dNode, m_sceneManager, m_meshManager, rootSceneNode);
-
+    if (roadB3dNode)
+    {
+        m_road = std::make_unique<B3dRoad>(b3dId, roadB3dNode, m_sceneManager, m_meshManager, rootSceneNode);
+    }
+    
     //auto objB3dNode = ExtractRoadNodeWithPrefix(b3dNode, "obj_" + b3dId + "_");
     //m_obj = std::make_unique<B3dObject????
 
