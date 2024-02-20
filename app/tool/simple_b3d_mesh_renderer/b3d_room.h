@@ -9,6 +9,8 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_road.h"
+
 namespace d2_hack
 {
 namespace app
@@ -27,8 +29,14 @@ public:
 
     void GetServiceStations() const;
 
+    const resource::data::b3d::block_data::Portals& GetPortals() const;
+
 private:
     resource::data::b3d::NodePtr m_b3dNode;
+    resource::data::b3d::block_data::Portals m_portals;
+    B3dRoadPtr m_road;
+
+
     Ogre::SceneManager* m_sceneManager;
     Ogre::MeshManager* m_meshManager;
     Ogre::SceneNode* m_rootSceneNode;

@@ -20,7 +20,7 @@ public:
     virtual ~NodeVisitorInterface() = default;
 
     virtual void Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) = 0;
-    
+
     virtual void Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) = 0;
 
     virtual void Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) = 0;
@@ -118,7 +118,7 @@ public:
 template <typename BlockType>
 NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr& parent, const block_data::BlockHeader& blockHeader, const BlockType& block)
 {
-    auto res = std::make_shared<VisitableNodeWithData<BlockType>>(originalRoot, blockHeader, block, VisitableNodeWithData<BlockType>::PrivateTag{});
+    auto res = std::make_shared<VisitableNodeWithData<BlockType>>(originalRoot, blockHeader, block, VisitableNodeWithData<BlockType>::PrivateTag());
 
     auto p = parent.lock();
     if (p)
@@ -129,70 +129,185 @@ NodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const WeakNodePtr&
 }
 
 
-class NoOpNodeVisitor: public NodeVisitorInterface
+template <typename GenericAction>
+class GenericActionVisitor: public NodeVisitorInterface
 {
 public:
 
-    virtual void Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) override;
+    virtual void Visit(NodeHierarchyBreaker& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeEmpty0& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleObjectConnector1& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
     
-    virtual void Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupUnknown2& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupRoadInfraObjects4& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupObjects5& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupVertexData7& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleFaces8& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupTrigger9& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupTrigger9& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupLodParameters10& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupUnknown12& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupUnknown12& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleTrigger13& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleUnknown14& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupObjects19& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupObjects19& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleFlatCollision20& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupObjects21& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleVolumeCollision23& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleUnknown25& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleFaces28& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupUnknown29& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupUnknown29& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimplePortal30& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimplePortal30& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupLightingObjects33& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleUnknown34& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleFaces35& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupVertexData36& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupVertexData36& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupVertexData37& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeGroupUnknown39& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 
-    virtual void Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */) override;
+    virtual void Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
+    {
+        GenericAction::Perform(node, visitMode);
+    }
 };
+
+struct NoOpAction
+{
+    template <typename NodeType>
+    static void Perform(NodeType& /* node */, VisitMode /* visitMode */)
+    {
+    }
+};
+
+using NoOpNodeVisitor = GenericActionVisitor<NoOpAction>;
+
+struct RaiseExceptionAction
+{
+    template <typename NodeType>
+    static void Perform(NodeType& /* node */, VisitMode /* visitMode */)
+    {
+        RaiseException(NodeType::Name, NodeType::Value);
+    }
+
+    static void RaiseException(const char* name, std::uint32_t type);
+};
+
+using RaiseExceptionVisitor = GenericActionVisitor<RaiseExceptionAction>;
+
 
 } // namespace b3d
 } // namespace data

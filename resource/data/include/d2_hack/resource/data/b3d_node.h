@@ -4,7 +4,7 @@
 #include <d2_hack/common/platform.h>
 
 #include <memory>
-#include <vector>
+#include <list>
 #include <string>
 #include <map>
 
@@ -21,7 +21,7 @@ namespace b3d
 
 typedef std::shared_ptr<class Node> NodePtr;
 typedef std::weak_ptr<class Node> WeakNodePtr;
-typedef std::vector<NodePtr> NodeList;
+typedef std::list<NodePtr> NodeList;
 
 class NodeVisitorInterface;
 struct B3dTree;
@@ -109,6 +109,7 @@ protected:
     }
 public:
 
+    static constexpr auto Name = BlockType::Name;
     static constexpr auto Value = BlockType::Value;
 
     virtual const common::BoundingSphere& GetBoundingSphere() const override

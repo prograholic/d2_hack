@@ -328,7 +328,7 @@ private:
     void PrintData(const block_data::GroupRoadInfraObjects4& block, const char* /* name */, int adjustOffset)
     {
         GetStream(adjustOffset) << "name: " << ToString(block.name) << "," << std::endl;
-        GetStream(adjustOffset) << "data: " << ToString(block.data) << std::endl;
+        GetStream(adjustOffset) << "data: " << ToString(block.data.data(), block.data.data() + block.data.size()) << std::endl;
     }
 
     void PrintData(const block_data::GroupObjects5& block, const char* /* name */, int adjustOffset)
@@ -394,7 +394,7 @@ private:
     void PrintData(const block_data::SimpleTrigger13& block, const char* /* name */, int adjustOffset)
     {
         GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown1: " << block.unknown1 << std::endl;
+        GetStream(adjustOffset) << "possibleNumberOrId: " << block.possibleNumberOrId << std::endl;
         PrintData(block.unknown2, "unknown2", adjustOffset);
     }
 

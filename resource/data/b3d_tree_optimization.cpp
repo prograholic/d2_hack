@@ -119,9 +119,7 @@ static void UseFirstAlternative(const NodePtr& node)
         ++pos;
     }
 
-    D2_HACK_LOG(UseFirstAlternative) << "  childs size: " << childs.size();
     childs.erase(pos, childs.end());
-    D2_HACK_LOG(UseFirstAlternative) << "  childs size: " << childs.size();
 
     for (const auto& child : node->GetChildNodeList())
     {
@@ -170,7 +168,7 @@ static FacesVector MergeMeshInfoListForMaterial(const std::vector<common::Simple
     FacesVector res;
     for (auto entry : meshInfoForMerging)
     {
-        FacesVector::value_type face;
+        typename FacesVector::value_type face;
         face.materialIndex = materialIndex;
         face.meshInfo.indices = common::IndexList{};
 
@@ -374,22 +372,42 @@ static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const 
     {
         NodeSimpleObjectConnector18* typedNode = node->NodeCast<NodeSimpleObjectConnector18>();
         auto nodeName = common::ResourceNameToString(typedNode->GetBlockData().object);
-        NodePtr newChildNode = FindTopLevelNodeByNameInTrees(tree, common, trucks, nodeName);
-        if (!newChildNode)
+        if (!nodeName.empty())
         {
-            OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
-        }
+            NodePtr newChildNode = FindTopLevelNodeByNameInTrees(tree, common, trucks, nodeName);
+            if (!newChildNode)
+            {
+                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
+            }
 
-        NodeList newChildNodes;
-        newChildNodes.push_back(newChildNode);
-        typedNode->SetChildNodes(std::move(newChildNodes));
-    }
-    else
-    {
-        for (const auto& child : node->GetChildNodeList())
-        {
-            ProcessObjectConnectors(tree, common, trucks, child);
+            NodeList newChildNodes;
+            newChildNodes.push_back(newChildNode);
+            typedNode->SetChildNodes(std::move(newChildNodes));
+
+            typedNode->GetBlockData().object = common::ResourceName{}; // prevent duplicate processing
         }
+    }
+    else if (node->GetType() == block_data::GroupObjectsBlock5)
+    {
+        NodeGroupObjects5* typedNode = node->NodeCast<NodeGroupObjects5>();
+        auto nodeName = common::ResourceNameToString(typedNode->GetBlockData().name);
+        if (!nodeName.empty())
+        {
+            NodePtr newChildNode = FindTopLevelNodeByNameInTrees(tree, common, trucks, nodeName);
+            if (!newChildNode)
+            {
+                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
+            }
+
+            typedNode->AddChildNode(newChildNode);
+
+            typedNode->GetBlockData().name = common::ResourceName{}; // prevent duplicate processing
+        }
+    }
+
+    for (const auto& child : node->GetChildNodeList())
+    {
+        ProcessObjectConnectors(tree, common, trucks, child);
     }
 }
 
@@ -442,11 +460,19 @@ void Transform(B3dForest& forest)
 
 static void Optimize(B3dTree& tree)
 {
-    SkipTopLevelNodes(tree);
-    FilterUnusedNodes(tree);
+    if (tree.id.empty()) // always false
+    {
+        SkipTopLevelNodes(tree);
+        FilterUnusedNodes(tree);
+    }
+
     UseFirstAlternative(tree);
     MergeFacesWithSameMaterial(tree);
-    RemoveEmptyNodes(tree);
+    
+    if (tree.id.empty()) // always false
+    {
+        RemoveEmptyNodes(tree);
+    }
 }
 
 void Optimize(B3dForest& forest)

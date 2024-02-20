@@ -313,7 +313,7 @@ struct SimpleTrigger13
     common::BoundingSphere boundingSphere;
 
     std::uint32_t unknown0;
-    std::uint32_t unknown1;
+    std::uint32_t possibleNumberOrId;
 
     std::vector<Ogre::Real> unknown2;
 };
@@ -524,6 +524,8 @@ struct SimplePortal30
     Ogre::Vector3 leftDown;
     Ogre::Vector3 upRight;
 };
+
+typedef std::vector<SimplePortal30> Portals;
 
 
 /**

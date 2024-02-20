@@ -54,7 +54,14 @@ void SimpleB3dMeshRenderer::CreateRooms(const resource::data::b3d::B3dTree& tree
     {
         if (rootNode->GetType() == resource::data::b3d::block_data::GroupObjectsBlock19)
         {
-            m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
+            if (!rootNode->GetChildNodeList().empty())
+            {
+                m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
+            }
+            else
+            {
+                D2_HACK_LOG(CreateRooms) << "Skipping empty room: `" << rootNode->GetName() << "`";
+            }
         }
     }
 }

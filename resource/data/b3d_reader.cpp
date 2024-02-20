@@ -514,7 +514,7 @@ private:
 
         block.boundingSphere = ReadBoundingSphere();
         block.unknown0 = ReadUint32();
-        block.unknown1 = ReadUint32();
+        block.possibleNumberOrId = ReadUint32();
 
         const std::uint32_t unknown2Count = ReadUint32();
         ReadCount(block.unknown2, unknown2Count);
@@ -547,6 +547,10 @@ private:
         common::ResourceName space;
         ReadBytes(space.data(), space.size());
         std::string spaceName = common::ResourceNameToString(space);
+        if (spaceName == "$$world")
+        {
+            spaceName = "";
+        }
         if (!spaceName.empty())
         {
             auto transformPos = m_originalRoot->transformations.find(spaceName);
