@@ -21,7 +21,7 @@ private:
 
     std::vector<B3dRoomPtr> m_rooms;
 
-    void CreateRooms(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+    void CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
 
     virtual void CreateScene() override;
 

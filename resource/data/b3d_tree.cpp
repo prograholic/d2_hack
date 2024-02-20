@@ -13,7 +13,7 @@ namespace data
 {
 namespace b3d
 {
-#define USE_ALL
+//#define USE_ALL
 
 const B3dRegistry SinglePlayerRegistry
 {
@@ -28,10 +28,10 @@ const B3dRegistry SinglePlayerRegistry
 		"ae",
 		"af",
 		"ag",
-#endif // USE_ALL
 		"ah",
-#ifdef USE_ALL
+#endif // USE_ALL
 		"aj",
+#ifdef USE_ALL
 		"ak",
 		"al",
 		"am",
