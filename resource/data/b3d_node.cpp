@@ -69,6 +69,24 @@ B3dTreePtr Node::GetOriginalRoot() const
 	return m_originalRoot.lock();
 }
 
+NodePtr Node::ExtractNodeWithPrefix(const std::string& prefix)
+{
+	auto pos = m_childNodeList.begin();
+	while (pos != m_childNodeList.end())
+	{
+		if ((*pos)->GetName().starts_with(prefix))
+		{
+			NodePtr res = *pos;
+			m_childNodeList.erase(pos);
+
+			return res;
+		}
+		++pos;
+	}
+
+	return NodePtr{};
+}
+
 } // namespace b3d
 } // namespace data
 } // namespace resource

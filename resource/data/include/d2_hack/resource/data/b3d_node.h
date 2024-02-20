@@ -56,6 +56,8 @@ public:
 
     B3dTreePtr GetOriginalRoot() const;
 
+    NodePtr ExtractNodeWithPrefix(const std::string& prefix);
+
     template <typename TypedNode>
     TypedNode* NodeCast()
     {

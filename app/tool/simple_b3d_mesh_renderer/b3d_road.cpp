@@ -47,6 +47,12 @@ B3dRoad::B3dRoad(const std::string& b3dId,
                  Ogre::SceneNode* rootSceneNode)
     : m_b3dNode(b3dNode)
 {
+    auto hitB3dNode = b3dNode->ExtractNodeWithPrefix("hit_" + b3dId + "_");
+    if (hitB3dNode)
+    {
+        m_hit = std::make_unique<B3dHit>(b3dId, hitB3dNode, sceneManager, meshManager, rootSceneNode);
+    }
+
     RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager};
 
     VisitNode(m_b3dNode, visitor);

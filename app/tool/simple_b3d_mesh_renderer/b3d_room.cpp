@@ -34,25 +34,6 @@ private:
     block_data::Portals& m_portals;
 };
 
-static NodePtr ExtractRoadNodeWithPrefix(const resource::data::b3d::NodePtr& b3dNode, const std::string& prefix)
-{
-    NodeList& childNodes = b3dNode->GetChildNodeList();
-    auto pos = childNodes.begin();
-    while (pos != childNodes.end())
-    {
-        if ((*pos)->GetName().starts_with(prefix))
-        {
-            NodePtr res = *pos;
-            childNodes.erase(pos);
-
-            return res;
-        }
-        ++pos;
-    }
-
-    return NodePtr{};
-}
-
 B3dRoom::B3dRoom(const std::string& b3dId,
                  const resource::data::b3d::NodePtr& b3dNode,
                  Ogre::SceneManager* sceneManager,
@@ -64,7 +45,7 @@ B3dRoom::B3dRoom(const std::string& b3dId,
     , m_meshManager(meshManager)
     , m_rootSceneNode(rootSceneNode)
 {
-    auto roadB3dNode = ExtractRoadNodeWithPrefix(b3dNode, "road_" + b3dId + "_");
+    auto roadB3dNode = b3dNode->ExtractNodeWithPrefix("road_" + b3dId + "_");
     if (roadB3dNode)
     {
         m_road = std::make_unique<B3dRoad>(b3dId, roadB3dNode, m_sceneManager, m_meshManager, rootSceneNode);
