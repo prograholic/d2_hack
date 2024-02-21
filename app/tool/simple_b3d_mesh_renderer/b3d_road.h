@@ -26,8 +26,6 @@ public:
             Ogre::MeshManager* meshManager,
             Ogre::SceneNode* rootSceneNode);
 
-    Terrain* GetTerrain();
-
 private:
     resource::data::b3d::NodePtr m_b3dNode;
 

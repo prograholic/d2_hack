@@ -20,19 +20,9 @@ Terrain::Terrain(Ogre::SceneManager* sceneManager)
     CreateTerrain();
 }
 
-Ogre::Vector3 Terrain::GetPosition() const
-{
-    return m_terrainGroup->getOrigin();
-}
-
-void Terrain::SetPosition(const Ogre::Vector3& pos)
-{
-    m_terrainGroup->setOrigin(pos);
-}
-
 void Terrain::CreateTerrain()
 {
-    SetPosition(TerrainOrigin);
+    m_terrainGroup->setOrigin(TerrainOrigin);
 
     ConfigureTerrainDefaults();
 
@@ -67,8 +57,7 @@ void Terrain::ConfigureTerrainDefaults()
     defaultimp.layerList[0].worldSize = TerrainWorldSize / 3;
     
     defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr");
-    defaultimp.layerList[0].textureNames.push_back("white.bmp");
-    //defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr");
+    defaultimp.layerList[0].textureNames.push_back("white.bmp"); // FIXME: find proper texture???
 }
 
 void Terrain::DefineTerrains()
@@ -76,17 +65,13 @@ void Terrain::DefineTerrains()
     Ogre::Image img0;
     img0.load(HeightMap0Name, "D2");
     img0.flipAroundX();
-    //img0.flipAroundY();
 
     Ogre::Image img1;
     img1.load(HeightMap1Name, "D2");
     img1.flipAroundX();
-    //img1.flipAroundY();
 
     Ogre::Image img2;
     img2.load(HeightMap2Name, "D2");
-    //img2.flipAroundX();
-    //img2.flipAroundY();
 
     const std::uint32_t borderSize = img0.getWidth();
 
@@ -100,7 +85,6 @@ void Terrain::DefineTerrains()
         {
             auto pos = x * borderSize + y;
             yyy[pos] = static_cast<float>(((x + y) > borderSize) ? data1[pos] : data0[pos]) / std::numeric_limits<std::uint16_t>::max();
-            //yyy[pos] = static_cast<float>((x < y) ? data1[pos] : data0[pos]) / std::numeric_limits<std::uint16_t>::max();
         }
     }
 
@@ -113,15 +97,12 @@ void Terrain::DefineTerrains()
     m_terrainGroup->defineTerrain(1, 0, &img2);
     m_terrainGroup->defineTerrain(0, 1, &img2);
     
-
-
     for (std::uint32_t x = 0; x != borderSize; ++x)
     {
         for (std::uint32_t y = 0; y != borderSize; ++y)
         {
             auto pos = x * borderSize + y;
             yyy[pos] = static_cast<float>(((x + y) < borderSize) ? data1[pos] : data0[pos]) / std::numeric_limits<std::uint16_t>::max();
-            //yyy[pos] = static_cast<float>((x < y) ? data1[pos] : data0[pos]) / std::numeric_limits<std::uint16_t>::max();
         }
     }
     m_terrainGroup->defineTerrain(0, 0, yyy.data());

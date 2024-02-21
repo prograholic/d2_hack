@@ -19,9 +19,6 @@ class Terrain
 public:
     explicit Terrain(Ogre::SceneManager* sceneManager);
 
-    Ogre::Vector3 GetPosition() const;
-    void SetPosition(const Ogre::Vector3& pos);
-
 private:
     std::unique_ptr<Ogre::TerrainGlobalOptions> m_terrainGlobalOptions;
     std::unique_ptr<Ogre::TerrainGroup> m_terrainGroup;
@@ -29,7 +26,6 @@ private:
     void CreateTerrain();
     void ConfigureTerrainDefaults();
     void DefineTerrains();
-
 };
 
 typedef std::unique_ptr<Terrain> TerrainPtr;

@@ -19,7 +19,6 @@ public:
 
 private:
     std::vector<B3dRoomPtr> m_rooms;
-    Terrain* m_terrain;
 
     void CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
 
