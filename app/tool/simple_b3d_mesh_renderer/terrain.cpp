@@ -6,7 +6,7 @@ namespace app
 {
 
 const std::uint16_t TerrainSize = 257;
-const Ogre::Real TerrainWorldSize = 3000.0f;
+const Ogre::Real TerrainWorldSize = 1000.0f;
 const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
 const char* HeightMap2Name = "terrain2.raw2";
@@ -31,7 +31,7 @@ void Terrain::SetPosition(const Ogre::Vector3& pos)
 
 void Terrain::CreateTerrain()
 {
-    SetPosition(Ogre::Vector3{-4700.0f, -500.0f, 3700.0f});
+    SetPosition(Ogre::Vector3{-5500.0f, 400.0f, 4550.0f});
 
     ConfigureTerrainDefaults();
 
@@ -57,7 +57,7 @@ void Terrain::ConfigureTerrainDefaults()
     Ogre::Terrain::ImportData& defaultimp = m_terrainGroup->getDefaultImportSettings();
     defaultimp.terrainSize = TerrainSize;
     defaultimp.worldSize = TerrainWorldSize;
-    defaultimp.inputScale = 600;
+    defaultimp.inputScale = TerrainWorldSize / 5;
     defaultimp.minBatchSize = 65;
     defaultimp.maxBatchSize = 129;
 
@@ -103,24 +103,27 @@ void Terrain::DefineTerrains()
         }
     }
 
-    m_terrainGroup->defineTerrain(0, 0, yyy.data());
-    //m_terrainGroup->defineTerrain(0, 0, &img0); // merge upper-left(1) and bootom-right(0)
-    //m_terrainGroup->defineTerrain(0, 1, &img1); // merge upper-left(1) and bootom-right(0)
+    m_terrainGroup->defineTerrain(2, 2, yyy.data());
 
-#if 0
+    m_terrainGroup->defineTerrain(2, 1, &img2);
+    
+    m_terrainGroup->defineTerrain(1, 2, &img2);
+    m_terrainGroup->defineTerrain(1, 1, &img0);
+    m_terrainGroup->defineTerrain(1, 0, &img2);
     m_terrainGroup->defineTerrain(0, 1, &img2);
     
-    std::vector<float> xxx;
-    xxx.resize(img2.getWidth() * img2.getHeight(), 0.0f);
-    m_terrainGroup->defineTerrain(0, 2, xxx.data());
 
 
-    m_terrainGroup->defineTerrain(1, 0, &img2);
-    m_terrainGroup->defineTerrain(1, 1, &img0);
-    m_terrainGroup->defineTerrain(1, 2, &img2);
-    m_terrainGroup->defineTerrain(2, 1, &img2);
-    m_terrainGroup->defineTerrain(2, 2, &img0);
-#endif //0
+    for (std::uint32_t x = 0; x != borderSize; ++x)
+    {
+        for (std::uint32_t y = 0; y != borderSize; ++y)
+        {
+            auto pos = x * borderSize + y;
+            yyy[pos] = static_cast<float>(((x + y) < borderSize) ? data1[pos] : data0[pos]) / std::numeric_limits<std::uint16_t>::max();
+            //yyy[pos] = static_cast<float>((x < y) ? data1[pos] : data0[pos]) / std::numeric_limits<std::uint16_t>::max();
+        }
+    }
+    m_terrainGroup->defineTerrain(0, 0, yyy.data());
 }
 
 
