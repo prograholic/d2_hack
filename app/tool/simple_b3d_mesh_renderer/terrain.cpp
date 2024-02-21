@@ -31,7 +31,7 @@ void Terrain::SetPosition(const Ogre::Vector3& pos)
 
 void Terrain::CreateTerrain()
 {
-    SetPosition(Ogre::Vector3{3300.0f, 300.0f, 4500.0f});
+    SetPosition(Ogre::Vector3{-4700.0f, -500.0f, 3700.0f});
 
     ConfigureTerrainDefaults();
 
