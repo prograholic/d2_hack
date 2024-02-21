@@ -10,6 +10,7 @@
 #include <d2_hack/resource/data/b3d_node.h>
 
 #include "b3d_hit.h"
+#include "terrain.h"
 
 namespace d2_hack
 {
@@ -29,6 +30,7 @@ private:
     resource::data::b3d::NodePtr m_b3dNode;
 
     B3dHitPtr m_hit;
+    TerrainPtr m_terrain;
 };
 
 typedef std::unique_ptr<B3dRoad> B3dRoadPtr;

@@ -27,14 +27,14 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
     {
         block_data::GroupObjects19 object19Data{};
         auto object19 = MakeVisitableNode(tree, WeakNodePtr{}, MakeBlockHeader(common::StringToResourceName(CarNodeNamePrefix + truckName), block_data::GroupObjectsBlock19), object19Data);
-        
+
         block_data::GroupObjects5 object5data{};
         auto object5 = MakeVisitableNode(tree, object19, MakeBlockHeader(common::ResourceName{}, block_data::GroupObjectsBlock5), object5data);
 
         block_data::SimpleObjectConnector18 object18Data{};
         object18Data.object = common::StringToResourceName(truckName);
 
-        Transform tf{Ogre::Matrix3::IDENTITY, pos};
+        Transform tf{ Ogre::Matrix3::IDENTITY, pos };
 
         object18Data.transformation.push_back(tf);
         auto object18 = MakeVisitableNode(tree, object5, MakeBlockHeader(common::ResourceName{}, block_data::SimpleObjectConnectorBlock18), object18Data);
@@ -159,7 +159,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)
     {
-        ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{3.5f * i, 0, 0 });
+        ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{ 3.5f * i, 0, 0 });
     }
 
     transformation::Transform(b3dForest);
@@ -289,6 +289,12 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     }
 
     return BaseApplication::keyPressed(evt);
+}
+
+void SimpleB3dMeshRenderer::shutdown()
+{
+    m_rooms.clear();
+    BaseApplication::shutdown();
 }
 
 } // namespace app

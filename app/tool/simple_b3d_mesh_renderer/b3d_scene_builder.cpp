@@ -154,13 +154,6 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
     m_sceneNodes.top()->createChildSceneNode(entityName + "_node_for_entity")->attachObject(entity);
 }
 
-void B3dSceneBuilder::CreateTerrain()
-{
-    std::unique_ptr<Terrain> t{ new Terrain(m_sceneManager) };
-    t.release();
-    // TODO: destroy properly
-}
-
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const
 {
     return common::GetResourceName(m_b3dId, name);

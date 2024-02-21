@@ -26,6 +26,8 @@ private:
     virtual void CreateScene() override;
 
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
+
+    virtual void shutdown() override;
 };
 
 
