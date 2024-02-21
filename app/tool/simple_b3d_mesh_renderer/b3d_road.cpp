@@ -68,6 +68,11 @@ B3dRoad::B3dRoad(const std::string& b3dId,
     }
 }
 
+Terrain* B3dRoad::GetTerrain()
+{
+    return m_terrain.get();
+}
+
 
 } // namespace app
 } // namespace d2_hack

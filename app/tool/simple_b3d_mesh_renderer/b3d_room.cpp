@@ -72,6 +72,11 @@ const block_data::Portals& B3dRoom::GetPortals() const
     return m_portals;
 }
 
+B3dRoad* B3dRoom::GetRoad()
+{
+    return m_road.get();
+}
+
 
 } // namespace app
 } // namespace d2_hack

@@ -31,6 +31,8 @@ public:
 
     const resource::data::b3d::block_data::Portals& GetPortals() const;
 
+    B3dRoad* GetRoad();
+
 private:
     resource::data::b3d::NodePtr m_b3dNode;
     resource::data::b3d::block_data::Portals m_portals;

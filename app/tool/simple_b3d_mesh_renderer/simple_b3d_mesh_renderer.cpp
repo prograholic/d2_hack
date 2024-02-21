@@ -46,6 +46,7 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
 
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseApplication()
+    , m_terrain(nullptr)
 {
 }
 
@@ -58,6 +59,15 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
             if (!rootNode->GetChildNodeList().empty())
             {
                 m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
+                if (!m_terrain)
+                {
+                    auto& room = m_rooms.back();
+                    auto road = room->GetRoad();
+                    if (road)
+                    {
+                        m_terrain = road->GetTerrain();
+                    }
+                }
             }
             else
             {
@@ -216,6 +226,8 @@ void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
 
 const char* node_name = "b3d.scene_node";
 
+static float increment = 100;
+
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
@@ -282,10 +294,84 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     else if (evt.keysym.sym == '=')
     {
         m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() * 2);
+        increment *= 2;
     }
     else if (evt.keysym.sym == '-')
     {
         m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() / 2);
+        increment /= 2;
+    }
+    else if (evt.keysym.sym == 'i')
+    {
+        if (m_terrain)
+        {
+            auto pos = m_terrain->GetPosition();
+            pos.y += increment;
+            m_terrain->SetPosition(pos);
+
+
+            D2_HACK_LOG(TerrainPos) << pos;
+        }
+    }
+    else if (evt.keysym.sym == 'j')
+    {
+        if (m_terrain)
+        {
+            auto pos = m_terrain->GetPosition();
+            pos.y -= increment;
+            m_terrain->SetPosition(pos);
+
+
+            D2_HACK_LOG(TerrainPos) << pos;
+        }
+    }
+    else if (evt.keysym.sym == 'k')
+    {
+        if (m_terrain)
+        {
+            auto pos = m_terrain->GetPosition();
+            pos.x += increment;
+            m_terrain->SetPosition(pos);
+
+
+            D2_HACK_LOG(TerrainPos) << pos;
+        }
+    }
+    else if (evt.keysym.sym == 'l')
+    {
+        if (m_terrain)
+        {
+            auto pos = m_terrain->GetPosition();
+            pos.x -= increment;
+            m_terrain->SetPosition(pos);
+
+
+            D2_HACK_LOG(TerrainPos) << pos;
+        }
+    }
+    else if (evt.keysym.sym == 'n')
+    {
+    if (m_terrain)
+    {
+        auto pos = m_terrain->GetPosition();
+        pos.z += increment;
+        m_terrain->SetPosition(pos);
+
+
+        D2_HACK_LOG(TerrainPos) << pos;
+    }
+    }
+    else if (evt.keysym.sym == 'm')
+    {
+    if (m_terrain)
+    {
+        auto pos = m_terrain->GetPosition();
+        pos.z -= increment;
+        m_terrain->SetPosition(pos);
+
+
+        D2_HACK_LOG(TerrainPos) << pos;
+    }
     }
 
     return BaseApplication::keyPressed(evt);
@@ -293,7 +379,7 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 
 void SimpleB3dMeshRenderer::shutdown()
 {
-    m_rooms.clear();
+    m_rooms.clear(); // TODO: rework with RAII
     BaseApplication::shutdown();
 }
 
