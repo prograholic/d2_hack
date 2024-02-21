@@ -26,7 +26,7 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
     for (auto& tree : forest.forest)
     {
         block_data::GroupObjects19 object19Data{};
-        auto object19 = MakeVisitableNode(tree, WeakNodePtr{}, MakeBlockHeader(common::StringToResourceName("car_" + truckName), block_data::GroupObjectsBlock19), object19Data);
+        auto object19 = MakeVisitableNode(tree, WeakNodePtr{}, MakeBlockHeader(common::StringToResourceName(CarNodeNamePrefix + truckName), block_data::GroupObjectsBlock19), object19Data);
         
         block_data::GroupObjects5 object5data{};
         auto object5 = MakeVisitableNode(tree, object19, MakeBlockHeader(common::ResourceName{}, block_data::GroupObjectsBlock5), object5data);
@@ -51,34 +51,28 @@ SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
 
 void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
 {
-    const std::string roomNodePrefix = "room_" + tree.id + "_";
-    const std::string carNodePrefix = "car_";
     for (const auto& rootNode : tree.rootNodes)
     {
-        if (rootNode->GetType() == resource::data::b3d::block_data::GroupObjectsBlock19)
+        if (rootNode->GetNodeCategory() == NodeCategory::RoomNode)
         {
             if (!rootNode->GetChildNodeList().empty())
             {
-                if (rootNode->GetName().starts_with(roomNodePrefix))
-                {
-                    m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
-                }
-                else if (rootNode->GetName().starts_with(carNodePrefix))
-                {
-                    // TODO: car should NOT be in rooms!!!!!
-                    //m_cars.emplace_back(B3dCar....)
-                    B3dTreeVisitor visitor{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager() };
-                    VisitNode(rootNode, visitor);
-                }
-                else
-                {
-                    D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized room: `" << rootNode->GetName() << "`";
-                }
+                m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
             }
             else
             {
                 D2_HACK_LOG(CreateRootNodes) << "Skipping empty room: `" << rootNode->GetName() << "`";
             }
+        }
+        else if (rootNode->GetNodeCategory() == NodeCategory::CarNode)
+        {
+            //m_cars.emplace_back(B3dCar....)
+            B3dTreeVisitor visitor{ tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager() };
+            VisitNode(rootNode, visitor);
+        }
+        else
+        {
+            D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized room: `" << rootNode->GetName() << "`";
         }
     }
 }

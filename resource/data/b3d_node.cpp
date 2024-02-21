@@ -11,6 +11,12 @@ namespace data
 namespace b3d
 {
 
+const char* RoomNodeNamePrefix = "room_";
+const char* RoadNodeNamePrefix = "road_";
+const char* RoadHitNodeNamePrefix = "hit_road_";
+const char* RoadObjNodeNamePrefix = "obj_";
+const char* CarNodeNamePrefix = "car_";
+
 Node::Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
 	: m_name(common::ResourceNameToString(blockHeader.name))
 	, m_type(blockHeader.type)
@@ -27,6 +33,40 @@ const std::string& Node::GetName() const
 std::uint32_t Node::GetType() const
 {
 	return m_type;
+}
+
+NodeCategory Node::GetNodeCategory() const
+{
+	switch (m_type)
+	{
+	case block_data::GroupObjectsBlock19:
+		if (m_name.starts_with(RoomNodeNamePrefix))
+		{
+			return NodeCategory::RoomNode;
+		}
+		else if (m_name.starts_with(CarNodeNamePrefix))
+		{
+			return NodeCategory::CarNode;
+		}
+		break;
+		
+	case block_data::GroupObjectsBlock5:
+		if (m_name.starts_with(RoadNodeNamePrefix))
+		{
+			return NodeCategory::RoadNode;
+		}
+		if (m_name.starts_with(RoadHitNodeNamePrefix))
+		{
+			return NodeCategory::RoadHitNode;
+		}
+		else if (m_name.starts_with(RoadObjNodeNamePrefix))
+		{
+			return NodeCategory::RoadObjNode;
+		}
+		break;
+	}
+
+	return NodeCategory::Generic;
 }
 
 NodeList& Node::GetChildNodeList()
@@ -69,12 +109,12 @@ B3dTreePtr Node::GetOriginalRoot() const
 	return m_originalRoot.lock();
 }
 
-NodePtr Node::ExtractNodeWithPrefix(const std::string& prefix)
+NodePtr Node::ExtractFirstNodeWithCategory(NodeCategory nodeCategory)
 {
 	auto pos = m_childNodeList.begin();
 	while (pos != m_childNodeList.end())
 	{
-		if ((*pos)->GetName().starts_with(prefix))
+		if ((*pos)->GetNodeCategory() == nodeCategory)
 		{
 			NodePtr res = *pos;
 			m_childNodeList.erase(pos);

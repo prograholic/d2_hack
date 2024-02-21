@@ -45,7 +45,7 @@ B3dRoom::B3dRoom(const std::string& b3dId,
     , m_meshManager(meshManager)
     , m_rootSceneNode(rootSceneNode)
 {
-    auto roadB3dNode = b3dNode->ExtractNodeWithPrefix("road_" + b3dId + "_");
+    auto roadB3dNode = b3dNode->ExtractFirstNodeWithCategory(NodeCategory::RoadNode);
     if (roadB3dNode)
     {
         m_road = std::make_unique<B3dRoad>(b3dId, roadB3dNode, m_sceneManager, m_meshManager, rootSceneNode);

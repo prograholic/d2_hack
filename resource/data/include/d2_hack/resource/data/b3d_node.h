@@ -29,6 +29,22 @@ struct B3dTree;
 typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;
 typedef std::shared_ptr<B3dTree> B3dTreePtr;
 
+enum class NodeCategory
+{
+    Generic,
+    RoomNode,
+    CarNode,
+    RoadNode,
+    RoadHitNode,
+    RoadObjNode
+};
+
+extern const char* RoomNodeNamePrefix;
+extern const char* RoadNodeNamePrefix;
+extern const char* RoadHitNodeNamePrefix;
+extern const char* RoadObjNodeNamePrefix;
+extern const char* CarNodeNamePrefix;
+
 class Node : public std::enable_shared_from_this<Node>
 {
     Node(const Node&) = delete;
@@ -41,6 +57,8 @@ public:
     const std::string& GetName() const;
 
     std::uint32_t GetType() const;
+
+    NodeCategory GetNodeCategory() const;
 
     NodeList& GetChildNodeList();
 
@@ -56,7 +74,7 @@ public:
 
     B3dTreePtr GetOriginalRoot() const;
 
-    NodePtr ExtractNodeWithPrefix(const std::string& prefix);
+    NodePtr ExtractFirstNodeWithCategory(NodeCategory nodeCategory);
 
     template <typename TypedNode>
     TypedNode* NodeCast()
@@ -90,7 +108,6 @@ private:
     const B3dTreeWeakPtr m_originalRoot;
     WeakNodePtr m_parent;
 };
-
 
 template <typename BlockType>
 class NodeWithData : public Node
