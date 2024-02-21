@@ -7,6 +7,7 @@ namespace app
 
 const std::uint16_t TerrainSize = 257;
 const Ogre::Real TerrainWorldSize = 1000.0f;
+const Ogre::Vector3 TerrainOrigin{ -5500.0f, 425.0f, 4550.0f };
 const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
 const char* HeightMap2Name = "terrain2.raw2";
@@ -31,7 +32,7 @@ void Terrain::SetPosition(const Ogre::Vector3& pos)
 
 void Terrain::CreateTerrain()
 {
-    SetPosition(Ogre::Vector3{-5500.0f, 400.0f, 4550.0f});
+    SetPosition(TerrainOrigin);
 
     ConfigureTerrainDefaults();
 
@@ -57,7 +58,7 @@ void Terrain::ConfigureTerrainDefaults()
     Ogre::Terrain::ImportData& defaultimp = m_terrainGroup->getDefaultImportSettings();
     defaultimp.terrainSize = TerrainSize;
     defaultimp.worldSize = TerrainWorldSize;
-    defaultimp.inputScale = TerrainWorldSize / 5;
+    defaultimp.inputScale = TerrainWorldSize / 10;
     defaultimp.minBatchSize = 65;
     defaultimp.maxBatchSize = 129;
 
@@ -66,7 +67,7 @@ void Terrain::ConfigureTerrainDefaults()
     defaultimp.layerList[0].worldSize = TerrainWorldSize / 3;
     
     defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr");
-    defaultimp.layerList[0].textureNames.push_back(HeightMap0Name);
+    defaultimp.layerList[0].textureNames.push_back("white.bmp");
     //defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr");
 }
 
@@ -84,7 +85,7 @@ void Terrain::DefineTerrains()
 
     Ogre::Image img2;
     img2.load(HeightMap2Name, "D2");
-    img2.flipAroundX();
+    //img2.flipAroundX();
     //img2.flipAroundY();
 
     const std::uint32_t borderSize = img0.getWidth();
@@ -106,8 +107,8 @@ void Terrain::DefineTerrains()
     m_terrainGroup->defineTerrain(2, 2, yyy.data());
 
     m_terrainGroup->defineTerrain(2, 1, &img2);
-    
     m_terrainGroup->defineTerrain(1, 2, &img2);
+
     m_terrainGroup->defineTerrain(1, 1, &img0);
     m_terrainGroup->defineTerrain(1, 0, &img2);
     m_terrainGroup->defineTerrain(0, 1, &img2);
