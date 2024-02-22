@@ -21,7 +21,7 @@ TransformVisitor::~TransformVisitor()
     assert(m_transformQueue.empty());
 }
 
-void TransformVisitor::Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode)
+VisitResult TransformVisitor::Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
@@ -43,6 +43,8 @@ void TransformVisitor::Visit(NodeGroupTransformMatrix24& node, VisitMode visitMo
         m_transformMap[node.GetName()] = transformList;
         m_transformQueue.pop_back();
     }
+
+    return VisitResult::Continue;
 }
 
 

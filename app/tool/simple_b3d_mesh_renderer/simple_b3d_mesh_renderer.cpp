@@ -68,7 +68,8 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
         {
             //m_cars.emplace_back(B3dCar....)
             B3dTreeVisitor visitor{ tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager() };
-            VisitNode(rootNode, visitor);
+            auto visitResult = VisitNode(rootNode, visitor);
+            (void)visitResult;
         }
         else
         {

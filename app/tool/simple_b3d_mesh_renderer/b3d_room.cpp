@@ -22,12 +22,14 @@ public:
     {
     }
 
-    virtual void Visit(resource::data::b3d::NodeSimplePortal30& node, VisitMode visitMode) override
+    virtual VisitResult Visit(resource::data::b3d::NodeSimplePortal30& node, VisitMode visitMode) override
     {
         if (visitMode == VisitMode::PreOrder)
         {
             m_portals.push_back(node.GetBlockData());
         }
+
+        return VisitResult::Continue;
     }
 
 private:
@@ -56,7 +58,8 @@ B3dRoom::B3dRoom(const std::string& b3dId,
 
     RoomVisitor visitor{b3dId, m_sceneManager, rootSceneNode, m_meshManager, m_portals};
 
-    VisitNode(m_b3dNode, visitor);
+    auto visitResult = VisitNode(m_b3dNode, visitor);
+    (void)visitResult;
 }
 
 void B3dRoom::GetGasStations() const

@@ -27,7 +27,7 @@ public:
     {
     }
 
-    virtual void Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode)
+    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode)
     {
         if (visitMode == VisitMode::PreOrder)
         {
@@ -41,6 +41,8 @@ public:
                 D2_HACK_LOG(Visit) << "unsupported generator `" << generatorName << "`";
             }
         }
+
+        return VisitResult::Continue;
     }
 private:
     TerrainPtr& m_terrain;
@@ -64,15 +66,10 @@ B3dRoad::B3dRoad(const std::string& b3dId,
     {
         RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_terrain};
 
-        VisitNode(m_b3dNode, visitor);
+        auto visitResult = VisitNode(m_b3dNode, visitor);
+        (void)visitResult;
     }
 }
-
-Terrain* B3dRoad::GetTerrain()
-{
-    return m_terrain.get();
-}
-
 
 } // namespace app
 } // namespace d2_hack

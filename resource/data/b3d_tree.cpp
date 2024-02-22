@@ -72,7 +72,8 @@ std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 void AddTransformMatrix(const NodePtr& root, TransformationMap& transformations)
 {
 	TransformVisitor visitor{transformations};
-	VisitNode(root, visitor);
+	auto visitResult = VisitNode(root, visitor);
+	(void)visitResult;
 }
 
 void B3dTree::AddRootNode(const NodePtr& root)

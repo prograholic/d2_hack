@@ -19,44 +19,6 @@ namespace transformation
 namespace predicates
 {
 
-static bool IsNodeOfType(NodePtr node, const std::uint32_t* begin, const std::uint32_t* end)
-{
-    auto nodeType = node->GetType();
-    while (begin != end)
-    {
-        if (*begin == nodeType)
-        {
-            return true;
-        }
-        ++begin;
-    }
-
-    return false;
-}
-
-static bool IsUnusedNode(NodePtr node)
-{
-    static const std::uint32_t unusedNodeTypes[] =
-    {
-        block_data::SimpleTriggerBlock13,
-        block_data::SimpleFlatCollisionBlock20,
-        block_data::SimpleVolumeCollisionBlock23
-    };
-
-    return IsNodeOfType(node, std::begin(unusedNodeTypes), std::end(unusedNodeTypes));
-}
-
-static bool IsUnusedTopLevelNode(NodePtr node)
-{
-    static const std::uint32_t unusedTopLevelNodeTypes[] =
-    {
-        block_data::GroupRoadInfraObjectsBlock4,
-        block_data::GroupObjectsBlock5,
-        block_data::HierarchyBreakerBlockXxx
-    };
-
-    return IsNodeOfType(node, std::begin(unusedTopLevelNodeTypes), std::end(unusedTopLevelNodeTypes));
-}
 
 template <typename Iterator>
 static bool IsAllNodesOfType(Iterator first, Iterator last, const std::uint32_t* firstType, const std::uint32_t* lastType)
@@ -75,33 +37,6 @@ static bool IsAllNodesOfType(Iterator first, Iterator last, const std::uint32_t*
 }
 
 } // namespace predicates
-
-static void FilterUnusedNodes(NodePtr node)
-{
-    NodeList newChildren;
-    for (auto child : node->GetChildNodeList())
-    {
-        if (predicates::IsUnusedNode(child))
-        {
-            D2_HACK_LOG(FilterUnusedNodes) << "Skipping unused node " << child->GetName() << ", with type: " << child->GetType();
-            continue;
-        }
-
-        FilterUnusedNodes(child);
-
-        newChildren.push_back(child);
-    }
-
-    node->SetChildNodes(std::move(newChildren));
-}
-
-static void FilterUnusedNodes(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        FilterUnusedNodes(node);
-    }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -294,49 +229,6 @@ static void MergeFacesWithSameMaterial(const B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static bool RemoveEmptyNodes(const NodePtr& node)
-{
-    const auto& children = node->GetChildNodeList();
-
-    NodeList newChildList;
-    for (auto child : children)
-    {
-        bool needToRemove = RemoveEmptyNodes(child);
-        if (!needToRemove)
-        {
-            newChildList.push_back(child);
-        }
-        else
-        {
-            D2_HACK_LOG(RemoveEmptyNodes) << "removed node: " << child->GetName() << " with type: " << child->GetType();
-        }
-    }
-
-    node->SetChildNodes(std::move(newChildList));
-
-    if (node->GetChildNodeList().empty())
-    {
-        switch (node->GetType())
-        {
-        case block_data::GroupRoadInfraObjectsBlock4:
-        case block_data::GroupObjectsBlock5:
-        case block_data::GroupObjectsBlock19:
-        case block_data::GroupObjectsBlock21:
-            return true;
-        };
-    }
-
-    return false;
-}
-
-static void RemoveEmptyNodes(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        RemoveEmptyNodes(node);
-    }
-}
-
 static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &name)
 {
     for (const auto& node : nodes)
@@ -419,27 +311,6 @@ static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& trucks
     }
 }
 
-static void SkipTopLevelNodes(B3dTree& tree)
-{
-    NodeList newRoots;
-    for (const auto& node : tree.rootNodes)
-    {
-        if (predicates::IsUnusedTopLevelNode(node))
-        {
-            /**
-             * На верхнем уровне эти узлы не нужны,
-             * они должны быть прицеплены к соотв. объектам с помощью SimpleObjectConnector18
-             * с помощью ProcessObjectConnectors
-             */
-            continue;
-        }
-
-        newRoots.push_back(node);
-    }
-
-    std::swap(tree.rootNodes, newRoots);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 void Transform(B3dForest& forest)
@@ -460,19 +331,8 @@ void Transform(B3dForest& forest)
 
 static void Optimize(B3dTree& tree)
 {
-    if (tree.id.empty()) // always false
-    {
-        SkipTopLevelNodes(tree);
-        FilterUnusedNodes(tree);
-    }
-
     UseFirstAlternative(tree);
     MergeFacesWithSameMaterial(tree);
-    
-    if (tree.id.empty()) // always false
-    {
-        RemoveEmptyNodes(tree);
-    }
 }
 
 void Optimize(B3dForest& forest)

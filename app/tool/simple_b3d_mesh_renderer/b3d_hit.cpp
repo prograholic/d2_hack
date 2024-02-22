@@ -20,7 +20,8 @@ B3dHit::B3dHit(const std::string& b3dId,
 
     B3dTreeVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager};
 
-    VisitNode(m_b3dNode, visitor);
+    auto visitResult = VisitNode(m_b3dNode, visitor);
+    (void)visitResult;
 }
 
 

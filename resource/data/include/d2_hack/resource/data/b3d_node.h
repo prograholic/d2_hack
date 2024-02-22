@@ -29,6 +29,22 @@ struct B3dTree;
 typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;
 typedef std::shared_ptr<B3dTree> B3dTreePtr;
 
+
+enum class VisitResult
+{
+    // Continue processing, this is the default behavior
+    Continue,
+
+    // Stop all processing
+    Stop,
+
+    // Skip children (only allowed in PreOrder mode)
+    SkipChildren,
+
+    // Skip children and post order (only allowed in PreOrder mode)
+    SkipChildrenAndPostOrder
+};
+
 enum class NodeCategory
 {
     Generic,
@@ -92,7 +108,7 @@ public:
         return static_cast<const TypedNode*>(this);
     }
 
-    virtual void Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
+    virtual [[nodiscard]] VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
     virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
 

@@ -9,25 +9,59 @@ namespace data
 namespace b3d
 {
 
-void VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
+VisitResult VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
 {
-    node->Visit(visitor, VisitMode::PreOrder);
-
-    const auto& children = node->GetChildNodeList();
-    for (auto child : children)
+    auto preOrderVisitResult = node->Visit(visitor, VisitMode::PreOrder);
+    switch (preOrderVisitResult)
     {
-        VisitNode(child, visitor);
+    case VisitResult::Continue:
+        break;
+
+    case VisitResult::Stop:
+        return preOrderVisitResult;
+    default:
+        break;
     }
 
-    node->Visit(visitor, VisitMode::PostOrder);
+    if ((preOrderVisitResult != VisitResult::SkipChildren) && (preOrderVisitResult != VisitResult::SkipChildrenAndPostOrder))
+    {
+        const auto& children = node->GetChildNodeList();
+        for (auto child : children)
+        {
+            auto childVisitResult = VisitNode(child, visitor);
+            if (childVisitResult == VisitResult::Stop)
+            {
+                return childVisitResult;
+            }
+            assert(childVisitResult == VisitResult::Continue);
+        }
+    }
+
+    if (preOrderVisitResult != VisitResult::SkipChildrenAndPostOrder)
+    {
+        auto postOrderVisitResult = node->Visit(visitor, VisitMode::PostOrder);
+        assert((postOrderVisitResult == VisitResult::Continue) || (postOrderVisitResult == VisitResult::Stop));
+
+        return postOrderVisitResult;
+    }
+    
+    return preOrderVisitResult;
 }
 
-void VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor)
+VisitResult VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor)
 {
     for (auto node : tree.rootNodes)
     {
-        VisitNode(node, visitor);
+        auto visitResult = VisitNode(node, visitor);
+        if (visitResult == VisitResult::Stop)
+        {
+            return VisitResult::Stop;
+        }
+
+        assert(visitResult == VisitResult::Continue);
     }
+
+    return VisitResult::Continue;
 }
 
 

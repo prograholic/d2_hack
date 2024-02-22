@@ -20,7 +20,7 @@ public:
 
     ~TransformVisitor() noexcept;
 
-    virtual void Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override;
+    virtual VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override;
 
 private:
     std::list<block_data::GroupTransformMatrix24> m_transformQueue;

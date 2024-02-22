@@ -84,154 +84,214 @@ public:
         PrintData(node.GetBlockData(), "", 1);
     }
 
-    virtual void Visit(NodeHierarchyBreaker& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeEmpty0& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeEmpty0& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleObjectConnector1& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleObjectConnector1& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupUnknown2& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupUnknown2& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupRoadInfraObjects4& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupObjects5& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupObjects5& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupVertexData7& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleFaces8& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupTrigger9& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupTrigger9& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupLodParameters10& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupLodParameters10& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupUnknown12& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupUnknown12& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleTrigger13& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleTrigger13& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleUnknown14& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleUnknown14& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleObjectConnector18& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupObjects19& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleFlatCollision20& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleFlatCollision20& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupObjects21& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupObjects21& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleVolumeCollision23& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleVolumeCollision23& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupTransformMatrix24& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleUnknown25& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleUnknown25& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleFaces28& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupUnknown29& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupUnknown29& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimplePortal30& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimplePortal30& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupLightingObjects33& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupLightingObjects33& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleUnknown34& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleUnknown34& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleFaces35& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupVertexData36& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupVertexData37& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeGroupUnknown39& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeGroupUnknown39& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
-    virtual void Visit(NodeSimpleGeneratedObjects40& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
+
+        return VisitResult::Continue;
     }
 
 private:
