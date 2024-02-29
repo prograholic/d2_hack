@@ -5,6 +5,8 @@
 
 #include "b3d_scene_builder.h"
 
+#include "b3d_renderable_object.h"
+
 
 namespace d2_hack
 {
@@ -17,7 +19,8 @@ public:
     B3dTreeVisitor(const std::string& b3dId,
                    Ogre::SceneManager* sceneManager,
                    Ogre::SceneNode* rootNode,
-                   Ogre::MeshManager* meshManager);
+                   Ogre::MeshManager* meshManager,
+                   B3dRenderableObjectList& renderables);
 
     using VisitResult = resource::data::b3d::VisitResult;
 
@@ -82,6 +85,9 @@ public:
     virtual VisitResult Visit(resource::data::b3d::NodeSimpleGeneratedObjects40& node, resource::data::b3d::VisitMode visitMode) override;
 
 private:
+
+    B3dRenderableObjectList& m_renderables;
+
     template <typename FacesNode>
     void VisitFaces(FacesNode& block, resource::data::b3d::VisitMode visitMode);
 };

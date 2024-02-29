@@ -6,6 +6,7 @@
 #include <d2_hack/resource/data/b3d_tree.h>
 
 #include "b3d_room.h"
+#include "b3d_car.h"
 
 namespace d2_hack
 {
@@ -19,6 +20,7 @@ public:
 
 private:
     std::vector<B3dRoomPtr> m_rooms;
+    std::vector<B3dCarPtr> m_cars;
 
     void CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
 

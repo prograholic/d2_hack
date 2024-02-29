@@ -4,6 +4,7 @@
 #include <d2_hack/common/platform.h>
 
 #include <memory>
+#include <vector>
 
 #include <d2_hack/resource/data/b3d_node.h>
 
@@ -40,6 +41,8 @@ private:
 };
 
 typedef std::unique_ptr<B3dRenderableObject> B3dRenderableObjectPtr;
+
+typedef std::vector<B3dRenderableObjectPtr> B3dRenderableObjectList;
 
 } // namespace app
 } // namespace d2_hack

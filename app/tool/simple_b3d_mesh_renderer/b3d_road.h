@@ -9,6 +9,7 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_renderable_object.h"
 #include "b3d_hit.h"
 #include "terrain.h"
 
@@ -28,6 +29,8 @@ public:
 
 private:
     resource::data::b3d::NodePtr m_b3dNode;
+
+    B3dRenderableObjectList m_renderables;
 
     B3dHitPtr m_hit;
     TerrainPtr m_terrain;

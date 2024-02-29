@@ -13,6 +13,8 @@ d2_hack_add_executable(d2_hack.app.simple_b3d_mesh_renderer
     b3d_road.h
     b3d_hit.cpp
     b3d_hit.h
+    b3d_car.cpp
+    b3d_car.h
     b3d_renderable_object.cpp
     b3d_renderable_object.h
 

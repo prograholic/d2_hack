@@ -57,7 +57,7 @@ void Terrain::ConfigureTerrainDefaults()
     defaultimp.layerList[0].worldSize = TerrainWorldSize / 3;
     
     defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr");
-    defaultimp.layerList[0].textureNames.push_back("white.bmp"); // FIXME: find proper texture???
+    defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr"); // FIXME: find proper texture???
 }
 
 void Terrain::DefineTerrains()

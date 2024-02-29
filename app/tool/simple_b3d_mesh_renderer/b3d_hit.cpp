@@ -16,9 +16,10 @@ B3dHit::B3dHit(const std::string& b3dId,
                Ogre::MeshManager* meshManager,
                Ogre::SceneNode* rootSceneNode)
     : m_b3dNode(b3dNode)
+    , m_renderables()
 {
 
-    B3dTreeVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager};
+    B3dTreeVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_renderables};
 
     auto visitResult = VisitNode(m_b3dNode, visitor);
     (void)visitResult;

@@ -16,8 +16,9 @@ public:
                 Ogre::SceneManager* sceneManager,
                 Ogre::SceneNode* rootNode,
                 Ogre::MeshManager* meshManager,
-                block_data::Portals& portals)
-        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager)
+                block_data::Portals& portals,
+                B3dRenderableObjectList& renderables)
+        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, renderables)
         , m_portals(portals)
     {
     }
@@ -43,6 +44,8 @@ B3dRoom::B3dRoom(const std::string& b3dId,
                  Ogre::SceneNode* rootSceneNode)
     : m_b3dNode(b3dNode)
     , m_portals()
+    , m_road()
+    , m_renderables()
     , m_sceneManager(sceneManager)
     , m_meshManager(meshManager)
     , m_rootSceneNode(rootSceneNode)
@@ -56,7 +59,7 @@ B3dRoom::B3dRoom(const std::string& b3dId,
     //auto objB3dNode = ExtractRoadNodeWithPrefix(b3dNode, "obj_" + b3dId + "_");
     //m_obj = std::make_unique<B3dObject????
 
-    RoomVisitor visitor{b3dId, m_sceneManager, rootSceneNode, m_meshManager, m_portals};
+    RoomVisitor visitor{b3dId, m_sceneManager, rootSceneNode, m_meshManager, m_portals, m_renderables};
 
     auto visitResult = VisitNode(m_b3dNode, visitor);
     (void)visitResult;

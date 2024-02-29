@@ -7,6 +7,8 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_renderable_object.h"
+
 namespace d2_hack
 {
 namespace app
@@ -23,6 +25,7 @@ public:
 
 private:
     resource::data::b3d::NodePtr m_b3dNode;
+    B3dRenderableObjectList m_renderables;
 };
 
 typedef std::unique_ptr<B3dHit> B3dHitPtr;

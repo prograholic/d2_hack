@@ -21,8 +21,10 @@ using namespace resource::data::b3d;
 B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
                                Ogre::SceneManager* sceneManager,
                                Ogre::SceneNode* rootNode,
-                               Ogre::MeshManager* meshManager)
+                               Ogre::MeshManager* meshManager,
+                               B3dRenderableObjectList& m_renderables)
     : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager)
+    , m_renderables(m_renderables)
 {
 }
 
@@ -212,11 +214,10 @@ VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData36& no
     return VisitResult::Continue;
 }
 
-VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData37& node, VisitMode visitMode)
+VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData37& node, VisitMode /* visitMode */)
 {
-    ProcessSceneNode(node.GetName(), visitMode);
-
-    return VisitResult::Continue;
+    m_renderables.emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
+    return VisitResult::SkipChildrenAndPostOrder;
 }
 
 VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown39& /* node */, VisitMode /* visitMode */)

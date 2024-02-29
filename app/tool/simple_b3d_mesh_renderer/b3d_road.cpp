@@ -20,8 +20,9 @@ public:
                 Ogre::SceneManager* sceneManager,
                 Ogre::SceneNode* rootNode,
                 Ogre::MeshManager* meshManager,
-                TerrainPtr& terrain)
-        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager)
+                TerrainPtr& terrain,
+                B3dRenderableObjectList& renderables)
+        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, renderables)
         , m_terrain(terrain)
         , m_sceneManager(sceneManager)
     {
@@ -55,6 +56,7 @@ B3dRoad::B3dRoad(const std::string& b3dId,
                  Ogre::MeshManager* meshManager,
                  Ogre::SceneNode* rootSceneNode)
     : m_b3dNode(b3dNode)
+    , m_renderables()
 {
     auto hitB3dNode = b3dNode->ExtractFirstNodeWithCategory(NodeCategory::RoadHitNode);
     if (hitB3dNode)
@@ -64,7 +66,7 @@ B3dRoad::B3dRoad(const std::string& b3dId,
 
     if (!m_b3dNode->GetChildNodeList().empty())
     {
-        RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_terrain};
+        RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_terrain, m_renderables};
 
         auto visitResult = VisitNode(m_b3dNode, visitor);
         (void)visitResult;

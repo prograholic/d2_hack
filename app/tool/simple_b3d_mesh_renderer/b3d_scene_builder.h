@@ -29,6 +29,14 @@ public:
 
     ~B3dSceneBuilder();
 
+    std::string GetB3dId() const;
+    
+    Ogre::SceneManager* GetSceneManager() const;
+    
+    Ogre::MeshManager* GetMeshManager() const;
+    
+    Ogre::SceneNode* GetCurrentSceneNode() const;
+
     void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, resource::data::b3d::VisitMode visitMode);
 
     void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, resource::data::b3d::VisitMode visitMode);

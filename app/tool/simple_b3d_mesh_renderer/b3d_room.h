@@ -37,6 +37,7 @@ private:
     resource::data::b3d::NodePtr m_b3dNode;
     resource::data::b3d::block_data::Portals m_portals;
     B3dRoadPtr m_road;
+    B3dRenderableObjectList m_renderables;
 
 
     Ogre::SceneManager* m_sceneManager;

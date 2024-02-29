@@ -33,7 +33,6 @@ VisitResult VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
             {
                 return childVisitResult;
             }
-            assert(childVisitResult == VisitResult::Continue);
         }
     }
 

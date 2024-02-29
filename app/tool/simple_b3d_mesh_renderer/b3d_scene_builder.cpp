@@ -51,6 +51,26 @@ B3dSceneBuilder::~B3dSceneBuilder()
     assert(m_sceneNodes.empty());
 }
 
+std::string B3dSceneBuilder::GetB3dId() const
+{
+    return m_b3dId;
+}
+
+Ogre::SceneManager* B3dSceneBuilder::GetSceneManager() const
+{
+    return m_sceneManager;
+}
+
+Ogre::MeshManager* B3dSceneBuilder::GetMeshManager() const
+{
+    return m_meshManager;
+}
+
+Ogre::SceneNode* B3dSceneBuilder::GetCurrentSceneNode() const
+{
+    return m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
+}
+
 void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode)
 {
     Ogre::SceneNode* sceneNode = ProcessSceneNode(node.GetName(), visitMode);

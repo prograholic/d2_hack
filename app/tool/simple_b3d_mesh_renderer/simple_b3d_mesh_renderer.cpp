@@ -66,10 +66,7 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
         }
         else if (rootNode->GetNodeCategory() == NodeCategory::CarNode)
         {
-            //m_cars.emplace_back(B3dCar....)
-            B3dTreeVisitor visitor{ tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager() };
-            auto visitResult = VisitNode(rootNode, visitor);
-            (void)visitResult;
+            m_cars.emplace_back(std::make_unique<B3dCar>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
         }
         else
         {

@@ -20,6 +20,7 @@ const B3dRegistry SinglePlayerRegistry
 	D2_ROOT_DIR,
 	"ENV",
 	{
+#ifdef USE_ALL
 		"aa",
 		"ab",
 		"ac",
@@ -27,7 +28,9 @@ const B3dRegistry SinglePlayerRegistry
 		"ae",
 		"af",
 		"ag",
+#endif //USE_ALL
 		"ah",
+#ifdef USE_ALL
 		"aj",
 		"ak",
 		"al",
@@ -41,7 +44,6 @@ const B3dRegistry SinglePlayerRegistry
 		"av",
 		"aw",
 		"ax",
-#ifdef USE_ALL
 		"ba",
 		"bb",
 		"bc",
