@@ -39,7 +39,7 @@ public:
             }
             else
             {
-                D2_HACK_LOG(Visit) << "unsupported generator `" << generatorName << "`";
+                OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Unsupported generator `" + generatorName + "`, node: " + node.GetName());
             }
         }
 

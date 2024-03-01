@@ -39,13 +39,7 @@ public:
 
     virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
     {
-        auto sceneNode = ProcessSceneNode(node.GetName(), visitMode);
-        if (visitMode == VisitMode::PostOrder)
-        {
-            m_selfSceneNode = sceneNode;
-        }
-
-        return VisitResult::Continue;
+        return ProcessGroupVertexData(node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
@@ -89,15 +83,14 @@ public:
         return VisitResult::Continue;
     }
 
+    virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode visitMode) override
+    {
+        return ProcessGroupVertexData(node, visitMode);
+    }
+
     virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode visitMode) override
     {
-        auto sceneNode = ProcessSceneNode(node.GetName(), visitMode);
-        if (visitMode == VisitMode::PostOrder)
-        {
-            m_selfSceneNode = sceneNode;
-        }
-
-        return VisitResult::Continue;
+        return ProcessGroupVertexData(node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode)
@@ -120,6 +113,18 @@ public:
 
 private:
     Ogre::SceneNode*& m_selfSceneNode;;
+
+    template <typename GroupVertexNode>
+    VisitResult ProcessGroupVertexData(GroupVertexNode& node, VisitMode visitMode)
+    {
+        auto sceneNode = ProcessSceneNode(node.GetName(), visitMode);
+        if (visitMode == VisitMode::PostOrder)
+        {
+            m_selfSceneNode = sceneNode;
+        }
+
+        return VisitResult::Continue;
+    }
 
     template <typename FacesNode>
     void VisitFaces(FacesNode& node, VisitMode visitMode)
