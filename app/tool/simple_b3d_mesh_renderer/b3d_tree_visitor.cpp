@@ -68,11 +68,10 @@ VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupObjects5& node, 
     return VisitResult::Continue;
 }
 
-VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData7& node, VisitMode visitMode)
+VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData7& node, VisitMode /* visitMode */)
 {
-    ProcessSceneNode(node.GetName(), visitMode);
-
-    return VisitResult::Continue;
+    m_renderables.emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
+    return VisitResult::SkipChildrenAndPostOrder;
 }
 
 VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFaces8& node, VisitMode visitMode)

@@ -37,6 +37,17 @@ public:
         return VisitResult::Continue;
     }
 
+    virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
+    {
+        auto sceneNode = ProcessSceneNode(node.GetName(), visitMode);
+        if (visitMode == VisitMode::PostOrder)
+        {
+            m_selfSceneNode = sceneNode;
+        }
+
+        return VisitResult::Continue;
+    }
+
     virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
     {
         VisitFaces(node, visitMode);
@@ -55,6 +66,11 @@ public:
     }
 
     virtual VisitResult Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */) override
     {
         return VisitResult::Continue;
     }
