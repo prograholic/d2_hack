@@ -311,20 +311,23 @@ static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& trucks
     }
 }
 
+static void TransformTree(const B3dTree& common, const B3dTree& trucks, B3dTree& tree)
+{
+    MergeFacesWithVertices(tree);
+    ProcessObjectConnectors(common, trucks, tree);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void Transform(B3dForest& forest)
 {
-    MergeFacesWithVertices(*forest.common);
-    ProcessObjectConnectors(*forest.common, *forest.trucks, *forest.common);
+    TransformTree(*forest.common, *forest.trucks, *forest.common);
 
-    MergeFacesWithVertices(*forest.trucks);
-    ProcessObjectConnectors(*forest.common, *forest.trucks, *forest.trucks);
+    TransformTree(*forest.common, *forest.trucks, *forest.trucks);
 
     for (auto& tree : forest.forest)
     {
-        MergeFacesWithVertices(*tree);
-        ProcessObjectConnectors(*forest.common, *forest.trucks, *tree);
+        TransformTree(*forest.common, *forest.trucks, *tree);
     }
 }
 
