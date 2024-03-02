@@ -18,9 +18,39 @@ public:
                   Ogre::MeshManager* meshManager,
                   B3dRenderableObjectList& renderables,
                   B3dRoadGroupList& roadGroupList)
-        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, &renderables, &roadGroupList)
+        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager)
+        , m_renderables(renderables)
+        , m_roadGroupList(roadGroupList)
     {
     }
+
+    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode /* visitMode */) override
+    {
+        m_roadGroupList.emplace_back(std::make_unique<B3dRoadGroup>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
+        return VisitResult::SkipChildrenAndPostOrder;
+    }
+
+    virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode /* visitMode */) override
+    {
+        m_renderables.emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
+        return VisitResult::SkipChildrenAndPostOrder;
+    }
+
+    virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode /* visitMode */) override
+    {
+        m_renderables.emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
+        return VisitResult::SkipChildrenAndPostOrder;
+    }
+
+    virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode /* visitMode */) override
+    {
+        m_renderables.emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
+        return VisitResult::SkipChildrenAndPostOrder;
+    }
+
+private:
+    B3dRenderableObjectList& m_renderables;
+    B3dRoadGroupList& m_roadGroupList;
 };
 
 B3dObject::B3dObject(const std::string& b3dId,

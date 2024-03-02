@@ -828,7 +828,8 @@ private:
 void VisitNode(const NodePtr& node, TracingVisitor& visitor, int level)
 {
     visitor.SetLevel(level);
-    node->Visit(visitor, VisitMode::PreOrder);
+    auto unusedRes = node->Visit(visitor, VisitMode::PreOrder);
+    (void)unusedRes;
 
     const auto& childNodes = node->GetChildNodeList();
     if (!childNodes.empty())

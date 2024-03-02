@@ -19,71 +19,71 @@ class NodeVisitorInterface
 public:
     virtual ~NodeVisitorInterface() = default;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) = 0;
+    virtual VisitResult Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupVertexData7& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupVertexData7& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFaces8& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleFaces8& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupTrigger9& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupTrigger9& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown12& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupUnknown12& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupObjects19& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupObjects19& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFaces28& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleFaces28& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown29& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupUnknown29& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimplePortal30& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimplePortal30& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFaces35& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleFaces35& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupVertexData36& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupVertexData36& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */) = 0;
 };
 
 
-[[nodiscard]] VisitResult VisitNode(const NodePtr& node, NodeVisitorInterface& visitor);
+VisitResult VisitNode(const NodePtr& node, NodeVisitorInterface& visitor);
 
-[[nodiscard]] VisitResult VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor);
+VisitResult VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor);
 
 
 template <typename BlockType>
@@ -109,7 +109,7 @@ public:
     {
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) override
     {
         return visitor.Visit(*this, visitMode);
     }
@@ -134,152 +134,152 @@ class GenericActionVisitor: public NodeVisitorInterface
 {
 public:
 
-    virtual [[nodiscard]] VisitResult Visit(NodeHierarchyBreaker& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeEmpty0& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeEmpty0& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleObjectConnector1& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleObjectConnector1& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
     
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown2& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupUnknown2& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupObjects5& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupObjects5& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupTrigger9& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupTrigger9& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupLodParameters10& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupLodParameters10& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown12& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupUnknown12& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleTrigger13& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleTrigger13& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleUnknown14& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleUnknown14& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupObjects19& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFlatCollision20& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleFlatCollision20& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupObjects21& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupObjects21& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleVolumeCollision23& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleVolumeCollision23& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleUnknown25& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleUnknown25& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown29& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupUnknown29& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimplePortal30& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimplePortal30& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupLightingObjects33& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupLightingObjects33& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleUnknown34& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleUnknown34& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupVertexData36& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupVertexData37& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeGroupUnknown39& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeGroupUnknown39& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }
@@ -288,7 +288,7 @@ public:
 struct NoOpAction
 {
     template <typename NodeType>
-    static [[nodiscard]] VisitResult Perform(NodeType& /* node */, VisitMode /* visitMode */)
+    static VisitResult Perform(NodeType& /* node */, VisitMode /* visitMode */)
     {
         return VisitResult::Continue;
     }
@@ -299,7 +299,7 @@ using NoOpNodeVisitor = GenericActionVisitor<NoOpAction>;
 struct RaiseExceptionAction
 {
     template <typename NodeType>
-    static [[nodiscard]] VisitResult Perform(NodeType& /* node */, VisitMode /* visitMode */)
+    static VisitResult Perform(NodeType& /* node */, VisitMode /* visitMode */)
     {
         RaiseException(NodeType::Name, NodeType::Value);
         return VisitResult::Stop;

@@ -102,7 +102,7 @@ void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimp
 
         Ogre::SceneNode* newSceneNode = m_sceneManager->createSceneNode(cloneName);
 
-        Ogre::SceneNode* parentSceneNode = m_sceneNodes.top();
+        Ogre::SceneNode* parentSceneNode = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
         parentSceneNode->addChild(newSceneNode);
         m_sceneNodes.push(newSceneNode);
 

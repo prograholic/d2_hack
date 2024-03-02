@@ -30,6 +30,8 @@ private:
 
     B3dRenderableObjectList m_renderables;
 
+    resource::data::b3d::block_data::SimpleUnknown14 m_unknown14;
+
     Ogre::SceneManager* m_sceneManager;
     Ogre::MeshManager* m_meshManager;
     Ogre::SceneNode* m_rootSceneNode;

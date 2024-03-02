@@ -30,7 +30,7 @@ typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;
 typedef std::shared_ptr<B3dTree> B3dTreePtr;
 
 
-enum class VisitResult
+enum class [[nodiscard]] VisitResult
 {
     // Continue processing, this is the default behavior
     Continue,
@@ -108,7 +108,7 @@ public:
         return static_cast<const TypedNode*>(this);
     }
 
-    virtual [[nodiscard]] VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
+    virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
     virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
 

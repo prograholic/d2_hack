@@ -21,12 +21,8 @@ using namespace resource::data::b3d;
 B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
                                Ogre::SceneManager* sceneManager,
                                Ogre::SceneNode* rootNode,
-                               Ogre::MeshManager* meshManager,
-                               B3dRenderableObjectList* renderables,
-                               B3dRoadGroupList* roadGroupList)
+                               Ogre::MeshManager* meshManager)
     : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager)
-    , m_renderables(renderables)
-    , m_roadGroupList(roadGroupList)
 {
 }
 
@@ -56,23 +52,11 @@ VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown2& /* nod
     return VisitResult::Continue;
 }
 
-VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupRoadInfraObjects4& node, VisitMode /* visitMode */)
-{
-    m_roadGroupList->emplace_back(std::make_unique<B3dRoadGroup>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
-    return VisitResult::SkipChildrenAndPostOrder;
-}
-
 VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupObjects5& node, VisitMode visitMode)
 {
     ProcessSceneNode(node.GetName(), visitMode);
 
     return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData7& node, VisitMode /* visitMode */)
-{
-    m_renderables->emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
-    return VisitResult::SkipChildrenAndPostOrder;
 }
 
 VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFaces8& node, VisitMode visitMode)
@@ -205,18 +189,6 @@ VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeSimpleFaces35& node, 
     VisitFaces(node, visitMode);
 
     return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData36& node, VisitMode /* visitMode */)
-{
-    m_renderables->emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
-    return VisitResult::SkipChildrenAndPostOrder;
-}
-
-VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupVertexData37& node, VisitMode /* visitMode */)
-{
-    m_renderables->emplace_back(std::make_unique<B3dRenderableObject>(GetB3dId(), node.shared_from_this(), GetSceneManager(), GetMeshManager(), GetCurrentSceneNode()));
-    return VisitResult::SkipChildrenAndPostOrder;
 }
 
 VisitResult B3dTreeVisitor::Visit(resource::data::b3d::NodeGroupUnknown39& /* node */, VisitMode /* visitMode */)

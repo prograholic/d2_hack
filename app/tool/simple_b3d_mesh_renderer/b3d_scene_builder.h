@@ -22,6 +22,10 @@ namespace app
 class B3dSceneBuilder
 {
 public:
+
+    using VisitResult = resource::data::b3d::VisitResult;
+    using VisitMode = resource::data::b3d::VisitMode;
+
     B3dSceneBuilder(const std::string& b3dId,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
@@ -37,11 +41,11 @@ public:
     
     Ogre::SceneNode* GetCurrentSceneNode() const;
 
-    void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, resource::data::b3d::VisitMode visitMode);
+    void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode);
 
-    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, resource::data::b3d::VisitMode visitMode);
+    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, VisitMode visitMode);
 
-    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& node, resource::data::b3d::VisitMode visitMode);
+    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& node, VisitMode visitMode);
 
     Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
@@ -52,7 +56,6 @@ private:
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
-
     std::stack<Ogre::SceneNode*> m_sceneNodes;
 
 
