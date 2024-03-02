@@ -23,12 +23,13 @@ namespace b3d
 class TracingVisitor : public NodeVisitorInterface
 {
 public:
-    TracingVisitor(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printFaceInfo, bool printMeshInfo)
+    TracingVisitor(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printFaceInfo, bool printMeshInfo, bool printOnlyNames)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
         , m_printVectorData(printVectorData)
         , m_printFaceInfo(printFaceInfo)
         , m_printMeshInfo(printMeshInfo)
+        , m_printOnlyNames(printOnlyNames)
     {
     }
 
@@ -79,12 +80,23 @@ public:
     {
         GetStream() << GetBlockNamePrefix(node.GetBlockData()) << ToString(node.GetName()) << std::endl;
         GetStream() << "{" << std::endl;
-        GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
 
-        PrintData(node.GetBlockData(), "", 1);
+        if (!m_printOnlyNames)
+        {
+            GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
+
+            PrintData(node.GetBlockData(), "", 1);
+        }
     }
 
     virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode /* visitMode */) override
+    {
+        ProcessBlock(node);
+
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeLodAlternative& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
@@ -300,6 +312,7 @@ private:
     bool m_printVectorData;
     bool m_printFaceInfo;
     bool m_printMeshInfo;
+    bool m_printOnlyNames;
     size_t m_offset = 0;
 
     std::string GetOffsetString(int adjustOffset = 0) const
@@ -364,6 +377,10 @@ private:
     }
 
     void PrintData(const block_data::HierarchyBreaker& /* block */, const char* /* name */, int /* adjustOffset */)
+    {
+    }
+
+    void PrintData(const block_data::LodAlternative& /* block */, const char* /* name */, int /* adjustOffset */)
     {
     }
 
@@ -1010,6 +1027,7 @@ int main(int argc, char* argv[])
     bool printBoundingSphere = true;
     bool printFaceInfo = true;
     bool printMeshInfo = true;
+    bool printOnlyNames = false;
     bool optimize = true;
     bool transform = true;
     bool printOnlyTypes = false;
@@ -1048,6 +1066,10 @@ int main(int argc, char* argv[])
         else if (argv[i] == std::string("--print_trucks"))
         {
             printTrucks = true;
+        }
+        else if (argv[i] == std::string("--print_only_names"))
+        {
+            printOnlyNames = true;
         }
         else
         {
@@ -1094,13 +1116,13 @@ int main(int argc, char* argv[])
             {
                 for (const auto& tree : forest.forest)
                 {
-                    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
+                    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames };
                     VisitTree(*tree, visitor);
                 }
             }
             else
             {
-                TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo };
+                TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames };
                 VisitTree(*forest.trucks, visitor);
             }
         }
