@@ -96,13 +96,6 @@ public:
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeLodAlternative& node, VisitMode /* visitMode */) override
-    {
-        ProcessBlock(node);
-
-        return VisitResult::Continue;
-    }
-
     virtual VisitResult Visit(NodeEmpty0& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
@@ -377,10 +370,6 @@ private:
     }
 
     void PrintData(const block_data::HierarchyBreaker& /* block */, const char* /* name */, int /* adjustOffset */)
-    {
-    }
-
-    void PrintData(const block_data::LodAlternative& /* block */, const char* /* name */, int /* adjustOffset */)
     {
     }
 

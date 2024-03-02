@@ -89,13 +89,6 @@ struct HierarchyBreaker
     static constexpr bool HasNestedCount = false;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
-
-    static const size_t EmptyDataSize0 = 40;
-    static const size_t EmptyDataSize1 = 4;
-
-    std::uint8_t emptyData0[EmptyDataSize0];
-    Ogre::Real unknown;
-    std::uint8_t emptyData1[EmptyDataSize1];
 };
 
 /**
