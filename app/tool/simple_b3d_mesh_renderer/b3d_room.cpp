@@ -17,8 +17,9 @@ public:
                 Ogre::SceneNode* rootNode,
                 Ogre::MeshManager* meshManager,
                 block_data::Portals& portals,
-                B3dRenderableObjectList& renderables)
-        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, renderables)
+                B3dRenderableObjectList& renderables,
+                B3dRoadGroupList& roadGroupList)
+        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, &renderables, &roadGroupList)
         , m_portals(portals)
     {
     }
@@ -45,7 +46,9 @@ B3dRoom::B3dRoom(const std::string& b3dId,
     : m_b3dNode(b3dNode)
     , m_portals()
     , m_road()
+    , m_obj()
     , m_renderables()
+    , m_roadGroupList()
     , m_sceneManager(sceneManager)
     , m_meshManager(meshManager)
     , m_rootSceneNode(rootSceneNode)
@@ -56,10 +59,13 @@ B3dRoom::B3dRoom(const std::string& b3dId,
         m_road = std::make_unique<B3dRoad>(b3dId, roadB3dNode, m_sceneManager, m_meshManager, rootSceneNode);
     }
     
-    //auto objB3dNode = ExtractRoadNodeWithPrefix(b3dNode, "obj_" + b3dId + "_");
-    //m_obj = std::make_unique<B3dObject????
+    auto objB3dNode = b3dNode->ExtractFirstNodeWithCategory(NodeCategory::RoadObjNode);
+    if (objB3dNode)
+    {
+        m_obj = std::make_unique<B3dObject>(b3dId, objB3dNode, m_sceneManager, m_meshManager, rootSceneNode);
+    }
 
-    RoomVisitor visitor{b3dId, m_sceneManager, rootSceneNode, m_meshManager, m_portals, m_renderables};
+    RoomVisitor visitor{b3dId, m_sceneManager, rootSceneNode, m_meshManager, m_portals, m_renderables, m_roadGroupList};
 
     auto visitResult = VisitNode(m_b3dNode, visitor);
     (void)visitResult;

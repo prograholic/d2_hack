@@ -10,6 +10,8 @@
 #include <d2_hack/resource/data/b3d_node.h>
 
 #include "b3d_road.h"
+#include "b3d_object.h"
+#include "b3d_road_group.h"
 
 namespace d2_hack
 {
@@ -37,7 +39,9 @@ private:
     resource::data::b3d::NodePtr m_b3dNode;
     resource::data::b3d::block_data::Portals m_portals;
     B3dRoadPtr m_road;
+    B3dObjectPtr m_obj;
     B3dRenderableObjectList m_renderables;
+    B3dRoadGroupList m_roadGroupList;
 
 
     Ogre::SceneManager* m_sceneManager;

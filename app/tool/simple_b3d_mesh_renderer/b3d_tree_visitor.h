@@ -4,8 +4,8 @@
 #include <d2_hack/resource/data/b3d_visitor.h>
 
 #include "b3d_scene_builder.h"
-
 #include "b3d_renderable_object.h"
+#include "b3d_road_group.h"
 
 
 namespace d2_hack
@@ -20,7 +20,8 @@ public:
                    Ogre::SceneManager* sceneManager,
                    Ogre::SceneNode* rootNode,
                    Ogre::MeshManager* meshManager,
-                   B3dRenderableObjectList& renderables);
+                   B3dRenderableObjectList* renderables,
+                   B3dRoadGroupList* roadGroupList);
 
     using VisitResult = resource::data::b3d::VisitResult;
 
@@ -86,7 +87,8 @@ public:
 
 private:
 
-    B3dRenderableObjectList& m_renderables;
+    B3dRenderableObjectList* m_renderables;
+    B3dRoadGroupList* m_roadGroupList;
 
     template <typename FacesNode>
     void VisitFaces(FacesNode& block, resource::data::b3d::VisitMode visitMode);

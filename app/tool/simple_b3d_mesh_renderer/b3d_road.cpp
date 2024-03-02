@@ -22,13 +22,13 @@ public:
                 Ogre::MeshManager* meshManager,
                 TerrainPtr& terrain,
                 B3dRenderableObjectList& renderables)
-        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, renderables)
+        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, &renderables, nullptr)
         , m_terrain(terrain)
         , m_sceneManager(sceneManager)
     {
     }
 
-    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode)
+    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
     {
         if (visitMode == VisitMode::PreOrder)
         {

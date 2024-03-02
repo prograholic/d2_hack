@@ -17,24 +17,9 @@ public:
                Ogre::SceneNode* rootNode,
                Ogre::MeshManager* meshManager,
                B3dRenderableObjectList& renderables)
-        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, renderables)
+        : B3dTreeVisitor(b3dId, sceneManager, rootNode, meshManager, &renderables, nullptr)
     {
     }
-
-#if 0
-    virtual VisitResult Visit(resource::data::b3d::NodeSimplePortal30& node, VisitMode visitMode) override
-    {
-        if (visitMode == VisitMode::PreOrder)
-        {
-            m_portals.push_back(node.GetBlockData());
-        }
-
-        return VisitResult::Continue;
-    }
-
-private:
-    block_data::Portals& m_portals;
-#endif //0
 };
 
 B3dCar::B3dCar(const std::string& b3dId,
