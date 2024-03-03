@@ -21,6 +21,8 @@ public:
 
     virtual VisitResult Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) = 0;
 
+    virtual VisitResult Visit(NodeEventEntry& /*node */, VisitMode /* visidMode */) = 0;
+
     virtual VisitResult Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) = 0;
 
     virtual VisitResult Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) = 0;
@@ -135,6 +137,11 @@ class GenericActionVisitor: public NodeVisitorInterface
 public:
 
     virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode visitMode) override
+    {
+        return GenericAction::Perform(node, visitMode);
+    }
+
+    virtual VisitResult Visit(NodeEventEntry& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(node, visitMode);
     }

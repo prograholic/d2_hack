@@ -3,6 +3,8 @@
 #include <OgreException.h>
 
 #include <d2_hack/resource/data/b3d_utils.h>
+#include <d2_hack/resource/data/b3d_visitor.h>
+
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/utils.h>
 
@@ -311,8 +313,58 @@ static void ProcessObjectConnectors(const B3dTree& common, const B3dTree& trucks
     }
 }
 
+static NodePtr CreateEventEntryNode(const B3dTreePtr& tree)
+{
+    return MakeVisitableNode(tree, NodePtr{}, MakeBlockHeader(common::ResourceName{}, block_data::EventEntryBlockXxx), block_data::EventEntry{});
+}
+
+static void InjectGroup21Event(const NodePtr& node)
+{
+    if (node->GetType() == block_data::GroupObjectsBlock21)
+    {
+        if ((node->GetChildNodeList().size() == 1) && (node->GetChildNodeList().front()->GetType() == block_data::HierarchyBreakerBlockXxx))
+        {
+            node->GetChildNodeList().pop_back(); // remove unused node
+            return; // empty group, skip it!
+        }
+
+        NodeList newChilds;
+
+        newChilds.push_back(CreateEventEntryNode(node->GetOriginalRoot()));
+
+        for (auto& child : node->GetChildNodeList())
+        {
+            if (child->GetType() == block_data::HierarchyBreakerBlockXxx)
+            {
+                newChilds.push_back(CreateEventEntryNode(node->GetOriginalRoot()));
+            }
+            else
+            {
+                newChilds.back()->AddChildNode(child);
+            }
+        }
+
+        assert(node->NodeCast<NodeGroupObjects21>()->GetBlockData().count == newChilds.size());
+        node->SetChildNodes(std::move(newChilds));
+    }
+
+    for (const auto& child : node->GetChildNodeList())
+    {
+        InjectGroup21Event(child);
+    }
+}
+
+static void InjectGroup21Event(B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        InjectGroup21Event(node);
+    }
+}
+
 static void TransformTree(const B3dTree& common, const B3dTree& trucks, B3dTree& tree)
 {
+    InjectGroup21Event(tree);
     MergeFacesWithVertices(tree);
     ProcessObjectConnectors(common, trucks, tree);
 }

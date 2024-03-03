@@ -70,6 +70,9 @@ protected:
     Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
 
 public:
+
+    virtual ~Node() noexcept = default;
+
     const std::string& GetName() const;
 
     std::uint32_t GetType() const;
@@ -178,6 +181,7 @@ private:
 
 
 using NodeHierarchyBreaker = NodeWithData<block_data::HierarchyBreaker>;
+using NodeEventEntry = NodeWithData<block_data::EventEntry>;
 using NodeEmpty0 = NodeWithData<block_data::Empty0>;
 using NodeSimpleObjectConnector1 = NodeWithData<block_data::SimpleObjectConnector1>;
 using NodeGroupUnknown2 = NodeWithData<block_data::GroupUnknown2>;

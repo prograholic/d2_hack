@@ -22,6 +22,8 @@ public:
     using VisitMode = resource::data::b3d::VisitMode;
 
     virtual VisitResult Visit(resource::data::b3d::NodeHierarchyBreaker& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(resource::data::b3d::NodeEventEntry& node, VisitMode visitMode) override;
     
     virtual VisitResult Visit(resource::data::b3d::NodeEmpty0& node, VisitMode visitMode) override;
 

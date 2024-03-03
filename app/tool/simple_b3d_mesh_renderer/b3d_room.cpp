@@ -26,7 +26,7 @@ public:
     {
     }
 
-    virtual VisitResult Visit(resource::data::b3d::NodeSimplePortal30& node, VisitMode visitMode) override
+    virtual VisitResult Visit(NodeSimplePortal30& node, VisitMode visitMode) override
     {
         if (visitMode == VisitMode::PreOrder)
         {
@@ -67,7 +67,7 @@ private:
 };
 
 B3dRoom::B3dRoom(const std::string& b3dId,
-                 const resource::data::b3d::NodePtr& b3dNode,
+                 const NodePtr& b3dNode,
                  Ogre::SceneManager* sceneManager,
                  Ogre::MeshManager* meshManager,
                  Ogre::SceneNode* rootSceneNode)

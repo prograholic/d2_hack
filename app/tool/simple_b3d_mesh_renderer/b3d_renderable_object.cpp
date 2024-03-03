@@ -27,6 +27,11 @@ public:
     {
     }
 
+    virtual VisitResult Visit(NodeEventEntry& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
     virtual VisitResult Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) override
     {
         return VisitResult::Continue;

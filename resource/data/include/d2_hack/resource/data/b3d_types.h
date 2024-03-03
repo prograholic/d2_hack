@@ -71,7 +71,8 @@ static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 
 // should not intersect with other block IDs
 static const std::uint32_t HierarchyBreakerBlockXxx = 41;
-static const std::uint32_t MaxBlockId = 41;
+static const std::uint32_t EventEntryBlockXxx = 42;
+static const std::uint32_t MaxBlockId = 42;
 
 
 struct BlockHeader
@@ -87,6 +88,15 @@ struct HierarchyBreaker
     static constexpr auto Value = HierarchyBreakerBlockXxx;
     static constexpr char Name[] = "HierarchyBreaker";
     static constexpr bool HasNestedCount = false;
+
+    inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
+};
+
+struct EventEntry
+{
+    static constexpr auto Value = EventEntryBlockXxx;
+    static constexpr char Name[] = "EventEntry";
+    static constexpr bool HasNestedCount = true;
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 };

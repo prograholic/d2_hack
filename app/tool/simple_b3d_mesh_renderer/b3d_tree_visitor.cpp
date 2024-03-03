@@ -32,6 +32,12 @@ VisitResult B3dTreeVisitor::Visit(NodeHierarchyBreaker& /* node */, VisitMode /*
     return VisitResult::Continue;
 }
 
+VisitResult B3dTreeVisitor::Visit(NodeEventEntry& /* node */, VisitMode /* visitMode */)
+{
+    // no need to implement
+    return VisitResult::Continue;
+}
+
 VisitResult B3dTreeVisitor::Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */)
 {
     // no need to implement

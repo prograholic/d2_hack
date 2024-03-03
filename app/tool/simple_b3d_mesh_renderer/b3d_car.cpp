@@ -25,6 +25,11 @@ public:
     {
     }
 
+    virtual VisitResult Visit(NodeEventEntry& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue; // unused node
+    }
+
     virtual VisitResult Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) override
     {
         return VisitResult::Continue; // unused node
@@ -54,17 +59,27 @@ public:
         return VisitResult::Continue;
     }
 
+    virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode /* visitMode */) override
+    {
+        assert(!node.HasParent()); // should be top-level node
+        (void)node;
+
+        return VisitResult::Continue;
+    }
+
     virtual VisitResult Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */) override
     {
         return VisitResult::Continue; // TODO: process 21 block
     }
 
-    virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */) override
     {
-        assert(!node.HasParent()); // should be top-level node
-        (void)node;
-        
-        return VisitResult::Continue;
+        return VisitResult::Continue; // TODO: process 23 block
+    }
+
+    virtual VisitResult Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue; // TODO: process 33 block
     }
 
     virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode /* visitMode */) override
