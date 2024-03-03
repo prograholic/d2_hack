@@ -9,6 +9,7 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_scene_builder.h"
 #include "b3d_road.h"
 #include "b3d_object.h"
 #include "b3d_road_group.h"
@@ -21,11 +22,7 @@ namespace app
 class B3dRoom
 {
 public:
-    B3dRoom(const std::string& b3dId,
-            const resource::data::b3d::NodePtr& b3dNode,
-            Ogre::SceneManager* sceneManager,
-            Ogre::MeshManager* meshManager,
-            Ogre::SceneNode* rootSceneNode);
+    B3dRoom(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
 
     void GetGasStations() const;
 
@@ -36,17 +33,11 @@ public:
     B3dRoad* GetRoad();
 
 private:
-    resource::data::b3d::NodePtr m_b3dNode;
     resource::data::b3d::block_data::Portals m_portals;
     B3dRoadPtr m_road;
     B3dObjectPtr m_obj;
     B3dRenderableObjectList m_renderables;
     B3dRoadGroupList m_roadGroupList;
-
-
-    Ogre::SceneManager* m_sceneManager;
-    Ogre::MeshManager* m_meshManager;
-    Ogre::SceneNode* m_rootSceneNode;
 };
 
 typedef std::unique_ptr<B3dRoom> B3dRoomPtr;

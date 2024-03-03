@@ -9,6 +9,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
+#if 0
 class CarVisitor : public RaiseExceptionVisitor, private B3dSceneBuilder
 {
 public:
@@ -99,20 +100,14 @@ private:
     block_data::SimpleUnknown14& m_unknown14;
 };
 
-B3dCar::B3dCar(const std::string& b3dId,
-               const resource::data::b3d::NodePtr& b3dNode,
-               Ogre::SceneManager* sceneManager,
-               Ogre::MeshManager* meshManager,
-               Ogre::SceneNode* rootSceneNode)
-    : m_b3dNode(b3dNode)
-    , m_renderables()
+#endif //0
+
+B3dCar::B3dCar(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
+    : m_renderables()
     , m_unknown14{}
-    , m_sceneManager(sceneManager)
-    , m_meshManager(meshManager)
-    , m_rootSceneNode(rootSceneNode)
 {
-    CarVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_renderables, m_unknown14};
-    auto visitResult = VisitNode(m_b3dNode, visitor);
+    B3dTreeVisitor visitor{sceneBuilder};
+    auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;
 }
 

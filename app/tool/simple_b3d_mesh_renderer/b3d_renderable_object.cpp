@@ -4,7 +4,7 @@
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/log.h>
 
-#include "b3d_scene_builder.h"
+#include "b3d_tree_visitor.h"
 
 namespace d2_hack
 {
@@ -13,6 +13,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
+#if 0
 class RenderableVisitor: public RaiseExceptionVisitor, private B3dSceneBuilder
 {
 public:
@@ -145,18 +146,13 @@ private:
     }
 };
 
+#endif //0
 
-B3dRenderableObject::B3dRenderableObject(const std::string& b3dId,
-                                         const resource::data::b3d::NodePtr& b3dNode,
-                                         Ogre::SceneManager* sceneManager,
-                                         Ogre::MeshManager* meshManager,
-                                         Ogre::SceneNode* rootSceneNode)
-    : m_b3dNode(b3dNode)
-    , m_sceneNode(nullptr)
+B3dRenderableObject::B3dRenderableObject(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
 {
-    RenderableVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_sceneNode};
+    B3dTreeVisitor visitor{sceneBuilder};
 
-    auto visitResult = VisitNode(m_b3dNode, visitor);
+    auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;
 }
 

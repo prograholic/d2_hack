@@ -9,7 +9,7 @@ namespace data
 namespace b3d
 {
 
-VisitResult VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
+VisitResult VisitNode(const B3dNodePtr& node, NodeVisitorInterface& visitor)
 {
     auto preOrderVisitResult = node->Visit(visitor, VisitMode::PreOrder);
     switch (preOrderVisitResult)
@@ -28,7 +28,7 @@ VisitResult VisitNode(const NodePtr& node, NodeVisitorInterface& visitor)
         const auto& children = node->GetChildNodeList();
         for (auto child : children)
         {
-            auto childVisitResult = VisitNode(child, visitor);
+            auto childVisitResult = VisitNode(std::static_pointer_cast<B3dNode>(child), visitor);
             if (childVisitResult == VisitResult::Stop)
             {
                 return childVisitResult;

@@ -9,6 +9,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
+#if 0
 class RoomVisitor : public B3dTreeVisitor
 {
 public:
@@ -66,21 +67,20 @@ private:
     B3dRoadGroupList& m_roadGroupList;
 };
 
-B3dRoom::B3dRoom(const std::string& b3dId,
-                 const NodePtr& b3dNode,
-                 Ogre::SceneManager* sceneManager,
-                 Ogre::MeshManager* meshManager,
-                 Ogre::SceneNode* rootSceneNode)
-    : m_b3dNode(b3dNode)
-    , m_portals()
+#endif //0
+
+B3dRoom::B3dRoom(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
+    : m_portals()
     , m_road()
     , m_obj()
     , m_renderables()
     , m_roadGroupList()
-    , m_sceneManager(sceneManager)
-    , m_meshManager(meshManager)
-    , m_rootSceneNode(rootSceneNode)
 {
+    B3dTreeVisitor visitor{sceneBuilder};
+    auto visitResult = VisitNode(b3dNode, visitor);
+    (void)visitResult;
+
+#if 0
     auto roadB3dNode = b3dNode->ExtractFirstNodeWithCategory(NodeCategory::RoadNode);
     if (roadB3dNode)
     {
@@ -94,9 +94,9 @@ B3dRoom::B3dRoom(const std::string& b3dId,
     }
 
     RoomVisitor visitor{b3dId, m_sceneManager, rootSceneNode, m_meshManager, m_portals, m_renderables, m_roadGroupList};
-
     auto visitResult = VisitNode(m_b3dNode, visitor);
     (void)visitResult;
+#endif //0
 }
 
 void B3dRoom::GetGasStations() const

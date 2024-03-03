@@ -10,6 +10,7 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_scene_builder.h"
 #include "b3d_renderable_object.h"
 
 namespace d2_hack
@@ -20,15 +21,9 @@ namespace app
 class B3dRoadGroup
 {
 public:
-    B3dRoadGroup(const std::string& b3dId,
-                 const resource::data::b3d::NodePtr& b3dNode,
-                 Ogre::SceneManager* sceneManager,
-                 Ogre::MeshManager* meshManager,
-                 Ogre::SceneNode* rootSceneNode);
+    B3dRoadGroup(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
 
 private:
-    resource::data::b3d::NodePtr m_b3dNode;
-
     B3dRenderableObjectList m_renderables;
 };
 

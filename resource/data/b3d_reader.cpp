@@ -20,6 +20,8 @@ namespace data
 namespace b3d
 {
 
+using namespace common;
+
 struct FileHeader
 {
     static const size_t SignatureSize = 4;
@@ -134,7 +136,7 @@ private:
             ThrowError("Incorrect data offset", "B3dReaderImpl::ReadData");
         }
 
-        std::stack<NodePtr> roots;
+        std::stack<B3dNodePtr> roots;
 
         for ( ; ; )
         {
@@ -147,7 +149,7 @@ private:
             {
                 block_data::BlockHeader blockHeader = ReadBlockHeader();
                 bool noRoots = roots.empty();
-                NodePtr current = DispatchBlock(noRoots ? NodePtr{} : roots.top(), blockHeader);
+                B3dNodePtr current = DispatchBlock(noRoots ? NodePtr{} : roots.top(), blockHeader);
                 roots.push(current);
                 if (current->HasNestedCount())
                 {
@@ -159,7 +161,7 @@ private:
             else if (separator == BlockHierarchyBreaker)
             {
                 bool noRoots = roots.empty();
-                NodePtr current = MakeHierarhyBreaker(noRoots ? NodePtr{} : roots.top());
+                B3dNodePtr current = MakeHierarhyBreaker(noRoots ? NodePtr{} : roots.top());
                 if (noRoots)
                 {
                     tree.AddRootNode(current);
@@ -176,7 +178,7 @@ private:
         }
     }
 
-    NodePtr DispatchBlock(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr DispatchBlock(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         if (blockHeader.type == block_data::EmptyBlock0)
         {
@@ -298,7 +300,7 @@ private:
         ThrowError("Unknown block id: " + std::to_string(blockHeader.type), "B3dReaderImpl::ReadBlock");
     }
 
-    NodePtr MakeHierarhyBreaker(const WeakNodePtr& parent)
+    B3dNodePtr MakeHierarhyBreaker(const WeakNodePtr& parent)
     {
         block_data::BlockHeader blockHeader = MakeBlockHeader(common::ResourceName{}, block_data::HierarchyBreakerBlockXxx);
 
@@ -306,7 +308,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData0(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData0(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::Empty0 block;
 
@@ -316,7 +318,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData1(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData1(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleObjectConnector1 block;
 
@@ -326,7 +328,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData2(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData2(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupUnknown2 block;
 
@@ -337,7 +339,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData4(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData4(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupRoadInfraObjects4 block;
 
@@ -349,7 +351,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData5(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData5(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupObjects5 block;
 
@@ -359,7 +361,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData7(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData7(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupVertexData7 block;
 
@@ -448,7 +450,7 @@ private:
         };
     }
 
-    NodePtr ReadBlockData8(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData8(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleFaces8 block;
         block.boundingSphere = ReadBoundingSphere();
@@ -471,7 +473,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData9(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData9(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupTrigger9 block;
 
@@ -482,7 +484,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData10(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData10(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupLodParameters10 block;
 
@@ -493,7 +495,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData12(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData12(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupUnknown12 block;
 
@@ -508,7 +510,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData13(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData13(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleTrigger13 block;
 
@@ -522,7 +524,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData14(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData14(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleUnknown14 block;
         
@@ -539,7 +541,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData18(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData18(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleObjectConnector18 block;
 
@@ -566,14 +568,14 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData19(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData19(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupObjects19 block;
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData20(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData20(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleFlatCollision20 block;
 
@@ -591,7 +593,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData21(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData21(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupObjects21 block;
 
@@ -602,7 +604,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData23(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData23(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleVolumeCollision23 block;
 
@@ -625,7 +627,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData24(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData24(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupTransformMatrix24 block;
 
@@ -639,7 +641,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData25(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData25(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleUnknown25 block;
 
@@ -677,7 +679,7 @@ private:
         }
     }
 
-    NodePtr ReadBlockData28(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData28(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleFaces28 block;
 
@@ -701,7 +703,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData29(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData29(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupUnknown29 block;
 
@@ -714,7 +716,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData30(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData30(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimplePortal30 block;
 
@@ -727,7 +729,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData33(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData33(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupLightingObjects33 block;
 
@@ -744,7 +746,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData34(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData34(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleUnknown34 block;
 
@@ -865,7 +867,7 @@ private:
         }
     }
 
-    NodePtr ReadBlockData35(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData35(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleFaces35 block;
 
@@ -890,7 +892,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData36(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData36(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupVertexData36 block;
 
@@ -988,7 +990,7 @@ private:
         }
     }
 
-    NodePtr ReadBlockData37(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData37(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupVertexData37 block;
 
@@ -1001,7 +1003,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData39(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData39(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::GroupUnknown39 block;
 
@@ -1010,7 +1012,7 @@ private:
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
-    NodePtr ReadBlockData40(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
+    B3dNodePtr ReadBlockData40(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
         block_data::SimpleGeneratedObjects40 block;
 

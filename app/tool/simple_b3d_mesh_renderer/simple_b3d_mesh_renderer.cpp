@@ -19,6 +19,7 @@ namespace d2_hack
 namespace app
 {
 
+using namespace common;
 using namespace resource::data::b3d;
 
 static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName, const Ogre::Vector3& pos)
@@ -57,7 +58,8 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
         {
             if (!rootNode->GetChildNodeList().empty())
             {
-                m_rooms.emplace_back(std::make_unique<B3dRoom>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
+                B3dSceneBuilder sceneBuilder{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
+                m_rooms.emplace_back(std::make_unique<B3dRoom>(rootNode, sceneBuilder));
             }
             else
             {
@@ -66,11 +68,12 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
         }
         else if (rootNode->GetNodeCategory() == NodeCategory::CarNode)
         {
-            m_cars.emplace_back(std::make_unique<B3dCar>(tree.id, rootNode, m_sceneManager, mRoot->getMeshManager(), b3dSceneNode));
+            B3dSceneBuilder sceneBuilder{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
+            m_cars.emplace_back(std::make_unique<B3dCar>(rootNode, sceneBuilder));
         }
         else
         {
-            D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized room: `" << rootNode->GetName() << "`";
+            D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized root node: `" << rootNode->GetName() << "`";
         }
     }
 }

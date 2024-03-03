@@ -13,6 +13,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
+#if 0
 class RoadVisitor : public B3dTreeVisitor
 {
 public:
@@ -77,25 +78,22 @@ private:
     Ogre::SceneManager* m_sceneManager;
 };
 
-B3dRoad::B3dRoad(const std::string& b3dId,
-                 const resource::data::b3d::NodePtr& b3dNode,
-                 Ogre::SceneManager* sceneManager,
-                 Ogre::MeshManager* meshManager,
-                 Ogre::SceneNode* rootSceneNode)
-    : m_b3dNode(b3dNode)
-    , m_renderables()
+#endif //0
+
+B3dRoad::B3dRoad(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
+    : m_renderables()
 {
     auto hitB3dNode = b3dNode->ExtractFirstNodeWithCategory(NodeCategory::RoadHitNode);
     if (hitB3dNode)
     {
-        m_hit = std::make_unique<B3dHit>(b3dId, hitB3dNode, sceneManager, meshManager, rootSceneNode);
+        m_hit = std::make_unique<B3dHit>(hitB3dNode, sceneBuilder);
     }
 
-    if (!m_b3dNode->GetChildNodeList().empty())
+    if (!b3dNode->GetChildNodeList().empty())
     {
-        RoadVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_terrain, m_renderables};
+        B3dTreeVisitor visitor{sceneBuilder};
 
-        auto visitResult = VisitNode(m_b3dNode, visitor);
+        auto visitResult = VisitNode(b3dNode, visitor);
         (void)visitResult;
     }
 }

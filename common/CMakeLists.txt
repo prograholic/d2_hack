@@ -3,6 +3,7 @@ d2_hack_add_library(d2_hack.common
     reader.cpp
     resource_mgmt.cpp
     utils.cpp
+    node_base.cpp
     
     include/d2_hack/common/log.h
     include/d2_hack/common/memory_mgmt.h
@@ -13,6 +14,7 @@ d2_hack_add_library(d2_hack.common
     include/d2_hack/common/types.h
     include/d2_hack/common/resource_mgmt.h
     include/d2_hack/common/utils.h
+    include/d2_hack/common/node_base.h
 )
 
 target_link_libraries(d2_hack.common

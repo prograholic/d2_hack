@@ -16,6 +16,9 @@ namespace data
 {
 namespace b3d
 {
+
+using namespace common;
+
 namespace transformation
 {
 namespace predicates
@@ -131,7 +134,7 @@ static FacesVector MergeMeshInfoListForMaterial(const std::vector<common::Simple
 
 
 template <typename Visitor>
-void VisitFaces(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
+void VisitFaces(B3dNodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
 {
     if (node->GetType() == block_data::GroupVertexDataBlock7)
     {
@@ -169,7 +172,7 @@ void VisitFaces(NodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
 
     for (const auto& child : node->GetChildNodeList())
     {
-        VisitFaces<Visitor>(child, parentMeshInfo);
+        VisitFaces<Visitor>(std::static_pointer_cast<B3dNode>(child), parentMeshInfo);
     }
 }
 
@@ -231,7 +234,7 @@ static void MergeFacesWithSameMaterial(const B3dTree& tree)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &name)
+static B3dNodePtr GetTopLevelNodeByName(const B3dNodeList& nodes, const std::string &name)
 {
     for (const auto& node : nodes)
     {
@@ -241,12 +244,12 @@ static NodePtr GetTopLevelNodeByName(const NodeList& nodes, const std::string &n
         }
     }
 
-    return NodePtr{};
+    return B3dNodePtr{};
 }
 
-static NodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string& name)
+static B3dNodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string& name)
 {
-    NodePtr res = GetTopLevelNodeByName(tree.rootNodes, name);
+    B3dNodePtr res = GetTopLevelNodeByName(tree.rootNodes, name);
     if (!res)
     {
         res = GetTopLevelNodeByName(common.rootNodes, name);
@@ -260,7 +263,7 @@ static NodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree&
     return res;
 }
 
-static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const NodePtr& node)
+static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const B3dNodePtr& node)
 {
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
     {
@@ -301,7 +304,7 @@ static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const 
 
     for (const auto& child : node->GetChildNodeList())
     {
-        ProcessObjectConnectors(tree, common, trucks, child);
+        ProcessObjectConnectors(tree, common, trucks, std::static_pointer_cast<B3dNode>(child));
     }
 }
 
@@ -318,7 +321,7 @@ static NodePtr CreateEventEntryNode(const B3dTreePtr& tree)
     return MakeVisitableNode(tree, NodePtr{}, MakeBlockHeader(common::ResourceName{}, block_data::EventEntryBlockXxx), block_data::EventEntry{});
 }
 
-static void InjectGroup21Event(const NodePtr& node)
+static void InjectGroup21Event(const B3dNodePtr& node)
 {
     if (node->GetType() == block_data::GroupObjectsBlock21)
     {
@@ -350,7 +353,7 @@ static void InjectGroup21Event(const NodePtr& node)
 
     for (const auto& child : node->GetChildNodeList())
     {
-        InjectGroup21Event(child);
+        InjectGroup21Event(std::static_pointer_cast<B3dNode>(child));
     }
 }
 

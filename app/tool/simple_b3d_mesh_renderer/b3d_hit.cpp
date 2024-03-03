@@ -9,6 +9,8 @@ namespace app
 
 using namespace resource::data::b3d;
 
+#if 0
+
 class B3dHitVisitor : public B3dTreeVisitor
 {
 public:
@@ -51,18 +53,15 @@ private:
 };
 
 
-B3dHit::B3dHit(const std::string& b3dId,
-               const resource::data::b3d::NodePtr& b3dNode,
-               Ogre::SceneManager* sceneManager,
-               Ogre::MeshManager* meshManager,
-               Ogre::SceneNode* rootSceneNode)
-    : m_b3dNode(b3dNode)
-    , m_renderables()
+#endif //0
+
+B3dHit::B3dHit(const B3dNodePtr& b3dNode,
+               B3dSceneBuilder& sceneBuilder)
+    : m_renderables()
 {
+    B3dTreeVisitor visitor{sceneBuilder};
 
-    B3dHitVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_renderables};
-
-    auto visitResult = VisitNode(m_b3dNode, visitor);
+    auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;
 }
 

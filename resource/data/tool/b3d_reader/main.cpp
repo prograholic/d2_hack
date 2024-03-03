@@ -20,6 +20,8 @@ namespace data
 namespace b3d
 {
 
+using namespace common;
+
 class TracingVisitor : public NodeVisitorInterface
 {
 public:
@@ -842,7 +844,7 @@ private:
 };
 
 
-void VisitNode(const NodePtr& node, TracingVisitor& visitor, int level)
+void VisitNode(const B3dNodePtr& node, TracingVisitor& visitor, int level)
 {
     visitor.SetLevel(level);
     auto unusedRes = node->Visit(visitor, VisitMode::PreOrder);
@@ -855,7 +857,7 @@ void VisitNode(const NodePtr& node, TracingVisitor& visitor, int level)
 
         for (auto child : childNodes)
         {
-            VisitNode(child, visitor, level + 2);
+            VisitNode(std::static_pointer_cast<B3dNode>(child), visitor, level + 2);
         }
 
         visitor.SetLevel(level);

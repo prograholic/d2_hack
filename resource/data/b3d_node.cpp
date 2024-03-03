@@ -17,49 +17,37 @@ const char* RoadHitNodeNamePrefix = "hit_road_";
 const char* RoadObjNodeNamePrefix = "obj_";
 const char* CarNodeNamePrefix = "car_";
 
-Node::Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
-	: m_name(common::ResourceNameToString(blockHeader.name))
-	, m_type(blockHeader.type)
+B3dNode::B3dNode(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
+	: NodeBase(common::ResourceNameToString(blockHeader.name), blockHeader.type)
 	, m_originalRoot(originalRoot)
-	, m_parent()
 {
 }
 
-const std::string& Node::GetName() const
+NodeCategory B3dNode::GetNodeCategory() const
 {
-	return m_name;
-}
-
-std::uint32_t Node::GetType() const
-{
-	return m_type;
-}
-
-NodeCategory Node::GetNodeCategory() const
-{
-	switch (m_type)
+	switch (GetType())
 	{
 	case block_data::GroupObjectsBlock19:
-		if (m_name.starts_with(RoomNodeNamePrefix))
+		if (GetName().starts_with(RoomNodeNamePrefix))
 		{
 			return NodeCategory::RoomNode;
 		}
-		else if (m_name.starts_with(CarNodeNamePrefix))
+		else if (GetName().starts_with(CarNodeNamePrefix))
 		{
 			return NodeCategory::CarNode;
 		}
 		break;
 		
 	case block_data::GroupObjectsBlock5:
-		if (m_name.starts_with(RoadNodeNamePrefix))
+		if (GetName().starts_with(RoadNodeNamePrefix))
 		{
 			return NodeCategory::RoadNode;
 		}
-		if (m_name.starts_with(RoadHitNodeNamePrefix))
+		if (GetName().starts_with(RoadHitNodeNamePrefix))
 		{
 			return NodeCategory::RoadHitNode;
 		}
-		else if (m_name.starts_with(RoadObjNodeNamePrefix))
+		else if (GetName().starts_with(RoadObjNodeNamePrefix))
 		{
 			return NodeCategory::RoadObjNode;
 		}
@@ -69,62 +57,28 @@ NodeCategory Node::GetNodeCategory() const
 	return NodeCategory::Generic;
 }
 
-NodeList& Node::GetChildNodeList()
-{
-	return m_childNodeList;
-}
-
-void Node::SetChildNodes(NodeList&& childNodes)
-{
-	m_childNodeList = std::move(childNodes);
-	for (auto child : m_childNodeList)
-	{
-		child->SetParent(weak_from_this());
-	}
-}
-
-void Node::AddChildNode(const NodePtr& node)
-{
-	m_childNodeList.push_back(node);
-	node->SetParent(weak_from_this());
-}
-
-bool Node::HasParent() const
-{
-	return !m_parent.expired();
-}
-
-NodePtr Node::GetParent()
-{
-	return m_parent.lock();
-}
-
-void Node::SetParent(const WeakNodePtr& parent)
-{
-	m_parent = parent;
-}
-
-B3dTreePtr Node::GetOriginalRoot() const
+B3dTreePtr B3dNode::GetOriginalRoot() const
 {
 	return m_originalRoot.lock();
 }
 
-NodePtr Node::ExtractFirstNodeWithCategory(NodeCategory nodeCategory)
+B3dNodePtr B3dNode::ExtractFirstNodeWithCategory(NodeCategory nodeCategory)
 {
-	auto pos = m_childNodeList.begin();
-	while (pos != m_childNodeList.end())
+	auto& childNodeList = GetChildNodeList();
+	auto pos = childNodeList.begin();
+	while (pos != childNodeList.end())
 	{
-		if ((*pos)->GetNodeCategory() == nodeCategory)
+		B3dNodePtr b3dNode = std::static_pointer_cast<B3dNode>(*pos);
+		if (b3dNode->GetNodeCategory() == nodeCategory)
 		{
-			NodePtr res = *pos;
-			m_childNodeList.erase(pos);
+			childNodeList.erase(pos);
 
-			return res;
+			return b3dNode;
 		}
 		++pos;
 	}
 
-	return NodePtr{};
+	return B3dNodePtr{};
 }
 
 } // namespace b3d

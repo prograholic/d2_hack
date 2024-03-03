@@ -9,6 +9,7 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_scene_builder.h"
 #include "b3d_renderable_object.h"
 
 namespace d2_hack
@@ -19,22 +20,12 @@ namespace app
 class B3dCar
 {
 public:
-    B3dCar(const std::string& b3dId,
-           const resource::data::b3d::NodePtr& b3dNode,
-           Ogre::SceneManager* sceneManager,
-           Ogre::MeshManager* meshManager,
-           Ogre::SceneNode* rootSceneNode);
+    B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
 
 private:
-    resource::data::b3d::NodePtr m_b3dNode;
-
     B3dRenderableObjectList m_renderables;
 
     resource::data::b3d::block_data::SimpleUnknown14 m_unknown14;
-
-    Ogre::SceneManager* m_sceneManager;
-    Ogre::MeshManager* m_meshManager;
-    Ogre::SceneNode* m_rootSceneNode;
 };
 
 typedef std::unique_ptr<B3dCar> B3dCarPtr;

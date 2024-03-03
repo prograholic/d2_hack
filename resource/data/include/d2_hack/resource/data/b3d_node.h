@@ -8,6 +8,8 @@
 #include <string>
 #include <map>
 
+#include <d2_hack/common/node_base.h>
+
 #include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
@@ -18,10 +20,6 @@ namespace data
 {
 namespace b3d
 {
-
-typedef std::shared_ptr<class Node> NodePtr;
-typedef std::weak_ptr<class Node> WeakNodePtr;
-typedef std::list<NodePtr> NodeList;
 
 class NodeVisitorInterface;
 struct B3dTree;
@@ -61,79 +59,39 @@ extern const char* RoadHitNodeNamePrefix;
 extern const char* RoadObjNodeNamePrefix;
 extern const char* CarNodeNamePrefix;
 
-class Node : public std::enable_shared_from_this<Node>
-{
-    Node(const Node&) = delete;
-    Node& operator=(const Node&) = delete;
+typedef std::shared_ptr<class B3dNode> B3dNodePtr;
 
+class B3dNode : public common::NodeBase
+{
 protected:
-    Node(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
+    B3dNode(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
 
 public:
-
-    virtual ~Node() noexcept = default;
-
-    const std::string& GetName() const;
-
-    std::uint32_t GetType() const;
-
     NodeCategory GetNodeCategory() const;
-
-    NodeList& GetChildNodeList();
-
-    void SetChildNodes(NodeList&& childNodes);
-
-    void AddChildNode(const NodePtr& node);
-
-    bool HasParent() const;
-
-    NodePtr GetParent();
-
-    void SetParent(const WeakNodePtr& parent);
 
     B3dTreePtr GetOriginalRoot() const;
 
-    NodePtr ExtractFirstNodeWithCategory(NodeCategory nodeCategory);
-
-    template <typename TypedNode>
-    TypedNode* NodeCast()
-    {
-        assert(GetType() == TypedNode::Value);
-
-        return static_cast<TypedNode*>(this);
-    }
-
-    template <typename TypedNode>
-    const TypedNode* NodeCast() const
-    {
-        assert(GetType() == TypedNode::Value);
-
-        return static_cast<const TypedNode*>(this);
-    }
+    B3dNodePtr ExtractFirstNodeWithCategory(NodeCategory nodeCategory);
 
     virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
     virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
 
-    virtual std::string GetTypeName() const = 0;
-
     virtual bool HasNestedCount() const = 0;
 
 private:
-    const std::string m_name;
-    const std::uint32_t m_type;
-
-    NodeList m_childNodeList;
     const B3dTreeWeakPtr m_originalRoot;
-    WeakNodePtr m_parent;
 };
 
+typedef std::list<B3dNodePtr> B3dNodeList;
+
+
 template <typename BlockType>
-class NodeWithData : public Node
+class NodeWithData : public B3dNode
 {
 protected:
     NodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
-        : Node(originalRoot, blockHeader)
+        : B3dNode(originalRoot, blockHeader)
         , m_block(block)
     {
         if (blockHeader.type != block.Value)

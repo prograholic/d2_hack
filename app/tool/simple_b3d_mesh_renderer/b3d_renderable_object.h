@@ -8,6 +8,8 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 
+#include "b3d_scene_builder.h"
+
 namespace d2_hack
 {
 namespace app
@@ -28,16 +30,7 @@ namespace app
 class B3dRenderableObject
 {
 public:
-    B3dRenderableObject(const std::string& b3dId,
-                        const resource::data::b3d::NodePtr& b3dNode,
-                        Ogre::SceneManager* sceneManager,
-                        Ogre::MeshManager* meshManager,
-                        Ogre::SceneNode* rootSceneNode);
-
-private:
-    resource::data::b3d::NodePtr m_b3dNode;
-
-    Ogre::SceneNode* m_sceneNode;
+    B3dRenderableObject(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
 };
 
 typedef std::unique_ptr<B3dRenderableObject> B3dRenderableObjectPtr;

@@ -71,14 +71,14 @@ std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
 }
 
-void AddTransformMatrix(const NodePtr& root, TransformationMap& transformations)
+void AddTransformMatrix(const B3dNodePtr& root, TransformationMap& transformations)
 {
 	TransformVisitor visitor{transformations};
 	auto visitResult = VisitNode(root, visitor);
 	(void)visitResult;
 }
 
-void B3dTree::AddRootNode(const NodePtr& root)
+void B3dTree::AddRootNode(const B3dNodePtr& root)
 {
 	switch (root->GetType())
 	{

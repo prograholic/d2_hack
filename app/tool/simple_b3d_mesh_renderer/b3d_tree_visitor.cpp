@@ -18,18 +18,22 @@ using namespace resource::data::b3d;
 
 
 
-B3dTreeVisitor::B3dTreeVisitor(const std::string& b3dId,
-                               Ogre::SceneManager* sceneManager,
-                               Ogre::SceneNode* rootNode,
-                               Ogre::MeshManager* meshManager)
-    : B3dSceneBuilder(b3dId, sceneManager, rootNode, meshManager)
+B3dTreeVisitor::B3dTreeVisitor(B3dSceneBuilder& sceneBuilder)
+    : m_sceneBuilder(sceneBuilder)
 {
 }
 
+VisitResult B3dTreeVisitor::Visit(NodeGroupObjects19& node, VisitMode visitMode)
+{
+    m_sceneBuilder.ProcessSceneNode(node.GetName(), visitMode);
+
+    return VisitResult::Continue;
+}
+
+#if 0
 VisitResult B3dTreeVisitor::Visit(NodeHierarchyBreaker& /* node */, VisitMode /* visitMode */)
 {
-    // no need to implement
-    return VisitResult::Continue;
+    return VisitResult::Continue; // TODO: need to implement
 }
 
 VisitResult B3dTreeVisitor::Visit(NodeEventEntry& /* node */, VisitMode /* visitMode */)
@@ -58,11 +62,21 @@ VisitResult B3dTreeVisitor::Visit(NodeGroupUnknown2& /* node */, VisitMode /* vi
     return VisitResult::Continue;
 }
 
+VisitResult B3dTreeVisitor::Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue; // TODO: need to implement
+}
+
 VisitResult B3dTreeVisitor::Visit(NodeGroupObjects5& node, VisitMode visitMode)
 {
     ProcessSceneNode(node.GetName(), visitMode);
 
     return VisitResult::Continue;
+}
+
+VisitResult B3dTreeVisitor::Visit(NodeGroupVertexData7& node, VisitMode visitMode)
+{
+    return ProcessGroupVertexData(node, visitMode);
 }
 
 VisitResult B3dTreeVisitor::Visit(NodeSimpleFaces8& node, VisitMode visitMode)
@@ -110,13 +124,6 @@ VisitResult B3dTreeVisitor::Visit(NodeSimpleUnknown14& /* node */, VisitMode /* 
 VisitResult B3dTreeVisitor::Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode)
 {
     ProcessObjectConnector(node, visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupObjects19& node, VisitMode visitMode)
-{
-    ProcessSceneNode(node.GetName(), visitMode);
 
     return VisitResult::Continue;
 }
@@ -197,6 +204,16 @@ VisitResult B3dTreeVisitor::Visit(NodeSimpleFaces35& node, VisitMode visitMode)
     return VisitResult::Continue;
 }
 
+VisitResult B3dTreeVisitor::Visit(NodeGroupVertexData36& node, VisitMode visitMode)
+{
+    return ProcessGroupVertexData(node, visitMode);
+}
+
+VisitResult B3dTreeVisitor::Visit(NodeGroupVertexData37& node, VisitMode visitMode)
+{
+    return ProcessGroupVertexData(node, visitMode);
+}
+
 VisitResult B3dTreeVisitor::Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */)
 {
     B3D_NOT_IMPLEMENTED();
@@ -224,6 +241,14 @@ void B3dTreeVisitor::VisitFaces(FacesNode& node, VisitMode visitMode)
     }
 }
 
+template <typename GroupVertexNode>
+VisitResult B3dTreeVisitor::ProcessGroupVertexData(GroupVertexNode& node, VisitMode visitMode)
+{
+    ProcessSceneNode(node.GetName(), visitMode);
+    return VisitResult::Continue;
+}
+
+#endif //0
 
 } // namespace app
 } // namespace d2_hack

@@ -34,11 +34,11 @@ struct B3dTree
 
     TransformationMap transformations;
 
-    NodeList rootNodes;
+    B3dNodeList rootNodes;
 
     std::string GetMaterialNameByIndex(std::uint32_t materialIndex) const;
 
-    void AddRootNode(const NodePtr& node);
+    void AddRootNode(const B3dNodePtr& node);
 };
 
 typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;

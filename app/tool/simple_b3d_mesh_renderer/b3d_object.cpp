@@ -9,6 +9,7 @@ namespace app
 
 using namespace resource::data::b3d;
 
+#if 0
 class ObjectVisitor : public B3dTreeVisitor
 {
 public:
@@ -53,18 +54,15 @@ private:
     B3dRoadGroupList& m_roadGroupList;
 };
 
-B3dObject::B3dObject(const std::string& b3dId,
-                     const resource::data::b3d::NodePtr& b3dNode,
-                     Ogre::SceneManager* sceneManager,
-                     Ogre::MeshManager* meshManager,
-                     Ogre::SceneNode* rootSceneNode)
-    : m_b3dNode(b3dNode)
-    , m_renderables()
+#endif //0
+
+B3dObject::B3dObject(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
+    : m_renderables()
     , m_roadGroupList()
 {
-    ObjectVisitor visitor{b3dId, sceneManager, rootSceneNode, meshManager, m_renderables, m_roadGroupList};
+    B3dTreeVisitor visitor{sceneBuilder};
 
-    auto visitResult = VisitNode(m_b3dNode, visitor);
+    auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;
 }
 

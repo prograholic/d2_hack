@@ -21,15 +21,9 @@ namespace app
 class B3dRoad
 {
 public:
-    B3dRoad(const std::string& b3dId,
-            const resource::data::b3d::NodePtr& b3dNode,
-            Ogre::SceneManager* sceneManager,
-            Ogre::MeshManager* meshManager,
-            Ogre::SceneNode* rootSceneNode);
+    B3dRoad(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
 
 private:
-    resource::data::b3d::NodePtr m_b3dNode;
-
     B3dRenderableObjectList m_renderables;
 
     B3dHitPtr m_hit;
