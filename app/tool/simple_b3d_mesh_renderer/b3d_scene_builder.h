@@ -19,6 +19,17 @@ namespace d2_hack
 namespace app
 {
 
+class B3dSceneNodeBase : public common::NodeBase
+{
+public:
+    B3dSceneNodeBase(const std::string& name, std::uint32_t type);
+
+    virtual void SetVisible(bool visible) = 0;
+};
+
+typedef std::shared_ptr<B3dSceneNodeBase> B3dSceneNodeBasePtr;
+typedef std::list<B3dSceneNodeBasePtr> B3dSceneNodeBaseList;
+
 class B3dSceneBuilder
 {
 public:
@@ -29,7 +40,8 @@ public:
     B3dSceneBuilder(const std::string& b3dId,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* rootNode,
-                    Ogre::MeshManager* meshManager);
+                    Ogre::MeshManager* meshManager,
+                    B3dSceneNodeBaseList& rootB3dSceneNodes);
 
     ~B3dSceneBuilder();
 
@@ -51,13 +63,20 @@ public:
 
     void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
 
+    B3dSceneNodeBasePtr GetParentB3dSceneNode();
+
+    void PushToSceneNodeStack(const B3dSceneNodeBasePtr& node);
+
+    void PopFromSceneNodeStack();
+
 private:
     const std::string m_b3dId;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_rootNode;
     Ogre::MeshManager* m_meshManager;
+    B3dSceneNodeBaseList& m_rootB3dSceneNodes;
     std::stack<Ogre::SceneNode*> m_sceneNodes;
-
+    std::stack<B3dSceneNodeBasePtr> m_b3dSceneNodesStack;
 
     std::string GetB3dResourceId(const std::string& name) const;
 

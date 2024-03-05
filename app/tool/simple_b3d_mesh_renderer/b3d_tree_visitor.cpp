@@ -1,5 +1,7 @@
 #include "b3d_tree_visitor.h"
 
+#include <OgreSceneNode.h>
+
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/log.h>
 
@@ -17,238 +19,129 @@ namespace app
 using namespace resource::data::b3d;
 
 
+B3dSceneNodeBase::B3dSceneNodeBase(const std::string& name, std::uint32_t type)
+    : common::NodeBase(name, type)
+{
+}
+
+
+template <std::uint32_t NodeTypeId>
+class B3dSceneNode : public B3dSceneNodeBase
+{
+public:
+    static constexpr std::uint32_t Value = NodeTypeId;
+
+    explicit B3dSceneNode(const std::string& name)
+        : B3dSceneNodeBase(name, Value)
+    {
+    }
+};
+
+
+template <std::uint32_t NodeTypeId>
+class B3dOgreSceneNode : public B3dSceneNode<NodeTypeId>
+{
+public:
+
+    B3dOgreSceneNode(const std::string& name, Ogre::SceneNode* sceneNode)
+        : B3dSceneNode<NodeTypeId>(name)
+        , m_sceneNode(sceneNode)
+    {
+    }
+
+    virtual void SetVisible(bool visible) override
+    {
+        m_sceneNode->setVisible(visible);
+    }
+
+    static B3dSceneNodeBasePtr Create(const B3dSceneNodeBasePtr& parent, const std::string& name, Ogre::SceneNode* sceneNode)
+    {
+        auto res = std::make_shared<B3dOgreSceneNode<NodeTypeId>>(name, sceneNode);
+        if (parent)
+        {
+            parent->AddChildNode(res);
+        }
+
+        return res;
+    }
+
+private:
+    Ogre::SceneNode* m_sceneNode;
+};
+
+
+typedef B3dOgreSceneNode<block_data::GroupObjectsBlock19> GroupObject19B3dSceneNode;
+
+
+
 
 B3dTreeVisitor::B3dTreeVisitor(B3dSceneBuilder& sceneBuilder)
     : m_sceneBuilder(sceneBuilder)
 {
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeGroupObjects19& node, VisitMode visitMode)
+B3dSceneBuilder& B3dTreeVisitor::GetSceneBuilder()
 {
-    m_sceneBuilder.ProcessSceneNode(node.GetName(), visitMode);
-
-    return VisitResult::Continue;
+    return m_sceneBuilder;
 }
 
-#if 0
-VisitResult B3dTreeVisitor::Visit(NodeHierarchyBreaker& /* node */, VisitMode /* visitMode */)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeGroupObjects5& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return VisitResult::Continue; // TODO: need to implement
+    return B3dOgreSceneNode<NodeGroupObjects5::Value>::Create(parent, node.GetName(), sceneNode);
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeEventEntry& /* node */, VisitMode /* visitMode */)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeSimpleFaces8& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    // no need to implement
-    return VisitResult::Continue;
+    auto res = B3dOgreSceneNode<NodeSimpleFaces8::Value>::Create(parent, node.GetName(), sceneNode);
+
+    VisitFaces(node);
+
+    return res;
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeGroupLodParameters10& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    // no need to implement
-    return VisitResult::Continue;
+    return B3dOgreSceneNode<NodeGroupLodParameters10::Value>::Create(parent, node.GetName(), sceneNode);
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeSimpleObjectConnector1& node, VisitMode visitMode)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeGroupObjects19& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    ProcessObjectConnector(node, visitMode);
-
-    return VisitResult::Continue;
+    return B3dOgreSceneNode<NodeGroupObjects19::Value>::Create(parent, node.GetName(), sceneNode);
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeGroupVertexData37& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
+    return B3dOgreSceneNode<NodeGroupVertexData37::Value>::Create(parent, node.GetName(), sceneNode);
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeSimpleFaces28& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return VisitResult::Continue; // TODO: need to implement
+    auto res = B3dOgreSceneNode<NodeSimpleFaces28::Value>::Create(parent, node.GetName(), sceneNode);
+
+    VisitFaces(node);
+
+    return res;
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeGroupObjects5& node, VisitMode visitMode)
+B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const resource::data::b3d::NodeSimpleFaces35& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    ProcessSceneNode(node.GetName(), visitMode);
+    auto res = B3dOgreSceneNode<NodeSimpleFaces35::Value>::Create(parent, node.GetName(), sceneNode);
 
-    return VisitResult::Continue;
+    VisitFaces(node);
+
+    return res;
 }
 
-VisitResult B3dTreeVisitor::Visit(NodeGroupVertexData7& node, VisitMode visitMode)
-{
-    return ProcessGroupVertexData(node, visitMode);
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleFaces8& node, VisitMode visitMode)
-{
-    VisitFaces(node, visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupTrigger9& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */)
-{
-    // no need to implement
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupUnknown12& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode)
-{
-    ProcessObjectConnector(node, visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupObjects21& node, VisitMode visitMode)
-{
-    ProcessSceneNode(node.GetName(), visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */)
-{
-    // No need to implement
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleFaces28& node, VisitMode visitMode)
-{
-    VisitFaces(node, visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupUnknown29& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimplePortal30& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupLightingObjects33& node, VisitMode visitMode)
-{
-    ProcessLight(node, visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleFaces35& node, VisitMode visitMode)
-{
-    VisitFaces(node, visitMode);
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupVertexData36& node, VisitMode visitMode)
-{
-    return ProcessGroupVertexData(node, visitMode);
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupVertexData37& node, VisitMode visitMode)
-{
-    return ProcessGroupVertexData(node, visitMode);
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
-
-VisitResult B3dTreeVisitor::Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
-
-    return VisitResult::Continue;
-}
 
 template <typename FacesNode>
-void B3dTreeVisitor::VisitFaces(FacesNode& node, VisitMode visitMode)
+void B3dTreeVisitor::VisitFaces(FacesNode& node)
 {
-    if (visitMode == VisitMode::PreOrder)
+    const auto& block = node.GetBlockData();
+    for (const auto& face : block.faces)
     {
-        const auto& block = node.GetBlockData();
-        for (const auto& face : block.faces)
-        {
-            CreateMesh(node.GetName(), face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
-        }
+        m_sceneBuilder.CreateMesh(node.GetName(), face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
     }
 }
-
-template <typename GroupVertexNode>
-VisitResult B3dTreeVisitor::ProcessGroupVertexData(GroupVertexNode& node, VisitMode visitMode)
-{
-    ProcessSceneNode(node.GetName(), visitMode);
-    return VisitResult::Continue;
-}
-
-#endif //0
 
 } // namespace app
 } // namespace d2_hack

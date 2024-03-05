@@ -69,13 +69,18 @@ private:
 
 #endif //0
 
-B3dRoom::B3dRoom(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
+B3dRoom::B3dRoom(const B3dNodePtr& b3dNode,
+                 const std::string& b3dId,
+                 Ogre::SceneManager* sceneManager,
+                 Ogre::SceneNode* rootNode,
+                 Ogre::MeshManager* meshManager)
     : m_portals()
     , m_road()
     , m_obj()
     , m_renderables()
     , m_roadGroupList()
 {
+    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, m_rootB3dNodes};
     B3dTreeVisitor visitor{sceneBuilder};
     auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;

@@ -73,6 +73,8 @@ public:
 
     B3dNodePtr ExtractFirstNodeWithCategory(NodeCategory nodeCategory);
 
+    virtual std::string GetTypeName() const = 0;
+
     virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
     virtual const common::BoundingSphere& GetBoundingSphere() const = 0;
@@ -86,25 +88,12 @@ private:
 typedef std::list<B3dNodePtr> B3dNodeList;
 
 
-template <typename BlockType>
+template <typename Block>
 class NodeWithData : public B3dNode
 {
-protected:
-    NodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
-        : B3dNode(originalRoot, blockHeader)
-        , m_block(block)
-    {
-        if (blockHeader.type != block.Value)
-        {
-            OGRE_EXCEPT(
-                Ogre::Exception::ERR_INVALID_STATE,
-                "Inconsistent block header type (" + std::to_string(blockHeader.type) + ") and BlockType value (" + std::to_string(block.Value) + ")",
-                "NodeWithData::NodeWithData"
-            );
-        }
-    }
 public:
 
+    using BlockType = typename Block;
     static constexpr auto Name = BlockType::Name;
     static constexpr auto Value = BlockType::Value;
 
@@ -131,6 +120,21 @@ public:
     BlockType& GetBlockData()
     {
         return m_block;
+    }
+
+protected:
+    NodeWithData(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader, const BlockType& block)
+        : B3dNode(originalRoot, blockHeader)
+        , m_block(block)
+    {
+        if (blockHeader.type != block.Value)
+        {
+            OGRE_EXCEPT(
+                Ogre::Exception::ERR_INVALID_STATE,
+                "Inconsistent block header type (" + std::to_string(blockHeader.type) + ") and BlockType value (" + std::to_string(block.Value) + ")",
+                "NodeWithData::NodeWithData"
+            );
+        }
     }
 
 private:

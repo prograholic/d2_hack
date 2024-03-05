@@ -22,7 +22,11 @@ namespace app
 class B3dRoom
 {
 public:
-    B3dRoom(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
+    B3dRoom(const resource::data::b3d::B3dNodePtr& b3dNode,
+            const std::string& b3dId,
+            Ogre::SceneManager* sceneManager,
+            Ogre::SceneNode* rootNode,
+            Ogre::MeshManager* meshManager);
 
     void GetGasStations() const;
 
@@ -33,6 +37,8 @@ public:
     B3dRoad* GetRoad();
 
 private:
+    B3dSceneNodeBaseList m_rootB3dNodes;
+
     resource::data::b3d::block_data::Portals m_portals;
     B3dRoadPtr m_road;
     B3dObjectPtr m_obj;

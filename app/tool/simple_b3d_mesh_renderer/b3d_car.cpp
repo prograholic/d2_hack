@@ -102,10 +102,16 @@ private:
 
 #endif //0
 
-B3dCar::B3dCar(const B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder)
-    : m_renderables()
+B3dCar::B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
+               const std::string& b3dId,
+               Ogre::SceneManager* sceneManager,
+               Ogre::SceneNode* rootNode,
+               Ogre::MeshManager* meshManager)
+    : m_rootB3dNodes()
+    , m_renderables()
     , m_unknown14{}
 {
+    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, m_rootB3dNodes};
     B3dTreeVisitor visitor{sceneBuilder};
     auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;

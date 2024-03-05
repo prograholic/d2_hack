@@ -131,182 +131,184 @@ B3dNodePtr MakeVisitableNode(const B3dTreeWeakPtr& originalRoot, const common::W
 }
 
 
-template <typename GenericAction>
+template <typename SelfType, typename GenericAction>
 class GenericActionVisitor: public NodeVisitorInterface
 {
 public:
 
     virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeEventEntry& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeEmpty0& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleObjectConnector1& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
     
     virtual VisitResult Visit(NodeGroupUnknown2& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupObjects5& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupTrigger9& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupLodParameters10& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupUnknown12& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleTrigger13& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleUnknown14& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleFlatCollision20& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupObjects21& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleVolumeCollision23& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleUnknown25& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupUnknown29& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimplePortal30& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupLightingObjects33& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleUnknown34& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupUnknown39& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
     {
-        return GenericAction::Perform(node, visitMode);
+        return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 };
 
 struct NoOpAction
 {
     template <typename NodeType>
-    static VisitResult Perform(NodeType& /* node */, VisitMode /* visitMode */)
+    static VisitResult Perform(const void* /* self*/, NodeType& /* node */, VisitMode /* visitMode */)
     {
         return VisitResult::Continue;
     }
 };
 
-using NoOpNodeVisitor = GenericActionVisitor<NoOpAction>;
+class NoOpNodeVisitor : public GenericActionVisitor<NoOpNodeVisitor, NoOpAction>
+{
+};
 
 struct RaiseExceptionAction
 {
     template <typename NodeType>
-    static VisitResult Perform(NodeType& /* node */, VisitMode /* visitMode */)
+    static VisitResult Perform(const void* /* self*/, NodeType& /* node */, VisitMode /* visitMode */)
     {
         RaiseException(NodeType::Name, NodeType::Value);
         return VisitResult::Stop;
@@ -315,7 +317,9 @@ struct RaiseExceptionAction
     static void RaiseException(const char* name, std::uint32_t type);
 };
 
-using RaiseExceptionVisitor = GenericActionVisitor<RaiseExceptionAction>;
+class RaiseExceptionVisitor : public GenericActionVisitor<RaiseExceptionVisitor, RaiseExceptionAction>
+{
+};
 
 
 } // namespace b3d

@@ -20,9 +20,15 @@ namespace app
 class B3dCar
 {
 public:
-    B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode, B3dSceneBuilder& sceneBuilder);
+    B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
+           const std::string& b3dId,
+           Ogre::SceneManager* sceneManager,
+           Ogre::SceneNode* rootNode,
+           Ogre::MeshManager* meshManager);
 
 private:
+    B3dSceneNodeBaseList m_rootB3dNodes;
+
     B3dRenderableObjectList m_renderables;
 
     resource::data::b3d::block_data::SimpleUnknown14 m_unknown14;

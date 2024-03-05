@@ -58,8 +58,7 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
         {
             if (!rootNode->GetChildNodeList().empty())
             {
-                B3dSceneBuilder sceneBuilder{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
-                m_rooms.emplace_back(std::make_unique<B3dRoom>(rootNode, sceneBuilder));
+                m_rooms.emplace_back(std::make_unique<B3dRoom>(rootNode, tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()));
             }
             else
             {
@@ -68,8 +67,7 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
         }
         else if (rootNode->GetNodeCategory() == NodeCategory::CarNode)
         {
-            B3dSceneBuilder sceneBuilder{tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()};
-            m_cars.emplace_back(std::make_unique<B3dCar>(rootNode, sceneBuilder));
+            m_cars.emplace_back(std::make_unique<B3dCar>(rootNode, tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager()));
         }
         else
         {

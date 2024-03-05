@@ -37,11 +37,13 @@ using namespace resource::data::b3d;
 B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,
-                                 Ogre::MeshManager* meshManager)
+                                 Ogre::MeshManager* meshManager,
+                                 B3dSceneNodeBaseList& rootB3dSceneNodes)
     : m_b3dId(b3dId)
     , m_sceneManager(sceneManager)
     , m_rootNode(rootNode)
     , m_meshManager(meshManager)
+    , m_rootB3dSceneNodes(rootB3dSceneNodes)
 {
 }
 
@@ -49,6 +51,7 @@ B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
 B3dSceneBuilder::~B3dSceneBuilder()
 {
     assert(m_sceneNodes.empty());
+    assert(m_b3dSceneNodesStack.empty());
 }
 
 std::string B3dSceneBuilder::GetB3dId() const
@@ -173,6 +176,30 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
 
     m_sceneNodes.top()->createChildSceneNode(entityName + "_node_for_entity")->attachObject(entity);
 }
+
+B3dSceneNodeBasePtr B3dSceneBuilder::GetParentB3dSceneNode()
+{
+    return m_b3dSceneNodesStack.empty() ? B3dSceneNodeBasePtr{} : m_b3dSceneNodesStack.top();
+}
+
+void B3dSceneBuilder::PushToSceneNodeStack(const B3dSceneNodeBasePtr& node)
+{
+    if (m_b3dSceneNodesStack.empty())
+    {
+        m_rootB3dSceneNodes.push_back(node);
+    }
+
+    m_b3dSceneNodesStack.push(node);
+}
+
+void B3dSceneBuilder::PopFromSceneNodeStack()
+{
+    m_b3dSceneNodesStack.pop();
+}
+
+
+/////////////////////////////////////////////////////////////
+
 
 std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const
 {

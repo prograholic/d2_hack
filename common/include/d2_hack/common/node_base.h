@@ -32,8 +32,6 @@ public:
 
     virtual ~NodeBase() noexcept = default;
 
-    virtual std::string GetTypeName() const = 0;
-
     const std::string& GetName() const;
 
     std::uint32_t GetType() const;

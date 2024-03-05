@@ -910,7 +910,7 @@ void PrintSequence(const std::vector<std::uint32_t>& sequence)
 }
 
 
-void PrintOnlyTypes(const NodePtr& node, const std::vector<std::uint32_t>& sequence, std::set< std::vector<std::uint32_t>>& uniqueSequences, int indent = 0)
+void PrintOnlyTypes(const B3dNodePtr& node, const std::vector<std::uint32_t>& sequence, std::set< std::vector<std::uint32_t>>& uniqueSequences, int indent = 0)
 {
     GetStream(indent) << node->GetTypeName() << "(" << node->GetName() << ")";
     if (!node->GetChildNodeList().empty())
@@ -923,7 +923,7 @@ void PrintOnlyTypes(const NodePtr& node, const std::vector<std::uint32_t>& seque
         std::vector<std::uint32_t> newSequence = sequence;
         newSequence.push_back(child->GetType());
 
-        PrintOnlyTypes(child, newSequence, uniqueSequences, indent + 1);
+        PrintOnlyTypes(std::static_pointer_cast<B3dNode>(child), newSequence, uniqueSequences, indent + 1);
     }
 
     if (node->GetChildNodeList().empty())
