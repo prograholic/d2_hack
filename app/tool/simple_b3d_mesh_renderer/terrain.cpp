@@ -7,7 +7,7 @@ namespace app
 
 const std::uint16_t TerrainSize = 257;
 const Ogre::Real TerrainWorldSize = 1000.0f;
-const Ogre::Vector3 TerrainOrigin{ -5500.0f, 425.0f, 4550.0f };
+const Ogre::Vector3 TerrainOrigin{ 4550.0f, -5500.0f, 425.0f };
 const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
 const char* HeightMap2Name = "terrain2.raw2";
@@ -15,16 +15,16 @@ const char* HeightMap2Name = "terrain2.raw2";
 Terrain::Terrain(Ogre::SceneManager* sceneManager, Ogre::SceneNode* sceneNode)
     : B3dOgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>("terrain", sceneNode)
     , m_terrainGlobalOptions(std::make_unique<Ogre::TerrainGlobalOptions>())
-    , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Z, TerrainSize, TerrainWorldSize, sceneNode))
+    , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Y, TerrainSize, TerrainWorldSize, sceneNode))
 {
     m_terrainGroup->setResourceGroup("D2");
     CreateTerrain();
+    sceneNode->roll(Ogre::Degree(90.0f));
+    sceneNode->setPosition(TerrainOrigin);
 }
 
 void Terrain::CreateTerrain()
 {
-    m_terrainGroup->setOrigin(TerrainOrigin);
-
     ConfigureTerrainDefaults();
 
     DefineTerrains();

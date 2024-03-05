@@ -219,7 +219,6 @@ const char* node_name = "b3d.scene_node";
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
-
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
@@ -287,6 +286,44 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() / 2);
     }
+#if 0
+    else if (evt.keysym.sym == 'i')
+    {
+        pos2.z += increment;
+        terrainNode->setPosition(pos2);
+        D2_HACK_LOG(TERRAIN) << pos2;
+    }
+    else if (evt.keysym.sym == 'j')
+    {
+        pos2.z -= increment;
+        terrainNode->setPosition(pos2);
+        D2_HACK_LOG(TERRAIN) << pos2;
+    }
+    else if (evt.keysym.sym == 'k')
+    {
+        pos2.y += increment;
+        terrainNode->setPosition(pos2);
+        D2_HACK_LOG(TERRAIN) << pos2;
+    }
+    else if (evt.keysym.sym == 'l')
+    {
+        pos2.y -= increment;
+        terrainNode->setPosition(pos2);
+        D2_HACK_LOG(TERRAIN) << pos2;
+    }
+    else if (evt.keysym.sym == 'm')
+    {
+        pos2.x += increment;
+        terrainNode->setPosition(pos2);
+        D2_HACK_LOG(TERRAIN) << pos2;
+    }
+    else if (evt.keysym.sym == 'n')
+    {
+        pos2.x -= increment;
+        terrainNode->setPosition(pos2);
+        D2_HACK_LOG(TERRAIN) << pos2;
+    }
+#endif //0
 
     return BaseApplication::keyPressed(evt);
 }
