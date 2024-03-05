@@ -9,18 +9,8 @@ d2_hack_add_executable(d2_hack.app.simple_b3d_mesh_renderer
     b3d_scene_builder.h
     b3d_room.cpp
     b3d_room.h
-    b3d_object.cpp
-    b3d_object.h
-    b3d_road.cpp
-    b3d_road.h
-    b3d_road_group.cpp
-    b3d_road_group.h
-    b3d_hit.cpp
-    b3d_hit.h
     b3d_car.cpp
     b3d_car.h
-    b3d_renderable_object.cpp
-    b3d_renderable_object.h
 
     main.cpp
 )

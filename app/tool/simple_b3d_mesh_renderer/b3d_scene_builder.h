@@ -8,6 +8,7 @@
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 #include <OgreRenderOperation.h>
+#include <OgreSceneNode.h>
 #include <OgreMatrix3.h>
 D2_HACK_DISABLE_WARNING_END() // 4251
 
@@ -29,6 +30,53 @@ public:
 
 typedef std::shared_ptr<B3dSceneNodeBase> B3dSceneNodeBasePtr;
 typedef std::list<B3dSceneNodeBasePtr> B3dSceneNodeBaseList;
+
+
+template <std::uint32_t NodeTypeId>
+class B3dSceneNode : public B3dSceneNodeBase
+{
+public:
+    static constexpr std::uint32_t Value = NodeTypeId;
+
+    explicit B3dSceneNode(const std::string& name)
+        : B3dSceneNodeBase(name, Value)
+    {
+    }
+};
+
+
+
+template <std::uint32_t NodeTypeId>
+class B3dOgreSceneNode : public B3dSceneNode<NodeTypeId>
+{
+public:
+
+    B3dOgreSceneNode(const std::string& name, Ogre::SceneNode* sceneNode)
+        : B3dSceneNode<NodeTypeId>(name)
+        , m_sceneNode(sceneNode)
+    {
+    }
+
+    virtual void SetVisible(bool visible) override
+    {
+        m_sceneNode->setVisible(visible);
+    }
+
+private:
+    Ogre::SceneNode* m_sceneNode;
+};
+
+template <typename Node, typename... Args>
+static B3dSceneNodeBasePtr CreateB3dSceneNode(const B3dSceneNodeBasePtr& parent, Args&&... args)
+{
+    auto res = std::make_shared<Node>(std::forward<Args&&>(args)...);
+    if (parent)
+    {
+        parent->AddChildNode(res);
+    }
+
+    return res;
+}
 
 class B3dSceneBuilder
 {
@@ -55,7 +103,7 @@ public:
 
     void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode);
 
-    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, VisitMode visitMode);
+    void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node);
 
     void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& node, VisitMode visitMode);
 

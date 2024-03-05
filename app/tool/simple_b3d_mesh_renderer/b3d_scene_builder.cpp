@@ -34,6 +34,11 @@ namespace app
 
 using namespace resource::data::b3d;
 
+B3dSceneNodeBase::B3dSceneNodeBase(const std::string& name, std::uint32_t type)
+    : common::NodeBase(name, type)
+{
+}
+
 B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* rootNode,
@@ -97,27 +102,14 @@ void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingO
 }
 
 
-void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node, VisitMode visitMode)
+void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node)
 {
-    if (visitMode == VisitMode::PreOrder)
+    Ogre::SceneNode* sceneNode = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
+
+    for (const auto& transform : node.GetBlockData().transformation)
     {
-        const std::string cloneName = GetNameImpl(common::ResourceNameToString(node.GetBlockData().object) + "_clone", "scene_node", true);
-
-        Ogre::SceneNode* newSceneNode = m_sceneManager->createSceneNode(cloneName);
-
-        Ogre::SceneNode* parentSceneNode = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
-        parentSceneNode->addChild(newSceneNode);
-        m_sceneNodes.push(newSceneNode);
-
-        for (const auto& transform : node.GetBlockData().transformation)
-        {
-            newSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
-            newSceneNode->translate(transform.position);
-        }
-    }
-    else
-    {
-        m_sceneNodes.pop();
+        sceneNode->rotate(Ogre::Quaternion{ transform.matrix });
+        sceneNode->translate(transform.position);
     }
 }
 

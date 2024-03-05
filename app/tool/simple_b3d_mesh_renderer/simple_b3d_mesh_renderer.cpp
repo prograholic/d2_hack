@@ -170,7 +170,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     }
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
-    b3dSceneNode->yaw(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
+    //b3dSceneNode->yaw(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
 
 

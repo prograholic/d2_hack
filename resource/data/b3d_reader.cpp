@@ -599,7 +599,7 @@ private:
 
         block.boundingSphere = ReadBoundingSphere();
         block.count = ReadUint32();
-        block.unknown = ReadUint32();
+        block.defaultValue = ReadUint32();
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }

@@ -405,7 +405,7 @@ struct GroupObjects21
     common::BoundingSphere boundingSphere;
 
     std::uint32_t count;
-    std::uint32_t unknown;
+    std::uint32_t defaultValue;
 };
 
 struct SimpleVolumeCollision23

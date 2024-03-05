@@ -509,7 +509,7 @@ private:
     void PrintData(const block_data::GroupObjects21& block, const char* /* name */, int adjustOffset)
     {
         GetStream(adjustOffset) << "count: " << block.count << "," << std::endl;
-        GetStream(adjustOffset) << "unknown: " << block.unknown << std::endl;
+        GetStream(adjustOffset) << "defaultValue: " << block.defaultValue << std::endl;
     }
 
     void PrintData(const block_data::SimpleVolumeCollision23& block, const char* /* name */, int adjustOffset)

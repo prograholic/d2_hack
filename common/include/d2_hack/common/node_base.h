@@ -6,7 +6,7 @@
 #include <cassert>
 #include <string>
 #include <memory>
-#include <list>
+#include <deque>
 
 
 namespace d2_hack
@@ -16,7 +16,7 @@ namespace common
 
 typedef std::shared_ptr<class NodeBase> NodePtr;
 typedef std::weak_ptr<class NodeBase> WeakNodePtr;
-typedef std::list<NodePtr> NodeList;
+typedef std::deque<NodePtr> NodeList;
 
 
 

@@ -7,17 +7,19 @@
 
 #include <Terrain/OgreTerrainGroup.h>
 
-#include <d2_hack/resource/data/b3d_node.h>
+#include "b3d_scene_builder.h"
+
+
 
 namespace d2_hack
 {
 namespace app
 {
 
-class Terrain
+class Terrain : public B3dOgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>
 {
 public:
-    explicit Terrain(Ogre::SceneManager* sceneManager);
+    Terrain(Ogre::SceneManager* sceneManager, Ogre::SceneNode* sceneNode);
 
 private:
     std::unique_ptr<Ogre::TerrainGlobalOptions> m_terrainGlobalOptions;

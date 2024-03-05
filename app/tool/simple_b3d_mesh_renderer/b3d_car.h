@@ -5,12 +5,9 @@
 
 #include <memory>
 
-#include <OgreSceneNode.h>
-
 #include <d2_hack/resource/data/b3d_node.h>
 
 #include "b3d_scene_builder.h"
-#include "b3d_renderable_object.h"
 
 namespace d2_hack
 {
@@ -28,10 +25,6 @@ public:
 
 private:
     B3dSceneNodeBaseList m_rootB3dNodes;
-
-    B3dRenderableObjectList m_renderables;
-
-    resource::data::b3d::block_data::SimpleUnknown14 m_unknown14;
 };
 
 typedef std::unique_ptr<B3dCar> B3dCarPtr;
