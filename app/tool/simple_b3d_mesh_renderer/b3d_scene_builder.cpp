@@ -149,24 +149,24 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
 
 void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
 {
-    std::string name = GetNameImpl(blockName, "mesh", false);
-    std::string group = "D2";
-    if (m_meshManager->resourceExists(name, group))
+    const std::string meshName = GetNameImpl(blockName + "." + materialName, "mesh", false);
+    const std::string entityName = meshName + ".entity";
+    const std::string group = "D2";
+
+    Ogre::MeshPtr mesh;
+    if (m_meshManager->resourceExists(meshName, group))
     {
-        // TODO: deduplicate meshes!
-        name = GetNameImpl(blockName, "mesh", true);
+        D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Mesh `" << meshName << "` already exists, reuse it";
+        mesh = m_meshManager->getByName(meshName, group);
+    }
+    else
+    {
+        mesh = m_meshManager->createManual(meshName, group);
+        SetMeshInfo(mesh, meshInfo, materialName);
     }
 
-    //D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Starting processing mesh with name: " << name;
-
-    Ogre::MeshPtr mesh = m_meshManager->createManual(name, group);
-
-    SetMeshInfo(mesh, meshInfo, materialName);
-
-    const std::string entityName = mesh->getName() + ".entity";
-    Ogre::Entity* entity = m_sceneManager->createEntity(entityName, mesh);
-
-    m_sceneNodes.top()->createChildSceneNode(entityName + "_node_for_entity")->attachObject(entity);
+    Ogre::Entity* entity = m_sceneManager->createEntity(mesh);
+    m_sceneNodes.top()->createChildSceneNode()->attachObject(entity);
 }
 
 B3dSceneNodeBasePtr B3dSceneBuilder::GetParentB3dSceneNode()

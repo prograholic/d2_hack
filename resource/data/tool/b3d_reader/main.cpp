@@ -366,6 +366,7 @@ private:
         PrintData(meshInfo.positions, "positions", adjustOffset + 1, m_printMeshInfo);
         PrintData(meshInfo.texCoords, "texCoords", adjustOffset + 1, m_printMeshInfo);
         PrintData(meshInfo.normals, "normals", adjustOffset + 1, m_printMeshInfo);
+        PrintData(meshInfo.indices, "indices", adjustOffset + 1, m_printMeshInfo);
         GetStream(adjustOffset) << "}" << std::endl;
     }
 
