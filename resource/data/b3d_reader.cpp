@@ -570,25 +570,34 @@ private:
 
     B3dNodePtr ReadBlockData19(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
-        block_data::GroupObjects19 block;
+        block_data::GroupObjects19 block{};
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 
     B3dNodePtr ReadBlockData20(const NodePtr& parent, const block_data::BlockHeader& blockHeader)
     {
-        block_data::SimpleFlatCollision20 block;
+        block_data::SimpleFlatCollision20 block{};
 
         block.boundingSphere = ReadBoundingSphere();
-        const std::uint32_t countUnknown2 = ReadUint32();
+        const std::uint32_t countVertices = ReadUint32();
 
         block.unknown0 = ReadUint32();
         block.unknown1 = ReadUint32();
+        block.keyNameOrParametersCount = ReadUint32();
 
-        const std::uint32_t countUnknown3 = ReadUint32();
+        if (block.keyNameOrParametersCount > 0)
+        {
+            block.height = ReadFloat();
 
-        ReadCount(block.unknown2, countUnknown2);
-        ReadCount(block.unknown3, countUnknown3);
+            ReadCount(block.parameters, block.keyNameOrParametersCount - 1);
+        }
+        else
+        {
+            block.height = 100.0f;
+        }
+
+        ReadCount(block.maybeVertices, countVertices);
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }

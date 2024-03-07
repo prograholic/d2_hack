@@ -391,9 +391,11 @@ struct SimpleFlatCollision20
 
     std::uint32_t unknown0;
     std::uint32_t unknown1;
+    std::uint32_t keyNameOrParametersCount;
+    Ogre::Real height;
+    std::vector<std::uint32_t> parameters;
 
-    std::vector<common::Position> unknown2;
-    std::vector<Ogre::Real> unknown3;
+    std::vector<common::Position> maybeVertices;
 };
 
 struct GroupObjects21

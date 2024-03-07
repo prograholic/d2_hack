@@ -503,8 +503,10 @@ private:
     {
         GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(adjustOffset) << "unknown1: " << block.unknown1 << std::endl;
-        PrintData(block.unknown2, "unknown2", adjustOffset);
-        PrintData(block.unknown3, "unknown3", adjustOffset);
+        GetStream(adjustOffset) << "keyNameOrParametersCount: " << block.keyNameOrParametersCount << std::endl;
+        GetStream(adjustOffset) << "height: " << block.height << std::endl;
+        PrintData(block.parameters, "parameters", adjustOffset);
+        PrintData(block.maybeVertices, "maybeVertices", adjustOffset);
     }
 
     void PrintData(const block_data::GroupObjects21& block, const char* /* name */, int adjustOffset)
