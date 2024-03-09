@@ -19,7 +19,7 @@ namespace app
 class Terrain : public B3dOgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>
 {
 public:
-    Terrain(Ogre::SceneManager* sceneManager, Ogre::SceneNode* sceneNode);
+    Terrain(const std::string& name, Ogre::SceneNode* sceneNode, Ogre::SceneManager* sceneManager);
 
 private:
     std::unique_ptr<Ogre::TerrainGlobalOptions> m_terrainGlobalOptions;

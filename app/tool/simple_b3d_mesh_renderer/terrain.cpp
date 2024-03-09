@@ -12,8 +12,8 @@ const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
 const char* HeightMap2Name = "terrain2.raw2";
 
-Terrain::Terrain(Ogre::SceneManager* sceneManager, Ogre::SceneNode* sceneNode)
-    : B3dOgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>("terrain", sceneNode)
+Terrain::Terrain(const std::string& name, Ogre::SceneNode* sceneNode, Ogre::SceneManager* sceneManager)
+    : B3dOgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, sceneNode)
     , m_terrainGlobalOptions(std::make_unique<Ogre::TerrainGlobalOptions>())
     , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Y, TerrainSize, TerrainWorldSize, sceneNode))
 {

@@ -32,27 +32,29 @@ typedef std::shared_ptr<B3dSceneNodeBase> B3dSceneNodeBasePtr;
 typedef std::list<B3dSceneNodeBasePtr> B3dSceneNodeBaseList;
 
 
-template <std::uint32_t NodeTypeId>
-class B3dSceneNode : public B3dSceneNodeBase
+template <std::uint32_t NodeTypeId, typename SceneNodeBaseType>
+class B3dSceneNode : public SceneNodeBaseType
 {
 public:
     static constexpr std::uint32_t Value = NodeTypeId;
 
-    explicit B3dSceneNode(const std::string& name)
-        : B3dSceneNodeBase(name, Value)
+    template<typename... Args>
+    B3dSceneNode(const std::string& name, Args&&... args)
+        : SceneNodeBaseType(name, Value, std::forward<Args&&>(args)...)
     {
     }
 };
 
 
 
-template <std::uint32_t NodeTypeId>
-class B3dOgreSceneNode : public B3dSceneNode<NodeTypeId>
+template <std::uint32_t NodeTypeId, typename SceneNodeBaseType = B3dSceneNodeBase>
+class B3dOgreSceneNode : public B3dSceneNode<NodeTypeId, SceneNodeBaseType>
 {
 public:
 
-    B3dOgreSceneNode(const std::string& name, Ogre::SceneNode* sceneNode)
-        : B3dSceneNode<NodeTypeId>(name)
+    template<typename... Args>
+    B3dOgreSceneNode(const std::string& name, Ogre::SceneNode* sceneNode, Args&&... args)
+        : B3dSceneNode<NodeTypeId, SceneNodeBaseType>(name, std::forward<Args&&>(args)...)
         , m_sceneNode(sceneNode)
     {
     }

@@ -21,11 +21,12 @@ namespace app
 
 using namespace resource::data::b3d;
 
-class B3dSceneNodeEvent : public B3dOgreSceneNode<block_data::GroupObjectsBlock21>
+
+class B3dSceneNodeEventBase : public B3dSceneNodeBase
 {
 public:
-    B3dSceneNodeEvent(size_t activeNode, const std::string& name, Ogre::SceneNode* sceneNode)
-        : B3dOgreSceneNode<block_data::GroupObjectsBlock21>(name, sceneNode)
+    B3dSceneNodeEventBase(const std::string& name, std::uint32_t type, size_t activeNode)
+        : B3dSceneNodeBase(name, type)
         , m_activeNode(activeNode)
     {
     }
@@ -50,9 +51,46 @@ public:
         }
     }
 
+
+    void SetActive(size_t activeNode)
+    {
+        auto& childs = GetChildNodeList();
+
+        if (activeNode >= childs.size())
+        {
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "activeNodeId too big: " + std::to_string(activeNode) + ", childs count: " + std::to_string(childs.size()));
+        }
+
+        m_activeNode = activeNode;
+        SetVisible(true); //TODO: possibly incorrect implementation of SetVisible + SetActive
+    }
+
+    size_t GetActiveNode() const
+    {
+        return m_activeNode;
+    }
+
 private:
     size_t m_activeNode;
 };
+
+
+class B3dSceneNodeEvent9 : public B3dOgreSceneNode<block_data::GroupTriggerBlock9, B3dSceneNodeEventBase>
+{
+public:
+    B3dSceneNodeEvent9(const std::string& name, Ogre::SceneNode* sceneNode) :
+        B3dOgreSceneNode<block_data::GroupTriggerBlock9, B3dSceneNodeEventBase>(name, sceneNode, 0)
+    {
+    }
+
+
+    void Switch()
+    {
+        SetActive((GetActiveNode() + 1) % 2);
+    }
+};
+
+using B3dSceneNodeEvent21 = B3dOgreSceneNode<block_data::GroupObjectsBlock21, B3dSceneNodeEventBase>;
 
 static const char* matNames[] = {
     "aa_col0",
@@ -3942,7 +3980,7 @@ static size_t matIdx = 0;
 class B3dSimpleVolumeCollision23 : public B3dOgreSceneNode<block_data::SimpleVolumeCollisionBlock23>
 {
 public:
-    B3dSimpleVolumeCollision23(const block_data::SimpleVolumeCollision23& data, Ogre::SceneManager* sceneManager, const std::string& name, Ogre::SceneNode* sceneNode)
+    B3dSimpleVolumeCollision23(const std::string& name, Ogre::SceneNode* sceneNode, const block_data::SimpleVolumeCollision23& data, Ogre::SceneManager* sceneManager)
         : B3dOgreSceneNode<block_data::SimpleVolumeCollisionBlock23>(name, sceneNode)
     {
         // https://github.com/Duude92/KOTRunity/blob/alpha/Scripts/BlockClasses/Block23.cs
@@ -3971,7 +4009,7 @@ public:
 class B3dSimpleFlatCollision20 : public B3dOgreSceneNode<block_data::SimpleFlatCollisionBlock20>
 {
 public:
-    B3dSimpleFlatCollision20(const block_data::SimpleFlatCollision20& data, Ogre::SceneManager* sceneManager, const std::string& name, Ogre::SceneNode* sceneNode)
+    B3dSimpleFlatCollision20(const std::string& name, Ogre::SceneNode* sceneNode, const block_data::SimpleFlatCollision20& data, Ogre::SceneManager* sceneManager)
         : B3dOgreSceneNode<block_data::SimpleFlatCollisionBlock20>(name, sceneNode)
     {
         // https://github.com/Duude92/KOTRunity/blob/alpha/Scripts/BlockClasses/Block20.cs
@@ -4040,7 +4078,7 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces8& node, con
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupTrigger9& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dOgreSceneNode<NodeGroupTrigger9::Value>>(parent, node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dSceneNodeEvent9>(parent, node.GetName(), sceneNode);
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupLodParameters10& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -4079,17 +4117,17 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects19& node, c
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFlatCollision20& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dSimpleFlatCollision20>(parent, node.GetBlockData(), GetSceneBuilder().GetSceneManager(), node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dSimpleFlatCollision20>(parent, node.GetName(), sceneNode, node.GetBlockData(), GetSceneBuilder().GetSceneManager());
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects21& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dSceneNodeEvent>(parent, node.GetBlockData().defaultValue, node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dSceneNodeEvent21>(parent, node.GetName(), sceneNode, node.GetBlockData().defaultValue);
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleVolumeCollision23& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dSimpleVolumeCollision23>(parent, node.GetBlockData(), GetSceneBuilder().GetSceneManager(), node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dSimpleVolumeCollision23>(parent, node.GetName(), sceneNode, node.GetBlockData(), GetSceneBuilder().GetSceneManager());
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleUnknown25& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -4146,7 +4184,7 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleGeneratedObjects4
     auto generatorName = common::ResourceNameToString(node.GetBlockData().name);
     if (generatorName == "$$GeneratorOfTerrain")
     {
-        return CreateB3dSceneNode<Terrain>(parent, GetSceneBuilder().GetSceneManager(), sceneNode);
+        return CreateB3dSceneNode<Terrain>(parent, "terrain." + node.GetName(), sceneNode, GetSceneBuilder().GetSceneManager());
     }
     else
     {

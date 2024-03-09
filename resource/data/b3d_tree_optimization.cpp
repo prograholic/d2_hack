@@ -21,29 +21,6 @@ using namespace common;
 
 namespace transformation
 {
-namespace predicates
-{
-
-
-template <typename Iterator>
-static bool IsAllNodesOfType(Iterator first, Iterator last, const std::uint32_t* firstType, const std::uint32_t* lastType)
-{
-    while (first != last)
-    {
-        if (!IsNodeOfType(*first, firstType, lastType))
-        {
-            return false;
-        }
-
-        ++first;
-    }
-
-    return true;
-}
-
-} // namespace predicates
-
-////////////////////////////////////////////////////////////////////////////////
 
 static void UseFirstAlternative(const NodePtr& node)
 {
@@ -321,9 +298,9 @@ static NodePtr CreateEventEntryNode(const B3dTreePtr& tree)
     return MakeVisitableNode(tree, NodePtr{}, MakeBlockHeader(common::ResourceName{}, block_data::EventEntryBlockXxx), block_data::EventEntry{});
 }
 
-static void InjectGroup21Event(const B3dNodePtr& node)
+static void InjectEventNode(const B3dNodePtr& node)
 {
-    if (node->GetType() == block_data::GroupObjectsBlock21)
+    if ((node->GetType() == block_data::GroupObjectsBlock21) || (node->GetType() == block_data::GroupTriggerBlock9))
     {
         if ((node->GetChildNodeList().size() == 1) && (node->GetChildNodeList().front()->GetType() == block_data::HierarchyBreakerBlockXxx))
         {
@@ -347,27 +324,35 @@ static void InjectGroup21Event(const B3dNodePtr& node)
             }
         }
 
-        assert(node->NodeCast<NodeGroupObjects21>()->GetBlockData().count == newChilds.size());
+        if (node->GetType() == block_data::GroupObjectsBlock21)
+        {
+            assert(node->NodeCast<NodeGroupObjects21>()->GetBlockData().count == newChilds.size());
+        }
+        else if (node->GetType() == block_data::GroupTriggerBlock9)
+        {
+            assert(newChilds.size() == 2);
+        }
+        
         node->SetChildNodes(std::move(newChilds));
     }
 
     for (const auto& child : node->GetChildNodeList())
     {
-        InjectGroup21Event(std::static_pointer_cast<B3dNode>(child));
+        InjectEventNode(std::static_pointer_cast<B3dNode>(child));
     }
 }
 
-static void InjectGroup21Event(B3dTree& tree)
+static void InjectEventNode(B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        InjectGroup21Event(node);
+        InjectEventNode(node);
     }
 }
 
 static void TransformTree(const B3dTree& common, const B3dTree& trucks, B3dTree& tree)
 {
-    InjectGroup21Event(tree);
+    InjectEventNode(tree);
     MergeFacesWithVertices(tree);
     ProcessObjectConnectors(common, trucks, tree);
 }
