@@ -20,6 +20,7 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 #include <d2_hack/common/resource_mgmt.h>
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/log.h>
+#include <d2_hack/common/numeric_conversion.h>
 
 #include "terrain.h"
 
@@ -265,7 +266,7 @@ void B3dSceneBuilder::SetMeshInfo(const Ogre::MeshPtr& mesh, const common::Simpl
 
 void B3dSceneBuilder::ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex)
 {
-    vertexData->vertexCount = positions.size();
+    vertexData->vertexCount = common::NumericCast<std::uint32_t>(positions.size());
     Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
     Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
 

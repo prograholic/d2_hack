@@ -10,8 +10,7 @@
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
 
 #include <OgreString.h>
-#include <OgreVector3.h>
-#include <OgreVector2.h>
+#include <Ogre.h>
 
 D2_HACK_DISABLE_WARNING_END() //4251
 

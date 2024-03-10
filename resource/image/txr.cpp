@@ -1,12 +1,11 @@
 #include <d2_hack/resource/image/txr.h>
 
-#include <cstdint>
-
-#include <OgreImage.h>
 #include <OgreDataStream.h>
+#include <OgreImage.h>
 
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/numeric_conversion.h>
+
 
 namespace d2_hack
 {
@@ -47,22 +46,7 @@ static_assert(sizeof(TgaHeader) == 18, "Incorrect TGA header declaration");
 } // namespace detail
 
 
-
-
-Ogre::DataStreamPtr TxrImageCodec::encode(const Ogre::MemoryDataStreamPtr& /* input */,
-                                          const Ogre::Codec::CodecDataPtr& /* pData */) const
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "encode is not implemented");
-}
-
-void TxrImageCodec::encodeToFile(const Ogre::MemoryDataStreamPtr& /* input */,
-                                 const Ogre::String& /* outFileName */,
-                                 const Ogre::Codec::CodecDataPtr& /* pData */) const
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "encodeToFile is not implemented");
-}
-
-Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input) const
+void TxrImageCodec::decode(const Ogre::DataStreamPtr& input, const Ogre::Any& output) const
 {
     detail::TgaHeader tgaHeader;
     if (input->read(&tgaHeader, sizeof(tgaHeader)) != sizeof(tgaHeader))
@@ -98,39 +82,25 @@ Ogre::Codec::DecodeResult TxrImageCodec::decode(const Ogre::DataStreamPtr& input
 
     D2_HACK_LOG(TxrImageCodec) << "image descriptor: " << static_cast<int>(tgaHeader.imagedescriptor);
 
-    input->skip(tgaHeader.idlength);
-
-    std::unique_ptr<ImageData> imgData(new ImageData());
-
-    imgData->depth = 1;
-    imgData->width = width;
-    imgData->height = height;
-    imgData->num_mipmaps = 0;
-    imgData->flags = 0;
+    Ogre::PixelFormat pixelFormat;
     switch (tgaHeader.bitsperpixel)
     {
     case 16:
-        imgData->format = Ogre::PF_R5G6B5;
+        pixelFormat = Ogre::PF_R5G6B5;
         break;
 
     default:
         OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "can`t decode bits per pixel");
     }
 
-    imgData->size = Ogre::Image::calculateSize(imgData->num_mipmaps, 1,
-                                               imgData->width, imgData->height,
-                                               imgData->depth, imgData->format);
+    input->skip(tgaHeader.idlength);
 
-    Ogre::MemoryDataStreamPtr output(new Ogre::MemoryDataStream(imgData->size));
-    if (input->read(output->getPtr(), imgData->size) != imgData->size)
+    Ogre::Image* image = any_cast<Ogre::Image*>(output);
+    image->create(pixelFormat, width, height, 1, 1, 0);
+    if (input->read(image->getData(), image->getSize()) != image->getSize())
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Failed to read image data");
     }
-
-    Ogre::Codec::DecodeResult res(output, Ogre::Codec::CodecDataPtr(imgData.get()));
-    imgData.release();
-
-    return res;
 }
 
 Ogre::String TxrImageCodec::getType() const

@@ -15,7 +15,7 @@ set(Boost_ADDITIONAL_VERSIONS "1.74.0" "1.74")
 
 find_package(Boost REQUIRED)
 
-find_package(OGRE 1.11 REQUIRED PATHS ${OGRE_DIR})
+find_package(OGRE 14 REQUIRED PATHS ${OGRE_DIR})
 include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
 
 set(APP_ROOT_DIRECTORY ${CMAKE_BINARY_DIR}/app_root)

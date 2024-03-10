@@ -15,11 +15,7 @@ namespace image
 class RawImageCodec : public Ogre::ImageCodec
 {
 public:
-    virtual Ogre::DataStreamPtr encode(const Ogre::MemoryDataStreamPtr& input, const CodecDataPtr& pData) const override;
-
-    virtual void encodeToFile(const Ogre::MemoryDataStreamPtr& input, const Ogre::String& outFileName, const CodecDataPtr& pData) const override;
-
-    virtual Ogre::Codec::DecodeResult decode(const Ogre::DataStreamPtr& input) const override;
+    virtual void decode(const Ogre::DataStreamPtr& input, const Ogre::Any& output) const override;
 
     virtual Ogre::String getType() const override;
 

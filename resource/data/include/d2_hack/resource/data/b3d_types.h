@@ -7,7 +7,7 @@
 #include <memory>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4251)
-#include <OgreVector3.h>
+#include <Ogre.h>
 #include <OgreMatrix3.h>
 D2_HACK_DISABLE_WARNING_END() // 4251
 

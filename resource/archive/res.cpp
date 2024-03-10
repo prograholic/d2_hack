@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include <OgreException.h>
+#include <OgreSharedPtr.h>
 
 #include <d2_hack/common/offset_data_stream.h>
 #include <d2_hack/common/resource_mgmt.h>
@@ -112,7 +113,7 @@ Ogre::DataStreamPtr ResArchive::open(const Ogre::String& filename, bool /* readO
 
 Ogre::StringVectorPtr ResArchive::list(bool recursive, bool dirs) const
 {
-    Ogre::StringVectorPtr ret = Ogre::StringVectorPtr(OGRE_NEW_T(Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
+    Ogre::StringVectorPtr ret = Ogre::StringVectorPtr{new Ogre::StringVector{}};
 
     Ogre::FileInfoList::const_iterator i, iend;
     iend = m_fileInfoList.end();
@@ -141,13 +142,12 @@ Ogre::FileInfoListPtr ResArchive::listFileInfo(bool recursive, bool dirs) const
         }
     }
 
-    return Ogre::FileInfoListPtr(fil, Ogre::SPFM_DELETE_T);
+    return Ogre::FileInfoListPtr{fil};
 }
 
 Ogre::StringVectorPtr ResArchive::find(const Ogre::String& pattern, bool recursive, bool dirs) const
 {
-    Ogre::StringVectorPtr ret =
-        Ogre::StringVectorPtr(OGRE_NEW_T(Ogre::StringVector, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
+    Ogre::StringVectorPtr ret = Ogre::StringVectorPtr{new Ogre::StringVector{}};
     // If pattern contains a directory name, do a full match
     bool full_match = (pattern.find('/') != Ogre::String::npos) || (pattern.find('\\') != Ogre::String::npos);
     bool wildCard = pattern.find('*') != Ogre::String::npos;
@@ -194,7 +194,7 @@ time_t ResArchive::getModifiedTime(const Ogre::String& /* filename */) const
 
 Ogre::FileInfoListPtr ResArchive::findFileInfo(const Ogre::String& pattern, bool recursive, bool dirs) const
 {
-    Ogre::FileInfoListPtr ret = Ogre::FileInfoListPtr(OGRE_NEW_T(Ogre::FileInfoList, Ogre::MEMCATEGORY_GENERAL)(), Ogre::SPFM_DELETE_T);
+    Ogre::FileInfoListPtr ret = Ogre::FileInfoListPtr{new Ogre::FileInfoList{}};
     // If pattern contains a directory name, do a full match
     bool full_match = (pattern.find('/') != Ogre::String::npos) || (pattern.find('\\') != Ogre::String::npos);
     bool wildCard = pattern.find('*') != Ogre::String::npos;

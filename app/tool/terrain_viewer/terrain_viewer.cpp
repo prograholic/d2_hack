@@ -35,14 +35,13 @@ void TerrainViewer::CreateTerrain()
     Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
     Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(7);
 
-    Ogre::Vector3 lightdir(0.55f, -0.3f, 0.75f);
-    lightdir.normalise();
-
     Ogre::Light* light = m_sceneManager->createLight("tstLight");
     light->setType(Ogre::Light::LT_DIRECTIONAL);
-    light->setDirection(lightdir);
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue(0.4f, 0.4f, 0.4f));
+
+    Ogre::SceneNode* lightSceneNode = m_sceneManager->getRootSceneNode()->createChildSceneNode();
+    lightSceneNode->attachObject(light);
 
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.2f, 0.2f, 0.2f));
 
@@ -77,7 +76,6 @@ void TerrainViewer::ConfigureTerrainDefaults(Ogre::Light* light)
     m_terrainGlobalOptions->setCompositeMapDistance(3000);
 
     // Important to set these so that the terrain knows what to use for derived (non-realtime) data
-    m_terrainGlobalOptions->setLightMapDirection(light->getDerivedDirection());
     m_terrainGlobalOptions->setCompositeMapAmbient(m_sceneManager->getAmbientLight());
     m_terrainGlobalOptions->setCompositeMapDiffuse(light->getDiffuseColour());
 
