@@ -15,9 +15,9 @@ B3dCar::B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
                Ogre::SceneManager* sceneManager,
                Ogre::SceneNode* rootNode,
                Ogre::MeshManager* meshManager)
-    : m_rootB3dNodes()
+    : m_rootNodes()
 {
-    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, m_rootB3dNodes};
+    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, m_rootNodes};
     B3dTreeVisitor visitor{sceneBuilder};
     auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;

@@ -28,6 +28,21 @@ enum class VisitMode
     PostOrder
 };
 
+enum class [[nodiscard]] VisitResult
+{
+    // Continue processing, this is the default behavior
+    Continue,
+
+    // Stop all processing
+    Stop,
+
+    // Skip children (only allowed in PreOrder mode)
+    SkipChildren,
+
+    // Skip children and post order (only allowed in PreOrder mode)
+    SkipChildrenAndPostOrder
+};
+
 struct Transform
 {
     Ogre::Matrix3 matrix;

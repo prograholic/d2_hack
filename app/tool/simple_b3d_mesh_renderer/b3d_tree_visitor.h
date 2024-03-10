@@ -18,12 +18,12 @@ struct SceneNodeGenericAction
     static resource::data::b3d::VisitResult Perform(VisitorType* self, NodeType& node, resource::data::b3d::VisitMode visitMode)
     {
 
-        auto sceneNode = self->GetSceneBuilder().ProcessSceneNode(node.GetName(), visitMode);
+        auto ogreSceneNode = self->GetSceneBuilder().ProcessOgreSceneNode(node.GetName(), visitMode);
 
         if (visitMode == resource::data::b3d::VisitMode::PreOrder)
         {
-            auto parentB3dSceneNode = self->GetSceneBuilder().GetParentB3dSceneNode();
-            auto b3dSceneNode = self->CreateNode(node, parentB3dSceneNode, sceneNode);
+            auto parentB3dSceneNode = self->GetSceneBuilder().GetParentSceneNode();
+            auto b3dSceneNode = self->CreateNode(node, parentB3dSceneNode, ogreSceneNode);
             self->GetSceneBuilder().PushToSceneNodeStack(b3dSceneNode);
         }
         else
@@ -43,62 +43,62 @@ public:
     B3dSceneBuilder& GetSceneBuilder();
 
     template <typename NodeType>
-    B3dSceneNodeBasePtr CreateNode(const NodeType& node, const B3dSceneNodeBasePtr& /* parent */, Ogre::SceneNode* /* sceneNode */)
+    scene_node::SceneNodeBasePtr CreateNode(const NodeType& node, const scene_node::SceneNodeBasePtr& /* parent */, Ogre::SceneNode* /* sceneNode */)
     {
         resource::data::b3d::RaiseExceptionAction::RaiseException(node.GetName().c_str(), node.GetType());
 
-        return B3dSceneNodeBasePtr{};
+        return scene_node::SceneNodeBasePtr{};
     }
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeEventEntry& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeEventEntry& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupUnknown2& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupUnknown2& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupRoadInfraObjects4& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupRoadInfraObjects4& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupObjects5& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupObjects5& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupVertexData7& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupVertexData7& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFaces8& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFaces8& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupTrigger9& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupTrigger9& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupLodParameters10& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupLodParameters10& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupUnknown12& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupUnknown12& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleTrigger13& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleTrigger13& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleUnknown14& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleUnknown14& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleObjectConnector18& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleObjectConnector18& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupObjects19& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupObjects19& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFlatCollision20& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFlatCollision20& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupObjects21& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupObjects21& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleVolumeCollision23& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleVolumeCollision23& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleUnknown25& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleUnknown25& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFaces28& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFaces28& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupUnknown29& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupUnknown29& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimplePortal30& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimplePortal30& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupLightingObjects33& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupLightingObjects33& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleUnknown34& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleUnknown34& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFaces35& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleFaces35& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupVertexData37& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeGroupVertexData37& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
-    B3dSceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleGeneratedObjects40& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
+    scene_node::SceneNodeBasePtr CreateNode(const resource::data::b3d::NodeSimpleGeneratedObjects40& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode);
 
 private:
     B3dSceneBuilder& m_sceneBuilder;

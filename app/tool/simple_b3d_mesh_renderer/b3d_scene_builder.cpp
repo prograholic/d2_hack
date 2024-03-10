@@ -1,28 +1,9 @@
 #include "b3d_scene_builder.h"
 
-D2_HACK_DISABLE_WARNING_BEGIN(4100)
-D2_HACK_DISABLE_WARNING_BEGIN(4275)
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-
-#include <OgreHardwareBufferManager.h>
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
-#include <OgreMesh.h>
-#include <OgreSubMesh.h>
-#include <OgreMeshManager.h>
-#include <OgreEntity.h>
-
-D2_HACK_DISABLE_WARNING_END() // 4251
-D2_HACK_DISABLE_WARNING_END() // 4275
-D2_HACK_DISABLE_WARNING_END() // 4100
-
-
-#include <d2_hack/common/resource_mgmt.h>
-#include <d2_hack/common/utils.h>
 #include <d2_hack/common/log.h>
+#include <d2_hack/common/utils.h>
+#include <d2_hack/common/resource_mgmt.h>
 #include <d2_hack/common/numeric_conversion.h>
-
-#include "terrain.h"
 
 //#define B3D_NOT_IMPLEMENTED() D2_HACK_LOG("") << __FUNCSIG__ << ": NOT IMPLEMENTED"
 #define B3D_NOT_IMPLEMENTED()
@@ -35,29 +16,25 @@ namespace app
 
 using namespace resource::data::b3d;
 
-B3dSceneNodeBase::B3dSceneNodeBase(const std::string& name, std::uint32_t type)
-    : common::NodeBase(name, type)
-{
-}
 
 B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
                                  Ogre::SceneManager* sceneManager,
-                                 Ogre::SceneNode* rootNode,
+                                 Ogre::SceneNode* ogreRootNode,
                                  Ogre::MeshManager* meshManager,
-                                 B3dSceneNodeBaseList& rootB3dSceneNodes)
+                                 scene_node::SceneNodeBaseList& rootSceneNodes)
     : m_b3dId(b3dId)
     , m_sceneManager(sceneManager)
-    , m_rootNode(rootNode)
+    , m_ogreRootNode(ogreRootNode)
     , m_meshManager(meshManager)
-    , m_rootB3dSceneNodes(rootB3dSceneNodes)
+    , m_rootSceneNodes(rootSceneNodes)
 {
 }
 
 
 B3dSceneBuilder::~B3dSceneBuilder()
 {
-    assert(m_sceneNodes.empty());
-    assert(m_b3dSceneNodesStack.empty());
+    assert(m_ogreSceneNodes.empty());
+    assert(m_SceneNodesStack.empty());
 }
 
 std::string B3dSceneBuilder::GetB3dId() const
@@ -75,14 +52,14 @@ Ogre::MeshManager* B3dSceneBuilder::GetMeshManager() const
     return m_meshManager;
 }
 
-Ogre::SceneNode* B3dSceneBuilder::GetCurrentSceneNode() const
+Ogre::SceneNode* B3dSceneBuilder::GetCurrentOgreSceneNode() const
 {
-    return m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
+    return m_ogreSceneNodes.empty() ? m_ogreRootNode : m_ogreSceneNodes.top();
 }
 
 void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode)
 {
-    Ogre::SceneNode* sceneNode = ProcessSceneNode(node.GetName(), visitMode);
+    Ogre::SceneNode* ogreSceneNode = ProcessOgreSceneNode(node.GetName(), visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
         std::string full_name = GetNameImpl(node.GetName(), "light", false);
@@ -95,7 +72,7 @@ void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingO
         Ogre::SceneNode* lightNode = m_sceneManager->createSceneNode(full_name + "_scene_node");
         lightNode->attachObject(light);
         lightNode->setPosition(node.GetBlockData().position);
-        sceneNode->addChild(lightNode);
+        ogreSceneNode->addChild(lightNode);
 
         // TODO: setup light
         B3D_NOT_IMPLEMENTED();
@@ -105,12 +82,12 @@ void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingO
 
 void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node)
 {
-    Ogre::SceneNode* sceneNode = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
+    Ogre::SceneNode* ogreSceneNode = m_ogreSceneNodes.empty() ? m_ogreRootNode : m_ogreSceneNodes.top();
 
     for (const auto& transform : node.GetBlockData().transformation)
     {
-        sceneNode->rotate(Ogre::Quaternion{ transform.matrix });
-        sceneNode->translate(transform.position);
+        ogreSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
+        ogreSceneNode->translate(transform.position);
     }
 }
 
@@ -119,7 +96,7 @@ void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimp
     B3D_NOT_IMPLEMENTED();
 }
 
-Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, VisitMode visitMode)
+Ogre::SceneNode* B3dSceneBuilder::ProcessOgreSceneNode(const std::string& name, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
@@ -129,22 +106,22 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessSceneNode(const std::string& name, Visi
             full_name = GetNameImpl(name, "scene_node", true);
         }
 
-        Ogre::SceneNode* sceneNode = m_sceneManager->createSceneNode(full_name);
-        Ogre::SceneNode* parent = m_sceneNodes.empty() ? m_rootNode : m_sceneNodes.top();
-        parent->addChild(sceneNode);
+        Ogre::SceneNode* ogreSceneNode = m_sceneManager->createSceneNode(full_name);
+        Ogre::SceneNode* parent = m_ogreSceneNodes.empty() ? m_ogreRootNode : m_ogreSceneNodes.top();
+        parent->addChild(ogreSceneNode);
 
-        m_sceneNodes.push(sceneNode);
+        m_ogreSceneNodes.push(ogreSceneNode);
 
         //D2_HACK_LOG(B3dTreeVisitor::ProcessSceneNode(PreOrder)) << "name: " << name << ", parent: " << parent->getName() << ", scene nodes count: " << m_sceneNodes.size();
 
-        return sceneNode;
+        return ogreSceneNode;
     }
     else
     {
-        Ogre::SceneNode* sceneNode = m_sceneNodes.top();
-        m_sceneNodes.pop();
+        Ogre::SceneNode* ogreSceneNode = m_ogreSceneNodes.top();
+        m_ogreSceneNodes.pop();
 
-        return sceneNode;
+        return ogreSceneNode;
     }
 }
 
@@ -167,27 +144,27 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
     }
 
     Ogre::Entity* entity = m_sceneManager->createEntity(mesh);
-    m_sceneNodes.top()->createChildSceneNode()->attachObject(entity);
+    m_ogreSceneNodes.top()->createChildSceneNode()->attachObject(entity);
 }
 
-B3dSceneNodeBasePtr B3dSceneBuilder::GetParentB3dSceneNode()
+scene_node::SceneNodeBasePtr B3dSceneBuilder::GetParentSceneNode()
 {
-    return m_b3dSceneNodesStack.empty() ? B3dSceneNodeBasePtr{} : m_b3dSceneNodesStack.top();
+    return m_sceneNodesStack.empty() ? scene_node::SceneNodeBasePtr{} : m_sceneNodesStack.top();
 }
 
-void B3dSceneBuilder::PushToSceneNodeStack(const B3dSceneNodeBasePtr& node)
+void B3dSceneBuilder::PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& node)
 {
-    if (m_b3dSceneNodesStack.empty())
+    if (m_sceneNodesStack.empty())
     {
-        m_rootB3dSceneNodes.push_back(node);
+        m_rootSceneNodes.push_back(node);
     }
 
-    m_b3dSceneNodesStack.push(node);
+    m_sceneNodesStack.push(node);
 }
 
 void B3dSceneBuilder::PopFromSceneNodeStack()
 {
-    m_b3dSceneNodesStack.pop();
+    m_sceneNodesStack.pop();
 }
 
 

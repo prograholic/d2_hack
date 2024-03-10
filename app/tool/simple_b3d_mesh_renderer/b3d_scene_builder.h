@@ -4,15 +4,9 @@
 #include <d2_hack/common/platform.h>
 
 #include <stack>
-#include <list>
 
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-#include <OgreRenderOperation.h>
-#include <OgreSceneNode.h>
-#include <OgreMatrix3.h>
-D2_HACK_DISABLE_WARNING_END() // 4251
+#include <d2_hack/scene_node/scene_node_base.h>
 
-#include <d2_hack/common/types.h>
 #include <d2_hack/resource/data/b3d_node.h>
 
 namespace d2_hack
@@ -20,65 +14,6 @@ namespace d2_hack
 namespace app
 {
 
-class B3dSceneNodeBase : public common::NodeBase
-{
-public:
-    B3dSceneNodeBase(const std::string& name, std::uint32_t type);
-
-    virtual void SetVisible(bool visible) = 0;
-};
-
-typedef std::shared_ptr<B3dSceneNodeBase> B3dSceneNodeBasePtr;
-typedef std::list<B3dSceneNodeBasePtr> B3dSceneNodeBaseList;
-
-
-template <std::uint32_t NodeTypeId, typename SceneNodeBaseType>
-class B3dSceneNode : public SceneNodeBaseType
-{
-public:
-    static constexpr std::uint32_t Value = NodeTypeId;
-
-    template<typename... Args>
-    B3dSceneNode(const std::string& name, Args&&... args)
-        : SceneNodeBaseType(name, Value, std::forward<Args&&>(args)...)
-    {
-    }
-};
-
-
-
-template <std::uint32_t NodeTypeId, typename SceneNodeBaseType = B3dSceneNodeBase>
-class B3dOgreSceneNode : public B3dSceneNode<NodeTypeId, SceneNodeBaseType>
-{
-public:
-
-    template<typename... Args>
-    B3dOgreSceneNode(const std::string& name, Ogre::SceneNode* sceneNode, Args&&... args)
-        : B3dSceneNode<NodeTypeId, SceneNodeBaseType>(name, std::forward<Args&&>(args)...)
-        , m_sceneNode(sceneNode)
-    {
-    }
-
-    virtual void SetVisible(bool visible) override
-    {
-        m_sceneNode->setVisible(visible);
-    }
-
-private:
-    Ogre::SceneNode* m_sceneNode;
-};
-
-template <typename Node, typename... Args>
-static B3dSceneNodeBasePtr CreateB3dSceneNode(const B3dSceneNodeBasePtr& parent, Args&&... args)
-{
-    auto res = std::make_shared<Node>(std::forward<Args&&>(args)...);
-    if (parent)
-    {
-        parent->AddChildNode(res);
-    }
-
-    return res;
-}
 
 class B3dSceneBuilder
 {
@@ -89,9 +24,9 @@ public:
 
     B3dSceneBuilder(const std::string& b3dId,
                     Ogre::SceneManager* sceneManager,
-                    Ogre::SceneNode* rootNode,
+                    Ogre::SceneNode* ogreRootNode,
                     Ogre::MeshManager* meshManager,
-                    B3dSceneNodeBaseList& rootB3dSceneNodes);
+                    scene_node::SceneNodeBaseList& rootSceneNodes);
 
     ~B3dSceneBuilder();
 
@@ -101,7 +36,7 @@ public:
     
     Ogre::MeshManager* GetMeshManager() const;
     
-    Ogre::SceneNode* GetCurrentSceneNode() const;
+    Ogre::SceneNode* GetCurrentOgreSceneNode() const;
 
     void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode);
 
@@ -109,24 +44,24 @@ public:
 
     void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& node, VisitMode visitMode);
 
-    Ogre::SceneNode* ProcessSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
+    Ogre::SceneNode* ProcessOgreSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
 
     void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
 
-    B3dSceneNodeBasePtr GetParentB3dSceneNode();
+    scene_node::SceneNodeBasePtr GetParentSceneNode();
 
-    void PushToSceneNodeStack(const B3dSceneNodeBasePtr& node);
+    void PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& node);
 
     void PopFromSceneNodeStack();
 
 private:
     const std::string m_b3dId;
     Ogre::SceneManager* m_sceneManager;
-    Ogre::SceneNode* m_rootNode;
+    Ogre::SceneNode* m_ogreRootNode;
     Ogre::MeshManager* m_meshManager;
-    B3dSceneNodeBaseList& m_rootB3dSceneNodes;
-    std::stack<Ogre::SceneNode*> m_sceneNodes;
-    std::stack<B3dSceneNodeBasePtr> m_b3dSceneNodesStack;
+    scene_node::SceneNodeBaseList& m_rootSceneNodes;
+    std::stack<Ogre::SceneNode*> m_ogreSceneNodes;
+    std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
 
     std::string GetB3dResourceId(const std::string& name) const;
 

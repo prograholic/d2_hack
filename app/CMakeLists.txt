@@ -9,6 +9,7 @@ target_link_libraries(d2_hack.app
         OgreBites
         OgreTerrain
         d2_hack.resource
+        d2_hack.scene_node
 )
 
 add_subdirectory(tool)

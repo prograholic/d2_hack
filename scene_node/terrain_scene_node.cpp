@@ -1,8 +1,8 @@
-#include "terrain.h"
+#include <d2_hack/scene_node/terrain_scene_node.h>
 
 namespace d2_hack
 {
-namespace app
+namespace scene_node
 {
 
 const std::uint16_t TerrainSize = 257;
@@ -12,18 +12,18 @@ const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
 const char* HeightMap2Name = "terrain2.raw2";
 
-Terrain::Terrain(const std::string& name, Ogre::SceneNode* sceneNode, Ogre::SceneManager* sceneManager)
-    : B3dOgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, sceneNode)
+TerrainSceneNode::TerrainSceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode, Ogre::SceneManager* sceneManager)
+    : OgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, ogreSceneNode)
     , m_terrainGlobalOptions(std::make_unique<Ogre::TerrainGlobalOptions>())
-    , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Y, TerrainSize, TerrainWorldSize, sceneNode))
+    , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Y, TerrainSize, TerrainWorldSize, ogreSceneNode))
 {
     m_terrainGroup->setResourceGroup("D2");
     CreateTerrain();
-    sceneNode->roll(Ogre::Degree(90.0f));
-    sceneNode->setPosition(TerrainOrigin);
+    ogreSceneNode->roll(Ogre::Degree(90.0f));
+    ogreSceneNode->setPosition(TerrainOrigin);
 }
 
-void Terrain::CreateTerrain()
+void TerrainSceneNode::CreateTerrain()
 {
     ConfigureTerrainDefaults();
 
@@ -34,7 +34,7 @@ void Terrain::CreateTerrain()
     m_terrainGroup->freeTemporaryResources();
 }
 
-void Terrain::ConfigureTerrainDefaults()
+void TerrainSceneNode::ConfigureTerrainDefaults()
 {
     m_terrainGlobalOptions->setMaxPixelError(8);
     // testing composite map
@@ -61,7 +61,7 @@ void Terrain::ConfigureTerrainDefaults()
     defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr"); // FIXME: find proper texture???
 }
 
-void Terrain::DefineTerrains()
+void TerrainSceneNode::DefineTerrains()
 {
     Ogre::Image img0;
     img0.load(HeightMap0Name, "D2");
@@ -109,6 +109,5 @@ void Terrain::DefineTerrains()
     m_terrainGroup->defineTerrain(0, 0, yyy.data());
 }
 
-
-} // namespace app
+} // namespace scene_node
 } // namespace d2_hack

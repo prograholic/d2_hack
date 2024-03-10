@@ -50,20 +50,23 @@ function(copy_ogre_target_runtime target)
 endfunction()
 
 
-function(copy_runtime dll_name suffix)
+function(copy_runtime dll_name suffix suffix2)
     set(runtime_dir ${OGRE_MEDIA_DIR}/../bin)
     set(runtime_path ${runtime_dir}/${dll_name}${suffix}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    if (EXISTS ${runtime_path})
-        message(STATUS "copy (${runtime_path} to ${APP_BIN_DIRECTORY} ...")
-        configure_file(${runtime_path} ${APP_BIN_DIRECTORY} COPYONLY)
-    else()
-        message(FATAL_ERROR "unknown location of ${dll_name}")
+    if (NOT EXISTS ${runtime_path})
+        set(runtime_path ${runtime_dir}/${dll_name}${suffix2}${CMAKE_SHARED_LIBRARY_SUFFIX})
+        if (NOT EXISTS ${runtime_path})
+            message(FATAL_ERROR "unknown location of ${dll_name}")
+        endif()
     endif()
+    
+    message(STATUS "copy (${runtime_path} to ${APP_BIN_DIRECTORY} ...")
+    configure_file(${runtime_path} ${APP_BIN_DIRECTORY} COPYONLY)
 endfunction()
 
 
-function(copy_3rd_party_runtime dll_name)
-    copy_runtime(${dll_name} "")
+function(copy_3rd_party_runtime dll_name suffix_debug)
+    copy_runtime(${dll_name} "" "${suffix_debug}")
 endfunction()
 
 function(copy_ogre_runtime dll_name)
@@ -79,11 +82,11 @@ function(copy_ogre_runtime dll_name)
     endif()
     
     if (should_copy_debug)
-        copy_runtime(${dll_name} "_d")
+        copy_runtime(${dll_name} "_d" "_d")
     endif()
     
     if (should_copy_release)
-        copy_runtime(${dll_name} "")
+        copy_runtime(${dll_name} "" "")
     endif()
     
 endfunction()

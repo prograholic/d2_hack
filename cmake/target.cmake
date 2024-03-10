@@ -16,6 +16,14 @@ function(d2_hack_set_common_target_props target_name)
             -DD2_ROOT_DIR="${D2_ROOT_DIR_CMAKE_DIR}"
     )
     
+    get_target_property(target_source_dir ${target_name} SOURCE_DIR)
+    file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${target_source_dir})
+    
+    set_target_properties(${target_name}
+        PROPERTIES
+            FOLDER "${rel_path}"
+    )
+    
 endfunction()
 
 function(d2_hack_add_executable target_name)

@@ -28,21 +28,6 @@ typedef std::weak_ptr<B3dTree> B3dTreeWeakPtr;
 typedef std::shared_ptr<B3dTree> B3dTreePtr;
 
 
-enum class [[nodiscard]] VisitResult
-{
-    // Continue processing, this is the default behavior
-    Continue,
-
-    // Stop all processing
-    Stop,
-
-    // Skip children (only allowed in PreOrder mode)
-    SkipChildren,
-
-    // Skip children and post order (only allowed in PreOrder mode)
-    SkipChildrenAndPostOrder
-};
-
 enum class NodeCategory
 {
     Generic,

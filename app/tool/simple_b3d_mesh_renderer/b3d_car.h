@@ -6,8 +6,7 @@
 #include <memory>
 
 #include <d2_hack/resource/data/b3d_node.h>
-
-#include "b3d_scene_builder.h"
+#include <d2_hack/scene_node/scene_node_base.h>
 
 namespace d2_hack
 {
@@ -24,7 +23,7 @@ public:
            Ogre::MeshManager* meshManager);
 
 private:
-    B3dSceneNodeBaseList m_rootB3dNodes;
+    scene_node::SceneNodeBaseList m_rootNodes;
 };
 
 typedef std::unique_ptr<B3dCar> B3dCarPtr;

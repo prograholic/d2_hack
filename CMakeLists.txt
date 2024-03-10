@@ -10,6 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(copy_runtime)
 include(setup_toolchain)
 include(target)
+include(setup_ide)
 
 set(Boost_ADDITIONAL_VERSIONS "1.74.0" "1.74")
 
@@ -44,8 +45,8 @@ copy_ogre_target_runtime(OgrePaging)
 
 copy_ogre_runtime(RenderSystem_GL)
 
-copy_3rd_party_runtime(zlib)
-copy_3rd_party_runtime(sdl2)
+copy_3rd_party_runtime(zlib "d")
+copy_3rd_party_runtime(sdl2 "d")
 
 
 enable_testing()
@@ -55,3 +56,4 @@ add_subdirectory(common)
 add_subdirectory(resource)
 add_subdirectory(app)
 add_subdirectory(scripts)
+add_subdirectory(scene_node)
