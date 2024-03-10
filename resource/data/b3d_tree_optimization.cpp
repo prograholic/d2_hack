@@ -22,38 +22,6 @@ using namespace common;
 namespace transformation
 {
 
-static void UseFirstAlternative(const NodePtr& node)
-{
-    auto& childs = node->GetChildNodeList();
-    auto pos = childs.begin();
-    while (pos != childs.end())
-    {
-        if ((*pos)->GetType() == block_data::HierarchyBreakerBlockXxx)
-        {
-            D2_HACK_LOG(UseFirstAlternative) << "  Got breaker node: " << (*pos)->GetName();
-            break;
-        }
-        ++pos;
-    }
-
-    childs.erase(pos, childs.end());
-
-    for (const auto& child : node->GetChildNodeList())
-    {
-        UseFirstAlternative(child);
-    }
-}
-
-static void UseFirstAlternative(B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        UseFirstAlternative(node);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 template <typename Item>
 void MergeItem(Item& dest, const Item& src)
 {
@@ -329,7 +297,16 @@ static std::list<NodeList> SplitNodes(const NodeList& childs)
 
 static void InjectEventNode(const B3dNodePtr& node)
 {
-    if ((node->GetType() == block_data::GroupObjectsBlock21) || (node->GetType() == block_data::GroupTriggerBlock9) || (node->GetType() == block_data::GroupUnknownBlock2))
+    static const std::uint32_t nodesWithHierarchyBreaker[] =
+    {
+        block_data::GroupUnknownBlock2,
+        block_data::GroupTriggerBlock9,
+        block_data::GroupLodParametersBlock10,
+        block_data::GroupObjectsBlock21,
+        block_data::GroupUnknownBlock29,
+    };
+
+    if (std::any_of(std::begin(nodesWithHierarchyBreaker), std::end(nodesWithHierarchyBreaker), [node](std::uint32_t value){return node->GetType() == value;}))
     {
         NodeList newChilds;
         auto categorizedNodes = SplitNodes(node->GetChildNodeList());
@@ -397,7 +374,6 @@ void Transform(B3dForest& forest)
 
 static void Optimize(B3dTree& tree)
 {
-    UseFirstAlternative(tree);
     MergeFacesWithSameMaterial(tree);
 }
 

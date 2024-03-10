@@ -75,7 +75,9 @@ private:
 
 using B3dGroupUnknown2 = B3dOgreSceneNode<block_data::GroupUnknownBlock2, B3dSceneNodeEventBase>;
 using B3dGroupTrigger9 = B3dOgreSceneNode<block_data::GroupTriggerBlock9, B3dSceneNodeEventBase>;
+using B3dGroupLod10 = B3dOgreSceneNode<block_data::GroupLodParametersBlock10, B3dSceneNodeEventBase>;
 using B3dSceneNodeEvent21 = B3dOgreSceneNode<block_data::GroupObjectsBlock21, B3dSceneNodeEventBase>;
+using B3dGroupUnknown29 = B3dOgreSceneNode<block_data::GroupUnknownBlock29, B3dSceneNodeEventBase>;
 
 static const char* matNames[] = {
     "aa_col0",
@@ -4069,7 +4071,7 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupTrigger9& node, co
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupLodParameters10& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dOgreSceneNode<NodeGroupLodParameters10::Value>>(parent, node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dGroupLod10>(parent, node.GetName(), sceneNode, 0);
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown12& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -4132,7 +4134,7 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces28& node, co
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown29& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dOgreSceneNode<NodeGroupUnknown29::Value>>(parent, node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dGroupUnknown29>(parent, node.GetName(), sceneNode, 0);
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimplePortal30& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
