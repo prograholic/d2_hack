@@ -298,39 +298,62 @@ static NodePtr CreateEventEntryNode(const B3dTreePtr& tree)
     return MakeVisitableNode(tree, NodePtr{}, MakeBlockHeader(common::ResourceName{}, block_data::EventEntryBlockXxx), block_data::EventEntry{});
 }
 
+static std::list<NodeList> SplitNodes(const NodeList& childs)
+{
+    std::list<NodeList> res;
+
+    NodeList tmp;
+
+    for (const auto& child : childs)
+    {
+        if (child->GetType() != block_data::HierarchyBreakerBlockXxx)
+        {
+            tmp.push_back(child);
+        }
+        else
+        {
+            if (!tmp.empty())
+            {
+                res.emplace_back(std::move(tmp));
+            }
+        }
+    }
+
+    if (!tmp.empty())
+    {
+        res.emplace_back(std::move(tmp));
+    }
+
+    return res;
+}
+
 static void InjectEventNode(const B3dNodePtr& node)
 {
-    if ((node->GetType() == block_data::GroupObjectsBlock21) || (node->GetType() == block_data::GroupTriggerBlock9))
+    if ((node->GetType() == block_data::GroupObjectsBlock21) || (node->GetType() == block_data::GroupTriggerBlock9) || (node->GetType() == block_data::GroupUnknownBlock2))
     {
-        if ((node->GetChildNodeList().size() == 1) && (node->GetChildNodeList().front()->GetType() == block_data::HierarchyBreakerBlockXxx))
-        {
-            node->GetChildNodeList().pop_back(); // remove unused node
-            return; // empty group, skip it!
-        }
-
         NodeList newChilds;
+        auto categorizedNodes = SplitNodes(node->GetChildNodeList());
 
-        newChilds.push_back(CreateEventEntryNode(node->GetOriginalRoot()));
-
-        for (auto& child : node->GetChildNodeList())
+        if (categorizedNodes.size() == 1)
         {
-            if (child->GetType() == block_data::HierarchyBreakerBlockXxx)
-            {
-                newChilds.push_back(CreateEventEntryNode(node->GetOriginalRoot()));
-            }
-            else
-            {
-                newChilds.back()->AddChildNode(child);
-            }
+            newChilds = std::move(categorizedNodes.front());
         }
-
-        if (node->GetType() == block_data::GroupObjectsBlock21)
+        else
         {
-            assert(node->NodeCast<NodeGroupObjects21>()->GetBlockData().count == newChilds.size());
-        }
-        else if (node->GetType() == block_data::GroupTriggerBlock9)
-        {
-            assert(newChilds.size() == 2);
+            for (auto& childs : categorizedNodes)
+            {
+                if (childs.size() == 1)
+                {
+                    newChilds.push_back(childs.front());
+                }
+                else
+                {
+                    assert(childs.size() > 1 && "Error in SplitNodes???");
+                    auto eventEntryNode = CreateEventEntryNode(node->GetOriginalRoot());
+                    eventEntryNode->SetChildNodes(std::move(childs));
+                    newChilds.push_back(eventEntryNode);
+                }
+            }
         }
         
         node->SetChildNodes(std::move(newChilds));

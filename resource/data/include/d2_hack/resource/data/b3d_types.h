@@ -139,8 +139,10 @@ struct GroupUnknown2
     static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
-    common::Position unknown0;
+    Ogre::Real unknown0;
     Ogre::Real unknown1;
+    std::uint32_t unknown2;
+    Ogre::Real unknown3;
 };
 
 

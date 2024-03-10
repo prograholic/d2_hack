@@ -333,8 +333,10 @@ private:
         block_data::GroupUnknown2 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        block.unknown0 = ReadVector3();
+        block.unknown0 = ReadFloat();
         block.unknown1 = ReadFloat();
+        block.unknown2 = ReadInt<std::uint32_t>();
+        block.unknown3 = ReadFloat();
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }

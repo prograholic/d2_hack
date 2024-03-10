@@ -403,6 +403,8 @@ private:
     {
         GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(adjustOffset) << "unknown1: " << block.unknown1 << "," << std::endl;
+        GetStream(adjustOffset) << "unknown2: " << block.unknown2 << "," << std::endl;
+        GetStream(adjustOffset) << "unknown3: " << block.unknown3 << "," << std::endl;
     }
 
     void PrintData(const block_data::GroupRoadInfraObjects4& block, const char* /* name */, int adjustOffset)
@@ -832,7 +834,6 @@ private:
         GetStream() << "{" << std::endl;
         if (m_printVectorData && printVectorData)
         {
-            GetStream(adjustOffset) << "}" << std::endl;
             for (auto pos : data)
             {
                 PrintData(pos.second, pos.first.c_str(), adjustOffset + 1);

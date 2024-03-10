@@ -51,7 +51,6 @@ public:
         }
     }
 
-
     void SetActive(size_t activeNode)
     {
         auto& childs = GetChildNodeList();
@@ -74,22 +73,8 @@ private:
     size_t m_activeNode;
 };
 
-
-class B3dSceneNodeEvent9 : public B3dOgreSceneNode<block_data::GroupTriggerBlock9, B3dSceneNodeEventBase>
-{
-public:
-    B3dSceneNodeEvent9(const std::string& name, Ogre::SceneNode* sceneNode) :
-        B3dOgreSceneNode<block_data::GroupTriggerBlock9, B3dSceneNodeEventBase>(name, sceneNode, 0)
-    {
-    }
-
-
-    void Switch()
-    {
-        SetActive((GetActiveNode() + 1) % 2);
-    }
-};
-
+using B3dGroupUnknown2 = B3dOgreSceneNode<block_data::GroupUnknownBlock2, B3dSceneNodeEventBase>;
+using B3dGroupTrigger9 = B3dOgreSceneNode<block_data::GroupTriggerBlock9, B3dSceneNodeEventBase>;
 using B3dSceneNodeEvent21 = B3dOgreSceneNode<block_data::GroupObjectsBlock21, B3dSceneNodeEventBase>;
 
 static const char* matNames[] = {
@@ -3977,6 +3962,32 @@ static const char* matNames[] = {
 static size_t matIdx = 0;
 
 
+class B3dSimpleFlatCollision20 : public B3dOgreSceneNode<block_data::SimpleFlatCollisionBlock20>
+{
+public:
+    B3dSimpleFlatCollision20(const std::string& name, Ogre::SceneNode* sceneNode, const block_data::SimpleFlatCollision20& data, Ogre::SceneManager* sceneManager)
+        : B3dOgreSceneNode<block_data::SimpleFlatCollisionBlock20>(name, sceneNode)
+    {
+        // https://github.com/Duude92/KOTRunity/blob/alpha/Scripts/BlockClasses/Block20.cs
+        matIdx += 1;
+        if (matIdx == (sizeof(matNames) / sizeof(matNames[0])))
+        {
+            matIdx = 0;
+        }
+        for (const auto& point : data.maybeVertices)
+        {
+            Ogre::Entity* pointEntity = sceneManager->createEntity(Ogre::SceneManager::PT_SPHERE);
+
+            pointEntity->setMaterialName(matNames[matIdx], "D2");
+
+            Ogre::SceneNode* pointSceneNode = sceneNode->createChildSceneNode(point);
+            pointSceneNode->attachObject(pointEntity);
+            float scale = 0.1f;
+            pointSceneNode->scale(scale, scale, scale);
+        }
+    }
+};
+
 class B3dSimpleVolumeCollision23 : public B3dOgreSceneNode<block_data::SimpleVolumeCollisionBlock23>
 {
 public:
@@ -4006,31 +4017,6 @@ public:
     }
 };
 
-class B3dSimpleFlatCollision20 : public B3dOgreSceneNode<block_data::SimpleFlatCollisionBlock20>
-{
-public:
-    B3dSimpleFlatCollision20(const std::string& name, Ogre::SceneNode* sceneNode, const block_data::SimpleFlatCollision20& data, Ogre::SceneManager* sceneManager)
-        : B3dOgreSceneNode<block_data::SimpleFlatCollisionBlock20>(name, sceneNode)
-    {
-        // https://github.com/Duude92/KOTRunity/blob/alpha/Scripts/BlockClasses/Block20.cs
-        matIdx += 1;
-        if (matIdx == (sizeof(matNames) / sizeof(matNames[0])))
-        {
-            matIdx = 0;
-        }
-        for (const auto& point : data.maybeVertices)
-        {
-            Ogre::Entity* pointEntity = sceneManager->createEntity(Ogre::SceneManager::PT_SPHERE);
-
-            pointEntity->setMaterialName(matNames[matIdx], "D2");
-
-            Ogre::SceneNode* pointSceneNode = sceneNode->createChildSceneNode(point);
-            pointSceneNode->attachObject(pointEntity);
-            float scale = 0.1f;
-            pointSceneNode->scale(scale, scale, scale);
-        }
-    }
-};
 
 B3dTreeVisitor::B3dTreeVisitor(B3dSceneBuilder& sceneBuilder)
     : m_sceneBuilder(sceneBuilder)
@@ -4049,7 +4035,7 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeEventEntry& node, const
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown2& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dOgreSceneNode<NodeGroupUnknown2::Value>>(parent, node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dGroupUnknown2>(parent, node.GetName(), sceneNode, 0);
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupRoadInfraObjects4& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -4078,7 +4064,7 @@ B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces8& node, con
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupTrigger9& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateB3dSceneNode<B3dSceneNodeEvent9>(parent, node.GetName(), sceneNode);
+    return CreateB3dSceneNode<B3dGroupTrigger9>(parent, node.GetName(), sceneNode, 0);
 }
 
 B3dSceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupLodParameters10& node, const B3dSceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
