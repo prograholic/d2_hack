@@ -32,6 +32,8 @@ private:
 
     virtual void CreateScene() override;
 
+    virtual void shutdown() override;
+
     void CreateTerrain();
     void ConfigureTerrainDefaults(Ogre::Light* light);
     void InitBlendMaps(Ogre::Terrain* terrain);

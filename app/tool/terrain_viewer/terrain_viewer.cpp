@@ -22,6 +22,13 @@ void TerrainViewer::CreateScene()
     CreateTerrain();
 }
 
+void TerrainViewer::shutdown()
+{
+    m_terrainGroup.reset();
+    m_terrainGlobalOptions.reset();
+    BaseApplication::shutdown();
+}
+
 void TerrainViewer::CreateTerrain()
 {
     m_camera->setNearClipDistance(0.1f);
