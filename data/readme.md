@@ -26,3 +26,5 @@ Material parsing algorithm:
 3. Read 
 
 
+Terrain map:
+  https://rnr-wiki.ru/index.php?title=%D0%A4%D0%B0%D0%B9%D0%BB:%D0%9A%D0%B0%D1%80%D1%82%D0%B0_%D0%BF%D1%83%D1%81%D1%82%D1%8B%D0%BD%D0%B8_5.jpg

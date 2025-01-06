@@ -8,11 +8,15 @@
 #include <d2_hack/resource/data/b3d_utils.h>
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
 
+#include <d2_hack/scene_node/terrain_scene_node.h>
+
 #include <OgreEntity.h>
 #include <OgreMesh.h>
 #include <OgreSubMesh.h>
 
 #include "b3d_tree_visitor.h"
+
+extern d2_hack::scene_node::TerrainSceneNode* terrainNode;
 
 namespace d2_hack
 {
@@ -216,6 +220,9 @@ void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
 
 const char* node_name = "b3d.scene_node";
 
+Ogre::Vector3 pos2{ 2548.0f, 425.0f, 5490.0 };
+Ogre::Real increment = 1.0f;
+
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
@@ -286,44 +293,42 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() / 2);
     }
-#if 0
     else if (evt.keysym.sym == 'i')
     {
         pos2.z += increment;
-        terrainNode->setPosition(pos2);
+        terrainNode->SetPosition(pos2);
         D2_HACK_LOG(TERRAIN) << pos2;
     }
     else if (evt.keysym.sym == 'j')
     {
         pos2.z -= increment;
-        terrainNode->setPosition(pos2);
+        terrainNode->SetPosition(pos2);
         D2_HACK_LOG(TERRAIN) << pos2;
     }
     else if (evt.keysym.sym == 'k')
     {
         pos2.y += increment;
-        terrainNode->setPosition(pos2);
+        terrainNode->SetPosition(pos2);
         D2_HACK_LOG(TERRAIN) << pos2;
     }
     else if (evt.keysym.sym == 'l')
     {
         pos2.y -= increment;
-        terrainNode->setPosition(pos2);
+        terrainNode->SetPosition(pos2);
         D2_HACK_LOG(TERRAIN) << pos2;
     }
     else if (evt.keysym.sym == 'm')
     {
         pos2.x += increment;
-        terrainNode->setPosition(pos2);
+        terrainNode->SetPosition(pos2);
         D2_HACK_LOG(TERRAIN) << pos2;
     }
     else if (evt.keysym.sym == 'n')
     {
         pos2.x -= increment;
-        terrainNode->setPosition(pos2);
+        terrainNode->SetPosition(pos2);
         D2_HACK_LOG(TERRAIN) << pos2;
     }
-#endif //0
 
     return BaseApplication::keyPressed(evt);
 }

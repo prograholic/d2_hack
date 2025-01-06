@@ -34,7 +34,7 @@ B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
 B3dSceneBuilder::~B3dSceneBuilder()
 {
     assert(m_ogreSceneNodes.empty());
-    assert(m_SceneNodesStack.empty());
+    assert(m_sceneNodesStack.empty());
 }
 
 std::string B3dSceneBuilder::GetB3dId() const

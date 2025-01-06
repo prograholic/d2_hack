@@ -22,3 +22,5 @@ target_link_libraries(d2_hack.common
         Boost::boost
         OgreMain
 )
+
+add_subdirectory(test)

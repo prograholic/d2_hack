@@ -45,8 +45,9 @@ copy_ogre_target_runtime(OgrePaging)
 
 copy_ogre_runtime(RenderSystem_GL)
 
-copy_3rd_party_runtime(zlib "d")
-copy_3rd_party_runtime(sdl2 "d")
+copy_3rd_party_runtime(zlib1 "")
+copy_3rd_party_runtime(sdl2 "")
+copy_3rd_party_runtime(freetype "")
 
 
 enable_testing()

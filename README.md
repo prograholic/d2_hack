@@ -6,8 +6,7 @@
 No specific version, any recent version is acceptable
  
 ### Ogre
-Project uses custom modification of Ogre - patch for attaching terrain to various SceneNode.
-Clone https://github.com/prograholic/ogre and switch to branch `v14.2.2_terrain_with_custom_scene_node`
+Project uses vanilla Ogre, version v14.
 Build Ogre with original instructions
 
 #### Recommendations for building Ogre for Win platform

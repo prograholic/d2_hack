@@ -20,6 +20,8 @@ class TerrainSceneNode : public OgreSceneNode<resource::data::b3d::block_data::S
 public:
     TerrainSceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode, Ogre::SceneManager* sceneManager);
 
+    virtual void SetPosition(const Ogre::Vector3& position) override;
+
 private:
     std::unique_ptr<Ogre::TerrainGlobalOptions> m_terrainGlobalOptions;
     std::unique_ptr<Ogre::TerrainGroup> m_terrainGroup;

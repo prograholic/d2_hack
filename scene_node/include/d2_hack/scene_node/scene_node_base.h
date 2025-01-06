@@ -54,6 +54,11 @@ public:
         m_ogreSceneNode->setVisible(visible);
     }
 
+    virtual void SetPosition(const Ogre::Vector3& position)
+    {
+        m_ogreSceneNode->setPosition(position);
+    }
+
 private:
     Ogre::SceneNode* m_ogreSceneNode;
 };
