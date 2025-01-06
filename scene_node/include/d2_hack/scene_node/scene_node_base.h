@@ -12,12 +12,40 @@ namespace d2_hack
 namespace scene_node
 {
 
+struct WorldContext
+{
+    Ogre::Vector3f playerPosition;
+};
+
 class SceneNodeBase : public common::NodeBase
 {
 public:
     SceneNodeBase(const std::string& name, std::uint32_t type);
 
-    virtual void SetVisible(bool visible) = 0;
+    virtual void Activate(const WorldContext& worldContext)
+    {
+        DoActivate(worldContext);
+        for (const auto& childNode : this->GetChildNodeList())
+        {
+            auto childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode);
+            childSceneNode->Activate(worldContext);
+        }
+    }
+
+    virtual void Deactivate(const WorldContext& worldContext)
+    {
+        DoDeactivate(worldContext);
+        for (const auto& childNode : this->GetChildNodeList())
+        {
+            auto childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode);
+            childSceneNode->Deactivate(worldContext);
+        }
+    }
+
+protected:
+    virtual void DoActivate(const WorldContext& worldContext) = 0;
+
+    virtual void DoDeactivate(const WorldContext& worldContext) = 0;
 };
 
 typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;
@@ -49,22 +77,22 @@ public:
     {
     }
 
-    virtual void SetVisible(bool visible) override
-    {
-        m_ogreSceneNode->setVisible(visible);
-    }
-
-    virtual void SetPosition(const Ogre::Vector3& position)
-    {
-        m_ogreSceneNode->setPosition(position);
-    }
-
 private:
     Ogre::SceneNode* m_ogreSceneNode;
+
+    virtual void DoActivate(const WorldContext& /* worldContext */) override
+    {
+        m_ogreSceneNode->setVisible(true);
+    }
+
+    virtual void DoDeactivate(const WorldContext& /* worldContext */) override
+    {
+        m_ogreSceneNode->setVisible(false);
+    }
 };
 
 template <typename Node, typename... Args>
-SceneNodeBasePtr CreateSceneNode(const SceneNodeBasePtr& parent, Args&&... args)
+std::shared_ptr<Node> CreateSceneNode(const SceneNodeBasePtr& parent, Args&&... args)
 {
     auto res = std::make_shared<Node>(std::forward<Args&&>(args)...);
     if (parent)

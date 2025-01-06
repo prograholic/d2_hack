@@ -1038,6 +1038,7 @@ int main(int argc, char* argv[])
     bool transform = true;
     bool printOnlyTypes = false;
     bool printTrucks = false;
+    bool printCommon = false;
 
     for (int i = 3; i != argc; ++i)
     {
@@ -1073,6 +1074,10 @@ int main(int argc, char* argv[])
         {
             printTrucks = true;
         }
+        else if (argv[i] == std::string("--print_common"))
+        {
+            printCommon = true;
+        }
         else if (argv[i] == std::string("--print_only_names"))
         {
             printOnlyNames = true;
@@ -1101,7 +1106,7 @@ int main(int argc, char* argv[])
                 }
             };
 
-            if (!printTrucks)
+            if (!printTrucks && !printCommon)
             {
                 registry.dir = dir;
                 registry.entries.push_back(id);
@@ -1118,7 +1123,7 @@ int main(int argc, char* argv[])
                 transformation::Optimize(forest);
             }
 
-            if (!printTrucks)
+            if (!printTrucks && !printCommon)
             {
                 for (const auto& tree : forest.forest)
                 {
@@ -1129,7 +1134,14 @@ int main(int argc, char* argv[])
             else
             {
                 TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames };
-                VisitTree(*forest.trucks, visitor);
+                if (printTrucks)
+                {
+                    VisitTree(*forest.trucks, visitor);
+                }
+                else
+                {
+                    VisitTree(*forest.common, visitor);
+                }
             }
         }
         else

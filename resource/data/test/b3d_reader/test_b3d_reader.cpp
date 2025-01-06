@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include <d2_hack/resource/data/b3d_reader.h>
+#include <d2_hack/resource/data/b3d_tree_optimization.h>
 
 
 using namespace d2_hack::resource::data::b3d;
@@ -16,7 +17,7 @@ void TestTree(const B3dTree& tree, const std::string& dir, const std::string& id
 
     if (tree.id != id)
     {
-        throw std::runtime_error("Incorrect tree id, expected  \"" + id + "\", got " + tree.id + "\"");
+        throw std::runtime_error("Incorrect tree id, expected  \"" + id + "\", got \"" + tree.id + "\"");
     }
 
     if (tree.materials.size() != expectedMaterialCount)
@@ -53,7 +54,10 @@ int main()
 
         B3dForest forest = ReadB3d(registry);
 
-        TestTree(*forest.common, "COMMON", "common", 171);
+        transformation::Transform(forest);
+        transformation::Optimize(forest);
+
+        TestTree(*forest.common, "COMMON", "COMMON", 171);
 
         TestForestEntry(forest, 0, "ENV", "aa", 114);
         TestForestEntry(forest, 1, "ENV", "ab", 53);

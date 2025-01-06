@@ -116,6 +116,7 @@ struct EventEntry
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 };
 
+
 /**
  * TODO - разобраться, что это.
  *

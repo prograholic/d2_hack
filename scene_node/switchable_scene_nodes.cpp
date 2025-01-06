@@ -6,49 +6,112 @@ namespace scene_node
 {
 
 
-SwitchableSceneNodeBase::SwitchableSceneNodeBase(const std::string& name, std::uint32_t type, size_t activeNode)
+SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string& name, std::uint32_t type)
     : SceneNodeBase(name, type)
-    , m_activeNode(activeNode)
 {
+
 }
 
-void SwitchableSceneNodeBase::SetVisible(bool visible)
+void SwitchableOgreSceneNode::Activate(const WorldContext& worldContext)
 {
-    auto& childs = GetChildNodeList();
+    std::size_t active = GetActiveItem(worldContext);
 
-    assert(m_activeNode < childs.size());
+    DoActivate(worldContext);
 
-    for (size_t i = 0; i != childs.size(); ++i)
+    const auto& childs = this->GetChildNodeList();
+    for (std::size_t i = 0; i != childs.size(); ++i)
     {
-        auto b3dSceneNode = std::static_pointer_cast<SceneNodeBase>(childs[i]);
-        if (i == m_activeNode)
+        auto childSceneNode = std::static_pointer_cast<SceneNodeBase>(childs[i]);
+        if (i == active)
         {
-            b3dSceneNode->SetVisible(visible);
+            childSceneNode->Activate(worldContext);
         }
         else
         {
-            b3dSceneNode->SetVisible(false);
+            childSceneNode->Deactivate(worldContext);
         }
     }
 }
 
-void SwitchableSceneNodeBase::SetActive(size_t activeNode)
+GroupUnknown2::GroupUnknown2(
+    const std::string& name,
+    Ogre::SceneNode* ogreSceneNode,
+    const resource::data::b3d::block_data::GroupUnknown2& /* data */)
+    : OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableOgreSceneNode>(name, ogreSceneNode)
 {
-    auto& childs = GetChildNodeList();
+}
 
-    if (activeNode >= childs.size())
+std::size_t GroupUnknown2::GetActiveItem(const WorldContext& /* worldContext */)
+{
+    return 0;
+}
+
+
+
+GroupTrigger9::GroupTrigger9(
+    const std::string& name,
+    Ogre::SceneNode* ogreSceneNode,
+    const resource::data::b3d::block_data::GroupTrigger9& /* data */)
+    : OgreSceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableOgreSceneNode>(name, ogreSceneNode)
+{
+}
+
+std::size_t GroupTrigger9::GetActiveItem(const WorldContext& /* worldContext */)
+{
+    return 0;
+}
+
+
+
+GroupLod10::GroupLod10(
+    const std::string& name,
+    Ogre::SceneNode* ogreSceneNode,
+    const resource::data::b3d::block_data::GroupLodParameters10& data)
+    : OgreSceneNode<resource::data::b3d::block_data::GroupLodParametersBlock10, SwitchableOgreSceneNode>(name, ogreSceneNode)
+    , m_data(data)
+{
+}
+
+std::size_t GroupLod10::GetActiveItem(const WorldContext& worldContext)
+{
+    auto distance = worldContext.playerPosition.distance(m_data.unknown);
+    if (distance > m_data.distanceToPlayer)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "activeNodeId too big: " + std::to_string(activeNode) + ", childs count: " + std::to_string(childs.size()));
+        return 1;
     }
 
-    m_activeNode = activeNode;
-    SetVisible(true); //TODO: possibly incorrect implementation of SetVisible + SetActive
+    return 0;
 }
 
-size_t SwitchableSceneNodeBase::GetActiveNode() const
+
+SceneNodeEvent21::SceneNodeEvent21(
+    const std::string& name,
+    Ogre::SceneNode* ogreSceneNode,
+    const resource::data::b3d::block_data::GroupObjects21& /* data */)
+    : OgreSceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableOgreSceneNode>(name, ogreSceneNode)
 {
-    return m_activeNode;
 }
+
+std::size_t SceneNodeEvent21::GetActiveItem(const WorldContext& /* worldContext */)
+{
+    return 0;
+}
+
+
+GroupUnknown29::GroupUnknown29(
+    const std::string& name,
+    Ogre::SceneNode* ogreSceneNode,
+    const resource::data::b3d::block_data::GroupUnknown29& /* data */)
+    : OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableOgreSceneNode>(name, ogreSceneNode)
+{
+}
+
+std::size_t GroupUnknown29::GetActiveItem(const WorldContext& /* worldContext */)
+{
+    return 0;
+}
+
+
 
 } // namespace scene_node
 } // namespace d2_hack

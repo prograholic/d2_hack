@@ -37,7 +37,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeEventEntry& no
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown2& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::GroupUnknown2>(parent, node.GetName(), sceneNode, 0);
+    return CreateSceneNode<scene_node::GroupUnknown2>(parent, node.GetName(), sceneNode, node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupRoadInfraObjects4& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -66,12 +66,12 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces8& 
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupTrigger9& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::GroupTrigger9>(parent, node.GetName(), sceneNode, 0);
+    return CreateSceneNode<scene_node::GroupTrigger9>(parent, node.GetName(), sceneNode, node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupLodParameters10& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::GroupLod10>(parent, node.GetName(), sceneNode, 0);
+    return CreateSceneNode<scene_node::GroupLod10>(parent, node.GetName(), sceneNode, node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown12& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -110,7 +110,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFlatColl
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects21& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::SceneNodeEvent21>(parent, node.GetName(), sceneNode, node.GetBlockData().defaultValue);
+    return CreateSceneNode<scene_node::SceneNodeEvent21>(parent, node.GetName(), sceneNode, node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleVolumeCollision23& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -134,7 +134,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces28&
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown29& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::GroupUnknown29>(parent, node.GetName(), sceneNode, 0);
+    return CreateSceneNode<scene_node::GroupUnknown29>(parent, node.GetName(), sceneNode, node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimplePortal30& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)

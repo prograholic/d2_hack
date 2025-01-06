@@ -2,8 +2,6 @@
 
 #include <d2_hack/common/utils.h>
 
-d2_hack::scene_node::TerrainSceneNode* terrainNode = nullptr;
-
 namespace d2_hack
 {
 namespace scene_node
@@ -11,7 +9,6 @@ namespace scene_node
 
 const std::uint16_t TerrainSize = 257;
 const Ogre::Real TerrainWorldSize = 1000.0f;
-//const Ogre::Vector3 TerrainOrigin{ 4550.0f, -5500.0f, 425.0f };
 const Ogre::Vector3 TerrainOrigin{ 2548.0f, 425.0f, 5490.0 };
 const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
@@ -20,18 +17,11 @@ const char* HeightMap2Name = "terrain2.raw2";
 TerrainSceneNode::TerrainSceneNode(const std::string& name, Ogre::SceneNode* /* ogreSceneNode */, Ogre::SceneManager* sceneManager)
     : OgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, nullptr)
     , m_terrainGlobalOptions(std::make_unique<Ogre::TerrainGlobalOptions>())
-    , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Z, TerrainSize, TerrainWorldSize/*, ogreSceneNode*/))
+    , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Z, TerrainSize, TerrainWorldSize))
 {
     m_terrainGroup->setResourceGroup("D2");
     CreateTerrain();
     m_terrainGroup->setOrigin(TerrainOrigin);
-
-    terrainNode = this;
-}
-
-void TerrainSceneNode::SetPosition(const Ogre::Vector3& position)
-{
-    m_terrainGroup->setOrigin(position);
 }
 
 void TerrainSceneNode::CreateTerrain()
@@ -132,6 +122,17 @@ void TerrainSceneNode::DefineTerrains()
 
     m_terrainGroup->defineTerrain(2, 0, yyy2.data());
 }
+
+void TerrainSceneNode::DoActivate(const WorldContext& /* worldContext */)
+{
+    // TODO: how to ON/OFF terrain?
+}
+
+void TerrainSceneNode::DoDeactivate(const WorldContext& /* worldContext */)
+{
+    // TODO: how to ON/OFF terrain?
+}
+
 
 } // namespace scene_node
 } // namespace d2_hack

@@ -23,6 +23,9 @@ public:
            Ogre::SceneNode* rootNode,
            Ogre::MeshManager* meshManager);
 
+
+    void Activate(const scene_node::WorldContext& worldContext);
+
 private:
     scene_node::SceneNodeBaseList m_rootNodes;
 };

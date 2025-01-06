@@ -16,8 +16,6 @@
 
 #include "b3d_tree_visitor.h"
 
-extern d2_hack::scene_node::TerrainSceneNode* terrainNode;
-
 namespace d2_hack
 {
 namespace app
@@ -174,7 +172,6 @@ void SimpleB3dMeshRenderer::CreateScene()
     }
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
-    //b3dSceneNode->yaw(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
 
 
@@ -219,9 +216,6 @@ void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
 }
 
 const char* node_name = "b3d.scene_node";
-
-Ogre::Vector3 pos2{ 2548.0f, 425.0f, 5490.0 };
-Ogre::Real increment = 1.0f;
 
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
@@ -292,42 +286,6 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     else if (evt.keysym.sym == '-')
     {
         m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() / 2);
-    }
-    else if (evt.keysym.sym == 'i')
-    {
-        pos2.z += increment;
-        terrainNode->SetPosition(pos2);
-        D2_HACK_LOG(TERRAIN) << pos2;
-    }
-    else if (evt.keysym.sym == 'j')
-    {
-        pos2.z -= increment;
-        terrainNode->SetPosition(pos2);
-        D2_HACK_LOG(TERRAIN) << pos2;
-    }
-    else if (evt.keysym.sym == 'k')
-    {
-        pos2.y += increment;
-        terrainNode->SetPosition(pos2);
-        D2_HACK_LOG(TERRAIN) << pos2;
-    }
-    else if (evt.keysym.sym == 'l')
-    {
-        pos2.y -= increment;
-        terrainNode->SetPosition(pos2);
-        D2_HACK_LOG(TERRAIN) << pos2;
-    }
-    else if (evt.keysym.sym == 'm')
-    {
-        pos2.x += increment;
-        terrainNode->SetPosition(pos2);
-        D2_HACK_LOG(TERRAIN) << pos2;
-    }
-    else if (evt.keysym.sym == 'n')
-    {
-        pos2.x -= increment;
-        terrainNode->SetPosition(pos2);
-        D2_HACK_LOG(TERRAIN) << pos2;
     }
 
     return BaseApplication::keyPressed(evt);

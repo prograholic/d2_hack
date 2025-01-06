@@ -22,5 +22,13 @@ B3dRoom::B3dRoom(const B3dNodePtr& b3dNode,
     (void)visitResult;
 }
 
+void B3dRoom::Activate(const scene_node::WorldContext& worldContext)
+{
+    for (const auto& rootNode : m_rootNodes)
+    {
+        rootNode->Activate(worldContext);
+    }
+}
+
 } // namespace app
 } // namespace d2_hack

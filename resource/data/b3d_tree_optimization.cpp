@@ -266,7 +266,9 @@ static NodePtr CreateEventEntryNode(const B3dTreePtr& tree)
     return MakeVisitableNode(tree, NodePtr{}, MakeBlockHeader(common::ResourceName{}, block_data::EventEntryBlockXxx), block_data::EventEntry{});
 }
 
-static std::list<NodeList> SplitNodes(const NodeList& childs)
+
+
+static std::list<NodeList> SplitNodes(const NodeList& childs, bool preserveEmptyRanges)
 {
     std::list<NodeList> res;
 
@@ -280,14 +282,14 @@ static std::list<NodeList> SplitNodes(const NodeList& childs)
         }
         else
         {
-            if (!tmp.empty())
+            if (!tmp.empty() || preserveEmptyRanges)
             {
                 res.emplace_back(std::move(tmp));
             }
         }
     }
 
-    if (!tmp.empty())
+    if (!tmp.empty() || preserveEmptyRanges)
     {
         res.emplace_back(std::move(tmp));
     }
@@ -306,35 +308,21 @@ static void InjectEventNode(const B3dNodePtr& node)
         block_data::GroupUnknownBlock29,
     };
 
-    if (std::any_of(std::begin(nodesWithHierarchyBreaker), std::end(nodesWithHierarchyBreaker), [node](std::uint32_t value){return node->GetType() == value;}))
+    if (std::any_of(std::begin(nodesWithHierarchyBreaker), std::end(nodesWithHierarchyBreaker), [node](std::uint32_t value) {return node->GetType() == value;}))
     {
         NodeList newChilds;
-        auto categorizedNodes = SplitNodes(node->GetChildNodeList());
+        auto categorizedNodes = SplitNodes(node->GetChildNodeList(), true);
 
-        if (categorizedNodes.size() == 1)
+        for (auto& category : categorizedNodes)
         {
-            newChilds = std::move(categorizedNodes.front());
+            auto eventEntryNode = CreateEventEntryNode(node->GetOriginalRoot());
+            eventEntryNode->SetChildNodes(std::move(category));
+            newChilds.push_back(eventEntryNode);
         }
-        else
-        {
-            for (auto& childs : categorizedNodes)
-            {
-                if (childs.size() == 1)
-                {
-                    newChilds.push_back(childs.front());
-                }
-                else
-                {
-                    assert(childs.size() > 1 && "Error in SplitNodes???");
-                    auto eventEntryNode = CreateEventEntryNode(node->GetOriginalRoot());
-                    eventEntryNode->SetChildNodes(std::move(childs));
-                    newChilds.push_back(eventEntryNode);
-                }
-            }
-        }
-        
+
         node->SetChildNodes(std::move(newChilds));
     }
+
 
     for (const auto& child : node->GetChildNodeList())
     {
@@ -349,6 +337,7 @@ static void InjectEventNode(B3dTree& tree)
         InjectEventNode(node);
     }
 }
+
 
 static void TransformTree(const B3dTree& common, const B3dTree& trucks, B3dTree& tree)
 {
