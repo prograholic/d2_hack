@@ -27,10 +27,6 @@ private:
     void CreateTerrain();
     void ConfigureTerrainDefaults();
     void DefineTerrains();
-
-    virtual void DoActivate(const WorldContext& worldContext) override;
-
-    virtual void DoDeactivate(const WorldContext& worldContext) override;
 };
 
 } // namespace scene_node

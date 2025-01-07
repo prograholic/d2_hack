@@ -24,7 +24,7 @@ public:
            Ogre::MeshManager* meshManager);
 
 
-    void Activate(const scene_node::WorldContext& worldContext);
+    void PlayerMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
 
 private:
     scene_node::SceneNodeBaseList m_rootNodes;

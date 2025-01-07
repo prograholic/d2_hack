@@ -3893,10 +3893,8 @@ static size_t matIdx = 0;
 
 SimpleFlatCollision20::SimpleFlatCollision20(
     const std::string& name,
-    Ogre::SceneNode* ogreSceneNode,
-    const block_data::SimpleFlatCollision20& /* data */,
-    Ogre::SceneManager* /* sceneManager */)
-    : OgreSceneNode<block_data::SimpleFlatCollisionBlock20>(name, ogreSceneNode)
+    const block_data::SimpleFlatCollision20& /* data */)
+    : SceneNode<resource::data::b3d::block_data::SimpleFlatCollisionBlock20, SceneNodeBase>(name)
 {
     // https://github.com/Duude92/KOTRunity/blob/alpha/Scripts/BlockClasses/Block20.cs
     matIdx += 1;
@@ -3919,12 +3917,27 @@ SimpleFlatCollision20::SimpleFlatCollision20(
 #endif //0
 }
 
+
+void SimpleFlatCollision20::PlayerMoved(const WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
+{
+}
+
+void SimpleFlatCollision20::SetVisible(const WorldContext& /* worldContext */, bool /* visible */)
+{
+}
+
+Ogre::Vector3f SimpleFlatCollision20::GetPosition() const
+{
+    return Ogre::Vector3f{};
+}
+
+
+
+
 SimpleVolumeCollision23::SimpleVolumeCollision23(
     const std::string& name,
-    Ogre::SceneNode* ogreSceneNode,
-    const block_data::SimpleVolumeCollision23& /* data */,
-    Ogre::SceneManager* /* sceneManager */)
-    : OgreSceneNode<block_data::SimpleVolumeCollisionBlock23>(name, ogreSceneNode)
+    const block_data::SimpleVolumeCollision23& /* data */)
+    : SceneNode<resource::data::b3d::block_data::SimpleVolumeCollisionBlock23, SceneNodeBase>(name)
 {
     // https://github.com/Duude92/KOTRunity/blob/alpha/Scripts/BlockClasses/Block23.cs
 #if 0
@@ -3948,6 +3961,19 @@ SimpleVolumeCollision23::SimpleVolumeCollision23(
         }
     }
 #endif //0
+}
+
+void SimpleVolumeCollision23::PlayerMoved(const WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
+{
+}
+
+void SimpleVolumeCollision23::SetVisible(const WorldContext& /* worldContext */, bool /* visible */)
+{
+}
+
+Ogre::Vector3f SimpleVolumeCollision23::GetPosition() const
+{
+    return Ogre::Vector3f{};
 }
 
 } // namespace scene_node

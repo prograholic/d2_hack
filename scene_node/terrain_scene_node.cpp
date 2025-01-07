@@ -123,16 +123,5 @@ void TerrainSceneNode::DefineTerrains()
     m_terrainGroup->defineTerrain(2, 0, yyy2.data());
 }
 
-void TerrainSceneNode::DoActivate(const WorldContext& /* worldContext */)
-{
-    // TODO: how to ON/OFF terrain?
-}
-
-void TerrainSceneNode::DoDeactivate(const WorldContext& /* worldContext */)
-{
-    // TODO: how to ON/OFF terrain?
-}
-
-
 } // namespace scene_node
 } // namespace d2_hack

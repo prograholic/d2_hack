@@ -9,24 +9,33 @@ namespace d2_hack
 {
 namespace scene_node
 {
-class SimpleFlatCollision20 : public OgreSceneNode<resource::data::b3d::block_data::SimpleFlatCollisionBlock20>
+
+class SimpleFlatCollision20 : public SceneNode<resource::data::b3d::block_data::SimpleFlatCollisionBlock20, SceneNodeBase>
 {
 public:
     SimpleFlatCollision20(
         const std::string& name,
-        Ogre::SceneNode* ogreSceneNode,
-        const resource::data::b3d::block_data::SimpleFlatCollision20& data,
-        Ogre::SceneManager* sceneManager);
+        const resource::data::b3d::block_data::SimpleFlatCollision20& data);
+
+    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
+
+    virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
+
+    virtual Ogre::Vector3f GetPosition() const override;
 };
 
-class SimpleVolumeCollision23 : public OgreSceneNode<resource::data::b3d::block_data::SimpleVolumeCollisionBlock23>
+class SimpleVolumeCollision23 : public SceneNode<resource::data::b3d::block_data::SimpleVolumeCollisionBlock23, SceneNodeBase>
 {
 public:
     SimpleVolumeCollision23(
         const std::string& name,
-        Ogre::SceneNode* ogreSceneNode,
-        const resource::data::b3d::block_data::SimpleVolumeCollision23& data,
-        Ogre::SceneManager* sceneManager);
+        const resource::data::b3d::block_data::SimpleVolumeCollision23& data);
+
+    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
+
+    virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
+
+    virtual Ogre::Vector3f GetPosition() const override;
 };
 
 

@@ -26,8 +26,13 @@ using namespace resource::data::b3d;
 
 static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName, const Ogre::Vector3& pos)
 {
+    bool done = false;
     for (auto& tree : forest.forest)
     {
+        if (done)
+        {
+            break;
+        }
         block_data::GroupObjects19 object19Data{};
         auto object19 = MakeVisitableNode(tree, WeakNodePtr{}, MakeBlockHeader(common::StringToResourceName(CarNodeNamePrefix + truckName), block_data::GroupObjectsBlock19), object19Data);
 
@@ -43,6 +48,8 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
         auto object18 = MakeVisitableNode(tree, object5, MakeBlockHeader(common::ResourceName{}, block_data::SimpleObjectConnectorBlock18), object18Data);
 
         tree->rootNodes.push_back(object19);
+
+        done = true;
     }
 }
 
@@ -219,6 +226,9 @@ const char* node_name = "b3d.scene_node";
 
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
+    MovePlayer();
+
+
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
     if (evt.keysym.sym == '1')
     {
@@ -295,6 +305,19 @@ void SimpleB3dMeshRenderer::shutdown()
 {
     m_rooms.clear(); // TODO: rework with RAII
     BaseApplication::shutdown();
+}
+
+
+void SimpleB3dMeshRenderer::MovePlayer()
+{
+    Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->getPosition();
+    Ogre::Vector3f movement = currentPlayerPosition - m_worldContext.playerPosition;
+    m_worldContext.playerPosition = currentPlayerPosition;
+
+    for (const auto& room : m_rooms)
+    {
+        room->PlayerMoved(m_worldContext, movement);
+    }
 }
 
 } // namespace app

@@ -103,6 +103,7 @@ public:
 private:
     B3dSceneBuilder& m_sceneBuilder;
 
+    // TODO: Should use Ogre::SceneNode* for binding mesh and entity???
     template <typename FacesNode>
     void VisitFaces(FacesNode& block);
 };

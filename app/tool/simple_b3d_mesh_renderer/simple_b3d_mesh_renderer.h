@@ -21,6 +21,7 @@ public:
 private:
     std::vector<B3dRoomPtr> m_rooms;
     std::vector<B3dCarPtr> m_cars;
+    scene_node::WorldContext m_worldContext;
 
     void CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
 
@@ -29,6 +30,8 @@ private:
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 
     virtual void shutdown() override;
+
+    void MovePlayer();
 };
 
 

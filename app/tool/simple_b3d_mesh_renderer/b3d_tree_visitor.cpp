@@ -4,6 +4,7 @@
 #include <d2_hack/scene_node/switchable_scene_nodes.h>
 #include <d2_hack/scene_node/collision_scene_nodes.h>
 #include <d2_hack/scene_node/terrain_scene_node.h>
+#include <d2_hack/scene_node/renderable_scene_nodes.h>
 
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/log.h>
@@ -32,7 +33,7 @@ B3dSceneBuilder& B3dTreeVisitor::GetSceneBuilder()
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeEventEntry& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::OgreSceneNode<NodeEventEntry::Value>>(parent, node.GetName(), sceneNode);
+    return CreateSceneNode<scene_node::EventEntrySceneNode>(parent, node.GetName(), sceneNode);
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown2& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -52,7 +53,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects5&
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupVertexData7& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::OgreSceneNode<NodeGroupVertexData7::Value>>(parent, node.GetName(), sceneNode);
+    return CreateSceneNode<scene_node::GroupVertexData7>(parent, node.GetName(), sceneNode);
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces8& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -103,9 +104,9 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects19
     return CreateSceneNode<scene_node::OgreSceneNode<NodeGroupObjects19::Value>>(parent, node.GetName(), sceneNode);
 }
 
-scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFlatCollision20& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
+scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFlatCollision20& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* /* sceneNode */)
 {
-    return CreateSceneNode<scene_node::SimpleFlatCollision20>(parent, node.GetName(), sceneNode, node.GetBlockData(), GetSceneBuilder().GetSceneManager());
+    return CreateSceneNode<scene_node::SimpleFlatCollision20>(parent, node.GetName(), node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects21& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -113,9 +114,9 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects21
     return CreateSceneNode<scene_node::SceneNodeEvent21>(parent, node.GetName(), sceneNode, node.GetBlockData());
 }
 
-scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleVolumeCollision23& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
+scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleVolumeCollision23& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* /* sceneNode */)
 {
-    return CreateSceneNode<scene_node::SimpleVolumeCollision23>(parent, node.GetName(), sceneNode, node.GetBlockData(), GetSceneBuilder().GetSceneManager());
+    return CreateSceneNode<scene_node::SimpleVolumeCollision23>(parent, node.GetName(), node.GetBlockData());
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleUnknown25& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
@@ -163,7 +164,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleFaces35&
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupVertexData37& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::OgreSceneNode<NodeGroupVertexData37::Value>>(parent, node.GetName(), sceneNode);
+    return CreateSceneNode<scene_node::GroupVertexData37>(parent, node.GetName(), sceneNode);
 }
 
 

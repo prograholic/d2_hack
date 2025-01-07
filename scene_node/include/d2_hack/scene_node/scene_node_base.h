@@ -22,30 +22,22 @@ class SceneNodeBase : public common::NodeBase
 public:
     SceneNodeBase(const std::string& name, std::uint32_t type);
 
-    virtual void Activate(const WorldContext& worldContext)
+    /**
+     * @param worldContext - stores actual player location
+     * @param movement - delta between previous player location and current
+     */
+    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
     {
-        DoActivate(worldContext);
         for (const auto& childNode : this->GetChildNodeList())
         {
-            auto childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode);
-            childSceneNode->Activate(worldContext);
+            SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
+            childSceneNode->PlayerMoved(worldContext, movement);
         }
     }
 
-    virtual void Deactivate(const WorldContext& worldContext)
-    {
-        DoDeactivate(worldContext);
-        for (const auto& childNode : this->GetChildNodeList())
-        {
-            auto childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode);
-            childSceneNode->Deactivate(worldContext);
-        }
-    }
+    virtual void SetVisible(const WorldContext& worldContext, bool visible) = 0;
 
-protected:
-    virtual void DoActivate(const WorldContext& worldContext) = 0;
-
-    virtual void DoDeactivate(const WorldContext& worldContext) = 0;
+    virtual Ogre::Vector3f GetPosition() const = 0;
 };
 
 typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;
@@ -77,18 +69,18 @@ public:
     {
     }
 
+    virtual void SetVisible(const WorldContext& /* worldContext */, bool visible) override
+    {
+        m_ogreSceneNode->setVisible(visible);
+    }
+
+    virtual Ogre::Vector3f GetPosition() const override
+    {
+        return m_ogreSceneNode->getPosition();
+    }
+
 private:
     Ogre::SceneNode* m_ogreSceneNode;
-
-    virtual void DoActivate(const WorldContext& /* worldContext */) override
-    {
-        m_ogreSceneNode->setVisible(true);
-    }
-
-    virtual void DoDeactivate(const WorldContext& /* worldContext */) override
-    {
-        m_ogreSceneNode->setVisible(false);
-    }
 };
 
 template <typename Node, typename... Args>

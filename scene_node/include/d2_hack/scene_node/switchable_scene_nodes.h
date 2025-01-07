@@ -11,16 +11,25 @@ namespace scene_node
 {
 
 
+class EventEntrySceneNode : public OgreSceneNode<resource::data::b3d::block_data::EventEntryBlockXxx>
+{
+public:
+    EventEntrySceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode);
+
+    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
+};
+
+
 class SwitchableOgreSceneNode : public SceneNodeBase
 {
 public:
 
     SwitchableOgreSceneNode(const std::string& name, std::uint32_t type);
 
-    virtual void Activate(const WorldContext& worldContext);
+    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
 private:
-    virtual std::size_t GetActiveItem(const WorldContext& worldContext) = 0;
+    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) = 0;
 };
 
 class GroupUnknown2 : public OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableOgreSceneNode>
@@ -32,7 +41,7 @@ public:
         const resource::data::b3d::block_data::GroupUnknown2& data);
 
 private:
-    virtual std::size_t GetActiveItem(const WorldContext& worldContext) override;
+    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 
 class GroupTrigger9 : public OgreSceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableOgreSceneNode>
@@ -44,7 +53,7 @@ public:
         const resource::data::b3d::block_data::GroupTrigger9& data);
 
 private:
-    virtual std::size_t GetActiveItem(const WorldContext& worldContext) override;
+    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 
 class GroupLod10 : public OgreSceneNode<resource::data::b3d::block_data::GroupLodParametersBlock10, SwitchableOgreSceneNode>
@@ -58,7 +67,9 @@ public:
 private:
     const resource::data::b3d::block_data::GroupLodParameters10 m_data;
 
-    virtual std::size_t GetActiveItem(const WorldContext& worldContext) override;
+    SceneNodeBase* m_prevActive;
+
+    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 
 class SceneNodeEvent21 : public OgreSceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableOgreSceneNode>
@@ -70,7 +81,7 @@ public:
         const resource::data::b3d::block_data::GroupObjects21& data);
 
 private:
-    virtual std::size_t GetActiveItem(const WorldContext& worldContext) override;
+    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 
 class GroupUnknown29 : public OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableOgreSceneNode>
@@ -82,7 +93,7 @@ public:
         const resource::data::b3d::block_data::GroupUnknown29& data);
 
 private:
-    virtual std::size_t GetActiveItem(const WorldContext& worldContext) override;
+    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 
 
