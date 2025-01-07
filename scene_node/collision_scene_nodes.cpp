@@ -3926,9 +3926,14 @@ void SimpleFlatCollision20::SetVisible(const WorldContext& /* worldContext */, b
 {
 }
 
-Ogre::Vector3f SimpleFlatCollision20::GetPosition() const
+Ogre::Vector3f SimpleFlatCollision20::GetAbsolutePosition() const
 {
-    return Ogre::Vector3f{};
+    return Ogre::Vector3f::ZERO;
+}
+
+Ogre::Quaternion SimpleFlatCollision20::GetAbsoluteOrientation() const
+{
+    return Ogre::Quaternion::IDENTITY;
 }
 
 
@@ -3971,9 +3976,14 @@ void SimpleVolumeCollision23::SetVisible(const WorldContext& /* worldContext */,
 {
 }
 
-Ogre::Vector3f SimpleVolumeCollision23::GetPosition() const
+Ogre::Vector3f SimpleVolumeCollision23::GetAbsolutePosition() const
 {
-    return Ogre::Vector3f{};
+    return Ogre::Vector3f::ZERO;
+}
+
+Ogre::Quaternion SimpleVolumeCollision23::GetAbsoluteOrientation() const
+{
+    return Ogre::Quaternion::IDENTITY;
 }
 
 } // namespace scene_node

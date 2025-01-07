@@ -112,7 +112,6 @@ GroupLod10::GroupLod10(
     const resource::data::b3d::block_data::GroupLodParameters10& data)
     : OgreSceneNode<resource::data::b3d::block_data::GroupLodParametersBlock10, SwitchableOgreSceneNode>(name, ogreSceneNode)
     , m_data(data)
-    , m_prevActive(nullptr)
 {
 }
 
@@ -121,34 +120,12 @@ SceneNodeBase* GroupLod10::ActivateItem(const WorldContext& worldContext)
     const auto& childs = GetChildNodeList();
     assert(childs.size() == 2);
 
-    Ogre::Vector3f absoluteLodPosition = m_data.unknown + GetPosition();
+    Ogre::Vector3f absoluteLodPosition = (GetAbsoluteOrientation() * m_data.unknown) + GetAbsolutePosition();
 
     bool isInsideLod = worldContext.playerPosition.distance(absoluteLodPosition) < m_data.distanceToPlayer;
-#if 0
-    if (isInsideLod)
-    {
-        if (IsDebuggerPresent())
-        {
-            __debugbreak();
-        }
-    }
-#endif //0
 
     SceneNodeBase* active = std::static_pointer_cast<SceneNodeBase>(childs[isInsideLod ? 0 : 1]).get();
     SceneNodeBase* inactive = std::static_pointer_cast<SceneNodeBase>(childs[isInsideLod ? 1 : 0]).get();
-
-    if (m_prevActive != active)
-    {
-        D2_HACK_LOG(GroupLod10::ActivateItem) <<
-            "activate another LOD for " + GetName() << ", "
-            "this: " << (const void*) this << ", "
-            "player: " << worldContext.playerPosition << ", "
-            "node position: " << GetPosition() << ", "
-            "data.unknown: " << m_data.unknown << ", "
-            "data.distance: " << m_data.distanceToPlayer;
-
-        m_prevActive = active;
-    }
 
     active->SetVisible(worldContext, true);
     inactive->SetVisible(worldContext, false);

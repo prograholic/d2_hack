@@ -21,7 +21,9 @@ public:
 
     virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
 
-    virtual Ogre::Vector3f GetPosition() const override;
+    virtual Ogre::Vector3f GetAbsolutePosition() const override;
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
 };
 
 class SimpleVolumeCollision23 : public SceneNode<resource::data::b3d::block_data::SimpleVolumeCollisionBlock23, SceneNodeBase>
@@ -35,7 +37,9 @@ public:
 
     virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
 
-    virtual Ogre::Vector3f GetPosition() const override;
+    virtual Ogre::Vector3f GetAbsolutePosition() const override;
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
 };
 
 

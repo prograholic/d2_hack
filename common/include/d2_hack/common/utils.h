@@ -12,6 +12,7 @@ std::string ResourceNameToString(const ResourceName& resName);
 
 ResourceName StringToResourceName(const std::string& name);
 
+std::uint32_t GetNextUnnamedObjectCounter();
 
 bool IsValid(const BoundingSphere& boundingSphere);
 

@@ -17,7 +17,6 @@ struct SceneNodeGenericAction
     template <typename VisitorType, typename NodeType>
     static resource::data::b3d::VisitResult Perform(VisitorType* self, NodeType& node, resource::data::b3d::VisitMode visitMode)
     {
-
         auto ogreSceneNode = self->GetSceneBuilder().ProcessOgreSceneNode(node.GetName(), visitMode);
 
         if (visitMode == resource::data::b3d::VisitMode::PreOrder)
@@ -103,7 +102,6 @@ public:
 private:
     B3dSceneBuilder& m_sceneBuilder;
 
-    // TODO: Should use Ogre::SceneNode* for binding mesh and entity???
     template <typename FacesNode>
     void VisitFaces(FacesNode& block);
 };

@@ -1,5 +1,7 @@
 #include <d2_hack/common/utils.h>
 
+#include <atomic>
+
 
 namespace d2_hack
 {
@@ -24,6 +26,13 @@ ResourceName StringToResourceName(const std::string& name)
 
     return res;
 }
+
+std::uint32_t GetNextUnnamedObjectCounter()
+{
+    static std::atomic<std::uint32_t> unnamedObjectCounter{ 0 };
+    return unnamedObjectCounter++;
+}
+
 
 bool IsValid(const BoundingSphere& boundingSphere)
 {

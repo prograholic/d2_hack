@@ -67,8 +67,6 @@ public:
 private:
     const resource::data::b3d::block_data::GroupLodParameters10 m_data;
 
-    SceneNodeBase* m_prevActive;
-
     virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 

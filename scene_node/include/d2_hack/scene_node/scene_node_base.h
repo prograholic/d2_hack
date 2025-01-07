@@ -37,7 +37,9 @@ public:
 
     virtual void SetVisible(const WorldContext& worldContext, bool visible) = 0;
 
-    virtual Ogre::Vector3f GetPosition() const = 0;
+    virtual Ogre::Vector3f GetAbsolutePosition() const = 0;
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const = 0;
 };
 
 typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;
@@ -74,9 +76,14 @@ public:
         m_ogreSceneNode->setVisible(visible);
     }
 
-    virtual Ogre::Vector3f GetPosition() const override
+    virtual Ogre::Vector3f GetAbsolutePosition() const override
     {
-        return m_ogreSceneNode->getPosition();
+        return m_ogreSceneNode->_getDerivedPosition();
+    }
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override
+    {
+        return m_ogreSceneNode->_getDerivedOrientation();
     }
 
 private:

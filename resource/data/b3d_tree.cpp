@@ -13,13 +13,14 @@ namespace data
 {
 namespace b3d
 {
-//#define USE_ALL
+#define USE_ALL
 
 const B3dRegistry SinglePlayerRegistry
 {
 	D2_ROOT_DIR,
 	"ENV",
 	{
+#ifdef USE_ALL
 		"aa",
 		"ab",
 		"ac",
@@ -27,6 +28,7 @@ const B3dRegistry SinglePlayerRegistry
 		"ae",
 		"af",
 		"ag",
+#endif //USE_ALL
 		"ah",
 #ifdef USE_ALL
 		"aj",

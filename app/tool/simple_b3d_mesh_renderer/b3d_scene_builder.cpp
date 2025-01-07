@@ -59,6 +59,7 @@ Ogre::SceneNode* B3dSceneBuilder::GetCurrentOgreSceneNode() const
 
 void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode)
 {
+    // TODO: Ogre::SceneNode already created???
     Ogre::SceneNode* ogreSceneNode = ProcessOgreSceneNode(node.GetName(), visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
@@ -144,6 +145,7 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
     }
 
     Ogre::Entity* entity = m_sceneManager->createEntity(mesh);
+
     m_ogreSceneNodes.top()->createChildSceneNode()->attachObject(entity);
 }
 
@@ -187,9 +189,8 @@ std::string B3dSceneBuilder::GetNameImpl(const std::string& blockName, const std
 
     if (forceUnique)
     {
-        static int cnt = 0;
-        name += ("_" + std::to_string(cnt));
-        ++cnt;
+        auto counter = common::GetNextUnnamedObjectCounter();
+        name += ("_" + std::to_string(counter));
     }
 
     return name;

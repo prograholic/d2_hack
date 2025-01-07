@@ -228,7 +228,6 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     MovePlayer();
 
-
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
     if (evt.keysym.sym == '1')
     {
@@ -310,7 +309,7 @@ void SimpleB3dMeshRenderer::shutdown()
 
 void SimpleB3dMeshRenderer::MovePlayer()
 {
-    Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->getPosition();
+    Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->_getDerivedPosition();
     Ogre::Vector3f movement = currentPlayerPosition - m_worldContext.playerPosition;
     m_worldContext.playerPosition = currentPlayerPosition;
 

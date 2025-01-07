@@ -1,5 +1,7 @@
 #include <d2_hack/resource/data/b3d_utils.h>
 
+#include <d2_hack/common/utils.h>
+
 namespace d2_hack
 {
 namespace resource
@@ -392,10 +394,9 @@ common::SimpleMeshInfo PrepareStandaloneMeshInfo(const block_data::SimpleFaces35
 
 common::ResourceName GetProperResourceName(const common::ResourceName& name)
 {
-    static uint32_t unnamedObjectCounter = 0;
     if (name[0] == 0)
     {
-        std::string uniqueName = std::to_string(unnamedObjectCounter++);
+        std::string uniqueName = std::to_string(common::GetNextUnnamedObjectCounter());
 
         common::ResourceName res{ 0 };
         std::copy(uniqueName.begin(), uniqueName.end(), res.begin());
