@@ -1,6 +1,7 @@
 #include "material_parser.h"
 
 #include <d2_hack/common/platform.h>
+#include <d2_hack/common/types.h>
 
 #include <boost/format.hpp>
 
@@ -99,7 +100,7 @@ Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string
         }        
     }
 
-    palette::PalettePtr plm = manager::Manager::getSingleton().Load("COMMON\\common.plm", "D2");
+    palette::PalettePtr plm = manager::Manager::getSingleton().Load("COMMON\\common.plm", common::DefaultResourceGroup);
 
     Ogre::ColourValue cv = plm->GetColor(colorIndex);
     std::string materialContent = str(boost::format(ColorMaterialTemplate) % filename.substr(0, filename.size() - 9) % cv.r % cv.g % cv.b % alpha % depthCheck);

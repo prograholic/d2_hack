@@ -57,6 +57,10 @@ struct SimpleMeshInfo
 };
 
 
+// NOTE: Should be in sync with resource group in data/config/resources(_d).cfg.in
+const std::string DefaultResourceGroup = "D2";
+
+
 } // namespace common
 } // namespace d2_hack
 

@@ -1,5 +1,7 @@
 #include "terrain_viewer.h"
 
+#include <d2_hack/common/types.h>
+
 namespace d2_hack
 {
 namespace app
@@ -167,7 +169,7 @@ void TerrainViewer::DefineTerrain(long x, long y)
     //else
     {
         Ogre::Image img;
-        img.load("terrain0.raw2", "D2");
+        img.load("terrain0.raw2", common::DefaultResourceGroup);
         m_terrainGroup->defineTerrain(x, y, &img);
     }
 }

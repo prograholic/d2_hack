@@ -3,7 +3,7 @@
 #include <d2_hack/scene_node/scene_node_base.h>
 #include <d2_hack/scene_node/switchable_scene_nodes.h>
 #include <d2_hack/scene_node/collision_scene_nodes.h>
-#include <d2_hack/scene_node/terrain_scene_node.h>
+#include <d2_hack/scene_node/generator_scene_nodes.h>
 #include <d2_hack/scene_node/renderable_scene_nodes.h>
 
 #include <d2_hack/common/utils.h>
@@ -174,6 +174,12 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleGenerate
     if (generatorName == "$$GeneratorOfTerrain")
     {
         return CreateSceneNode<scene_node::TerrainSceneNode>(parent, "terrain." + node.GetName(), sceneNode, GetSceneBuilder().GetSceneManager());
+    }
+    else if (generatorName == "$$TreeGenerator1")
+    {
+        std::string b3dId = GetSceneBuilder().GetB3dId();
+        Ogre::SceneManager* sceneManager = GetSceneBuilder().GetSceneManager();
+        return CreateSceneNode<scene_node::TreeGeneratorSceneNode>(parent, "tree." + node.GetName(), node.GetBlockData(), b3dId, sceneNode, sceneManager);
     }
     else
     {

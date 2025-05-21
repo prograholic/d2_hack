@@ -28,14 +28,14 @@ const B3dRegistry SinglePlayerRegistry
 		"ae",
 		"af",
 		"ag",
-#endif //USE_ALL
 		"ah",
-#ifdef USE_ALL
 		"aj",
 		"ak",
 		"al",
 		"am",
+#endif
 		"ap",
+#ifdef USE_ALL
 		"aq",
 		"ar",
 		"as",

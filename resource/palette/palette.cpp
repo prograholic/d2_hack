@@ -34,7 +34,7 @@ Ogre::ColourValue Palette::GetColor(size_t index) const
 
 void Palette::loadImpl()
 {
-    Ogre::DataStreamPtr dataStream = Ogre::ResourceGroupManager::getSingleton().openResource(mName, "D2");
+    Ogre::DataStreamPtr dataStream = Ogre::ResourceGroupManager::getSingleton().openResource(mName, common::DefaultResourceGroup);
 
     PlmReader reader{*dataStream};
     PlmFile plmFile;

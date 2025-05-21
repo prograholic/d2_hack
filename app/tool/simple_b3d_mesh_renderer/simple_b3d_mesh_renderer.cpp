@@ -8,8 +8,6 @@
 #include <d2_hack/resource/data/b3d_utils.h>
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
 
-#include <d2_hack/scene_node/terrain_scene_node.h>
-
 #include <OgreEntity.h>
 #include <OgreMesh.h>
 #include <OgreSubMesh.h>

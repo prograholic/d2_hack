@@ -130,17 +130,16 @@ void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::Sim
 {
     const std::string meshName = GetNameImpl(blockName + "." + materialName, "mesh", false);
     const std::string entityName = meshName + ".entity";
-    const std::string group = "D2";
 
     Ogre::MeshPtr mesh;
-    if (m_meshManager->resourceExists(meshName, group))
+    if (m_meshManager->resourceExists(meshName, common::DefaultResourceGroup))
     {
         D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Mesh `" << meshName << "` already exists, reuse it";
-        mesh = m_meshManager->getByName(meshName, group);
+        mesh = m_meshManager->getByName(meshName, common::DefaultResourceGroup);
     }
     else
     {
-        mesh = m_meshManager->createManual(meshName, group);
+        mesh = m_meshManager->createManual(meshName, common::DefaultResourceGroup);
         SetMeshInfo(mesh, meshInfo, materialName);
     }
 

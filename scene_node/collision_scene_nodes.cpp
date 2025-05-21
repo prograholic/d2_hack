@@ -3907,7 +3907,7 @@ SimpleFlatCollision20::SimpleFlatCollision20(
     {
         Ogre::Entity* pointEntity = sceneManager->createEntity(Ogre::SceneManager::PT_SPHERE);
 
-        pointEntity->setMaterialName(matNames[matIdx], "D2");
+        pointEntity->setMaterialName(matNames[matIdx], common::DefaultResourceGroup);
 
         Ogre::SceneNode* pointSceneNode = ogreSceneNode->createChildSceneNode(point);
         pointSceneNode->attachObject(pointEntity);

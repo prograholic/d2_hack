@@ -2,6 +2,8 @@
 
 #include <OgreEntity.h>
 
+#include <d2_hack/common/types.h>
+
 namespace d2_hack
 {
 namespace app
@@ -18,7 +20,7 @@ void SimpleTxrRenderer::CreateScene()
 
     Ogre::Entity* plane = m_sceneManager->createEntity("Plane", Ogre::SceneManager::PT_PLANE);
 
-    plane->setMaterialName("PlaneMaterial", "D2");
+    plane->setMaterialName("PlaneMaterial", common::DefaultResourceGroup);
 
     Ogre::SceneNode* headNode = m_sceneManager->getRootSceneNode()->createChildSceneNode("HeadNode");
     headNode->attachObject(plane);

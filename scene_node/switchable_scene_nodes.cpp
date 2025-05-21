@@ -85,8 +85,6 @@ GroupTrigger9::GroupTrigger9(
 
 SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& worldContext)
 {
-    // TODO: rework
-
     SceneNodeBase* res = nullptr;
     for (const auto& childNode : this->GetChildNodeList())
     {

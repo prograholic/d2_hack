@@ -6,6 +6,7 @@
 #include <d2_hack/resource/archive/res.h>
 #include <d2_hack/resource/manager/manager.h>
 #include <d2_hack/common/reader.h>
+#include <d2_hack/common/types.h>
 
 namespace d2_hack
 {
@@ -155,7 +156,7 @@ int main()
 
         Ogre::LogManager logMgr;
         Ogre::ResourceGroupManager rgMgr;
-        rgMgr.createResourceGroup("D2");
+        rgMgr.createResourceGroup(d2_hack::common::DefaultResourceGroup);
 
         manager::Manager mgr;
 
