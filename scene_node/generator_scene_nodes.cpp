@@ -152,7 +152,16 @@ TreeGeneratorSceneNode::TreeGeneratorSceneNode(
     }
 
     Ogre::Entity* e = sceneManager->createEntity(treeMesh);
-    e->setMaterial(Ogre::MaterialManager::getSingleton().getByName(treeParams.materialName, common::DefaultResourceGroup));
+    auto material = Ogre::MaterialManager::getSingleton().getByName(treeParams.materialName, common::DefaultResourceGroup);
+    if (material)
+    {
+        e->setMaterial(material);
+    }
+    else
+    {
+        D2_HACK_LOG(TreeGeneratorSceneNode::TreeGeneratorSceneNode) << "Cannot find material \"" << treeParams.materialName << "\"";
+    }
+    
 
     ogreSceneNode->attachObject(e);
     ogreSceneNode->setPosition(treeParams.location);
@@ -166,7 +175,7 @@ Ogre::MeshPtr TreeGeneratorSceneNode::CreateMesh(const TreeGeneratorSceneNode::T
     obj->estimateVertexCount(16);
     obj->estimateIndexCount(48);
 
-    obj->begin("SomeFakeMaterial");
+    obj->begin(treeParams.materialName, Ogre::RenderOperation::OT_TRIANGLE_LIST, common::DefaultResourceGroup);
 
     obj->position(treeParams.scale / 5 - 1, 0, 0);
     obj->textureCoord(treeParams.textureScale - 0.49f, 1.0f);
@@ -307,10 +316,11 @@ TreeGeneratorSceneNode::TreeParams TreeGeneratorSceneNode::DeduceTreeParams(cons
     case 515:
     case 531:
     case 1059:
+    case 1089:
     case 1091:
     case 1313:
     case 1315:
-        res.materialName = "unklnown_ololoddd";
+        res.materialName = "zero";
         break;
 
     default:

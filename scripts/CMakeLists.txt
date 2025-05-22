@@ -3,6 +3,7 @@ set (scripts
     indent_b3d.py
     run_b3d_reader_for_env.bat
     run_b3d_reader_for_trucks.bat
+    run_b3d_reader_for_common.bat
     run_b3d_reader_for_types.bat
 )
 

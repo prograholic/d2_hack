@@ -1,2 +1,2 @@
-d2_hack.resource.data.tool.b3d_reader.exe skip skip --skip_face_info --skip_mesh_info --skip_vector_data --print_trucks > trucks.log
-d2_hack.resource.data.tool.b3d_reader.exe skip skip --skip_optimization --skip_transformation  --skip_face_info --skip_mesh_info --skip_vector_data --print_trucks > trucks_noopt.log
+d2_hack.resource.data.tool.b3d_reader.exe --mode print --use_single_player_registry --only_trucks --mode print --skip_face_info --skip_mesh_info --skip_vector_data > trucks.log
+d2_hack.resource.data.tool.b3d_reader.exe --mode print --use_single_player_registry --only_trucks --mode print --skip_optimization --skip_transformation  --skip_face_info --skip_mesh_info --skip_vector_data > trucks_noopt.log

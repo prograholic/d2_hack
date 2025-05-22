@@ -14,7 +14,7 @@ include(setup_ide)
 
 set(Boost_ADDITIONAL_VERSIONS "1.74.0" "1.74")
 
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
 
 find_package(OGRE 14 REQUIRED PATHS ${OGRE_DIR})
 include(${OGRE_CONFIG_DIR}/../CMake/OgreTargets.cmake)
