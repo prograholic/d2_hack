@@ -1,11 +1,6 @@
 #include "print.h"
 
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <string>
-#include <stdexcept>
-
 
 #include <d2_hack/resource/data/b3d_visitor.h>
 
@@ -885,117 +880,6 @@ void VisitTree(const B3dTree& tree, TracingVisitor& visitor)
     }
 }
 
-std::string GetOffsetString(int indent)
-{
-    std::string res;
-    res.resize(indent * 4, ' ');
-
-    return res;
-}
-    
-std::ostream& GetStream(int indent = 0, std::ostream& ostream = std::cout)
-{
-    ostream << GetOffsetString(indent);
-    return ostream;
-}
-
-void PrintSequence(const std::vector<std::uint32_t>& sequence)
-{
-    if (!sequence.empty())
-    {
-        auto it = sequence.begin();
-        std::cout << *it;
-        ++it;
-        while (it != sequence.end())
-        {
-            std::cout << " -> " << *it;
-            ++it;
-        }
-        std::cout << std::endl;
-    }
-}
-
-
-void PrintOnlyTypes(const B3dNodePtr& node, const std::vector<std::uint32_t>& sequence, std::set< std::vector<std::uint32_t>>& uniqueSequences, int indent = 0)
-{
-    GetStream(indent) << node->GetTypeName() << "(" << node->GetName() << ")";
-    if (!node->GetChildNodeList().empty())
-    {
-        std::cout << std::endl;
-    }
-
-    for (auto child : node->GetChildNodeList())
-    {
-        std::vector<std::uint32_t> newSequence = sequence;
-        newSequence.push_back(child->GetType());
-
-        PrintOnlyTypes(std::static_pointer_cast<B3dNode>(child), newSequence, uniqueSequences, indent + 1);
-    }
-
-    if (node->GetChildNodeList().empty())
-    {
-        uniqueSequences.insert(sequence);
-        PrintSequence(sequence);
-    }
-}
-
-
-void PrintSequences(const std::set< std::vector<std::uint32_t>>& sequences)
-{
-    for (const auto& seq : sequences)
-    {
-        PrintSequence(seq);
-    }
-}
-
-void PrintFirstElemsOfSequences(const std::set< std::vector<std::uint32_t>>& sequences)
-{
-    std::set<std::uint32_t> roots;
-    for (const auto& seq : sequences)
-    {
-        if (!seq.empty())
-        {
-            roots.insert(seq[0]);
-        }
-    }
-
-    std::cout << "Print root types: ";
-    for (auto root: roots)
-    {
-        std::cout << root << ", ";
-    }
-
-    std::cout << std::endl;
-}
-
-void PrintOnlyTypes(const B3dTree& tree, std::set< std::vector<std::uint32_t>>& sequences)
-{
-    std::cout << "Processing " << tree.dir << "/" << tree.id <<  "..." << std::endl;
-    for (auto node : tree.rootNodes)
-    {
-        PrintOnlyTypes(node, {node->GetType()}, sequences);
-    }
-}
-
-void PrintOnlyTypes(const B3dForest& forest)
-{
-    std::set< std::vector<std::uint32_t>> sequences;
-
-    //PrintOnlyTypes(*forest.common, sequences);
-    for (const auto& tree : forest.forest)
-    {
-        PrintOnlyTypes(*tree, sequences);
-    }
-
-    PrintOnlyTypes(*forest.common, sequences);
-    PrintOnlyTypes(*forest.trucks, sequences);
-
-    PrintSequences(sequences);
-
-    PrintFirstElemsOfSequences(sequences);
-}
-
-
 } // namespace b3d
 } // namespace data
 } // namespace resource
@@ -1009,7 +893,6 @@ boost::program_options::options_description get_print_options()
 {
     boost::program_options::options_description print_options("Printing options");
     print_options.add_options()
-        (options::printing::print_only_types, "Print only types")
         (options::printing::skip_bounding_sphere, "Skip bounding sphere")
         (options::printing::skip_vector_data, "Skip vector data")
         (options::printing::skip_face_info, "Skip face info")
@@ -1022,7 +905,6 @@ boost::program_options::options_description get_print_options()
 
 int print(const B3dForest& forest, const boost::program_options::variables_map& options)
 {
-    const bool printOnlyTypes = (options.count(options::printing::print_only_types) > 0);
     const bool printTrucks = (options.count(options::only_trucks) > 0);
     const bool printCommon = (options.count(options::only_common) > 0);
     const bool printBoundingSphere = (options.count(options::printing::skip_bounding_sphere) > 0);
@@ -1031,35 +913,26 @@ int print(const B3dForest& forest, const boost::program_options::variables_map& 
     const bool printMeshInfo = (options.count(options::printing::skip_mesh_info) == 0);
     const bool printOnlyNames = (options.count(options::printing::print_only_names) > 0);
 
-
-
     using namespace d2_hack::resource::data::b3d;
 
-    if (printOnlyTypes)
-    {
-        PrintOnlyTypes(forest);
-    }
-    else
-    {
-        TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames };
+    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames };
 
-        if (printTrucks || printCommon)
+    if (printTrucks || printCommon)
+    {
+        if (printTrucks)
         {
-            if (printTrucks)
-            {
-                VisitTree(*forest.trucks, visitor);
-            }
-            else
-            {
-                VisitTree(*forest.common, visitor);
-            }
+            VisitTree(*forest.trucks, visitor);
         }
         else
         {
-            for (const auto& tree : forest.forest)
-            {
-                VisitTree(*tree, visitor);
-            }
+            VisitTree(*forest.common, visitor);
+        }
+    }
+    else
+    {
+        for (const auto& tree : forest.forest)
+        {
+            VisitTree(*tree, visitor);
         }
     }
 

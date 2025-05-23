@@ -21,10 +21,15 @@ static const char skip_bounding_sphere[] = "skip_bounding_sphere";
 static const char skip_face_info[] = "skip_face_info";
 static const char skip_mesh_info[] = "skip_mesh_info";
 static const char print_only_names[] = "print_only_names";
-static const char print_only_types[] = "print_only_types";
 
-} //printing
+} // namespace printing
 
+namespace analysis
+{
+
+static const char collect_entries_list_patterns[] = "collect_entries_list_patterns";
+
+} // namespace analysis
 
 
 
