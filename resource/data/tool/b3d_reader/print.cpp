@@ -22,13 +22,20 @@ using namespace common;
 class TracingVisitor : public NodeVisitorInterface
 {
 public:
-    TracingVisitor(bool printBoundingSphere, bool newLineForVectorData, bool printVectorData, bool printFaceInfo, bool printMeshInfo, bool printOnlyNames)
+    TracingVisitor(bool printBoundingSphere,
+                   bool newLineForVectorData,
+                   bool printVectorData,
+                   bool printFaceInfo,
+                   bool printMeshInfo,
+                   bool printOnlyNames,
+                   std::set<std::uint32_t>&& blockTypesToPrint)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
         , m_printVectorData(printVectorData)
         , m_printFaceInfo(printFaceInfo)
         , m_printMeshInfo(printMeshInfo)
         , m_printOnlyNames(printOnlyNames)
+        , m_blockTypesToPrint(std::move(blockTypesToPrint))
     {
     }
 
@@ -80,7 +87,7 @@ public:
         GetStream() << GetBlockNamePrefix(node.GetBlockData()) << ToString(node.GetName()) << std::endl;
         GetStream() << "{" << std::endl;
 
-        if (!m_printOnlyNames)
+        if (ShouldPrintBlockContent(node.GetType()))
         {
             GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
 
@@ -313,6 +320,26 @@ private:
     bool m_printMeshInfo;
     bool m_printOnlyNames;
     size_t m_offset = 0;
+    const std::set<std::uint32_t> m_blockTypesToPrint;
+
+    bool ShouldPrintBlockContent(std::uint32_t blockType) const
+    {
+        if (m_printOnlyNames)
+        {
+            return false;
+        }
+
+        if (!m_blockTypesToPrint.empty())
+        {
+            const auto pos = m_blockTypesToPrint.find(blockType);
+            if (pos == m_blockTypesToPrint.end())
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     std::string GetOffsetString(int adjustOffset = 0) const
     {
@@ -322,8 +349,6 @@ private:
         return res;
     }
 
-
-private:
     std::ostream& GetStream(int adjustOffset = 0, std::ostream& ostream = std::cout)
     {
         ostream << GetOffsetString(adjustOffset);
@@ -898,6 +923,7 @@ static const char skip_bounding_sphere[] = "skip_bounding_sphere";
 static const char skip_face_info[] = "skip_face_info";
 static const char skip_mesh_info[] = "skip_mesh_info";
 static const char print_only_names[] = "print_only_names";
+static const char block_types_to_print[] = "block_types_to_print";
 
 } // namespace printing
 } // namespace options
@@ -912,7 +938,8 @@ boost::program_options::options_description get_print_options()
         (options::printing::skip_vector_data, "Skip vector data")
         (options::printing::skip_face_info, "Skip face info")
         (options::printing::skip_mesh_info, "Skip mesh info")
-        (options::printing::print_only_names, "Print only names");
+        (options::printing::print_only_names, "Print only names")
+        (options::printing::block_types_to_print, boost::program_options::value<std::vector<std::uint32_t>>()->multitoken(), "Print content only for given block types");
 
     return print_options;
 }
@@ -930,7 +957,14 @@ int print(const B3dForest& forest, const boost::program_options::variables_map& 
 
     using namespace d2_hack::resource::data::b3d;
 
-    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames };
+    std::set<std::uint32_t> blockTypesToPrint;
+    if (options.count(options::printing::block_types_to_print) > 0)
+    {
+        const auto& tmp = options[options::printing::block_types_to_print].as<std::vector<std::uint32_t>>();
+        blockTypesToPrint.insert(tmp.begin(), tmp.end());
+    }
+
+    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames, std::move(blockTypesToPrint)};
 
     if (printTrucks || printCommon)
     {
