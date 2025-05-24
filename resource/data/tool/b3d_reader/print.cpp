@@ -889,6 +889,21 @@ void VisitTree(const B3dTree& tree, TracingVisitor& visitor)
 using namespace d2_hack::resource::data::b3d;
 
 
+namespace options
+{
+namespace printing
+{
+static const char skip_vector_data[] = "skip_vector_data";
+static const char skip_bounding_sphere[] = "skip_bounding_sphere";
+static const char skip_face_info[] = "skip_face_info";
+static const char skip_mesh_info[] = "skip_mesh_info";
+static const char print_only_names[] = "print_only_names";
+
+} // namespace printing
+} // namespace options
+
+
+
 boost::program_options::options_description get_print_options()
 {
     boost::program_options::options_description print_options("Printing options");
@@ -905,8 +920,8 @@ boost::program_options::options_description get_print_options()
 
 int print(const B3dForest& forest, const boost::program_options::variables_map& options)
 {
-    const bool printTrucks = (options.count(options::only_trucks) > 0);
-    const bool printCommon = (options.count(options::only_common) > 0);
+    const bool printTrucks = (options.count(options::generic::only_trucks) > 0);
+    const bool printCommon = (options.count(options::generic::only_common) > 0);
     const bool printBoundingSphere = (options.count(options::printing::skip_bounding_sphere) > 0);
     const bool printVectorData = (options.count(options::printing::skip_vector_data) == 0);
     const bool printFaceInfo = (options.count(options::printing::skip_face_info) == 0);

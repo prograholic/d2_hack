@@ -23,15 +23,15 @@ int main(int argc, char* argv[])
         po::options_description general("Allowed options");
 
         general.add_options()
-            ("help", "Produce help message")
-            (options::mode, po::value<std::string>(), "select mode")
-            (options::subdir, po::value<std::string>(), "select subdir for b3d file")
-            (options::id, po::value<std::string>(), "select id")
-            (options::skip_transformation, "Skip transformation")
-            (options::skip_optimization, "Skip optimization")
-            (options::only_common, "Process only common.b3d")
-            (options::only_trucks, "Process ony trucks.b3d")
-            (options::use_single_player_registry, "Use single player registry");
+            (options::generic::help, "Produce help message")
+            (options::generic::mode, po::value<std::string>(), "select mode")
+            (options::generic::subdir, po::value<std::string>(), "select subdir for b3d file")
+            (options::generic::id, po::value<std::string>(), "select id")
+            (options::generic::skip_transformation, "Skip transformation")
+            (options::generic::skip_optimization, "Skip optimization")
+            (options::generic::only_common, "Process only common.b3d")
+            (options::generic::only_trucks, "Process ony trucks.b3d")
+            (options::generic::use_single_player_registry, "Use single player registry");
 
         general.add(get_print_options());
         general.add(get_analyze_options());
@@ -39,6 +39,12 @@ int main(int argc, char* argv[])
         po::variables_map vm;
         po::store(po::parse_command_line(argc, argv, general), vm);
         po::notify(vm);
+
+        if (vm.count(options::generic::help))
+        {
+            std::cerr << general << std::endl;
+            return 0;
+        }
 
         Ogre::LogManager logMgr;
         logMgr.createLog("default", true, false, true);
@@ -53,43 +59,48 @@ int main(int argc, char* argv[])
             }
         };
 
-        if (vm.count(options::use_single_player_registry))
+        if (vm.count(options::generic::use_single_player_registry))
         {
             registry = SinglePlayerRegistry;
         }
         else
         {
-            if (vm.count(options::only_common) || vm.count(options::only_trucks))
+            if (vm.count(options::generic::only_common) || vm.count(options::generic::only_trucks))
             {
                 //skip
             }
             else
             {
-                registry.dir = vm[options::subdir].as<std::string>();
-                registry.entries.push_back(vm[options::id].as<std::string>());
+                registry.dir = vm[options::generic::subdir].as<std::string>();
+                registry.entries.push_back(vm[options::generic::id].as<std::string>());
             }
         }
 
         B3dForest forest = ReadB3d(registry);
 
-        if (!vm.count(options::skip_transformation))
+        if (!vm.count(options::generic::skip_transformation))
         {
             transformation::Transform(forest);
         }
-        if (!vm.count(options::skip_optimization))
+        if (!vm.count(options::generic::skip_optimization))
         {
             transformation::Optimize(forest);
         }
 
-        const std::string op = vm[options::mode].as<std::string>();
+        const std::string op = vm[options::generic::mode].as<std::string>();
 
-        if (op == "print")
+        if (op == options::modes::print)
         {
             return print(forest, vm);
         }
-        else if (op == "analyze")
+        else if (op == options::modes::analyze)
         {
             return analyze(forest, vm);
+        }
+        else
+        {
+            std::cerr << "Allowed modes: {" << options::modes::print << ", " << options::modes::analyze << "}" << std::endl;
+            return 1;
         }
     }
     catch (const std::exception& e)
@@ -97,7 +108,5 @@ int main(int argc, char* argv[])
         std::cerr << "fail: " << e.what() << std::endl;
     }
 
-
-
-    return 0;
+    return 1;
 }

@@ -1,12 +1,16 @@
 #ifndef D2_HACK_COMMON_INCLUDE_D2_HACK_COMMON_UTILS_H
 #define D2_HACK_COMMON_INCLUDE_D2_HACK_COMMON_UTILS_H
 
+#include <string_view>
+
 #include <d2_hack/common/types.h>
 
 namespace d2_hack
 {
 namespace common
 {
+
+std::string_view ResourceNameToStringView(const ResourceName& resName);
 
 std::string ResourceNameToString(const ResourceName& resName);
 

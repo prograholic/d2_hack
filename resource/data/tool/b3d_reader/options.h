@@ -4,6 +4,16 @@
 
 namespace options
 {
+
+namespace modes
+{
+static const char print[] = "print";
+static const char analyze[] = "analyze";
+}
+
+namespace generic
+{
+
 static const char use_single_player_registry[] = "use_single_player_registry";
 static const char subdir[] = "subdir";
 static const char id[] = "id";
@@ -12,29 +22,9 @@ static const char skip_optimization[] = "skip_optimization";
 static const char only_common[] = "only_common";
 static const char only_trucks[] = "only_trucks";
 static const char mode[] = "mode";
+static const char help[] = "help";
 
-
-namespace printing
-{
-static const char skip_vector_data[] = "skip_vector_data";
-static const char skip_bounding_sphere[] = "skip_bounding_sphere";
-static const char skip_face_info[] = "skip_face_info";
-static const char skip_mesh_info[] = "skip_mesh_info";
-static const char print_only_names[] = "print_only_names";
-
-} // namespace printing
-
-namespace analysis
-{
-
-static const char collect_entries_list_patterns[] = "collect_entries_list_patterns";
-
-} // namespace analysis
-
-
-
-
-
+} // namespace generic
 } // namespace options
 
 

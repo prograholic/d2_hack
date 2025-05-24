@@ -8,10 +8,15 @@ namespace d2_hack
 namespace common
 {
 
-std::string ResourceNameToString(const ResourceName& resName)
+std::string_view ResourceNameToStringView(const ResourceName& resName)
 {
     const char* data = reinterpret_cast<const char*>(resName.data());
-    return std::string(data, data + strnlen(data, resName.size()));
+    return std::string_view(data, data + strnlen(data, resName.size()));
+}
+
+std::string ResourceNameToString(const ResourceName& resName)
+{
+    return std::string{ResourceNameToStringView(resName)};
 }
 
 ResourceName StringToResourceName(const std::string& name)
