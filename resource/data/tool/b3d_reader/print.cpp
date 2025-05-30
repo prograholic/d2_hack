@@ -28,6 +28,7 @@ public:
                    bool printFaceInfo,
                    bool printMeshInfo,
                    bool printOnlyNames,
+                   bool print_resource_name_as_hex,
                    std::set<std::uint32_t>&& blockTypesToPrint)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
@@ -35,6 +36,7 @@ public:
         , m_printFaceInfo(printFaceInfo)
         , m_printMeshInfo(printMeshInfo)
         , m_printOnlyNames(printOnlyNames)
+        , m_print_resource_name_as_hex(print_resource_name_as_hex)
         , m_blockTypesToPrint(std::move(blockTypesToPrint))
     {
     }
@@ -313,14 +315,16 @@ public:
     }
 
 private:
-    bool m_printBoundingSphere;
-    bool m_newLineForVectorData;
-    bool m_printVectorData;
-    bool m_printFaceInfo;
-    bool m_printMeshInfo;
-    bool m_printOnlyNames;
-    size_t m_offset = 0;
+    const bool m_printBoundingSphere;
+    const bool m_newLineForVectorData;
+    const bool m_printVectorData;
+    const bool m_printFaceInfo;
+    const bool m_printMeshInfo;
+    const bool m_printOnlyNames;
+    const bool m_print_resource_name_as_hex;
     const std::set<std::uint32_t> m_blockTypesToPrint;
+
+    size_t m_offset = 0;
 
     bool ShouldPrintBlockContent(std::uint32_t blockType) const
     {
@@ -415,6 +419,18 @@ private:
         GetStream(adjustOffset) << "unknown: " << block.unknown << "," << std::endl;
     }
 
+    void PrintData(const block_data::SomeUintsWithBuffer& data, const char* name, int adjustOffset)
+    {
+        GetStream(adjustOffset) << "SomeUintsWithBuffer(" << name << ")" << std::endl;
+        GetStream(adjustOffset) << "{" << std::endl;
+
+        GetStream(adjustOffset + 1) << "type: " << ToString(data.type) << "," << std::endl;
+        GetStream(adjustOffset + 1) << "unknown0: " << ToString(data.unknown0) << "," << std::endl;
+
+        PrintData(data.unknown1, "unknown1", adjustOffset + 1, m_printVectorData);
+        GetStream(adjustOffset) << "}" << std::endl;
+    }
+
     void PrintData(const block_data::SimpleObjectConnector1& block, const char* /* name */, int adjustOffset)
     {
         GetStream(adjustOffset) << "space: " << ToString(block.space) << "," << std::endl;
@@ -423,10 +439,7 @@ private:
 
     void PrintData(const block_data::GroupUnknown2& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown1: " << block.unknown1 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown2: " << block.unknown2 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown3: " << block.unknown3 << "," << std::endl;
+        GetStream(adjustOffset) << "unknown0: " << ToString(block.unknown0) << std::endl;
     }
 
     void PrintData(const block_data::GroupRoadInfraObjects4& block, const char* /* name */, int adjustOffset)
@@ -488,29 +501,18 @@ private:
     void PrintData(const block_data::GroupUnknown12& block, const char* /* name */, int adjustOffset)
     {
         GetStream(adjustOffset) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
-        GetStream(adjustOffset) << "unknown1: " << ToString(block.unknown1) << "," << std::endl;
-        GetStream(adjustOffset) << "unknown2: " << ToString(block.unknown2) << "," << std::endl;
-        GetStream(adjustOffset) << "unknown3: " << ToString(block.unknown3) << "," << std::endl;
-        GetStream(adjustOffset) << "unknown4: " << ToString(block.unknown4) << "," << std::endl;
-        GetStream(adjustOffset) << "unknown5: " << ToString(block.unknown5) << std::endl;
+        PrintData(block.unknown1, "unknown1", adjustOffset);
     }
 
     void PrintData(const block_data::SimpleTrigger13& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
-        GetStream(adjustOffset) << "possibleNumberOrId: " << block.possibleNumberOrId << std::endl;
-        PrintData(block.unknown2, "unknown2", adjustOffset);
+        PrintData(block.unknown0, "unknown0", adjustOffset);
     }
 
     void PrintData(const block_data::SimpleUnknown14& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown1: " << block.unknown1 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown2: " << block.unknown2 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown3: " << block.unknown3 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown4: " << block.unknown4 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown5: " << block.unknown5 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown6: " << block.unknown6 << std::endl;
+        GetStream(adjustOffset) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
+        PrintData(block.unknown1, "unknown1", adjustOffset);
     }
 
     void PrintData(const block_data::SimpleObjectConnector18& block, const char* /* name */, int adjustOffset)
@@ -525,11 +527,7 @@ private:
 
     void PrintData(const block_data::SimpleFlatCollision20& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
-        GetStream(adjustOffset) << "unknown1: " << block.unknown1 << std::endl;
-        GetStream(adjustOffset) << "keyNameOrParametersCount: " << block.keyNameOrParametersCount << std::endl;
-        GetStream(adjustOffset) << "height: " << block.height << std::endl;
-        PrintData(block.parameters, "parameters", adjustOffset);
+        PrintData(block.unknown0, "unknown0", adjustOffset);
         PrintData(block.maybeVertices, "maybeVertices", adjustOffset);
     }
 
@@ -541,9 +539,7 @@ private:
 
     void PrintData(const block_data::SimpleVolumeCollision23& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
-        GetStream(adjustOffset) << "surfaceType: " << block.surfaceType << "," << std::endl;
-        PrintData(block.unknown1, "unknown1", adjustOffset);
+        PrintData(block.unknown0, "unknown0", adjustOffset);
         PrintData(block.polygons, "polygons", adjustOffset);
     }
 
@@ -562,18 +558,14 @@ private:
         GetStream(adjustOffset) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(adjustOffset) << "unknown2: " << block.unknown2 << "," << std::endl;
         GetStream(adjustOffset) << "soundname: \"" << common::ResourceNameToString(block.soundName) << "\"," << std::endl;
-        GetStream(adjustOffset) << "unknown3: {"
-            << block.unknown3[0] << ", "
-            << block.unknown3[1] << ", "
-            << block.unknown3[2] << ", "
-            << block.unknown3[3] << ", "
-            << block.unknown3[4] << ", "
-            << block.unknown3[5] << ", "
-            << block.unknown3[6] << ", "
-            << block.unknown3[7] << ", "
-            << block.unknown3[8] << ", "
-            << block.unknown3[9] << ", "
-            << block.unknown3[10] << "}" << std::endl;
+        GetStream(adjustOffset) << "unknown3" << block.unknown3 << "\"," << std::endl;
+        GetStream(adjustOffset) << "unknown4" << block.unknown4 << "\"," << std::endl;
+        GetStream(adjustOffset) << "unknown5: {"
+            << block.unknown5[0] << ", "
+            << block.unknown5[1] << ", "
+            << block.unknown5[2] << ", "
+            << block.unknown5[3] << ", "
+            << block.unknown5[4] << "}" << std::endl;
     }
 
     void PrintData(const block_data::Face28& data, const char* /* name */, int adjustOffset)
@@ -615,18 +607,10 @@ private:
 
     void PrintData(const block_data::GroupUnknown29& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "type: " << ToString(block.type) << "," << std::endl;
+        GetStream(adjustOffset) << "count: " << ToString(block.count) << "," << std::endl;
         GetStream(adjustOffset) << "unknown0: " << ToString(block.unknown0) << "," << std::endl;
-        GetStream(adjustOffset) << "unknown1: "
-            "{" << block.unknown1[0] << ", "
-            "" << block.unknown1[1] << ", "
-            "" << block.unknown1[2] << ", "
-            "" << block.unknown1[3] << ", "
-            "" << block.unknown1[4] << ", "
-            "" << block.unknown1[5] << ", "
-            "" << block.unknown1[6] << ", "
-            "" << block.unknown1[7] << ", "
-            "}" << std::endl;
+        GetStream(adjustOffset) << "unknown1: " << ToString(block.unknown1) << "," << std::endl;
+        PrintData(block.unknown2, "unknown2", adjustOffset);
     }
 
     void PrintData(const block_data::SimplePortal30& block, const char* /* name */, int adjustOffset)
@@ -642,6 +626,7 @@ private:
         GetStream(adjustOffset) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(adjustOffset) << "unknown2: " << block.unknown2 << "," << std::endl;
         GetStream(adjustOffset) << "position: " << ToString(block.position) << "," << std::endl;
+        GetStream(adjustOffset) << "unknown3: " << ToString(block.unknown3) << "," << std::endl;
         GetStream(adjustOffset) << "color: {"
             << block.color[0] << ", "
             << block.color[1] << ", "
@@ -651,10 +636,7 @@ private:
             << block.color[5] << ", "
             << block.color[6] << ", "
             << block.color[7] << ", "
-            << block.color[8] << ", "
-            << block.color[9] << ", "
-            << block.color[10] << ", "
-            << block.color[11] << "}" << std::endl;
+            << block.color[8] << "}" << std::endl;
     }
 
     void PrintData(const block_data::SimpleUnknown34::Unknown& data, const char* /* name */, int adjustOffset)
@@ -792,7 +774,15 @@ private:
 
     std::string ToString(const common::ResourceName& resourceName)
     {
-        return "\"" + common::ResourceNameToString(resourceName) + "\"";
+        std::string res = "\"" + common::ResourceNameToString(resourceName) + "\"";
+
+        if (m_print_resource_name_as_hex)
+        {
+            res += ", ";
+            res += ToString(resourceName.data(), resourceName.data() + resourceName.size());
+        }
+
+        return res;
     }
 
     std::string ToString(const Ogre::Vector3& vector)
@@ -924,6 +914,7 @@ static const char skip_face_info[] = "skip_face_info";
 static const char skip_mesh_info[] = "skip_mesh_info";
 static const char print_only_names[] = "print_only_names";
 static const char block_types_to_print[] = "block_types_to_print";
+static const char print_resource_name_as_hex[] = "print_resource_name_as_hex";
 
 } // namespace printing
 } // namespace options
@@ -939,6 +930,7 @@ boost::program_options::options_description get_print_options()
         (options::printing::skip_face_info, "Skip face info")
         (options::printing::skip_mesh_info, "Skip mesh info")
         (options::printing::print_only_names, "Print only names")
+        (options::printing::print_resource_name_as_hex, "Print resource name as hex")
         (options::printing::block_types_to_print, boost::program_options::value<std::vector<std::uint32_t>>()->multitoken(), "Print content only for given block types");
 
     return print_options;
@@ -954,6 +946,7 @@ int print(const B3dForest& forest, const boost::program_options::variables_map& 
     const bool printFaceInfo = (options.count(options::printing::skip_face_info) == 0);
     const bool printMeshInfo = (options.count(options::printing::skip_mesh_info) == 0);
     const bool printOnlyNames = (options.count(options::printing::print_only_names) > 0);
+    const bool printResourceNameAsHex = (options.count(options::printing::print_resource_name_as_hex) > 0);
 
     using namespace d2_hack::resource::data::b3d;
 
@@ -964,7 +957,7 @@ int print(const B3dForest& forest, const boost::program_options::variables_map& 
         blockTypesToPrint.insert(tmp.begin(), tmp.end());
     }
 
-    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames, std::move(blockTypesToPrint)};
+    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames, printResourceNameAsHex, std::move(blockTypesToPrint)};
 
     if (printTrucks || printCommon)
     {

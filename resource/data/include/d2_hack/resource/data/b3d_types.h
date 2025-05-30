@@ -116,6 +116,13 @@ struct EventEntry
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 };
 
+struct SomeUintsWithBuffer
+{
+    std::uint32_t type;
+    std::uint32_t unknown0;
+    std::vector<Ogre::Real> unknown1;
+};
+
 
 /**
  * TODO - разобраться, что это.
@@ -155,10 +162,7 @@ struct GroupUnknown2
     static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
-    Ogre::Real unknown0;
-    Ogre::Real unknown1;
-    std::uint32_t unknown2;
-    Ogre::Real unknown3;
+    common::BoundingSphere unknown0;
 };
 
 
@@ -315,14 +319,9 @@ struct GroupUnknown12
     static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
-
-    Ogre::Real unknown0;
-    Ogre::Real unknown1;
-    Ogre::Real unknown2;
-    Ogre::Real unknown3;
-
-    std::uint32_t unknown4;
-    std::uint32_t unknown5;
+    
+    common::BoundingSphere unknown0;
+    SomeUintsWithBuffer unknown1;
 };
 
 struct SimpleTrigger13
@@ -333,10 +332,8 @@ struct SimpleTrigger13
 
     common::BoundingSphere boundingSphere;
 
-    std::uint32_t unknown0;
-    std::uint32_t possibleNumberOrId;
 
-    std::vector<Ogre::Real> unknown2;
+    SomeUintsWithBuffer unknown0;
 };
 
 struct SimpleUnknown14
@@ -347,14 +344,8 @@ struct SimpleUnknown14
 
     common::BoundingSphere boundingSphere;
 
-    std::uint32_t unknown0;
-    std::uint32_t unknown1;
-
-    Ogre::Real unknown2;
-    Ogre::Real unknown3;
-    Ogre::Real unknown4;
-    Ogre::Real unknown5;
-    Ogre::Real unknown6;
+    common::BoundingSphere unknown0;
+    SomeUintsWithBuffer unknown1;
 };
 
 
@@ -407,11 +398,7 @@ struct SimpleFlatCollision20
 
     common::BoundingSphere boundingSphere;
 
-    std::uint32_t unknown0;
-    std::uint32_t unknown1;
-    std::uint32_t keyNameOrParametersCount;
-    Ogre::Real height;
-    std::vector<std::uint32_t> parameters;
+    SomeUintsWithBuffer unknown0;
 
     std::vector<common::Position> maybeVertices;
 };
@@ -436,10 +423,7 @@ struct SimpleVolumeCollision23
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
-    std::uint32_t unknown0;
-    std::uint32_t surfaceType;
-
-    std::vector<Ogre::Real> unknown1;
+    SomeUintsWithBuffer unknown0;
 
     std::vector<common::PositionList> polygons;
 };
@@ -477,11 +461,13 @@ struct SimpleUnknown25
 
     inline static const common::BoundingSphere boundingSphere = common::InvalidBoundingSphere;
 
-    Ogre::Real unknown0;
+    std::uint32_t unknown0;
     std::uint32_t unknown1;
     std::uint32_t unknown2;
     common::ResourceName soundName;
-    std::array<Ogre::Real, 11> unknown3;
+    Ogre::Vector3 unknown3;
+    Ogre::Vector3 unknown4;
+    std::array<Ogre::Real, 5> unknown5;
 };
 
 struct Face28
@@ -528,10 +514,11 @@ struct GroupUnknown29
     static constexpr bool HasNestedCount = true;
 
     common::BoundingSphere boundingSphere;
-    std::uint32_t type;
+    std::uint32_t count;
     std::uint32_t unknown0;
 
-    std::array<Ogre::Real, 8> unknown1;
+    common::BoundingSphere unknown1;
+    std::vector<Ogre::Real> unknown2;
 };
 
 struct SimplePortal30
@@ -568,8 +555,9 @@ struct GroupLightingObjects33
     std::uint32_t unknown2;
 
     Ogre::Vector3 position;
+    Ogre::Vector3 unknown3;
 
-    std::array<Ogre::Real, 12> color;
+    std::array<Ogre::Real, 9> color;
 };
 
 struct SimpleUnknown34
@@ -819,7 +807,7 @@ struct SimpleGeneratedObjects40
     common::ResourceName name;
 
     std::uint32_t type;
-    Ogre::Real unknown0;
+    std::uint32_t unknown0; // always is zero
 
     std::vector<Ogre::Real> unknown1;
 };

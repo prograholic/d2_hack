@@ -3,6 +3,7 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <format>
 
 #include <d2_hack/resource/data/b3d_visitor.h>
 #include <d2_hack/common/utils.h>
@@ -257,6 +258,17 @@ void MatchTreeGeneratorMaterials(const TreeGeneratorMaterialsData& data, Matched
 }
 
 
+std::string ExtraPrintInfo(const std::string& /* data */)
+{
+    return std::string{};
+}
+
+std::string ExtraPrintInfo(std::uint32_t data)
+{
+    return ": " + std::format("{:#010x}", data);
+}
+
+
 template <typename T, typename P, typename A>
 void PrintData(const std::set<T, P, A>& data, std::ostream& stream)
 {
@@ -264,12 +276,12 @@ void PrintData(const std::set<T, P, A>& data, std::ostream& stream)
     if (!data.empty())
     {
         auto pos = data.begin();
-        stream << *pos;
+        stream << "(" << *pos << ExtraPrintInfo(*pos) << ")";
         ++pos;
 
         for (; pos != data.end(); ++pos)
         {
-            stream << ", " << *pos;
+            stream << ", (" << *pos << ExtraPrintInfo(*pos) << ")";
         }
     }
     stream << "}";
@@ -302,7 +314,7 @@ void PrintData(const std::map<K, V, P, A>& data, int indent, std::ostream& strea
     for (const auto& entry : data)
     {
         auto& subStream = GetStream(indent, stream);
-        subStream << entry.first << ": ";
+        subStream << "(" << entry.first << ExtraPrintInfo(entry.first) << ")" << ": ";
         PrintData(entry.second, subStream);
         subStream << std::endl;
     }

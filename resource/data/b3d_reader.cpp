@@ -119,6 +119,22 @@ private:
         return materials;
     }
 
+    block_data::SomeUintsWithBuffer ReadSomeUintsWithBuffer(bool readCount = true)
+    {
+        block_data::SomeUintsWithBuffer res;
+
+        res.type = ReadUint32();
+        res.unknown0 = ReadUint32();
+
+        if (readCount)
+        {
+            const std::uint32_t unknown1Count = ReadUint32();
+            ReadCount(res.unknown1, unknown1Count);
+        }
+
+        return res;
+    }
+
     block_data::BlockHeader ReadBlockHeader()
     {
         common::ResourceName name;
@@ -333,10 +349,7 @@ private:
         block_data::GroupUnknown2 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        block.unknown0 = ReadFloat();
-        block.unknown1 = ReadFloat();
-        block.unknown2 = ReadInt<std::uint32_t>();
-        block.unknown3 = ReadFloat();
+        block.unknown0 = ReadBoundingSphere();
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
@@ -502,12 +515,8 @@ private:
         block_data::GroupUnknown12 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        block.unknown0 = ReadFloat();
-        block.unknown1 = ReadFloat();
-        block.unknown2 = ReadFloat();
-        block.unknown3 = ReadFloat();
-        block.unknown4 = ReadUint32();
-        block.unknown5 = ReadUint32();
+        block.unknown0 = ReadBoundingSphere();
+        block.unknown1 = ReadSomeUintsWithBuffer(false);
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
@@ -517,11 +526,7 @@ private:
         block_data::SimpleTrigger13 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        block.unknown0 = ReadUint32();
-        block.possibleNumberOrId = ReadUint32();
-
-        const std::uint32_t unknown2Count = ReadUint32();
-        ReadCount(block.unknown2, unknown2Count);
+        block.unknown0 = ReadSomeUintsWithBuffer();
         
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
@@ -531,14 +536,9 @@ private:
         block_data::SimpleUnknown14 block;
         
         block.boundingSphere = ReadBoundingSphere();
-        block.unknown0 = ReadUint32();
-        block.unknown1 = ReadUint32();
 
-        block.unknown2 = ReadFloat();
-        block.unknown3 = ReadFloat();
-        block.unknown4 = ReadFloat();
-        block.unknown5 = ReadFloat();
-        block.unknown6 = ReadFloat();
+        block.unknown0 = ReadBoundingSphere();
+        block.unknown1 = ReadSomeUintsWithBuffer();
         
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
@@ -582,24 +582,10 @@ private:
         block_data::SimpleFlatCollision20 block{};
 
         block.boundingSphere = ReadBoundingSphere();
-        const std::uint32_t countVertices = ReadUint32();
+        std::uint32_t verticesCount = ReadUint32();
 
-        block.unknown0 = ReadUint32();
-        block.unknown1 = ReadUint32();
-        block.keyNameOrParametersCount = ReadUint32();
-
-        if (block.keyNameOrParametersCount > 0)
-        {
-            block.height = ReadFloat();
-
-            ReadCount(block.parameters, block.keyNameOrParametersCount - 1);
-        }
-        else
-        {
-            block.height = 100.0f;
-        }
-
-        ReadCount(block.maybeVertices, countVertices);
+        block.unknown0 = ReadSomeUintsWithBuffer();
+        ReadCount(block.maybeVertices, verticesCount);
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
@@ -619,11 +605,7 @@ private:
     {
         block_data::SimpleVolumeCollision23 block;
 
-        block.unknown0 = ReadUint32();
-        block.surfaceType = ReadUint32();
-
-        const std::uint32_t unknown1Count = ReadUint32();
-        ReadCount(block.unknown1, unknown1Count);
+        block.unknown0 = ReadSomeUintsWithBuffer();
 
         const std::uint32_t collisionCount = ReadUint32();
         for (std::uint32_t collisionNumber = 0; collisionNumber != collisionCount; ++collisionNumber)
@@ -656,11 +638,13 @@ private:
     {
         block_data::SimpleUnknown25 block;
 
-        block.unknown0 = ReadFloat();
+        block.unknown0 = ReadUint32();
         block.unknown1 = ReadUint32();
         block.unknown2 = ReadUint32();
         ReadBytes(block.soundName.data(), block.soundName.size());
-        for (auto& unknown : block.unknown3)
+        block.unknown3 = ReadVector3();
+        block.unknown4 = ReadVector3();
+        for (auto& unknown : block.unknown5)
         {
             unknown = ReadFloat();
         }
@@ -719,10 +703,10 @@ private:
         block_data::GroupUnknown29 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        block.type = ReadUint32();
+        block.count = ReadUint32();
         block.unknown0 = ReadUint32();
-
-        ReadBytes(block.unknown1.data(), (block.type == 3 ? 7 : 8) * sizeof(block.unknown1[0]));
+        block.unknown1 = ReadBoundingSphere();
+        ReadCount(block.unknown2, block.count);
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
@@ -749,6 +733,7 @@ private:
         block.unknown1 = ReadUint32();
         block.unknown2 = ReadUint32();
         block.position = ReadVector3();
+        block.unknown3 = ReadVector3();
         for (auto& colorEntry : block.color)
         {
             colorEntry = ReadFloat();
@@ -1032,7 +1017,11 @@ private:
         ReadBytes(block.name.data(), block.name.size());
 
         block.type = ReadUint32();
-        block.unknown0 = ReadFloat();
+        block.unknown0 = ReadUint32();
+        if (block.unknown0 != 0)
+        {
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "SimpleGeneratedObjects40: unknown0 is not zero: " + std::to_string(block.unknown0));
+        }
 
         const std::uint32_t unknown1Size = ReadUint32();
         ReadCount(block.unknown1, unknown1Size);
