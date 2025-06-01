@@ -733,9 +733,7 @@ private:
     {
         GetStream(adjustOffset) << "empty: " << ToString(block.empty) << "," << std::endl;
         GetStream(adjustOffset) << "name: " << ToString(block.name) << "," << std::endl;
-        GetStream(adjustOffset) << "type: " << block.type << "," << std::endl;
-        GetStream(adjustOffset) << "unknown0: " << block.unknown0 << std::endl;
-        PrintData(block.unknown1, "unknown1", adjustOffset);
+        PrintData(block.unknown0, "unknown0", adjustOffset);
     }
 
     std::string ToString(const std::string& data)

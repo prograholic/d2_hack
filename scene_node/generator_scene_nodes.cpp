@@ -255,6 +255,31 @@ Ogre::MeshPtr TreeGeneratorSceneNode::CreateMesh(const TreeGeneratorSceneNode::T
     return res;
 }
 
+
+static void CalculateMaterialName(std::uint32_t type, std::string& materialName, std::string& extraMaterialName)
+{
+    const std::uint32_t subType = (type >> 4) & 0x0f;
+    if ((subType % 2) == 0)
+    {
+        materialName = std::format("tree{}{}", subType, subType + 1);
+    }
+    else
+    {
+        materialName = std::format("tree{}{}", subType - 1, subType);
+    }
+
+    if ((type % 2) != 0)
+    {
+        extraMaterialName = "tree" + std::to_string(subType);
+    }
+    else
+    {
+        extraMaterialName = "";
+    }
+
+
+}
+
 TreeGeneratorSceneNode::TreeParams TreeGeneratorSceneNode::DeduceTreeParams(const resource::data::b3d::block_data::SimpleGeneratedObjects40& data, const std::string& b3dId)
 {
     TreeParams res;
@@ -262,80 +287,58 @@ TreeGeneratorSceneNode::TreeParams TreeGeneratorSceneNode::DeduceTreeParams(cons
     res.scale = data.boundingSphere.radius;
     res.location = data.boundingSphere.center;
     res.textureScale = 1.0f;
-    res.materialName = "tree01";
 
-    switch (data.type)
+    CalculateMaterialName(data.unknown0.type, res.materialName, res.extraMaterialName);
+
+    const std::uint32_t scaleType = (data.unknown0.type >> 8) & 0x0f;
+    switch (scaleType)
     {
     case 0:
+        res.textureScale = 0.5f;
+        break;
+
+    case 1:
+        res.textureScale = 0.75f;
+        break;
+
     case 2:
+        res.textureScale = 0.6666667f;
+        break;
+
     case 3:
-    case 16:
-    case 17:
-        res.textureScale = 0.5f;
+        res.textureScale = 0.8f;
         break;
 
-    case 18:
-    case 19:
-        // default values are OK
+    case 4:
+        res.textureScale = 0.8f;
         break;
 
-    case 32:
-    case 34:
-    case 35:
-        res.textureScale = 0.5f;
-        res.materialName = "tree23";
+    case 5:
+        res.textureScale = 0.55f;
         break;
 
-    case 48:
-    case 50:
-    case 51:
-        res.materialName = "tree23";
-        break;
-
-    case 80:
-    case 82:
-    case 83:
-        res.materialName = "tree45";
-        break;
-
-    case 544:
-    case 545:
-    case 546:
-    case 547:
-        res.textureScale = 0.5f;
-        res.materialName = "tree23";
-        break;
-
-    case 560:
-    case 561:
-    case 562:
-    case 563:
-        res.materialName = "tree23";
-        break;
-
-    case 515:
-    case 531:
-    case 1059:
-    case 1089:
-    case 1091:
-    case 1313:
-    case 1315:
-        res.materialName = "zero";
+    case 6:
+        res.textureScale = 1.0;
         break;
 
     default:
-        //OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "Unknown data type: " + std::to_string(data.type));
-        D2_HACK_LOG(TreeGeneratorSceneNode::DeduceTreeParams) << "Unknown data type: " << data.type << ", 0x" << std::hex << data.type;
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Unknown scale type {}, type: {}", scaleType, data.unknown0.type));
     }
 
-    D2_HACK_LOG(TreeGeneratorSceneNode::DeduceTreeParams) << "" << data.type << ", 0x" << std::hex << data.type << ", material name: " << res.materialName;
+    D2_HACK_LOG(TreeGeneratorSceneNode::DeduceTreeParams) << 
+        "data.unknown0.type: 0x" << std::hex << data.unknown0.type << ", "
+        "material name: " << res.materialName << ", "
+        "extra material name: " << res.extraMaterialName;
 
 
     res.meshName = "tree_mesh_" + res.materialName + "_" + std::to_string(res.scale) + "_" + std::to_string(res.textureScale);
     res.materialName = common::GetResourceName(b3dId, res.materialName);
+    res.extraMaterialName = common::GetResourceName(b3dId, res.extraMaterialName);
 
     return res;
 }
+
+
 
 
 } // namespace scene_node

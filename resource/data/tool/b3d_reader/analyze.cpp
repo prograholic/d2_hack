@@ -159,7 +159,7 @@ public:
             auto str = common::ResourceNameToStringView(blockData.name);
             if (str.find("$$TreeGenerator") != str.npos)
             {
-                m_data.second.insert(blockData.type);
+                m_data.second.insert(blockData.unknown0.type);
             }
         }
 

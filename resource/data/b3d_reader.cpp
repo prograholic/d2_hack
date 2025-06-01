@@ -1016,15 +1016,12 @@ private:
         ReadBytes(block.empty.data(), block.empty.size());
         ReadBytes(block.name.data(), block.name.size());
 
-        block.type = ReadUint32();
-        block.unknown0 = ReadUint32();
-        if (block.unknown0 != 0)
-        {
-            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "SimpleGeneratedObjects40: unknown0 is not zero: " + std::to_string(block.unknown0));
-        }
+        block.unknown0 = ReadSomeUintsWithBuffer();
 
-        const std::uint32_t unknown1Size = ReadUint32();
-        ReadCount(block.unknown1, unknown1Size);
+        if (block.unknown0.unknown0 != 0)
+        {
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "SimpleGeneratedObjects40: unknown0.unknown0 is not zero: " + std::to_string(block.unknown0.unknown0));
+        }
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }

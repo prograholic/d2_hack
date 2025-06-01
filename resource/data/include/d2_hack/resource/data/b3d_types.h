@@ -806,10 +806,7 @@ struct SimpleGeneratedObjects40
     common::ResourceName empty;
     common::ResourceName name;
 
-    std::uint32_t type;
-    std::uint32_t unknown0; // always is zero
-
-    std::vector<Ogre::Real> unknown1;
+    SomeUintsWithBuffer unknown0;
 };
 
 } // namespace block_data

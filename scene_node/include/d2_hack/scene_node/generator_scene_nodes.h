@@ -37,6 +37,7 @@ public:
     struct TreeParams
     {
         std::string materialName;
+        std::string extraMaterialName;
         std::string meshName;
         float textureScale;
         float scale;
