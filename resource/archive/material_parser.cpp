@@ -4,6 +4,7 @@
 #include <d2_hack/common/types.h>
 
 #include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 D2_HACK_DISABLE_WARNING_BEGIN(4100)
 
@@ -68,7 +69,7 @@ static std::list<std::string> ParseTokens(const std::string& filename, Ogre::Dat
     return std::list<std::string>{tokens.begin() + 1, tokens.end()};
 }
 
-Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string& filename)
+Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string& filename, const std::string& comment)
 {
     if (tokens.empty())
     {
@@ -106,6 +107,8 @@ Ogre::DataStreamPtr ParseColor(std::list<std::string>& tokens, const std::string
     std::string materialContent = str(boost::format(ColorMaterialTemplate) % filename.substr(0, filename.size() - 9) % cv.r % cv.g % cv.b % alpha % depthCheck);
     //D2_HACK_LOG(MaterialParser) << "content: " << materialContent;
 
+    materialContent += comment;
+
     const std::size_t dataSize = materialContent.size();
 
     std::unique_ptr<char, common::ArrayDeleter<Ogre::MEMCATEGORY_GENERAL>> buffer{ OGRE_ALLOC_T(char, dataSize, Ogre::MEMCATEGORY_GENERAL) };
@@ -133,7 +136,7 @@ std::string LookupTextureByIndex(const ResFileInfo& fileInfo, std::uint32_t text
     OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Cannot find texture for index: " + std::to_string(textureIndex));
 }
 
-Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::string>& tokens, const std::string& filename)
+Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::string>& tokens, const std::string& filename, const std::string& comment)
 {
     const std::uint32_t textureIndex = std::stoul(tokens.front()) - 1;
     tokens.pop_front();
@@ -241,6 +244,8 @@ Ogre::DataStreamPtr ParseTexture(const ResFileInfo& fileInfo, std::list<std::str
 
     std::string materialContent = str(boost::format(TextureMaterialTemplate) % filename.substr(0, filename.size() - 9) % textureFilename % depthCheck);
     //D2_HACK_LOG(MaterialParser) << "content: \n" << materialContent;
+
+    materialContent += comment;
     
     const std::size_t dataSize = materialContent.size();
 
@@ -258,16 +263,18 @@ Ogre::DataStreamPtr ParseMaterial(const ResFileInfo& fileInfo, const std::string
 {
     std::list<std::string> tokens = ParseTokens(filename, *stream);
 
+    std::string comment = "// " + boost::algorithm::join(tokens, " ") + "\n";
+
     const std::string materialType = tokens.front();
     tokens.pop_front();
 
     if (materialType == "col")
     {
-        return ParseColor(tokens, filename);
+        return ParseColor(tokens, filename, comment);
     }
     else if ((materialType == "ttx") || (materialType == "tex") || (materialType == "itx"))
     {
-        return ParseTexture(fileInfo, tokens, filename);
+        return ParseTexture(fileInfo, tokens, filename, comment);
     }
     else
     {
