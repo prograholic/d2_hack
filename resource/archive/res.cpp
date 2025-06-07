@@ -1,16 +1,13 @@
 #include <d2_hack/resource/archive/res.h>
 
-#include <memory>
 #include <fstream>
 
 #include <OgreException.h>
-#include <OgreSharedPtr.h>
 
 #include <d2_hack/common/offset_data_stream.h>
-#include <d2_hack/common/resource_mgmt.h>
 
 #include "res_file_info.h"
-#include "material_parser.h"
+#include "ogre_material_generator.h"
 
 namespace d2_hack
 {
@@ -234,7 +231,7 @@ bool ResArchive::FindEntry(const Ogre::String& filename, ResEntry& entry) const
 
 Ogre::DataStreamPtr ResArchive::OpenMaterial(const Ogre::String& filename, const Ogre::DataStreamPtr& stream) const
 {
-    return ParseMaterial(*m_archiveInfo, filename, stream);
+    return GenerateMaterial(*m_archiveInfo, filename, stream);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

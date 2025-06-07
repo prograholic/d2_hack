@@ -1,1 +1,2 @@
 add_subdirectory(res_archive)
+add_subdirectory(test_material_descriptor)

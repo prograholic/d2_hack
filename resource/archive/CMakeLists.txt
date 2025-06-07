@@ -2,8 +2,10 @@ d2_hack_add_library(d2_hack.resource.archive
     res.cpp
     res_file_info.cpp
     res_file_info.h
-    material_parser.cpp
-    material_parser.h
+    res_material_parser.cpp
+    res_material_parser.h
+    ogre_material_generator.cpp
+    ogre_material_generator.h
     
     include/d2_hack/resource/archive/res.h
 )
