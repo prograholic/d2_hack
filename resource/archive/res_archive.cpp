@@ -71,6 +71,7 @@ void ResArchive::load()
         {
             // add info for generated Ogre material
             info.filename = GetPublicFilename(info.filename);
+            info.basename = GetPublicFilename(info.basename);
             m_fileInfoList.push_back(info);
         }
     }

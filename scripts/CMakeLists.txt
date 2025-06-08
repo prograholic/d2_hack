@@ -6,6 +6,7 @@ set (scripts
     run_b3d_reader_for_common.bat
     run_b3d_reader_for_collecting_entries_list_patterns.bat
     run_b3d_reader_for_matching_tree_generator_materials.bat
+    generate_res_material_test.py
 )
 
 

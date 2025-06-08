@@ -44,6 +44,7 @@ struct MaterialDescriptor
     std::optional<std::uint32_t> power;
     std::optional<std::uint32_t> par;
     std::optional<std::uint32_t> col;
+    bool env3 = false;
 };
 
 MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content);

@@ -48,6 +48,7 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
     auto setPower = [&res](auto param) {res.power = param; };
     auto setPar = [&res](auto param) {res.par = param; };
     auto setCol = [&res](auto param) {res.col = param; };
+    auto setEnv3 = [&res]() {res.env3 = true; };
 
     using qi::int_;
     using qi::float_;
@@ -77,6 +78,7 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
             || lit("power") >> int_[setPower]
             || lit("par") >> int_[setPar]
             || lit("col") >> int_[setCol]
+            || lit("\"env3\"")[setEnv3]
             ) >> *data
         ;
 
@@ -89,10 +91,8 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
 
     qi::rule<iterator_type, ascii::space_type> start;
 
-    start %=
-        +qi::char_("a-zA-Z_0-9") >> materialTypeSymbols[setType] >> int_[setIndex] >> *data;
+    start %= qi::lexeme[+qi::graph] >> materialTypeSymbols[setType] >> int_[setIndex] >> *data;
 
-    
     bool isOk = phrase_parse(first, last, start, ascii::space);
 
     if (!isOk || (first != last))
