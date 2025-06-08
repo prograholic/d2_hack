@@ -15,21 +15,12 @@ namespace archive
 namespace res
 {
 
-enum class EntryType
-{
-    File,
-    Color,
-    Material
-};
-
 struct ResEntry
 {
-    EntryType type;
-
-    size_t index;
     size_t offset;
     size_t size;
     std::string name;
+    std::string resString;
 };
 
 namespace entries
@@ -50,9 +41,6 @@ struct ResFileInfo
 };
 
 void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo);
-
-
-std::string GetColorFileName(const std::string& resId, const std::string& colorId);
 
 } // namespace res
 } // namespace archive

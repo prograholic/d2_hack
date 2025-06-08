@@ -4,7 +4,7 @@
 
 #include <OgreException.h>
 
-#include <d2_hack/resource/archive/res_extensions.h>
+#include <d2_hack/common/resource_mgmt.h>
 #include <d2_hack/common/offset_data_stream.h>
 
 #include "res_file_info.h"

@@ -18,7 +18,6 @@ class OgreMaterialProvider
 public:
 
     Ogre::MaterialPtr CreateOrRetrieveMaterial(const std::string& materialName, const std::string& groupName);
-
 };
 
 } // namespace res

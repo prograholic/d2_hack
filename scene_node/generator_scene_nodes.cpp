@@ -60,8 +60,9 @@ void TerrainSceneNode::ConfigureTerrainDefaults()
     defaultimp.layerList.resize(1);
     defaultimp.layerList[0].worldSize = TerrainWorldSize / 3;
     
-    defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr");
-    defaultimp.layerList[0].textureNames.push_back("aa\\txr\\ter000.txr"); // FIXME: find proper texture???
+    std::string textureName = common::GetTextureFileName("aa", 12); //ter000.txr
+    defaultimp.layerList[0].textureNames.push_back(textureName);
+    defaultimp.layerList[0].textureNames.push_back(textureName); // FIXME: find proper texture???
 }
 
 void TerrainSceneNode::DefineTerrains()
@@ -333,8 +334,8 @@ TreeGeneratorSceneNode::TreeParams TreeGeneratorSceneNode::DeduceTreeParams(cons
 
 
     res.meshName = "tree_mesh_" + res.materialName + "_" + std::to_string(res.scale) + "_" + std::to_string(res.textureScale);
-    res.materialName = common::GetResourceName(b3dId, res.materialName);
-    res.extraMaterialName = common::GetResourceName(b3dId, res.extraMaterialName);
+    res.materialName = common::GetMaterialFileName(b3dId, res.materialName);
+    res.extraMaterialName = common::GetMaterialFileName(b3dId, res.extraMaterialName);
 
     return res;
 }

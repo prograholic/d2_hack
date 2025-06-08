@@ -5,7 +5,7 @@
 
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/numeric_conversion.h>
-
+#include <d2_hack/common/resource_mgmt.h>
 
 namespace d2_hack
 {
@@ -16,7 +16,6 @@ namespace image
 
 namespace
 {
-const Ogre::String TxrCodecType = "txr";
 const char TxrMagicNumber [] = " LOFF";
 
 size_t TxrMagicNumberOffset = 16;
@@ -105,7 +104,7 @@ void TxrImageCodec::decode(const Ogre::DataStreamPtr& input, const Ogre::Any& ou
 
 Ogre::String TxrImageCodec::getType() const
 {
-    return TxrCodecType;
+    return common::extensions::TextureFileExtNoDot;
 }
 
 Ogre::String TxrImageCodec::magicNumberToFileExt(const char *magicNumberPtr, size_t maxbytes) const
@@ -114,7 +113,7 @@ Ogre::String TxrImageCodec::magicNumberToFileExt(const char *magicNumberPtr, siz
     {
         if (memcmp(TxrMagicNumber, magicNumberPtr + TxrMagicNumberOffset, TxrMagicNumberSize) == 0)
         {
-            return "txr";
+            return common::extensions::TextureFileExtNoDot;
         }
     }
 

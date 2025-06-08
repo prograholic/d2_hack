@@ -3,6 +3,8 @@
 
 #include <d2_hack/resource/archive/res_archive.h>
 
+#include <d2_hack/common/resource_mgmt.h>
+
 namespace d2_hack
 {
 namespace resource
@@ -17,7 +19,7 @@ void ReadTxrFromAa()
     ResArchive archive{D2_ROOT_DIR "/ENV/aa.res", "test"};
 
     archive.load();
-    Ogre::StringVectorPtr res = archive.find("*.txr");
+    Ogre::StringVectorPtr res = archive.find(std::string{"*"} + common::extensions::TextureFileExt);
     if (!res)
     {
         throw std::runtime_error("aa: res is NULL");
@@ -34,7 +36,7 @@ void ReadPalleteFromCommon()
     ResArchive archive{D2_ROOT_DIR "/COMMON/common.res", "test"};
 
     archive.load();
-    Ogre::StringVectorPtr res = archive.find("*.plm");
+    Ogre::StringVectorPtr res = archive.find(std::string{"*"} + common::extensions::PaletteFileExt);
     if (!res)
     {
         throw std::runtime_error("common: res is NULL");

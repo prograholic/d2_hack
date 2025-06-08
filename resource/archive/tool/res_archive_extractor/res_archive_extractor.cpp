@@ -34,11 +34,6 @@ void ReadResourceFromArchiveToFile(ResArchive& archive, const std::string& outpu
 
     for (const auto& resourceFileName : *resources)
     {
-        if (resourceFileName.ends_with(".material"))
-        {
-            std::cout << "skip Ogre material for now: " << resourceFileName << std::endl;
-            continue;
-        }
         Ogre::DataStreamPtr stream = archive.open(resourceFileName);
         if (!stream)
         {
@@ -138,6 +133,7 @@ int main(int argc, char* argv[])
 
 
         Ogre::LogManager logMgr;
+        logMgr.createLog("log", true, true, true);
         Ogre::ResourceGroupManager rgMgr;
         rgMgr.createResourceGroup(d2_hack::common::DefaultResourceGroup);
 

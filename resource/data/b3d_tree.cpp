@@ -68,8 +68,9 @@ const B3dRegistry SinglePlayerRegistry
 
 std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 {
-	return common::GetResourceName(id, common::ResourceNameToString(materials[materialIndex]));
+	return common::GetMaterialFileName(id, common::ResourceNameToString(materials[materialIndex]));
 }
+
 
 void AddTransformMatrix(const B3dNodePtr& root, TransformationMap& transformations)
 {

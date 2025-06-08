@@ -2,8 +2,6 @@
 
 #include <functional>
 
-#include <d2_hack/resource/archive/res_extensions.h>
-
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/reader.h>
 #include <d2_hack/common/numeric_conversion.h>
@@ -32,18 +30,6 @@ const char SoundFiles[] = "SOUNDFILES";
 } // namespace entries
 
 
-static const std::map<std::string, std::string> entriesToExtMapping =
-{
-    {entries::Colors, extensions::ColorExt},
-    {entries::Materials, extensions::MaterialExt},
-    {entries::Sounds, extensions::SoundExt},
-    {entries::TextureFiles, extensions::TextureFileExt},
-    {entries::PaletteFiles, extensions::ColorExt},
-    {entries::BackFiles, extensions::PaletteFileExt},
-    {entries::MaskFiles, extensions::BackFileExt},
-    {entries::SoundFiles, extensions::SoundFileExt},
-};
-
 namespace
 {
 struct Header
@@ -56,7 +42,7 @@ struct Header
     }
 
     std::string name;
-    size_t count;
+    std::uint32_t count;
 };
 
 inline bool operator < (const Header& lhs, const Header& rhs)
@@ -66,7 +52,7 @@ inline bool operator < (const Header& lhs, const Header& rhs)
 
 typedef std::map<std::string, common::Blob> DataDictionary;
 typedef std::map<Header, DataDictionary> FileSystem;
-typedef std::function<void(const std::string & sectionName, ResEntry& entry, size_t index)> ResourceWatcher;
+typedef std::function<void(ResEntry& entry, std::uint32_t index)> ResourceWatcher;
 typedef std::map<std::string, ResourceWatcher> ParserDispatcher;
 
 
@@ -82,15 +68,15 @@ public:
     {
         using namespace std::placeholders;
 
-        m_dispatcher[entries::Colors] = std::bind(&ResInfoWatcher::ParseColorsData, this, _1, _2, _3);
-        m_dispatcher[entries::Materials] = std::bind(&ResInfoWatcher::ParseMaterialsData, this, _1, _2, _3);
-        m_dispatcher[entries::Sounds] = std::bind(&ResInfoWatcher::SkipNonFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::Colors] = std::bind(&ResInfoWatcher::ParseColorsData, this, _1, _2);
+        m_dispatcher[entries::Materials] = std::bind(&ResInfoWatcher::ParseMaterialsData, this, _1, _2);
+        m_dispatcher[entries::Sounds] = std::bind(&ResInfoWatcher::SkipSoundsData, this, _1, _2);
 
-        m_dispatcher[entries::TextureFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher[entries::PaletteFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher[entries::BackFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher[entries::MaskFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
-        m_dispatcher[entries::SoundFiles] = std::bind(&ResInfoWatcher::SkipFilesData, this, _1, _2, _3);
+        m_dispatcher[entries::TextureFiles] = std::bind(&ResInfoWatcher::SkipTextureFilesData, this, _1, _2);
+        m_dispatcher[entries::PaletteFiles] = std::bind(&ResInfoWatcher::SkipPaletteFilesData, this, _1, _2);
+        m_dispatcher[entries::BackFiles] = std::bind(&ResInfoWatcher::SkipBackFilesData, this, _1, _2);
+        m_dispatcher[entries::MaskFiles] = std::bind(&ResInfoWatcher::SkipMaskFilesData, this, _1, _2);
+        m_dispatcher[entries::SoundFiles] = std::bind(&ResInfoWatcher::SkipSoundFilesData, this, _1, _2);
     }
 
 
@@ -104,11 +90,10 @@ public:
             ParserDispatcher::const_iterator parser = m_dispatcher.find(header.name);
             if (parser != m_dispatcher.end())
             {
-                for (size_t i = 0; i != header.count; ++i)
+                for (std::uint32_t i = 0; i != header.count; ++i)
                 {
                     ResEntry entry;
-                    entry.index = i;
-                    parser->second(header.name, entry, i);
+                    parser->second(entry, i);
                     fileInfo.info.push_back(entry);
                 }
             }
@@ -130,55 +115,76 @@ public:
     }
 
 
-    void SkipFilesData(const std::string & /* sectionName */, ResEntry & entry, size_t /* index */)
+    void SkipTextureFilesData(ResEntry & entry, std::uint32_t index)
     {
-        entry.type = EntryType::File;
-        entry.name = m_resId + "\\" + ReadString('\0');
+        entry.name = common::GetTextureFileName(m_resId, index + 1);
+        SkipFilesData(entry);
+    }
 
-        auto sep = entry.name.find(' ');
-        if (sep != entry.name.npos)
+    void SkipPaletteFilesData(ResEntry& entry, std::uint32_t index)
+    {
+        entry.name = common::GetPaletteFileName(m_resId, index + 1);
+        SkipFilesData(entry);
+    }
+
+    void SkipBackFilesData(ResEntry& entry, std::uint32_t index)
+    {
+        entry.name = common::GetBackFileName(m_resId, index + 1);
+        SkipFilesData(entry);
+    }
+
+    void SkipMaskFilesData(ResEntry& entry, std::uint32_t index)
+    {
+        entry.name = common::GetMaskFileName(m_resId, index + 1);
+        SkipFilesData(entry);
+    }
+
+    void SkipSoundFilesData(ResEntry& entry, std::uint32_t index)
+    {
+        entry.name = common::GetSoundFileName(m_resId, index + 1);
+        SkipFilesData(entry);
+    }
+
+    void SkipSoundsData(ResEntry& entry, std::uint32_t index)
+    {
+        entry.offset = GetStream().tell();
+        entry.size = SkipLine('\0');
+
+        entry.name = common::GetSoundFileName(m_resId, index + 1);
+    }
+
+    void ParseColorsData(ResEntry& entry, std::uint32_t index)
+    {
+        entry.offset = GetStream().tell();
+        entry.size = SkipLine('\0');
+
+        entry.name = common::GetColorName(m_resId, index + 1);
+    }
+
+    void ParseMaterialsData(ResEntry& entry, std::uint32_t /* index */)
+    {
+        entry.offset = GetStream().tell();
+        auto materialId = ReadString('\0');
+        entry.size = materialId.size();
+
+        auto sep = materialId.find(' ');
+        if (sep != materialId.npos)
         {
-            entry.name = entry.name.substr(0, sep);
+            materialId = materialId.substr(0, sep);
         }
+
+        entry.name = common::GetMaterialFileName(m_resId, materialId);
+    }
+
+
+    void SkipFilesData(ResEntry& entry)
+    {
+        entry.resString = ReadString('\0');
 
         entry.size = ReadUint32();
         entry.offset = GetStream().tell();
 
         GetStream().seek(entry.offset + entry.size);
-    }
-
-
-    void SkipNonFilesData(const std::string& sectionName, ResEntry& entry, size_t index)
-    {
-        entry.offset = GetStream().tell();
-        entry.size = SkipLine('\0');
-
-        entry.name = std::to_string(index) + entriesToExtMapping.at(sectionName);
-    }
-
-    void ParseColorsData(const std::string& /* sectionName */, ResEntry& entry, size_t index)
-    {
-        entry.type = EntryType::Color;
-        entry.offset = GetStream().tell();
-        entry.size = SkipLine('\0');
-
-        entry.name = GetColorFileName(m_resId, std::to_string(index));
-    }
-
-    void ParseMaterialsData(const std::string& /* sectionName */, ResEntry& entry, size_t /* index */)
-    {
-        entry.type = EntryType::Material;
-        entry.offset = GetStream().tell();
-        entry.name = ReadString('\0');
-        entry.size = entry.name.size();
-
-        auto sep = entry.name.find(' ');
-        if (sep != entry.name.npos)
-        {
-            entry.name = entry.name.substr(0, sep);
-        }
-
-        entry.name = common::GetResourceName(m_resId, entry.name) + extensions::MaterialExt;
     }
 
     ParserDispatcher m_dispatcher;
@@ -195,11 +201,6 @@ void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInf
     ResInfoWatcher watcher(resId, stream);
 
     watcher.ReadResFile(fileInfo);
-}
-
-std::string GetColorFileName(const std::string& resId, const std::string& colorId)
-{
-    return common::GetResourceName(resId, entries::Colors + colorId) + extensions::ColorExt;
 }
 
 } // namespace res

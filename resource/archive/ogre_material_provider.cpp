@@ -6,12 +6,11 @@
 
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/memory_mgmt.h>
+#include <d2_hack/common/resource_mgmt.h>
 
-#include <d2_hack/resource/archive/res_extensions.h>
 #include <d2_hack/resource/manager/manager.h>
 
 #include "res_material_parser.h"
-#include "res_file_info.h"
 
 namespace d2_hack
 {
@@ -86,25 +85,9 @@ static Ogre::DataStreamPtr PrepareColorMaterial(const MaterialDescriptor& md, co
     return res;
 }
 
-static std::string LookupTextureByIndex(const ResFileInfo& fileInfo, std::uint32_t textureIndex)
+static Ogre::DataStreamPtr PrepareTextureMaterial(const MaterialDescriptor& md, const std::string& filename)
 {
-    for (const auto& resEntry : fileInfo.info)
-    {
-        if (resEntry.name.find("txr\\") != std::string::npos)
-        {
-            if (textureIndex == resEntry.index)
-            {
-                return resEntry.name;
-            }
-        }
-    }
-
-    OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Cannot find texture for index: " + std::to_string(textureIndex));
-}
-
-static Ogre::DataStreamPtr PrepareTextureMaterial(const MaterialDescriptor& md, const ResFileInfo& fileInfo, const std::string& filename)
-{
-    const std::string textureFilename = LookupTextureByIndex(fileInfo, md.index - 1);
+    const std::string textureFilename;// = LookupTextureByIndex(fileInfo, md.index);
 
     std::string depthCheck = "on";
     if (md.noz)
@@ -128,7 +111,7 @@ static Ogre::DataStreamPtr PrepareTextureMaterial(const MaterialDescriptor& md, 
 
 
 
-Ogre::DataStreamPtr GenerateMaterial(const ResFileInfo& fileInfo, const std::string& filename, const Ogre::DataStreamPtr& stream)
+Ogre::DataStreamPtr GenerateMaterial(const std::string& filename, const Ogre::DataStreamPtr& stream)
 {
     const std::string content = stream->getAsString();
 
@@ -142,20 +125,67 @@ Ogre::DataStreamPtr GenerateMaterial(const ResFileInfo& fileInfo, const std::str
     case MaterialType::itx:
     case MaterialType::tex:
     case MaterialType::ttx:
-        return PrepareTextureMaterial(md, fileInfo, filename);
+        return PrepareTextureMaterial(md, filename);
     default:
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, std::format("Unknown material type in {}: {}", filename, static_cast<int>(md.type)));
     }
 }
 
 
+#if 0
+
+"material %1%\n"
+"{\n"
+"    technique\n"
+"    {\n"
+"        pass\n"
+"        {\n"
+"            texture_unit\n"
+"            {\n"
+"                texture %2%\n"
+"            }\n"
+"            depth_check %3%\n"
+"        }\n"
+"    }\n"
+"}\n";
+
+#endif // 0
+
+void FillMaterialWithContent(const MaterialDescriptor& md, const std::string& resId, Ogre::Material& material)
+{
+    material.removeAllTechniques();
+
+    auto technique = material.createTechnique();
+    auto pass = technique->createPass();
+    auto textureUnitState = pass->createTextureUnitState();
+
+    std::string textureName = common::GetTextureFileName(resId, md.index);
+    auto textureRes = Ogre::TextureManager::getSingleton().createOrRetrieve(textureName, common::DefaultResourceGroup);
+
+    textureUnitState->setTexture(std::static_pointer_cast<Ogre::Texture>(textureRes.first));
+}
+
+
 Ogre::MaterialPtr OgreMaterialProvider::CreateOrRetrieveMaterial(const std::string& materialName, const std::string& groupName)
 {
     Ogre::MaterialManager& mgr = Ogre::MaterialManager::getSingleton();
-
     auto res = mgr.createOrRetrieve(materialName, groupName, true);
 
-    return std::static_pointer_cast<Ogre::Material>(res.first);
+    auto material = std::static_pointer_cast<Ogre::Material>(res.first);
+    if (res.second)
+    {
+        Ogre::DataStreamPtr stream = Ogre::ResourceGroupManager::getSingleton().openResource(materialName, common::DefaultResourceGroup);
+
+        auto content = stream->getAsString();
+        MaterialDescriptor md = ParseMaterialDescriptor(content);
+
+        std::string resId;
+        common::SplitResourceFileName(materialName, &resId);
+
+        FillMaterialWithContent(md, resId, *material); // TODO: possible Race Condition in multithreaded env
+    }
+
+    return material;
 }
 
 
