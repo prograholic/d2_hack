@@ -35,6 +35,8 @@ void BaseApplication::setup()
     m_rawImageCodec.reset(new resource::image::RawImageCodec);
     Ogre::Codec::registerCodec(m_rawImageCodec.get());
 
+    m_ogreMaterialProvider.reset(new resource::archive::res::OgreMaterialProvider);
+
     OgreBites::ApplicationContext::setup();
     addInputListener(this);
     setWindowGrab();

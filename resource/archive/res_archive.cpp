@@ -8,7 +8,6 @@
 #include <d2_hack/common/offset_data_stream.h>
 
 #include "res_file_info.h"
-#include "ogre_material_generator.h"
 
 namespace d2_hack
 {
@@ -66,14 +65,6 @@ void ResArchive::load()
         info.uncompressedSize = resEntry.size;
 
         m_fileInfoList.push_back(info);
-
-        if (info.filename.ends_with(extensions::MaterialExt))
-        {
-            // add info for generated Ogre material
-            info.filename = GetPublicFilename(info.filename);
-            info.basename = GetPublicFilename(info.basename);
-            m_fileInfoList.push_back(info);
-        }
     }
 }
 
@@ -93,22 +84,14 @@ Ogre::DataStreamPtr ResArchive::open(const Ogre::String& filename, bool /* readO
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Failed to open stream [" + mName + "]");
     }
-    
-    bool isOgreMaterial = false;
-    std::string underlyingFileName = GetInternalFileName(filename, isOgreMaterial);
-    if (!FindResEntry(underlyingFileName, entry))
+
+    if (!FindResEntry(filename, entry))
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "file [" + filename + "] cannot be found in archive [" + mName + "]");
     }
 
     Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream));
     Ogre::DataStreamPtr streamForFile(new common::OffsetDataStream(fileStream, entry.offset, entry.size));
-
-    if (isOgreMaterial)
-    {
-        return GenerateMaterial(*m_archiveInfo, filename, streamForFile);
-    }
-
 
     return streamForFile;
 }
@@ -238,27 +221,6 @@ bool ResArchive::FindResEntry(const Ogre::String& filename, ResEntry& entry) con
     }
 
     return false;
-}
-
-std::string ResArchive::GetInternalFileName(const std::string& filename, bool& isOgreMaterial)
-{
-    isOgreMaterial = false;
-    if (filename.ends_with(".material"))
-    {
-        isOgreMaterial = true;
-        return filename.substr(0, filename.size() - strlen(".material")) + extensions::MaterialExt;
-    }
-
-    return filename;
-}
-std::string ResArchive::GetPublicFilename(const std::string& filename)
-{
-    if (filename.ends_with(extensions::MaterialExt))
-    {
-        return filename.substr(0, filename.size() - strlen(extensions::MaterialExt)) + ".material";
-    }
-
-    return filename;
 }
 
 

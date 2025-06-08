@@ -7,6 +7,7 @@
 
 #include <d2_hack/scene_node/scene_node_base.h>
 #include <d2_hack/resource/data/b3d_types.h>
+#include <d2_hack/resource/archive/ogre_material_provider.h>
 
 
 
@@ -48,7 +49,8 @@ public:
                            const resource::data::b3d::block_data::SimpleGeneratedObjects40& data,
                            const std::string& b3dId,
                            Ogre::SceneNode* ogreSceneNode,
-                           Ogre::SceneManager* sceneManager);
+                           Ogre::SceneManager* sceneManager,
+                           resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
 private:
     Ogre::MeshPtr CreateMesh(const TreeParams& treeParams, Ogre::SceneManager* sceneManager);

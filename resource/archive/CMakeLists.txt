@@ -5,11 +5,11 @@ d2_hack_add_library(d2_hack.resource.archive
     res_file_info.h
     res_material_parser.cpp
     res_material_parser.h
-    ogre_material_generator.cpp
-    ogre_material_generator.h
+    ogre_material_provider.cpp
     
     include/d2_hack/resource/archive/res_archive.h
     include/d2_hack/resource/archive/res_extensions.h
+    include/d2_hack/resource/archive/ogre_material_provider.h
 )
 target_link_libraries(d2_hack.resource.archive
     PRIVATE

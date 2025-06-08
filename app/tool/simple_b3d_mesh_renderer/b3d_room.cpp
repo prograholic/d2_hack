@@ -13,10 +13,11 @@ B3dRoom::B3dRoom(const B3dNodePtr& b3dNode,
                  const std::string& b3dId,
                  Ogre::SceneManager* sceneManager,
                  Ogre::SceneNode* rootNode,
-                 Ogre::MeshManager* meshManager)
+                 Ogre::MeshManager* meshManager,
+                 resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
     : m_rootNodes()
 {
-    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, m_rootNodes};
+    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, ogreMaterialProvider, m_rootNodes};
     B3dTreeVisitor visitor{sceneBuilder};
     auto visitResult = VisitNode(b3dNode, visitor);
     (void)visitResult;

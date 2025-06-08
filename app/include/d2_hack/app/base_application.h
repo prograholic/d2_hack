@@ -24,6 +24,7 @@ D2_HACK_DISABLE_WARNING_END() // 4100
 #include <d2_hack/resource/image/raw.h>
 #include <d2_hack/resource/image/txr.h>
 #include <d2_hack/resource/manager/manager.h>
+#include <d2_hack/resource/archive/ogre_material_provider.h>
 
 namespace d2_hack
 {
@@ -46,6 +47,7 @@ protected:
     Ogre::SceneNode* m_cameraSceneNode;
     Ogre::Camera* m_camera;
     std::unique_ptr<OgreBites::CameraMan> m_cameraManager;
+    std::unique_ptr<resource::archive::res::OgreMaterialProvider> m_ogreMaterialProvider;
 
     bool m_shutdown;
 

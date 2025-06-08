@@ -8,6 +8,7 @@
 #include <d2_hack/scene_node/scene_node_base.h>
 
 #include <d2_hack/resource/data/b3d_node.h>
+#include <d2_hack/resource/archive/ogre_material_provider.h>
 
 namespace d2_hack
 {
@@ -26,6 +27,7 @@ public:
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* ogreRootNode,
                     Ogre::MeshManager* meshManager,
+                    resource::archive::res::OgreMaterialProvider* ogreMaterialProvider,
                     scene_node::SceneNodeBaseList& rootSceneNodes);
 
     ~B3dSceneBuilder();
@@ -37,6 +39,8 @@ public:
     Ogre::MeshManager* GetMeshManager() const;
     
     Ogre::SceneNode* GetCurrentOgreSceneNode() const;
+
+    resource::archive::res::OgreMaterialProvider* GetOgreMaterialProvider() const;
 
     void ProcessLight(const resource::data::b3d::NodeGroupLightingObjects33& node, VisitMode visitMode);
 
@@ -59,6 +63,7 @@ private:
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_ogreRootNode;
     Ogre::MeshManager* m_meshManager;
+    resource::archive::res::OgreMaterialProvider* m_ogreMaterialProvider;
     scene_node::SceneNodeBaseList& m_rootSceneNodes;
     std::stack<Ogre::SceneNode*> m_ogreSceneNodes;
     std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
@@ -69,9 +74,9 @@ private:
 
     std::string GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const;
 
-    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const std::string& materialName);
+    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const Ogre::MaterialPtr& material);
 
-    void SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
+    void SetMeshInfo(const Ogre::MeshPtr& mesh, const common::SimpleMeshInfo& meshInfo, const Ogre::MaterialPtr& material);
 
     void ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex);
 

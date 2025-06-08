@@ -7,6 +7,7 @@
 
 #include <d2_hack/resource/data/b3d_node.h>
 #include <d2_hack/scene_node/scene_node_base.h>
+#include <d2_hack/resource/archive/ogre_material_provider.h>
 
 namespace d2_hack
 {
@@ -20,7 +21,8 @@ public:
            const std::string& b3dId,
            Ogre::SceneManager* sceneManager,
            Ogre::SceneNode* rootNode,
-           Ogre::MeshManager* meshManager);
+           Ogre::MeshManager* meshManager,
+           resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
 private:
     scene_node::SceneNodeBaseList m_rootNodes;

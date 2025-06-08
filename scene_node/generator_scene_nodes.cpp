@@ -134,7 +134,8 @@ TreeGeneratorSceneNode::TreeGeneratorSceneNode(
     const resource::data::b3d::block_data::SimpleGeneratedObjects40& data,
     const std::string& b3dId,
     Ogre::SceneNode* ogreSceneNode,
-    Ogre::SceneManager* sceneManager)
+    Ogre::SceneManager* sceneManager,
+    resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
     : OgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, nullptr)
 {
     TreeParams treeParams = DeduceTreeParams(data, b3dId);
@@ -152,7 +153,7 @@ TreeGeneratorSceneNode::TreeGeneratorSceneNode(
     }
 
     Ogre::Entity* e = sceneManager->createEntity(treeMesh);
-    auto material = Ogre::MaterialManager::getSingleton().getByName(treeParams.materialName, common::DefaultResourceGroup);
+    auto material = ogreMaterialProvider->CreateOrRetrieveMaterial(treeParams.materialName, common::DefaultResourceGroup);
     if (material)
     {
         e->setMaterial(material);

@@ -1,4 +1,4 @@
-#include "ogre_material_generator.h"
+#include <d2_hack/resource/archive/ogre_material_provider.h>
 
 #include <OgreException.h>
 
@@ -149,8 +149,17 @@ Ogre::DataStreamPtr GenerateMaterial(const ResFileInfo& fileInfo, const std::str
 }
 
 
+Ogre::MaterialPtr OgreMaterialProvider::CreateOrRetrieveMaterial(const std::string& materialName, const std::string& groupName)
+{
+    Ogre::MaterialManager& mgr = Ogre::MaterialManager::getSingleton();
+
+    auto res = mgr.createOrRetrieve(materialName, groupName, true);
+
+    return std::static_pointer_cast<Ogre::Material>(res.first);
+}
+
 
 } // namespace res
-} // namespace archive
+} //namespace archive
 } // namespace resource
 } // namespace d2_hack  

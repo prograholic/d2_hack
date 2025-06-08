@@ -63,9 +63,6 @@ private:
     const std::string m_resId;
 
     bool FindResEntry(const Ogre::String & filename, ResEntry& entry) const;
-
-    static std::string GetInternalFileName(const std::string& filename, bool& isOgreMaterial);
-    static std::string GetPublicFilename(const std::string& filename);
 };
 
 

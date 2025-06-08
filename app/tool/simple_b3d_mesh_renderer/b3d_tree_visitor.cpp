@@ -170,6 +170,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupVertexDat
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleGeneratedObjects40& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
+    auto ogreMaterialProvider = GetSceneBuilder().GetOgreMaterialProvider();
     auto generatorName = common::ResourceNameToString(node.GetBlockData().name);
     if (generatorName == "$$GeneratorOfTerrain")
     {
@@ -179,7 +180,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeSimpleGenerate
     {
         std::string b3dId = GetSceneBuilder().GetB3dId();
         Ogre::SceneManager* sceneManager = GetSceneBuilder().GetSceneManager();
-        return CreateSceneNode<scene_node::TreeGeneratorSceneNode>(parent, "tree." + node.GetName(), node.GetBlockData(), b3dId, sceneNode, sceneManager);
+        return CreateSceneNode<scene_node::TreeGeneratorSceneNode>(parent, "tree." + node.GetName(), node.GetBlockData(), b3dId, sceneNode, sceneManager, ogreMaterialProvider);
     }
     else
     {
