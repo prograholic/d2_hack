@@ -7,9 +7,11 @@
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/memory_mgmt.h>
 
+#include <d2_hack/resource/archive/res_extensions.h>
 #include <d2_hack/resource/manager/manager.h>
 
 #include "res_material_parser.h"
+#include "res_file_info.h"
 
 namespace d2_hack
 {
@@ -84,7 +86,7 @@ static Ogre::DataStreamPtr PrepareColorMaterial(const MaterialDescriptor& md, co
     return res;
 }
 
-std::string LookupTextureByIndex(const ResFileInfo& fileInfo, std::uint32_t textureIndex)
+static std::string LookupTextureByIndex(const ResFileInfo& fileInfo, std::uint32_t textureIndex)
 {
     for (const auto& resEntry : fileInfo.info)
     {
@@ -145,6 +147,8 @@ Ogre::DataStreamPtr GenerateMaterial(const ResFileInfo& fileInfo, const std::str
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, std::format("Unknown material type in {}: {}", filename, static_cast<int>(md.type)));
     }
 }
+
+
 
 } // namespace res
 } // namespace archive

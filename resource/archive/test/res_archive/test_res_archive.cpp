@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <d2_hack/resource/archive/res.h>
+#include <d2_hack/resource/archive/res_archive.h>
 
 namespace d2_hack
 {

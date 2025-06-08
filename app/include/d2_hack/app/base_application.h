@@ -20,7 +20,7 @@ D2_HACK_DISABLE_WARNING_END() // 4251
 D2_HACK_DISABLE_WARNING_END() // 4275
 D2_HACK_DISABLE_WARNING_END() // 4100
 
-#include <d2_hack/resource/archive/res.h>
+#include <d2_hack/resource/archive/res_archive.h>
 #include <d2_hack/resource/image/raw.h>
 #include <d2_hack/resource/image/txr.h>
 #include <d2_hack/resource/manager/manager.h>

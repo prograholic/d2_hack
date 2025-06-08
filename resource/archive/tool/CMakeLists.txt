@@ -1,1 +1,2 @@
 add_subdirectory(palette_reader)
+add_subdirectory(res_archive_extractor)

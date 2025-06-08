@@ -1,14 +1,8 @@
 #ifndef D2_HACK_RESOURCE_ARCHIVE_OGRE_MATERIAL_GENERATOR_H
 #define D2_HACK_RESOURCE_ARCHIVE_OGRE_MATERIAL_GENERATOR_H
 
+#include <d2_hack/resource/archive/res_archive.h>
 
-//#include <optional>
-//#include <string_view>
-
-#include <OgreDataStream.h>
-//#include <OgreVector.h>
-
-#include "res_file_info.h"
 
 namespace d2_hack
 {
@@ -18,7 +12,6 @@ namespace archive
 {
 namespace res
 {
-
 
 Ogre::DataStreamPtr GenerateMaterial(const ResFileInfo& fileInfo, const std::string& filename, const Ogre::DataStreamPtr& stream);
 

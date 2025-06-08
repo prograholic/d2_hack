@@ -51,9 +51,9 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
 
     using qi::int_;
     using qi::float_;
-    using qi::eps;
     using qi::lit;
     using qi::_val;
+    using qi::char_;
 
     qi::rule<iterator_type, Ogre::Vector2(), ascii::space_type> ogreVector2Grammar;
     ogreVector2Grammar %= float_[qi::_val[0] = qi::_1] >> float_[qi::_val[1] = qi::_1];
@@ -61,8 +61,6 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
     qi::rule<iterator_type, ascii::space_type> data;
     data %=
         (
-            //eps
-            //|| 
             lit("noz")[setNoz]
             || lit("transp") >> float_[setTransp]
             || lit("notile")[setNotile]
@@ -92,7 +90,7 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
     qi::rule<iterator_type, ascii::space_type> start;
 
     start %=
-        materialTypeSymbols[setType] >> int_[setIndex] >> *data;
+        +qi::char_("a-zA-Z_0-9") >> materialTypeSymbols[setType] >> int_[setIndex] >> *data;
 
     
     bool isOk = phrase_parse(first, last, start, ascii::space);

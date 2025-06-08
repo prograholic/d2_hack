@@ -2,6 +2,8 @@
 
 #include <functional>
 
+#include <d2_hack/resource/archive/res_extensions.h>
+
 #include <d2_hack/common/types.h>
 #include <d2_hack/common/reader.h>
 #include <d2_hack/common/numeric_conversion.h>
@@ -28,6 +30,19 @@ const char MaskFiles[] = "MASKFILES";
 const char SoundFiles[] = "SOUNDFILES";
 
 } // namespace entries
+
+
+static const std::map<std::string, std::string> entriesToExtMapping =
+{
+    {entries::Colors, extensions::ColorExt},
+    {entries::Materials, extensions::MaterialExt},
+    {entries::Sounds, extensions::SoundExt},
+    {entries::TextureFiles, extensions::TextureFileExt},
+    {entries::PaletteFiles, extensions::ColorExt},
+    {entries::BackFiles, extensions::PaletteFileExt},
+    {entries::MaskFiles, extensions::BackFileExt},
+    {entries::SoundFiles, extensions::SoundFileExt},
+};
 
 namespace
 {
@@ -138,7 +153,7 @@ public:
         entry.offset = GetStream().tell();
         entry.size = SkipLine('\0');
 
-        entry.name = sectionName + "_" + std::to_string(index) + ".d2resinfo";
+        entry.name = std::to_string(index) + entriesToExtMapping.at(sectionName);
     }
 
     void ParseColorsData(const std::string& /* sectionName */, ResEntry& entry, size_t index)
@@ -163,7 +178,7 @@ public:
             entry.name = entry.name.substr(0, sep);
         }
 
-        entry.name = common::GetResourceName(m_resId, entry.name) + ".material";
+        entry.name = common::GetResourceName(m_resId, entry.name) + extensions::MaterialExt;
     }
 
     ParserDispatcher m_dispatcher;
@@ -184,7 +199,7 @@ void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInf
 
 std::string GetColorFileName(const std::string& resId, const std::string& colorId)
 {
-    return common::GetResourceName(resId, entries::Colors + colorId) + ".d2colorinfo";
+    return common::GetResourceName(resId, entries::Colors + colorId) + extensions::ColorExt;
 }
 
 } // namespace res

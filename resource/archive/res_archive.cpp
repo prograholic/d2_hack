@@ -1,9 +1,10 @@
-#include <d2_hack/resource/archive/res.h>
+#include <d2_hack/resource/archive/res_archive.h>
 
 #include <fstream>
 
 #include <OgreException.h>
 
+#include <d2_hack/resource/archive/res_extensions.h>
 #include <d2_hack/common/offset_data_stream.h>
 
 #include "res_file_info.h"
@@ -65,6 +66,13 @@ void ResArchive::load()
         info.uncompressedSize = resEntry.size;
 
         m_fileInfoList.push_back(info);
+
+        if (info.filename.ends_with(extensions::MaterialExt))
+        {
+            // add info for generated Ogre material
+            info.filename = GetPublicFilename(info.filename);
+            m_fileInfoList.push_back(info);
+        }
     }
 }
 
@@ -80,32 +88,28 @@ Ogre::DataStreamPtr ResArchive::open(const Ogre::String& filename, bool /* readO
     ResEntry entry;
 
     std::ifstream* stdStream = OGRE_NEW_T(std::ifstream, Ogre::MEMCATEGORY_GENERAL)(mName.c_str(), std::ios_base::binary);
-    if (*stdStream)
+    if (!*stdStream)
     {
-        Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream));
-
-        if (FindEntry(filename, entry))
-        {
-            Ogre::DataStreamPtr streamForFile(new common::OffsetDataStream(fileStream, entry.offset, entry.size));
-            if (entry.type == EntryType::File)
-            {
-                return streamForFile;
-            }
-            else if (entry.type == EntryType::Material)
-            {
-                return OpenMaterial(filename, streamForFile);
-            }
-            else if (entry.type == EntryType::Color)
-            {
-                return streamForFile;
-            }
-
-            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS,
-                        "file [" + filename + "] cannot be opened for type: " + std::to_string(static_cast<int>(entry.type)));
-        }
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Failed to open stream [" + mName + "]");
+    }
+    
+    bool isOgreMaterial = false;
+    std::string underlyingFileName = GetInternalFileName(filename, isOgreMaterial);
+    if (!FindResEntry(underlyingFileName, entry))
+    {
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "file [" + filename + "] cannot be found in archive [" + mName + "]");
     }
-    OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "Failed to open stream [" + mName + "]");
+
+    Ogre::DataStreamPtr fileStream(new Ogre::FileStreamDataStream(stdStream));
+    Ogre::DataStreamPtr streamForFile(new common::OffsetDataStream(fileStream, entry.offset, entry.size));
+
+    if (isOgreMaterial)
+    {
+        return GenerateMaterial(*m_archiveInfo, filename, streamForFile);
+    }
+
+
+    return streamForFile;
 }
 
 Ogre::StringVectorPtr ResArchive::list(bool recursive, bool dirs) const
@@ -169,9 +173,15 @@ Ogre::StringVectorPtr ResArchive::find(const Ogre::String& pattern, bool recursi
 
 bool ResArchive::exists(const Ogre::String& filename) const
 {
-    ResEntry entry;
+    for (const auto& fileInfo : m_fileInfoList)
+    {
+        if (fileInfo.filename == filename)
+        {
+            return true;
+        }
+    }
 
-    return FindEntry(filename, entry);
+    return false;
 }
 
 time_t ResArchive::getModifiedTime(const Ogre::String& /* filename */) const
@@ -215,7 +225,7 @@ Ogre::FileInfoListPtr ResArchive::findFileInfo(const Ogre::String& pattern, bool
 
 
 
-bool ResArchive::FindEntry(const Ogre::String& filename, ResEntry& entry) const
+bool ResArchive::FindResEntry(const Ogre::String& filename, ResEntry& entry) const
 {
     for (const auto& e : m_archiveInfo->info)
     {
@@ -229,10 +239,27 @@ bool ResArchive::FindEntry(const Ogre::String& filename, ResEntry& entry) const
     return false;
 }
 
-Ogre::DataStreamPtr ResArchive::OpenMaterial(const Ogre::String& filename, const Ogre::DataStreamPtr& stream) const
+std::string ResArchive::GetInternalFileName(const std::string& filename, bool& isOgreMaterial)
 {
-    return GenerateMaterial(*m_archiveInfo, filename, stream);
+    isOgreMaterial = false;
+    if (filename.ends_with(".material"))
+    {
+        isOgreMaterial = true;
+        return filename.substr(0, filename.size() - strlen(".material")) + extensions::MaterialExt;
+    }
+
+    return filename;
 }
+std::string ResArchive::GetPublicFilename(const std::string& filename)
+{
+    if (filename.ends_with(extensions::MaterialExt))
+    {
+        return filename.substr(0, filename.size() - strlen(extensions::MaterialExt)) + ".material";
+    }
+
+    return filename;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,6 @@
 d2_hack_add_library(d2_hack.resource.archive
-    res.cpp
+    res_archive.cpp
+    res_extensions.cpp
     res_file_info.cpp
     res_file_info.h
     res_material_parser.cpp
@@ -7,7 +8,8 @@ d2_hack_add_library(d2_hack.resource.archive
     ogre_material_generator.cpp
     ogre_material_generator.h
     
-    include/d2_hack/resource/archive/res.h
+    include/d2_hack/resource/archive/res_archive.h
+    include/d2_hack/resource/archive/res_extensions.h
 )
 target_link_libraries(d2_hack.resource.archive
     PRIVATE

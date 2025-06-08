@@ -20,98 +20,9 @@ namespace archive
 namespace res
 {
 
-struct PaletteEntry
+void ReadResourceFromArchiveToFile(ResArchive& archive, const std::string& outputDir)
 {
-    std::uint8_t red;
-    std::uint8_t green;
-    std::uint8_t blue;
-};
-
-typedef std::vector<PaletteEntry> Palette;
-
-static const size_t PlmSignatureSize = 4;
-
-struct PlmHeader
-{
-    char signature[PlmSignatureSize];
-    std::uint32_t fileSize;
-};
-
-struct Plm
-{
-    PlmHeader header;
-
-    Palette palette;
-};
-
-
-class PlmReader : private common::Reader
-{
-public:
-    explicit PlmReader(Ogre::DataStream& stream)
-        : common::Reader(stream)
-    {
-    }
-
-    void Read(Plm& plm)
-    {
-        ReadBytes(plm.header.signature, PlmSignatureSize);
-        plm.header.fileSize = ReadUint32();
-
-        while (GetStream().tell() < GetStream().size())
-        {
-            char entryName[PlmSignatureSize];
-            ReadBytes(entryName, PlmSignatureSize);
-
-            if (strncmp(entryName, "PALT", PlmSignatureSize) == 0)
-            {
-                ReadPalette(plm.palette);
-            }
-            else
-            {
-                ThrowError("Unknown ID " + std::string(entryName, PlmSignatureSize), "PlmReader::Read");
-            }
-        }
-    }
-
-private:
-
-    void ReadPalette(Palette& palette)
-    {
-        const std::uint32_t size = ReadUint32();
-        const size_t paletteEntriesCount = size / sizeof(PaletteEntry);
-
-        if (paletteEntriesCount * sizeof(PaletteEntry) != size)
-        {
-            ThrowError("Incorrect palette size: " + std::to_string(size), "PlmReader::ReadPalette");
-        }
-
-        palette.resize(paletteEntriesCount);
-        ReadBytes(palette.data(), size);
-    }
-};
-
-void ReadPalleteFromCommon()
-{
-    ResArchive archive{D2_ROOT_DIR "/COMMON/common.res", "test"};
-
-    archive.load();
-    Ogre::DataStreamPtr stream = archive.open("common\\common.plm");
-    if (!stream)
-    {
-        throw std::runtime_error("common: stream is NULL");
-    }
-
-    PlmReader plmReader{ *stream };
-
-    Plm plm;
-    plmReader.Read(plm);
-}
-
-
-void ReadResourceFromArchive(ResArchive& archive, const std::string& mask)
-{
-    Ogre::StringVectorPtr resources = archive.find(mask);
+    Ogre::StringVectorPtr resources = archive.list();
     if (!resources)
     {
         throw std::runtime_error("resources is NULL");
@@ -123,24 +34,40 @@ void ReadResourceFromArchive(ResArchive& archive, const std::string& mask)
 
     for (const auto& resourceFileName : *resources)
     {
+        if (resourceFileName.ends_with(".material"))
+        {
+            std::cout << "skip Ogre material for now: " << resourceFileName << std::endl;
+            continue;
+        }
         Ogre::DataStreamPtr stream = archive.open(resourceFileName);
         if (!stream)
         {
             throw std::runtime_error("stream is NULL for " + resourceFileName);
         }
 
-        std::cout << resourceFileName << std::endl;
-        std::cout << "    " << stream->getAsString() << std::endl;
+        std::string outputFilename = outputDir + "/" + resourceFileName;
+        std::filesystem::create_directories(std::filesystem::path(outputFilename).parent_path());
+
+        std::ofstream outputStream{ outputFilename, std::ios_base::binary };
+        if (!outputStream)
+        {
+            throw std::runtime_error(std::format("cannot open {} for writing", outputFilename));
+        }
+
+        auto data = stream->getAsString();
+        outputStream.write(data.data(), data.size());
+
+        std::cout << "processed: " << resourceFileName << std::endl;
     }
 }
 
-void ReadMaterialsAndColorsFromResFile(const std::string& resName)
+void ReadMaterialsAndColorsFromResFile(const std::string& resName, const std::string& outputDir)
 {
-    ResArchive archive{D2_ROOT_DIR "/ENV/" + resName, "test"};
+    ResArchive archive{resName, "test"};
 
     archive.load();
-    ReadResourceFromArchive(archive, "*.d2colorinfo");
-    ReadResourceFromArchive(archive, "*.material");
+    std::filesystem::path p{ resName};
+    ReadResourceFromArchiveToFile(archive, outputDir + "/" + std::filesystem::relative(p, D2_ROOT_DIR).string());
 }
 
 } // namespace res
@@ -154,6 +81,7 @@ namespace options
 static const char help[] = "help";
 static const char res_name[] = "res_name";
 static const char print_all_resources[] = "print_all_resources";
+static const char output_dir[] = "output_dir";
 
 
 } //namespace options
@@ -165,17 +93,17 @@ std::list<std::string> GetResFileList(const po::variables_map& vm)
     std::list<std::string> res;
     if (vm.contains(options::res_name))
     {
-        res.push_back(vm[options::res_name].as<std::string>());
+        res.push_back(D2_ROOT_DIR "/" + vm[options::res_name].as<std::string>());
         return res;
     }
 
     if (vm.contains(options::print_all_resources))
     {
-        for (const auto& path : std::filesystem::directory_iterator(D2_ROOT_DIR "/ENV/"))
+        for (const auto& path : std::filesystem::recursive_directory_iterator(D2_ROOT_DIR))
         {
             if (path.path().extension() == ".res")
             {
-                res.push_back(path.path().filename().string());
+                res.push_back(path.path().string());
             }
         }
     }
@@ -191,7 +119,8 @@ int main(int argc, char* argv[])
 
         general.add_options()
             (options::help, "Produce help message")
-            (options::res_name, po::value<std::string>(), "resource file name")
+            (options::res_name, po::value<std::string>(), "resource file name (relative to " D2_ROOT_DIR ")")
+            (options::output_dir, po::value<std::string>()->required(), "output directory")
             (options::print_all_resources, "print all resources in subdirectory");
 
         po::variables_map vm;
@@ -221,14 +150,13 @@ int main(int argc, char* argv[])
 
         rgMgr.addResourceLocation(D2_ROOT_DIR "/COMMON/COMMON.RES", "D2Res", d2_hack::common::DefaultResourceGroup);
 
-        ReadPalleteFromCommon();
-
-
         auto resFileList = GetResFileList(vm);
+
+        std::string outputDir = vm[options::output_dir].as<std::string>();
 
         for (const auto& resFile : resFileList)
         {
-            ReadMaterialsAndColorsFromResFile(resFile);
+            ReadMaterialsAndColorsFromResFile(resFile, outputDir);
         }
     }
     catch (const std::exception& e)
