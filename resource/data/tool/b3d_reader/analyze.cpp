@@ -268,6 +268,11 @@ std::string ExtraPrintInfo(std::uint32_t data)
     return ": " + std::format("{:#010x}", data);
 }
 
+std::string ExtraPrintInfo(size_t data)
+{
+    return ": " + std::format("{:#020x}", data);
+}
+
 
 template <typename T, typename P, typename A>
 void PrintData(const std::set<T, P, A>& data, std::ostream& stream)
@@ -335,6 +340,44 @@ void MatchTreeGeneratorMaterials(const B3dForest& forest)
     PrintData(matchedMaterials2, 0, std::cout);
 }
 
+
+typedef std::map < size_t, std::set<std::string>> Node21ChildInfo;
+
+static void CountChildrenInNode21(common::NodeBase& node, Node21ChildInfo& info)
+{
+    if (node.GetType() == block_data::GroupObjectsBlock21)
+    {
+        info[node.GetChildNodeList().size()].insert(node.GetName());
+    }
+    for (auto& child : node.GetChildNodeList())
+    {
+        CountChildrenInNode21(*child, info);
+    }
+}
+
+static void CountChildrenInNode21(const B3dTree& tree, Node21ChildInfo& info)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        CountChildrenInNode21(*node, info);
+    }
+}
+
+static void CountChildrenInNode21(const B3dForest& forest)
+{
+    Node21ChildInfo info;
+
+    for (const auto& tree : forest.forest)
+    {
+        CountChildrenInNode21(*tree, info);
+    }
+
+    CountChildrenInNode21(*forest.common, info);
+    CountChildrenInNode21(*forest.trucks, info);
+
+    PrintData(info, 0, std::cout);
+}
+
 } // namespace b3d
 } // namespace data
 } // namespace resource
@@ -352,6 +395,7 @@ namespace analysis
 
 static const char collect_entries_list_patterns[] = "collect_entries_list_patterns";
 static const char match_tree_generator_materials[] = "match_tree_generator_materials";
+static const char count_children_in_node_21[] = "count_children_in_node_21";
 
 } // namespace analysis
 } // namespace options
@@ -364,7 +408,8 @@ boost::program_options::options_description get_analyze_options()
     boost::program_options::options_description analyze_options("Analysis options");
     analyze_options.add_options()
         (options::analysis::collect_entries_list_patterns, "Collect entries list patterns")
-        (options::analysis::match_tree_generator_materials, "Match tree generator materials and parameters");
+        (options::analysis::match_tree_generator_materials, "Match tree generator materials and parameters")
+        (options::analysis::count_children_in_node_21, "Count children in node 21");
 
     return analyze_options;
 }
@@ -378,6 +423,7 @@ int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::
 {
     const bool collect_entries_list_patterns = (options.count(options::analysis::collect_entries_list_patterns) > 0);
     const bool match_tree_generator_materials = (options.count(options::analysis::match_tree_generator_materials) > 0);
+    const bool count_children_in_node_21 = (options.count(options::analysis::count_children_in_node_21) > 0);
 
     if (collect_entries_list_patterns)
     {
@@ -386,6 +432,10 @@ int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::
     else if (match_tree_generator_materials)
     {
         MatchTreeGeneratorMaterials(forest);
+    }
+    else if (count_children_in_node_21)
+    {
+        CountChildrenInNode21(forest);
     }
     else
     {
