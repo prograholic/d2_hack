@@ -100,7 +100,7 @@ void SimpleB3dMeshRenderer::CreateScene()
     const char* names[] =
     {
         "Zil",
-#if 0
+//#if 0
         "Kamaz",
         "Freightliner",
         "Scania",
@@ -160,7 +160,7 @@ void SimpleB3dMeshRenderer::CreateScene()
         "Avensis",
         "Volga",
         "Fiat",
-#endif //0
+//#endif //0
     };
 
     for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)

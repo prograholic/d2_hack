@@ -185,6 +185,26 @@ static void FillMaterialWithColor(const MaterialDescriptor& md, const std::strin
 
 #endif // 0
 
+
+static void SetTextureAnimation(const MaterialDescriptor& md, Ogre::TextureUnitState* textureUnitState)
+{
+    if (md.rot)
+    {
+        textureUnitState->setRotateAnimation(*md.rot);
+        // TODO: RotPoint is 0.5, 0.5 for each rotation, so skip it
+    }
+
+    if (md.wave)
+    {
+        textureUnitState->setTransformAnimation(Ogre::TextureUnitState::TextureTransformType::TT_ROTATE, Ogre::WaveformType::WFT_SINE);
+    }
+
+    if (md.move)
+    {
+        textureUnitState->setScrollAnimation(md.move->x, md.move->y);
+    }
+}
+
 static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::string& resId, Ogre::Material& material)
 {
     auto technique = material.createTechnique();
@@ -196,6 +216,8 @@ static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::str
     auto textureRes = Ogre::TextureManager::getSingleton().createOrRetrieve(textureName, common::DefaultResourceGroup);
 
     textureUnitState->setTexture(std::static_pointer_cast<Ogre::Texture>(textureRes.first));
+
+    SetTextureAnimation(md, textureUnitState);
 }
 
 
