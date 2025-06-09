@@ -275,7 +275,7 @@ std::string ExtraPrintInfo(size_t data)
 
 
 template <typename T, typename P, typename A>
-void PrintData(const std::set<T, P, A>& data, std::ostream& stream)
+void PrintData(const std::set<T, P, A>& data, int /* indent */, std::ostream& stream)
 {
     stream << "{";
     if (!data.empty())
@@ -296,9 +296,9 @@ void PrintData(const TreeGeneratorMaterialsEntry& data, int indent, std::ostream
 {
     auto& subStream = GetStream(indent, stream) << "[";
 
-    PrintData(data.first, subStream);
+    PrintData(data.first, indent + 1, subStream);
     subStream << ", ";
-    PrintData(data.second, subStream);
+    PrintData(data.second, indent + 1, subStream);
     subStream << "]" << std::endl;
 }
 
@@ -320,7 +320,7 @@ void PrintData(const std::map<K, V, P, A>& data, int indent, std::ostream& strea
     {
         auto& subStream = GetStream(indent, stream);
         subStream << "(" << entry.first << ExtraPrintInfo(entry.first) << ")" << ": ";
-        PrintData(entry.second, subStream);
+        PrintData(entry.second, indent + 1, subStream);
         subStream << std::endl;
     }
 }
@@ -341,39 +341,37 @@ void MatchTreeGeneratorMaterials(const B3dForest& forest)
 }
 
 
-typedef std::map < size_t, std::set<std::string>> Node21ChildInfo;
+typedef std::map<std::uint32_t, std::map < size_t, std::set<std::string>>> NodeChildInfo;
 
-static void CountChildrenInNode21(common::NodeBase& node, Node21ChildInfo& info)
+static void CountChildrenInNodes(common::NodeBase& node, NodeChildInfo& info)
 {
-    if (node.GetType() == block_data::GroupObjectsBlock21)
-    {
-        info[node.GetChildNodeList().size()].insert(node.GetName());
-    }
+    info[node.GetType()][node.GetChildNodeList().size()].insert(node.GetName());
+
     for (auto& child : node.GetChildNodeList())
     {
-        CountChildrenInNode21(*child, info);
+        CountChildrenInNodes(*child, info);
     }
 }
 
-static void CountChildrenInNode21(const B3dTree& tree, Node21ChildInfo& info)
+static void CountChildrenInNodes(const B3dTree& tree, NodeChildInfo& info)
 {
     for (const auto& node : tree.rootNodes)
     {
-        CountChildrenInNode21(*node, info);
+        CountChildrenInNodes(*node, info);
     }
 }
 
-static void CountChildrenInNode21(const B3dForest& forest)
+static void CountChildrenInNodes(const B3dForest& forest)
 {
-    Node21ChildInfo info;
+    NodeChildInfo info;
 
     for (const auto& tree : forest.forest)
     {
-        CountChildrenInNode21(*tree, info);
+        CountChildrenInNodes(*tree, info);
     }
 
-    CountChildrenInNode21(*forest.common, info);
-    CountChildrenInNode21(*forest.trucks, info);
+    CountChildrenInNodes(*forest.common, info);
+    CountChildrenInNodes(*forest.trucks, info);
 
     PrintData(info, 0, std::cout);
 }
@@ -395,7 +393,7 @@ namespace analysis
 
 static const char collect_entries_list_patterns[] = "collect_entries_list_patterns";
 static const char match_tree_generator_materials[] = "match_tree_generator_materials";
-static const char count_children_in_node_21[] = "count_children_in_node_21";
+static const char count_children_in_nodes[] = "count_children_in_nodes";
 
 } // namespace analysis
 } // namespace options
@@ -409,7 +407,7 @@ boost::program_options::options_description get_analyze_options()
     analyze_options.add_options()
         (options::analysis::collect_entries_list_patterns, "Collect entries list patterns")
         (options::analysis::match_tree_generator_materials, "Match tree generator materials and parameters")
-        (options::analysis::count_children_in_node_21, "Count children in node 21");
+        (options::analysis::count_children_in_nodes, "Count children in nodes");
 
     return analyze_options;
 }
@@ -423,24 +421,19 @@ int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::
 {
     const bool collect_entries_list_patterns = (options.count(options::analysis::collect_entries_list_patterns) > 0);
     const bool match_tree_generator_materials = (options.count(options::analysis::match_tree_generator_materials) > 0);
-    const bool count_children_in_node_21 = (options.count(options::analysis::count_children_in_node_21) > 0);
+    const bool count_children_in_nodes = (options.count(options::analysis::count_children_in_nodes) > 0);
 
     if (collect_entries_list_patterns)
     {
         CollectEntriesListPatterns(forest);
     }
-    else if (match_tree_generator_materials)
+    if (match_tree_generator_materials)
     {
         MatchTreeGeneratorMaterials(forest);
     }
-    else if (count_children_in_node_21)
+    if (count_children_in_nodes)
     {
-        CountChildrenInNode21(forest);
-    }
-    else
-    {
-        std::cerr << "No analysis option was given" << std::endl;
-        return 1;
+        CountChildrenInNodes(forest);
     }
 
     return 0;
