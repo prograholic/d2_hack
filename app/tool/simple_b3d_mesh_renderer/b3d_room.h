@@ -26,7 +26,7 @@ public:
             resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
 
-    void PlayerMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
+    void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
 
 private:
     scene_node::SceneNodeBaseList m_rootNodes;

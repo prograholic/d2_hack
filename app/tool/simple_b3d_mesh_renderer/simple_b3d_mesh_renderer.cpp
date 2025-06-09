@@ -224,7 +224,7 @@ const char* node_name = "b3d.scene_node";
 
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
-    MovePlayer();
+    ProcessCameraMovement();
 
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
     if (evt.keysym.sym == '1')
@@ -305,15 +305,22 @@ void SimpleB3dMeshRenderer::shutdown()
 }
 
 
-void SimpleB3dMeshRenderer::MovePlayer()
+void SimpleB3dMeshRenderer::ProcessCameraMovement()
 {
     Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->_getDerivedPosition();
     Ogre::Vector3f movement = currentPlayerPosition - m_worldContext.playerPosition;
     m_worldContext.playerPosition = currentPlayerPosition;
 
-    for (const auto& room : m_rooms)
+    if (movement != Ogre::Vector3f::ZERO)
     {
-        room->PlayerMoved(m_worldContext, movement);
+        for (const auto& room : m_rooms)
+        {
+            room->OnCameraMoved(m_worldContext, movement);
+        }
+        for (const auto& car : m_cars)
+        {
+            car->OnCameraMoved(m_worldContext, movement);
+        }
     }
 }
 

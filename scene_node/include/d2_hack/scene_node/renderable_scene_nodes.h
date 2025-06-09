@@ -15,8 +15,6 @@ class GroupVertexData7 : public OgreSceneNode< resource::data::b3d::block_data::
 public:
 
     GroupVertexData7(const std::string& name, Ogre::SceneNode* ogreSceneNode);
-
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 };
 
 class GroupVertexData37 : public OgreSceneNode< resource::data::b3d::block_data::GroupVertexDataBlock37>
@@ -24,8 +22,6 @@ class GroupVertexData37 : public OgreSceneNode< resource::data::b3d::block_data:
 public:
 
     GroupVertexData37(const std::string& name, Ogre::SceneNode* ogreSceneNode);
-
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 };
 
 

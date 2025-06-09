@@ -15,8 +15,6 @@ class EventEntrySceneNode : public OgreSceneNode<resource::data::b3d::block_data
 {
 public:
     EventEntrySceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode);
-
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 };
 
 
@@ -26,7 +24,7 @@ public:
 
     SwitchableOgreSceneNode(const std::string& name, std::uint32_t type);
 
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
+    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
 private:
     virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) = 0;

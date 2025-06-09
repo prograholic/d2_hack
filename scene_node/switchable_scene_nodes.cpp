@@ -13,15 +13,6 @@ EventEntrySceneNode::EventEntrySceneNode(const std::string& name, Ogre::SceneNod
 {
 }
 
-void EventEntrySceneNode::PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
-{
-    for (const auto& childNode : this->GetChildNodeList())
-    {
-        SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-        childSceneNode->PlayerMoved(worldContext, movement);
-    }
-}
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,12 +22,12 @@ SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string& name, std::u
 {
 }
 
-void SwitchableOgreSceneNode::PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
+void SwitchableOgreSceneNode::OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
 {
     SceneNodeBase* activeNode = ActivateItem(worldContext);
     if (activeNode)
     {
-        activeNode->PlayerMoved(worldContext, movement);
+        activeNode->OnCameraMoved(worldContext, movement);
     }
 }
 

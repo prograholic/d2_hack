@@ -3918,7 +3918,7 @@ SimpleFlatCollision20::SimpleFlatCollision20(
 }
 
 
-void SimpleFlatCollision20::PlayerMoved(const WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
+void SimpleFlatCollision20::OnCameraMoved(const WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
 {
 }
 
@@ -3968,7 +3968,7 @@ SimpleVolumeCollision23::SimpleVolumeCollision23(
 #endif //0
 }
 
-void SimpleVolumeCollision23::PlayerMoved(const WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
+void SimpleVolumeCollision23::OnCameraMoved(const WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
 {
 }
 

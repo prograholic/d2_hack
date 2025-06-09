@@ -26,12 +26,12 @@ public:
      * @param worldContext - stores actual player location
      * @param movement - delta between previous player location and current
      */
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
+    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
     {
         for (const auto& childNode : this->GetChildNodeList())
         {
             SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-            childSceneNode->PlayerMoved(worldContext, movement);
+            childSceneNode->OnCameraMoved(worldContext, movement);
         }
     }
 

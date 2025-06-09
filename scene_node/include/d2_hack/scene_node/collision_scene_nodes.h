@@ -17,7 +17,7 @@ public:
         const std::string& name,
         const resource::data::b3d::block_data::SimpleFlatCollision20& data);
 
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
+    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
     virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
 
@@ -33,7 +33,7 @@ public:
         const std::string& name,
         const resource::data::b3d::block_data::SimpleVolumeCollision23& data);
 
-    virtual void PlayerMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
+    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
     virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
 

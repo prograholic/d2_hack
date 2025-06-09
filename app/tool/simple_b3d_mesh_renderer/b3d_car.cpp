@@ -24,5 +24,13 @@ B3dCar::B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
     (void)visitResult;
 }
 
+void B3dCar::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
+{
+    for (const auto& rootNode : m_rootNodes)
+    {
+        rootNode->OnCameraMoved(worldContext, movement);
+    }
+}
+
 } // namespace app
 } // namespace d2_hack

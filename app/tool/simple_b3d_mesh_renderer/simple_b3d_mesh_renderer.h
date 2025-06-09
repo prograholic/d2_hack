@@ -31,7 +31,7 @@ private:
 
     virtual void shutdown() override;
 
-    void MovePlayer();
+    void ProcessCameraMovement();
 };
 
 

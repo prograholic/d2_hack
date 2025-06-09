@@ -23,11 +23,11 @@ B3dRoom::B3dRoom(const B3dNodePtr& b3dNode,
     (void)visitResult;
 }
 
-void B3dRoom::PlayerMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
+void B3dRoom::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
 {
     for (const auto& rootNode : m_rootNodes)
     {
-        rootNode->PlayerMoved(worldContext, movement);
+        rootNode->OnCameraMoved(worldContext, movement);
     }
 }
 

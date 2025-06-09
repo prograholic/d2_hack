@@ -24,6 +24,8 @@ public:
            Ogre::MeshManager* meshManager,
            resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
+    void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
+
 private:
     scene_node::SceneNodeBaseList m_rootNodes;
 };
