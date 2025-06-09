@@ -121,10 +121,10 @@ public:
         SkipFilesData(entry);
     }
 
-    void SkipPaletteFilesData(ResEntry& entry, std::uint32_t index)
+    void SkipPaletteFilesData(ResEntry& entry, std::uint32_t /* index */)
     {
-        entry.name = common::GetPaletteFileName(m_resId, index + 1);
         SkipFilesData(entry);
+        entry.name = common::GetPaletteFileName(m_resId, entry.resString.substr(0, entry.resString.find('.')));
     }
 
     void SkipBackFilesData(ResEntry& entry, std::uint32_t index)

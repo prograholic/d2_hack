@@ -32,7 +32,7 @@ std::string GetColorName(const std::string& resId, std::uint32_t colorIndex);
 
 std::string GetTextureFileName(const std::string& resId, std::uint32_t textureFileIndex);
 
-std::string GetPaletteFileName(const std::string& resId, std::uint32_t paletteFileIndex);
+std::string GetPaletteFileName(const std::string& resId, const std::string& paletteId);
 
 std::string GetBackFileName(const std::string& resId, std::uint32_t backFileIndex);
 

@@ -44,9 +44,9 @@ std::string GetTextureFileName(const std::string& resId, std::uint32_t textureIn
     return GetResourceName(resId, "TEXTURE-" + std::to_string(textureIndex)) + extensions::TextureFileExt;
 }
 
-std::string GetPaletteFileName(const std::string& resId, std::uint32_t paletteFileIndex)
+std::string GetPaletteFileName(const std::string& resId, const std::string& paletteId)
 {
-    return GetResourceName(resId, "PALETTE-" + std::to_string(paletteFileIndex)) + extensions::PaletteFileExt;
+    return GetResourceName(resId, "PALETTE-" + paletteId) + extensions::PaletteFileExt;
 }
 
 std::string GetBackFileName(const std::string& resId, std::uint32_t backFileIndex)

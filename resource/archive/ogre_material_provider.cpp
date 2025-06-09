@@ -140,6 +140,39 @@ Ogre::DataStreamPtr GenerateMaterial(const std::string& filename, const Ogre::Da
 "    {\n"
 "        pass\n"
 "        {\n"
+"            lighting on\n"
+"            ambient 0.1 0.3 0.1 1\n"
+"            diffuse 0.2 0.2 0.2 1\n"
+"            emissive %2% %3% %4% %5%\n"
+"            depth_check %6%\n"
+"        }\n"
+"    }\n"
+"}\n";
+
+#endif // 0
+
+static void FillMaterialWithColor(const MaterialDescriptor& md, const std::string& /* resId */, Ogre::Material& material)
+{
+    auto technique = material.createTechnique();
+    auto pass = technique->createPass();
+
+    pass->setLightingEnabled(true);
+    pass->setAmbient(Ogre::ColourValue{ 0.1f, 0.3f, 0.1f, 1.0f });
+    pass->setDiffuse(Ogre::ColourValue{ 0.2f, 0.2f, 0.2f, 1.0f });
+
+    palette::PalettePtr plm = manager::Manager::getSingleton().Load(common::GetPaletteFileName("COMMON", "common"), common::DefaultResourceGroup);
+
+    pass->setEmissive(plm->GetColor(md.index));
+}
+
+#if 0
+
+"material %1%\n"
+"{\n"
+"    technique\n"
+"    {\n"
+"        pass\n"
+"        {\n"
 "            texture_unit\n"
 "            {\n"
 "                texture %2%\n"
@@ -149,20 +182,42 @@ Ogre::DataStreamPtr GenerateMaterial(const std::string& filename, const Ogre::Da
 "    }\n"
 "}\n";
 
+
 #endif // 0
 
-void FillMaterialWithContent(const MaterialDescriptor& md, const std::string& resId, Ogre::Material& material)
+static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::string& resId, Ogre::Material& material)
 {
-    material.removeAllTechniques();
-
     auto technique = material.createTechnique();
     auto pass = technique->createPass();
+
     auto textureUnitState = pass->createTextureUnitState();
 
     std::string textureName = common::GetTextureFileName(resId, md.index);
     auto textureRes = Ogre::TextureManager::getSingleton().createOrRetrieve(textureName, common::DefaultResourceGroup);
 
     textureUnitState->setTexture(std::static_pointer_cast<Ogre::Texture>(textureRes.first));
+}
+
+
+static void FillMaterialWithContent(const MaterialDescriptor& md, const std::string& resId, Ogre::Material& material)
+{
+    material.removeAllTechniques();
+
+    switch (md.type)
+    {
+    case MaterialType::col:
+        FillMaterialWithColor(md, resId, material);
+        break;
+
+    case MaterialType::tex:
+    case MaterialType::ttx:
+    case MaterialType::itx:
+        FillMaterialWithTexture(md, resId, material);
+        break;
+
+    default:
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, std::format("Unknown material type: {}", static_cast<int>(md.type)));
+    }
 }
 
 
