@@ -297,7 +297,9 @@ struct GroupTrigger9
 /**
  * Группа объектов, группирует по Level Of Details.
  *
- * Алгоритм группировки неясен, вероятно, поле distanceToPlayer должно влиять на выбор нужного LoD
+ * У него всегда два дочерних узла (в нашей реализации), первый - если попадаем внутрь distanceToCamera, второй - если не попадаем.
+ * 
+ * См. также scene_node::GroupLod10
  */
 struct GroupLodParameters10
 {
@@ -307,9 +309,9 @@ struct GroupLodParameters10
 
     common::BoundingSphere boundingSphere;
 
-    Ogre::Vector3 unknown;
+    Ogre::Vector3 lodCenter;
 
-    Ogre::Real distanceToPlayer;
+    Ogre::Real distanceToCamera;
 };
 
 struct GroupUnknown12

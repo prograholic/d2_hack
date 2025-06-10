@@ -504,8 +504,8 @@ private:
         block_data::GroupLodParameters10 block;
 
         block.boundingSphere = ReadBoundingSphere();
-        block.unknown = ReadVector3();
-        block.distanceToPlayer = ReadFloat();
+        block.lodCenter = ReadVector3();
+        block.distanceToCamera = ReadFloat();
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }

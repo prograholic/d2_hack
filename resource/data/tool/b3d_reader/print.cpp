@@ -499,8 +499,8 @@ private:
 
     void PrintData(const block_data::GroupLodParameters10& block, const char* /* name */, int adjustOffset)
     {
-        GetStream(adjustOffset) << "unknown: " << ToString(block.unknown) << "," << std::endl;
-        GetStream(adjustOffset) << "distanceToPlayer: " << block.distanceToPlayer << std::endl;
+        GetStream(adjustOffset) << "lodCenter: " << ToString(block.lodCenter) << "," << std::endl;
+        GetStream(adjustOffset) << "distanceToCamera: " << block.distanceToCamera << std::endl;
     }
 
     void PrintData(const block_data::GroupUnknown12& block, const char* /* name */, int adjustOffset)
