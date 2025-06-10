@@ -1,6 +1,8 @@
 #include "print.h"
 
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 
 #include <d2_hack/resource/data/b3d_visitor.h>
 
@@ -29,7 +31,8 @@ public:
                    bool printMeshInfo,
                    bool printOnlyNames,
                    bool print_resource_name_as_hex,
-                   std::set<std::uint32_t>&& blockTypesToPrint)
+                   std::set<std::uint32_t>&& blockTypesToPrint,
+                   std::ostream& stream)
         : m_printBoundingSphere(printBoundingSphere)
         , m_newLineForVectorData(newLineForVectorData)
         , m_printVectorData(printVectorData)
@@ -38,6 +41,7 @@ public:
         , m_printOnlyNames(printOnlyNames)
         , m_print_resource_name_as_hex(print_resource_name_as_hex)
         , m_blockTypesToPrint(std::move(blockTypesToPrint))
+        , m_stream(stream)
     {
     }
 
@@ -323,6 +327,7 @@ private:
     const bool m_printOnlyNames;
     const bool m_print_resource_name_as_hex;
     const std::set<std::uint32_t> m_blockTypesToPrint;
+    std::ostream& m_stream;
 
     size_t m_offset = 0;
 
@@ -353,10 +358,10 @@ private:
         return res;
     }
 
-    std::ostream& GetStream(int adjustOffset = 0, std::ostream& ostream = std::cout)
+    std::ostream& GetStream(int adjustOffset = 0)
     {
-        ostream << GetOffsetString(adjustOffset);
-        return ostream;
+        m_stream << GetOffsetString(adjustOffset);
+        return m_stream;
     }
 
     void PrintData(Ogre::Real data, const char* /* name */, int adjustOffset)
@@ -882,6 +887,7 @@ void VisitNode(const B3dNodePtr& node, TracingVisitor& visitor, int level)
 
 void VisitTree(const B3dTree& tree, TracingVisitor& visitor)
 {
+    std::cout << "Processing " << tree.dir << "/" << tree.id << " ..." << std::endl;
     visitor.SetLevel(0);
     visitor.Visit(tree.materials);
     visitor.Visit(tree.transformations);
@@ -935,45 +941,91 @@ boost::program_options::options_description get_print_options()
 }
 
 
-int print(const B3dForest& forest, const boost::program_options::variables_map& options)
+static std::filesystem::path ConstructOutputPathName(const B3dTree& tree, const boost::program_options::variables_map& vm)
 {
-    const bool printTrucks = (options.count(options::generic::only_trucks) > 0);
-    const bool printCommon = (options.count(options::generic::only_common) > 0);
-    const bool printBoundingSphere = (options.count(options::printing::skip_bounding_sphere) > 0);
-    const bool printVectorData = (options.count(options::printing::skip_vector_data) == 0);
-    const bool printFaceInfo = (options.count(options::printing::skip_face_info) == 0);
-    const bool printMeshInfo = (options.count(options::printing::skip_mesh_info) == 0);
-    const bool printOnlyNames = (options.count(options::printing::print_only_names) > 0);
-    const bool printResourceNameAsHex = (options.count(options::printing::print_resource_name_as_hex) > 0);
+    std::filesystem::path dir = vm[options::generic::output_dir].as<std::string>() + "/" + tree.dir + "/" + tree.id;
+    std::filesystem::create_directories(dir);
 
-    using namespace d2_hack::resource::data::b3d;
+    using namespace options::generic;
+    using namespace options::printing;
+    
+    std::string filename = tree.id;
+
+    if (vm.contains(skip_transformation))
+    {
+        filename += "_notf";
+    }
+    if (vm.contains(skip_optimization))
+    {
+        filename += "_noopt";
+    }
+    if (vm.contains(skip_bounding_sphere))
+    {
+        filename += "_nobs";
+    }
+    if (vm.contains(skip_vector_data))
+    {
+        filename += "_novd";
+    }
+    if (vm.contains(skip_face_info))
+    {
+        filename += "_nofi";
+    }
+    if (vm.contains(skip_mesh_info))
+    {
+        filename += "_nomi";
+    }
+    if (vm.contains(print_only_names))
+    {
+        filename += "_onlynames";
+    }
+
+    return dir / (filename + ".txt");
+}
+
+
+static void PrintTree(const B3dTree& tree, const boost::program_options::variables_map& vm)
+{
+    const bool printBoundingSphere = (vm.count(options::printing::skip_bounding_sphere) > 0);
+    const bool printVectorData = (vm.count(options::printing::skip_vector_data) == 0);
+    const bool printFaceInfo = (vm.count(options::printing::skip_face_info) == 0);
+    const bool printMeshInfo = (vm.count(options::printing::skip_mesh_info) == 0);
+    const bool printOnlyNames = (vm.count(options::printing::print_only_names) > 0);
+    const bool printResourceNameAsHex = (vm.count(options::printing::print_resource_name_as_hex) > 0);
 
     std::set<std::uint32_t> blockTypesToPrint;
-    if (options.count(options::printing::block_types_to_print) > 0)
+    if (vm.count(options::printing::block_types_to_print) > 0)
     {
-        const auto& tmp = options[options::printing::block_types_to_print].as<std::vector<std::uint32_t>>();
+        const auto& tmp = vm[options::printing::block_types_to_print].as<std::vector<std::uint32_t>>();
         blockTypesToPrint.insert(tmp.begin(), tmp.end());
     }
 
-    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames, printResourceNameAsHex, std::move(blockTypesToPrint)};
+    std::filesystem::path outputFile = ConstructOutputPathName(tree, vm);
+    std::ofstream outputStream{ outputFile };
 
-    if (printTrucks || printCommon)
+    TracingVisitor visitor{ printBoundingSphere, true, printVectorData, printFaceInfo, printMeshInfo, printOnlyNames, printResourceNameAsHex, std::move(blockTypesToPrint), outputStream };
+
+    VisitTree(tree, visitor);
+}
+
+int print(const B3dForest& forest, const boost::program_options::variables_map& vm)
+{
+    const bool withTrucks = vm.contains(options::generic::with_trucks);
+    const bool withCommon = vm.contains(options::generic::with_common);
+
+
+    if (withTrucks)
     {
-        if (printTrucks)
-        {
-            VisitTree(*forest.trucks, visitor);
-        }
-        else
-        {
-            VisitTree(*forest.common, visitor);
-        }
+        PrintTree(*forest.trucks, vm);
     }
-    else
+    if (withCommon)
     {
-        for (const auto& tree : forest.forest)
-        {
-            VisitTree(*tree, visitor);
-        }
+        PrintTree(*forest.common, vm);
+    }
+
+    for (const auto& tree : forest.forest)
+    {
+        PrintTree(*tree, vm);
     }
 
     return 0;

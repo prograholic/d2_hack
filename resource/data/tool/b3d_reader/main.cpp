@@ -25,12 +25,13 @@ int main(int argc, char* argv[])
         general.add_options()
             (options::generic::help, "Produce help message")
             (options::generic::mode, po::value<std::string>(), "select mode")
+            (options::generic::output_dir, boost::program_options::value<std::string>()->required()->default_value("b3d_output"), "Output dir")
             (options::generic::subdir, po::value<std::string>(), "select subdir for b3d file")
             (options::generic::id, po::value<std::string>(), "select id")
             (options::generic::skip_transformation, "Skip transformation")
             (options::generic::skip_optimization, "Skip optimization")
-            (options::generic::only_common, "Process only common.b3d")
-            (options::generic::only_trucks, "Process ony trucks.b3d")
+            (options::generic::with_common, "Process common.b3d")
+            (options::generic::with_trucks, "Process trucks.b3d")
             (options::generic::use_single_player_registry, "Use single player registry");
 
         general.add(get_print_options());
@@ -65,11 +66,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            if (vm.count(options::generic::only_common) || vm.count(options::generic::only_trucks))
-            {
-                //skip
-            }
-            else
+            if (vm.contains(options::generic::subdir) && vm.contains(options::generic::id))
             {
                 registry.dir = vm[options::generic::subdir].as<std::string>();
                 registry.entries.push_back(vm[options::generic::id].as<std::string>());

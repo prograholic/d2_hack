@@ -1,6 +1,8 @@
 #include "analyze.h"
 
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 #include <set>
 #include <map>
 #include <format>
@@ -8,6 +10,7 @@
 #include <d2_hack/resource/data/b3d_visitor.h>
 #include <d2_hack/common/utils.h>
 
+#include "options.h"
 
 namespace d2_hack
 {
@@ -27,35 +30,35 @@ std::string GetOffsetString(int indent)
     return res;
 }
 
-std::ostream& GetStream(int indent = 0, std::ostream& ostream = std::cout)
+std::ostream& GetStream(int indent, std::ostream& stream)
 {
-    ostream << GetOffsetString(indent);
-    return ostream;
+    stream << GetOffsetString(indent);
+    return stream;
 }
 
-void PrintSequence(const std::vector<std::uint32_t>& sequence)
+void PrintSequence(const std::vector<std::uint32_t>& sequence, std::ostream& stream)
 {
     if (!sequence.empty())
     {
         auto it = sequence.begin();
-        std::cout << *it;
+        stream << *it;
         ++it;
         while (it != sequence.end())
         {
-            std::cout << " -> " << *it;
+            stream << " -> " << *it;
             ++it;
         }
-        std::cout << std::endl;
+        stream << std::endl;
     }
 }
 
 
-void CollectEntriesListPatterns(const B3dNodePtr& node, const std::vector<std::uint32_t>& sequence, std::set< std::vector<std::uint32_t>>& uniqueSequences, int indent = 0)
+void CollectEntriesListPatterns(const B3dNodePtr& node, const std::vector<std::uint32_t>& sequence, std::set< std::vector<std::uint32_t>>& uniqueSequences, int indent, std::ostream& stream)
 {
-    GetStream(indent) << node->GetTypeName() << "(" << node->GetName() << ")";
+    GetStream(indent, stream) << node->GetTypeName() << "(" << node->GetName() << ")";
     if (!node->GetChildNodeList().empty())
     {
-        std::cout << std::endl;
+        stream << std::endl;
     }
 
     for (auto child : node->GetChildNodeList())
@@ -63,26 +66,26 @@ void CollectEntriesListPatterns(const B3dNodePtr& node, const std::vector<std::u
         std::vector<std::uint32_t> newSequence = sequence;
         newSequence.push_back(child->GetType());
 
-        CollectEntriesListPatterns(std::static_pointer_cast<B3dNode>(child), newSequence, uniqueSequences, indent + 1);
+        CollectEntriesListPatterns(std::static_pointer_cast<B3dNode>(child), newSequence, uniqueSequences, indent + 1, stream);
     }
 
     if (node->GetChildNodeList().empty())
     {
         uniqueSequences.insert(sequence);
-        PrintSequence(sequence);
+        PrintSequence(sequence, stream);
     }
 }
 
 
-void PrintSequences(const std::set< std::vector<std::uint32_t>>& sequences)
+void PrintSequences(const std::set< std::vector<std::uint32_t>>& sequences, std::ostream& stream)
 {
     for (const auto& seq : sequences)
     {
-        PrintSequence(seq);
+        PrintSequence(seq, stream);
     }
 }
 
-void PrintFirstElemsOfSequences(const std::set< std::vector<std::uint32_t>>& sequences)
+void PrintFirstElemsOfSequences(const std::set< std::vector<std::uint32_t>>& sequences, std::ostream& stream)
 {
     std::set<std::uint32_t> roots;
     for (const auto& seq : sequences)
@@ -93,39 +96,39 @@ void PrintFirstElemsOfSequences(const std::set< std::vector<std::uint32_t>>& seq
         }
     }
 
-    std::cout << "Print root types: ";
+    stream << "Print root types: ";
     for (auto root : roots)
     {
-        std::cout << root << ", ";
+        stream << root << ", ";
     }
 
-    std::cout << std::endl;
+    stream << std::endl;
 }
 
-void CollectEntriesListPatterns(const B3dTree& tree, std::set< std::vector<std::uint32_t>>& sequences)
+void CollectEntriesListPatterns(const B3dTree& tree, std::set< std::vector<std::uint32_t>>& sequences, std::ostream& stream)
 {
     std::cout << "Processing " << tree.dir << "/" << tree.id << "..." << std::endl;
     for (auto node : tree.rootNodes)
     {
-        CollectEntriesListPatterns(node, { node->GetType() }, sequences);
+        CollectEntriesListPatterns(node, { node->GetType() }, sequences, 0, stream);
     }
 }
 
-void CollectEntriesListPatterns(const B3dForest& forest)
+void CollectEntriesListPatterns(const B3dForest& forest, std::ostream& stream)
 {
     std::set< std::vector<std::uint32_t>> sequences;
 
     for (const auto& tree : forest.forest)
     {
-        CollectEntriesListPatterns(*tree, sequences);
+        CollectEntriesListPatterns(*tree, sequences, stream);
     }
 
-    CollectEntriesListPatterns(*forest.common, sequences);
-    CollectEntriesListPatterns(*forest.trucks, sequences);
+    CollectEntriesListPatterns(*forest.common, sequences, stream);
+    CollectEntriesListPatterns(*forest.trucks, sequences, stream);
 
-    PrintSequences(sequences);
+    PrintSequences(sequences, stream);
 
-    PrintFirstElemsOfSequences(sequences);
+    PrintFirstElemsOfSequences(sequences, stream);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -325,7 +328,7 @@ void PrintData(const std::map<K, V, P, A>& data, int indent, std::ostream& strea
     }
 }
 
-void MatchTreeGeneratorMaterials(const B3dForest& forest)
+void MatchTreeGeneratorMaterials(const B3dForest& forest, std::ostream& stream)
 {
     TreeGeneratorMaterialsData data;
     MatchedTreeMaterials1 matchedMaterials1;
@@ -335,9 +338,9 @@ void MatchTreeGeneratorMaterials(const B3dForest& forest)
     MatchTreeGeneratorMaterials(data, matchedMaterials1);
     MatchTreeGeneratorMaterials(data, matchedMaterials2);
 
-    PrintData(data, 0, std::cout);
-    PrintData(matchedMaterials1, 0, std::cout);
-    PrintData(matchedMaterials2, 0, std::cout);
+    PrintData(data, 0, stream);
+    PrintData(matchedMaterials1, 0, stream);
+    PrintData(matchedMaterials2, 0, stream);
 }
 
 
@@ -361,7 +364,7 @@ static void CountChildrenInNodes(const B3dTree& tree, NodeChildInfo& info)
     }
 }
 
-static void CountChildrenInNodes(const B3dForest& forest)
+static void CountChildrenInNodes(const B3dForest& forest, std::ostream& stream)
 {
     NodeChildInfo info;
 
@@ -373,7 +376,7 @@ static void CountChildrenInNodes(const B3dForest& forest)
     CountChildrenInNodes(*forest.common, info);
     CountChildrenInNodes(*forest.trucks, info);
 
-    PrintData(info, 0, std::cout);
+    PrintData(info, 0, stream);
 }
 
 } // namespace b3d
@@ -414,26 +417,53 @@ boost::program_options::options_description get_analyze_options()
 
 
 
-
-
-
-int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::program_options::variables_map& options)
+static std::filesystem::path ConstructOutputPathName(const std::string& operation, const boost::program_options::variables_map& vm)
 {
-    const bool collect_entries_list_patterns = (options.count(options::analysis::collect_entries_list_patterns) > 0);
-    const bool match_tree_generator_materials = (options.count(options::analysis::match_tree_generator_materials) > 0);
-    const bool count_children_in_nodes = (options.count(options::analysis::count_children_in_nodes) > 0);
+    std::filesystem::path dir = vm[options::generic::output_dir].as<std::string>();
+    std::filesystem::create_directories(dir);
+
+    using namespace options::generic;
+
+    std::string filename = operation;
+
+    if (vm.contains(skip_transformation))
+    {
+        filename += "_notf";
+    }
+    if (vm.contains(skip_optimization))
+    {
+        filename += "_noopt";
+    }
+
+    return dir / (filename + ".txt");
+}
+
+
+
+
+int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::program_options::variables_map& vm)
+{
+    const bool collect_entries_list_patterns = vm.contains(options::analysis::collect_entries_list_patterns);
+    const bool match_tree_generator_materials = vm.contains(options::analysis::match_tree_generator_materials);
+    const bool count_children_in_nodes = vm.contains(options::analysis::count_children_in_nodes);
 
     if (collect_entries_list_patterns)
     {
-        CollectEntriesListPatterns(forest);
+        std::filesystem::path outputFile = ConstructOutputPathName(options::analysis::collect_entries_list_patterns, vm);
+        std::ofstream stream{ outputFile };
+        CollectEntriesListPatterns(forest, stream);
     }
     if (match_tree_generator_materials)
     {
-        MatchTreeGeneratorMaterials(forest);
+        std::filesystem::path outputFile = ConstructOutputPathName(options::analysis::match_tree_generator_materials, vm);
+        std::ofstream stream{ outputFile };
+        MatchTreeGeneratorMaterials(forest, stream);
     }
     if (count_children_in_nodes)
     {
-        CountChildrenInNodes(forest);
+        std::filesystem::path outputFile = ConstructOutputPathName(options::analysis::count_children_in_nodes, vm);
+        std::ofstream stream{ outputFile };
+        CountChildrenInNodes(forest, stream);
     }
 
     return 0;
