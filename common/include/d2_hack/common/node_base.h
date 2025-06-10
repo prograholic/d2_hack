@@ -52,6 +52,28 @@ public:
         return static_cast<const TypedNode*>(this);
     }
 
+    template <typename TypedNode>
+    TypedNode* TryNodeCast()
+    {
+        if (GetType() == TypedNode::Value)
+        {
+            return static_cast<TypedNode*>(this);
+        }
+
+        return nullptr;
+    }
+
+    template <typename TypedNode>
+    const TypedNode* TryNodeCast() const
+    {
+        if (GetType() == TypedNode::Value)
+        {
+            return static_cast<const TypedNode*>(this);
+        }
+
+        return nullptr;
+    }
+
     NodeList& GetChildNodeList();
 
     void SetChildNodes(NodeList&& childNodes);

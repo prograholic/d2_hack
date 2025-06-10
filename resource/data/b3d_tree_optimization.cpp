@@ -81,38 +81,29 @@ static FacesVector MergeMeshInfoListForMaterial(const std::vector<common::Simple
 template <typename Visitor>
 void VisitFaces(B3dNodePtr node, const common::SimpleMeshInfo* parentMeshInfo)
 {
-    if (node->GetType() == block_data::GroupVertexDataBlock7)
+    if (NodeGroupVertexData7* typedNode7 = node->TryNodeCast<NodeGroupVertexData7>())
     {
-        NodeGroupVertexData7* typedNode = node->NodeCast<NodeGroupVertexData7>();
-
-        parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
+        parentMeshInfo = std::addressof(typedNode7->GetBlockData().meshInfo);
     }
-    else if (node->GetType() == block_data::GroupVertexDataBlock36)
+    else if (NodeGroupVertexData36* typedNode36 = node->TryNodeCast<NodeGroupVertexData36>())
     {
-        NodeGroupVertexData36* typedNode = node->NodeCast<NodeGroupVertexData36>();
-
-        parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
+        parentMeshInfo = std::addressof(typedNode36->GetBlockData().meshInfo);
     }
-    else if (node->GetType() == block_data::GroupVertexDataBlock37)
+    else if (NodeGroupVertexData37* typedNode37 = node->TryNodeCast<NodeGroupVertexData37>())
     {
-        NodeGroupVertexData37* typedNode = node->NodeCast<NodeGroupVertexData37>();
-
-        parentMeshInfo = std::addressof(typedNode->GetBlockData().meshInfo);
+        parentMeshInfo = std::addressof(typedNode37->GetBlockData().meshInfo);
     }
-    else if (node->GetType() == block_data::SimpleFacesBlock8)
+    else if (NodeSimpleFaces8* typedNode8 = node->TryNodeCast<NodeSimpleFaces8>())
     {
-        NodeSimpleFaces8* typedNode = node->NodeCast<NodeSimpleFaces8>();
-        Visitor::Visit(typedNode->GetBlockData(), parentMeshInfo);
+        Visitor::Visit(typedNode8->GetBlockData(), parentMeshInfo);
     }
-    else if (node->GetType() == block_data::SimpleFacesBlock28)
+    else if (NodeSimpleFaces28* typedNode28 = node->TryNodeCast<NodeSimpleFaces28>())
     {
-        NodeSimpleFaces28* typedNode = node->NodeCast<NodeSimpleFaces28>();
-        Visitor::Visit(typedNode->GetBlockData(), parentMeshInfo);
+        Visitor::Visit(typedNode28->GetBlockData(), parentMeshInfo);
     }
-    else if (node->GetType() == block_data::SimpleFacesBlock35)
+    else if (NodeSimpleFaces35* typedNode35 = node->TryNodeCast<NodeSimpleFaces35>())
     {
-        NodeSimpleFaces35* typedNode = node->NodeCast<NodeSimpleFaces35>();
-        Visitor::Visit(typedNode->GetBlockData(), parentMeshInfo);
+        Visitor::Visit(typedNode35->GetBlockData(), parentMeshInfo);
     }
 
     for (const auto& child : node->GetChildNodeList())
