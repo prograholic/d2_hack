@@ -22,6 +22,10 @@ class SceneNodeBase : public common::NodeBase
 public:
     SceneNodeBase(const std::string& name, std::uint32_t type);
 
+    ~SceneNodeBase() noexcept;
+
+    static size_t GetSceneNodeBaseCount();
+
     /**
      * @param worldContext - stores actual player location
      * @param movement - delta between previous player location and current
@@ -40,6 +44,9 @@ public:
     virtual Ogre::Vector3f GetAbsolutePosition() const = 0;
 
     virtual Ogre::Quaternion GetAbsoluteOrientation() const = 0;
+
+private:
+    static size_t m_scNodeCount;
 };
 
 typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;

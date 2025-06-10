@@ -17,10 +17,24 @@ const char* RoadHitNodeNamePrefix = "hit_road_";
 const char* RoadObjNodeNamePrefix = "obj_";
 const char* CarNodeNamePrefix = "car_";
 
+size_t B3dNode::m_b3dCount = 0;
+
 B3dNode::B3dNode(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
 	: NodeBase(common::ResourceNameToString(blockHeader.name), blockHeader.type)
 	, m_originalRoot(originalRoot)
 {
+	m_b3dCount += 1;
+}
+
+B3dNode::~B3dNode()
+{
+	assert(m_b3dCount > 0);
+	m_b3dCount -= 1;
+}
+
+size_t B3dNode::GetB3dNodeCount()
+{
+	return m_b3dCount;
 }
 
 NodeCategory B3dNode::GetNodeCategory() const

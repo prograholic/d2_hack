@@ -52,6 +52,9 @@ protected:
     B3dNode(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader);
 
 public:
+
+    ~B3dNode() noexcept;
+
     NodeCategory GetNodeCategory() const;
 
     B3dTreePtr GetOriginalRoot() const;
@@ -66,8 +69,12 @@ public:
 
     virtual bool HasNestedCount() const = 0;
 
+    static size_t GetB3dNodeCount();
+
 private:
     const B3dTreeWeakPtr m_originalRoot;
+
+    static size_t m_b3dCount;
 };
 
 typedef std::list<B3dNodePtr> B3dNodeList;

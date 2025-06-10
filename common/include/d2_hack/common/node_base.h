@@ -30,7 +30,7 @@ protected:
 
 public:
 
-    virtual ~NodeBase() noexcept = default;
+    virtual ~NodeBase() noexcept;
 
     const std::string& GetName() const;
 
@@ -96,12 +96,16 @@ public:
         }
     }
 
+    static size_t GetNodeBaseCount();
+
 private:
     NodeList m_childNodeList;
     WeakNodePtr m_parent;
 
     const std::string m_name;
     const std::uint32_t m_type;
+
+    static size_t m_count;
 };
 
 } // namespace common

@@ -85,6 +85,8 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
 
 void SimpleB3dMeshRenderer::CreateScene()
 {
+    PrintNodesStats("start");
+
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
     Ogre::Light* light = m_sceneManager->createLight("MainLight");
@@ -94,13 +96,14 @@ void SimpleB3dMeshRenderer::CreateScene()
     lightSceneNode->setPosition(20.0f, 80.0f, 150.0f);
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
-
+    {
     B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
+
+    PrintNodesStats("after_ReadB3d");
 
     const char* names[] =
     {
         "Zil",
-//#if 0
         "Kamaz",
         "Freightliner",
         "Scania",
@@ -160,7 +163,6 @@ void SimpleB3dMeshRenderer::CreateScene()
         "Avensis",
         "Volga",
         "Fiat",
-//#endif //0
     };
 
     for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)
@@ -168,13 +170,23 @@ void SimpleB3dMeshRenderer::CreateScene()
         ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{ 3.5f * i, 0, 0 });
     }
 
+    PrintNodesStats("after_ConnectTruckToScenes");
+
     transformation::Transform(b3dForest);
+
+    PrintNodesStats("after_Transform");
+
     transformation::Optimize(b3dForest);
+
+    PrintNodesStats("after_Optimize");
 
     for (auto& tree : b3dForest.forest)
     {
         CreateRootNodes(*tree, b3dSceneNode);
     }
+    }
+
+    PrintNodesStats("after_CreateRootNodes");
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
@@ -322,6 +334,15 @@ void SimpleB3dMeshRenderer::ProcessCameraMovement()
             car->OnCameraMoved(m_worldContext, movement);
         }
     }
+}
+
+void SimpleB3dMeshRenderer::PrintNodesStats(const char* prefix)
+{
+    static int callCount = 0;
+    callCount += 1;
+    D2_HACK_LOG(PrintNodesStats) << "NodeBase(" << callCount << ", " << prefix << "): " << NodeBase::GetNodeBaseCount();
+    D2_HACK_LOG(PrintNodesStats) << "B3dNode(" << callCount << ", " << prefix << "): " << B3dNode::GetB3dNodeCount();
+    D2_HACK_LOG(PrintNodesStats) << "SceneNode(" << callCount << ", " << prefix << "): " << scene_node::SceneNodeBase::GetSceneNodeBaseCount();
 }
 
 } // namespace app

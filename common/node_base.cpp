@@ -6,12 +6,26 @@ namespace d2_hack
 namespace common
 {
 
+size_t NodeBase::m_count = 0;
+
 NodeBase::NodeBase(const std::string& name, std::uint32_t type)
 	: m_childNodeList()
 	, m_parent()
 	, m_name(name)
 	, m_type(type)
 {
+	m_count += 1;
+}
+
+NodeBase::~NodeBase()
+{
+	assert(m_count > 0);
+	m_count -= 1;
+}
+
+size_t NodeBase::GetNodeBaseCount()
+{
+	return m_count;
 }
 
 const std::string& NodeBase::GetName() const

@@ -32,6 +32,8 @@ private:
     virtual void shutdown() override;
 
     void ProcessCameraMovement();
+
+    void PrintNodesStats(const char* prefix);
 };
 
 

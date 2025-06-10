@@ -222,6 +222,43 @@ static void RemoveLodFromTree(const B3dTree& tree)
     }
 }
 
+static void Remove7_37FromTree(const B3dTree& tree)
+{
+    static const std::uint32_t nodes7_37[] =
+    {
+        block_data::GroupVertexDataBlock7,
+        block_data::GroupVertexDataBlock37
+    };
+
+    for (const auto& node : tree.rootNodes)
+    {
+        node->SimpleVisit(
+            [](common::NodeBase* node)
+            {
+                auto& childs = node->GetChildNodeList();
+                size_t pos = 0;
+                for (; pos < childs.size(); ++pos)
+                {
+                    auto& child = childs[pos];
+                    if (std::any_of(std::begin(nodes7_37), std::end(nodes7_37), [&child](std::uint32_t value) {return child->GetType() == value; }))
+                    {
+                        auto& subchilds = child->GetChildNodeList();
+
+                        for (auto& subchild : subchilds)
+                        {
+                            node->AddChildNode(subchild);
+                        }
+
+                        childs.erase(childs.begin() + pos);
+
+                        break;
+                    }
+                }
+            }
+        );
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 static B3dNodePtr GetTopLevelNodeByName(const B3dNodeList& nodes, const std::string &name)
@@ -411,6 +448,7 @@ static void Optimize(B3dTree& tree)
     MergeFacesWithSameMaterial(tree);
     UseOnlyFirstLod(tree);
     RemoveLodFromTree(tree);
+    Remove7_37FromTree(tree);
 }
 
 void Optimize(B3dForest& forest)
