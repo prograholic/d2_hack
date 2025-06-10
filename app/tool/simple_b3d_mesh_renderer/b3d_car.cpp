@@ -16,20 +16,8 @@ B3dCar::B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
                Ogre::SceneNode* rootNode,
                Ogre::MeshManager* meshManager,
                resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
-    : m_rootNodes()
+    : BaseGameObject(b3dNode, b3dId, sceneManager, rootNode, meshManager, ogreMaterialProvider)
 {
-    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, ogreMaterialProvider, m_rootNodes};
-    B3dTreeVisitor visitor{sceneBuilder};
-    auto visitResult = VisitNode(b3dNode, visitor);
-    (void)visitResult;
-}
-
-void B3dCar::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
-{
-    for (const auto& rootNode : m_rootNodes)
-    {
-        rootNode->OnCameraMoved(worldContext, movement);
-    }
 }
 
 } // namespace app

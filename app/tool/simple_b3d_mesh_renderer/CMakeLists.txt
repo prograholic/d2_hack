@@ -9,6 +9,8 @@ d2_hack_add_executable(d2_hack.app.simple_b3d_mesh_renderer
     b3d_room.h
     b3d_car.cpp
     b3d_car.h
+    base_game_object.h
+    base_game_object.cpp
 
     main.cpp
 )

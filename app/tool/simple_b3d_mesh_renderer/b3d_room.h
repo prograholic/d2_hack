@@ -1,13 +1,7 @@
 #ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_ROOM_H
 #define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_ROOM_H
 
-#include <d2_hack/common/platform.h>
-
-#include <memory>
-
-#include <d2_hack/resource/data/b3d_node.h>
-#include <d2_hack/scene_node/scene_node_base.h>
-#include <d2_hack/resource/archive/ogre_material_provider.h>
+#include "base_game_object.h"
 
 namespace d2_hack
 {
@@ -15,7 +9,7 @@ namespace app
 {
 
 
-class B3dRoom
+class B3dRoom : public BaseGameObject
 {
 public:
     B3dRoom(const resource::data::b3d::B3dNodePtr& b3dNode,
@@ -24,12 +18,6 @@ public:
             Ogre::SceneNode* rootNode,
             Ogre::MeshManager* meshManager,
             resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
-
-
-    void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
-
-private:
-    scene_node::SceneNodeBaseList m_rootNodes;
 };
 typedef std::unique_ptr<B3dRoom> B3dRoomPtr;
 
