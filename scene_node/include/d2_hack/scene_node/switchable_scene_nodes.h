@@ -54,20 +54,6 @@ private:
     virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
 };
 
-class GroupLod10 : public OgreSceneNode<resource::data::b3d::block_data::GroupLodParametersBlock10, SwitchableOgreSceneNode>
-{
-public:
-    GroupLod10(
-        const std::string& name,
-        Ogre::SceneNode* ogreSceneNode,
-        const resource::data::b3d::block_data::GroupLodParameters10& data);
-
-private:
-    const resource::data::b3d::block_data::GroupLodParameters10 m_data;
-
-    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
-};
-
 class SceneNodeEvent21 : public OgreSceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableOgreSceneNode>
 {
 public:

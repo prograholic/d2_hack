@@ -1,7 +1,5 @@
 #include "b3d_room.h"
 
-#include "b3d_tree_visitor.h"
-
 namespace d2_hack
 {
 namespace app

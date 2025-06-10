@@ -72,7 +72,7 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupTrigger9&
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupLodParameters10& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
-    return CreateSceneNode<scene_node::GroupLod10>(parent, node.GetName(), sceneNode, node.GetBlockData());
+    return CreateSceneNode<scene_node::OgreSceneNode<NodeGroupLodParameters10::Value>>(parent, node.GetName(), sceneNode);
 }
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupUnknown12& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)

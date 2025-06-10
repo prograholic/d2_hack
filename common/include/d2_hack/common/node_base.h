@@ -86,6 +86,16 @@ public:
 
     void SetParent(const WeakNodePtr& parent);
 
+    template <typename VisitCallback>
+    void SimpleVisit(const VisitCallback & visitCallback)
+    {
+        visitCallback(this);
+        for (auto& child : m_childNodeList)
+        {
+            child->SimpleVisit(visitCallback);
+        }
+    }
+
 private:
     NodeList m_childNodeList;
     WeakNodePtr m_parent;

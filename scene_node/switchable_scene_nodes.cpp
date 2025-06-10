@@ -95,34 +95,6 @@ SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& /* worldContext *
 
 
 
-GroupLod10::GroupLod10(
-    const std::string& name,
-    Ogre::SceneNode* ogreSceneNode,
-    const resource::data::b3d::block_data::GroupLodParameters10& data)
-    : OgreSceneNode<resource::data::b3d::block_data::GroupLodParametersBlock10, SwitchableOgreSceneNode>(name, ogreSceneNode)
-    , m_data(data)
-{
-}
-
-SceneNodeBase* GroupLod10::ActivateItem(const WorldContext& worldContext)
-{
-    const auto& childs = GetChildNodeList();
-    assert(childs.size() == 2);
-
-    Ogre::Vector3f absoluteLodPosition = (GetAbsoluteOrientation() * m_data.lodCenter) + GetAbsolutePosition();
-
-    bool isInsideLod = worldContext.playerPosition.distance(absoluteLodPosition) < m_data.distanceToCamera;
-
-    SceneNodeBase* active = std::static_pointer_cast<SceneNodeBase>(childs[isInsideLod ? 0 : 1]).get();
-    SceneNodeBase* inactive = std::static_pointer_cast<SceneNodeBase>(childs[isInsideLod ? 1 : 0]).get();
-
-    active->SetVisible(true);
-    inactive->SetVisible(false);
-
-    return active;
-}
-
-
 SceneNodeEvent21::SceneNodeEvent21(
     const std::string& name,
     Ogre::SceneNode* ogreSceneNode,

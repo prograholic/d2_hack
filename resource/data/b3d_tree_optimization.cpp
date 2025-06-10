@@ -168,6 +168,60 @@ static void MergeFacesWithSameMaterial(const B3dTree& tree)
     }
 }
 
+static void UseOnlyFirstLod(const B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        node->SimpleVisit(
+            [](common::NodeBase* node)
+            {
+                if (NodeGroupLodParameters10* typedNode = node->TryNodeCast<NodeGroupLodParameters10>())
+                {
+                    auto& childs = typedNode->GetChildNodeList();
+                    if (childs.size() == 2)
+                    {
+                        typedNode->GetChildNodeList().pop_back(); // simply drop all other LoDs
+                    }
+                }
+            }
+        );
+    }
+}
+
+static void RemoveLodFromTree(const B3dTree& tree)
+{
+    for (const auto& node : tree.rootNodes)
+    {
+        node->SimpleVisit(
+            [](common::NodeBase* node)
+            {
+                auto& childs = node->GetChildNodeList();
+                size_t pos = 0;
+                for ( ; pos != childs.size(); ++pos)
+                {
+                    auto& child = childs[pos];
+                    if (child->GetType() == block_data::GroupLodParametersBlock10)
+                    {
+                        assert(child->GetChildNodeList().size() == 1);
+                        assert(child->GetChildNodeList().front()->GetType() == block_data::EventEntryBlockXxx);
+
+                        auto& subsubchilds = child->GetChildNodeList().front()->GetChildNodeList(); // got childs of EventEntry
+
+                        for (auto& subsubchild : subsubchilds)
+                        {
+                            node->AddChildNode(subsubchild);
+                        }
+
+                        childs.erase(childs.begin() + pos);
+
+                        break;
+                    }
+                }
+            }
+        );
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 static B3dNodePtr GetTopLevelNodeByName(const B3dNodeList& nodes, const std::string &name)
@@ -355,6 +409,8 @@ void Transform(B3dForest& forest)
 static void Optimize(B3dTree& tree)
 {
     MergeFacesWithSameMaterial(tree);
+    UseOnlyFirstLod(tree);
+    RemoveLodFromTree(tree);
 }
 
 void Optimize(B3dForest& forest)

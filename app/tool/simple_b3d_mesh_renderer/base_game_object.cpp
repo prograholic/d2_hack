@@ -2,6 +2,9 @@
 
 #include <d2_hack/scene_node/switchable_scene_nodes.h>
 
+#include <d2_hack/scene_node/switchable_scene_nodes.h>
+
+#include "b3d_scene_builder.h"
 #include "b3d_tree_visitor.h"
 
 namespace d2_hack
@@ -32,6 +35,7 @@ void BaseGameObject::OnCameraMoved(const scene_node::WorldContext& worldContext,
         rootNode->OnCameraMoved(worldContext, movement);
     }
 }
+
 
 } // namespace app
 } // namespace d2_hack
