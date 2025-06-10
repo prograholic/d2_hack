@@ -3922,7 +3922,7 @@ void SimpleFlatCollision20::OnCameraMoved(const WorldContext& /* worldContext */
 {
 }
 
-void SimpleFlatCollision20::SetVisible(const WorldContext& /* worldContext */, bool /* visible */)
+void SimpleFlatCollision20::SetVisible(bool /* visible */)
 {
 }
 
@@ -3972,7 +3972,7 @@ void SimpleVolumeCollision23::OnCameraMoved(const WorldContext& /* worldContext 
 {
 }
 
-void SimpleVolumeCollision23::SetVisible(const WorldContext& /* worldContext */, bool /* visible */)
+void SimpleVolumeCollision23::SetVisible(bool /* visible */)
 {
 }
 

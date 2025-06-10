@@ -35,7 +35,7 @@ public:
         }
     }
 
-    virtual void SetVisible(const WorldContext& worldContext, bool visible) = 0;
+    virtual void SetVisible(bool visible) = 0;
 
     virtual Ogre::Vector3f GetAbsolutePosition() const = 0;
 
@@ -71,7 +71,7 @@ public:
     {
     }
 
-    virtual void SetVisible(const WorldContext& /* worldContext */, bool visible) override
+    virtual void SetVisible(bool visible) override
     {
         m_ogreSceneNode->setVisible(visible);
     }

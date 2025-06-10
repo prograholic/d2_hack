@@ -43,7 +43,7 @@ GroupUnknown2::GroupUnknown2(
 {
 }
 
-SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& worldContext)
+SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& /* worldContext */)
 {
     // TODO: rework
 
@@ -54,11 +54,11 @@ SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& worldContext)
         if (res == nullptr)
         {
             res = childSceneNode;
-            res->SetVisible(worldContext, true);
+            res->SetVisible(true);
         }
         else
         {
-            childSceneNode->SetVisible(worldContext, false);
+            childSceneNode->SetVisible(false);
         }
     }
     return res;
@@ -74,7 +74,7 @@ GroupTrigger9::GroupTrigger9(
 {
 }
 
-SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& worldContext)
+SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& /* worldContext */)
 {
     SceneNodeBase* res = nullptr;
     for (const auto& childNode : this->GetChildNodeList())
@@ -83,11 +83,11 @@ SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& worldContext)
         if (res == nullptr)
         {
             res = childSceneNode;
-            res->SetVisible(worldContext, true);
+            res->SetVisible(true);
         }
         else
         {
-            childSceneNode->SetVisible(worldContext, false);
+            childSceneNode->SetVisible(false);
         }
     }
     return res;
@@ -116,8 +116,8 @@ SceneNodeBase* GroupLod10::ActivateItem(const WorldContext& worldContext)
     SceneNodeBase* active = std::static_pointer_cast<SceneNodeBase>(childs[isInsideLod ? 0 : 1]).get();
     SceneNodeBase* inactive = std::static_pointer_cast<SceneNodeBase>(childs[isInsideLod ? 1 : 0]).get();
 
-    active->SetVisible(worldContext, true);
-    inactive->SetVisible(worldContext, false);
+    active->SetVisible(true);
+    inactive->SetVisible(false);
 
     return active;
 }
@@ -131,7 +131,7 @@ SceneNodeEvent21::SceneNodeEvent21(
 {
 }
 
-SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& worldContext)
+SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& /* worldContext */)
 {
     // TODO: rework
 
@@ -142,11 +142,11 @@ SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& worldContext)
         if (res == nullptr)
         {
             res = childSceneNode;
-            res->SetVisible(worldContext, true);
+            res->SetVisible(true);
         }
         else
         {
-            childSceneNode->SetVisible(worldContext, false);
+            childSceneNode->SetVisible(false);
         }
     }
     return res;
@@ -161,7 +161,7 @@ GroupUnknown29::GroupUnknown29(
 {
 }
 
-SceneNodeBase* GroupUnknown29::ActivateItem(const WorldContext& worldContext)
+SceneNodeBase* GroupUnknown29::ActivateItem(const WorldContext& /* worldContext */)
 {
     // TODO: rework
 
@@ -172,11 +172,11 @@ SceneNodeBase* GroupUnknown29::ActivateItem(const WorldContext& worldContext)
         if (res == nullptr)
         {
             res = childSceneNode;
-            res->SetVisible(worldContext, true);
+            res->SetVisible(true);
         }
         else
         {
-            childSceneNode->SetVisible(worldContext, false);
+            childSceneNode->SetVisible(false);
         }
     }
     return res;

@@ -19,7 +19,7 @@ public:
 
     virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
-    virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
+    virtual void SetVisible(bool visible) override;
 
     virtual Ogre::Vector3f GetAbsolutePosition() const override;
 
@@ -35,7 +35,7 @@ public:
 
     virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
-    virtual void SetVisible(const WorldContext& worldContext, bool visible) override;
+    virtual void SetVisible(bool visible) override;
 
     virtual Ogre::Vector3f GetAbsolutePosition() const override;
 
