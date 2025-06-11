@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
         general.add_options()
             (options::help, "Produce help message")
             (options::res_name, po::value<std::string>(), "resource file name (relative to " D2_ROOT_DIR ")")
-            (options::output_dir, po::value<std::string>()->required(), "output directory")
+            (options::output_dir, po::value<std::string>()->required()->default_value("res_output"), "output directory")
             (options::print_all_resources, "print all resources in subdirectory");
 
         po::variables_map vm;

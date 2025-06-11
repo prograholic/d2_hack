@@ -43,6 +43,12 @@ public:
         ReadBytes(data.data(), count * sizeof(T));
     }
 
+    template <typename T>
+    void TypedRead(T& value)
+    {
+        ReadBytes(&value, sizeof(value));
+    }
+
     Ogre::DataStream& GetStream();
 
     template <typename IntegralT>
