@@ -168,55 +168,33 @@ static void MergeFacesWithSameMaterial(const B3dTree& tree)
     }
 }
 
-static void UseOnlyFirstLod(const B3dTree& tree)
-{
-    for (const auto& node : tree.rootNodes)
-    {
-        node->SimpleVisit(
-            [](common::NodeBase* node)
-            {
-                if (NodeGroupLodParameters10* typedNode = node->TryNodeCast<NodeGroupLodParameters10>())
-                {
-                    auto& childs = typedNode->GetChildNodeList();
-                    if (childs.size() == 2)
-                    {
-                        typedNode->GetChildNodeList().pop_back(); // simply drop all other LoDs
-                    }
-                }
-            }
-        );
-    }
-}
-
 static void RemoveLodFromTree(const B3dTree& tree)
 {
     for (const auto& node : tree.rootNodes)
     {
-        node->SimpleVisit(
+        node->VisitPostOrder(
             [](common::NodeBase* node)
             {
-                auto& childs = node->GetChildNodeList();
-                size_t pos = 0;
-                for ( ; pos != childs.size(); ++pos)
+                const auto& childs = node->GetChildNodeList();
+                NodeList newChilds;
+
+                for (const auto& child : childs)
                 {
-                    auto& child = childs[pos];
                     if (child->GetType() == block_data::GroupLodParametersBlock10)
                     {
-                        assert(child->GetChildNodeList().size() == 1);
+                        assert(child->GetChildNodeList().size() == 2);
                         assert(child->GetChildNodeList().front()->GetType() == block_data::EventEntryBlockXxx);
 
                         auto& subsubchilds = child->GetChildNodeList().front()->GetChildNodeList(); // got childs of EventEntry
-
-                        for (auto& subsubchild : subsubchilds)
-                        {
-                            node->AddChildNode(subsubchild);
-                        }
-
-                        childs.erase(childs.begin() + pos);
-
-                        break;
+                        newChilds.insert(newChilds.end(), std::make_move_iterator(subsubchilds.begin()), std::make_move_iterator(subsubchilds.end()));
+                        subsubchilds.clear();
+                    }
+                    else
+                    {
+                        newChilds.push_back(child);
                     }
                 }
+                node->SetChildNodes(std::move(newChilds));
             }
         );
     }
@@ -232,31 +210,60 @@ static void Remove7_37FromTree(const B3dTree& tree)
 
     for (const auto& node : tree.rootNodes)
     {
-        node->SimpleVisit(
+        node->VisitPostOrder(
             [](common::NodeBase* node)
             {
-                auto& childs = node->GetChildNodeList();
-                size_t pos = 0;
-                for (; pos < childs.size(); ++pos)
+                const auto& childs = node->GetChildNodeList();
+                NodeList newChilds;
+
+                for (const auto& child : childs)
                 {
-                    auto& child = childs[pos];
                     if (std::any_of(std::begin(nodes7_37), std::end(nodes7_37), [&child](std::uint32_t value) {return child->GetType() == value; }))
                     {
                         auto& subchilds = child->GetChildNodeList();
-
-                        for (auto& subchild : subchilds)
-                        {
-                            node->AddChildNode(subchild);
-                        }
-
-                        childs.erase(childs.begin() + pos);
-
-                        break;
+                        newChilds.insert(newChilds.end(), std::make_move_iterator(subchilds.begin()), std::make_move_iterator(subchilds.end()));
+                        subchilds.clear();
+                    }
+                    else
+                    {
+                        newChilds.push_back(child);
                     }
                 }
+                node->SetChildNodes(std::move(newChilds));
             }
         );
     }
+}
+
+static void RemoveTopLevelEmptyNodes(B3dTree& tree)
+{
+    static const std::uint32_t topLevelNodesToDelete[] =
+    {
+        block_data::GroupVertexDataBlock7,
+        block_data::GroupVertexDataBlock37
+    };
+
+    B3dNodeList newRoots;
+
+    for (const auto& node : tree.rootNodes)
+    {
+        if (std::any_of(std::begin(topLevelNodesToDelete), std::end(topLevelNodesToDelete), [&node](std::uint32_t value) {return node->GetType() == value; }))
+        {
+            if (node->GetChildNodeList().empty())
+            {
+                continue;
+            }
+        }
+
+        newRoots.push_back(node);
+    }
+
+    tree.rootNodes = std::move(newRoots);
+}
+
+static void PrintOptStats(const char* pass)
+{
+    D2_HACK_LOG(PrintOptStats) << "NodeBase count after `" << pass << "`: " << NodeBase::GetNodeBaseCount();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -445,19 +452,33 @@ void Transform(B3dForest& forest)
 
 static void Optimize(B3dTree& tree)
 {
+    auto beforeOpt = NodeBase::GetNodeBaseCount();
+    PrintOptStats("(null)");
+
     MergeFacesWithSameMaterial(tree);
-    UseOnlyFirstLod(tree);
+    PrintOptStats("MergeFacesWithSameMaterial");
+
     RemoveLodFromTree(tree);
+    PrintOptStats("RemoveLodFromTree");
+
     Remove7_37FromTree(tree);
+    PrintOptStats("Remove7_37FromTree");
+
+    RemoveTopLevelEmptyNodes(tree);
+    PrintOptStats("RemoveTopLevelEmptyNodes");
+
+    D2_HACK_LOG(Optimize) << "After all passes was optimized " << beforeOpt - NodeBase::GetNodeBaseCount() << " nodes for " << tree.dir << "/" << tree.id;
 }
 
 void Optimize(B3dForest& forest)
 {
-    // TODO: нужно ли оптимизировать `common` и `trucks`?  ажетс€ что нет, так как на этапе трансформации мы из common надергаем узлы в другие деревь€.
     for (auto& tree : forest.forest)
     {
         Optimize(*tree);
     }
+
+    Optimize(*forest.common);
+    Optimize(*forest.trucks);
 }
 
 } // namespace transformation

@@ -64,13 +64,10 @@ int main(int argc, char* argv[])
         {
             registry = SinglePlayerRegistry;
         }
-        else
+        if (vm.contains(options::generic::subdir) && vm.contains(options::generic::id))
         {
-            if (vm.contains(options::generic::subdir) && vm.contains(options::generic::id))
-            {
-                registry.dir = vm[options::generic::subdir].as<std::string>();
-                registry.entries.push_back(vm[options::generic::id].as<std::string>());
-            }
+            registry.dir = vm[options::generic::subdir].as<std::string>();
+            registry.entries.push_back(vm[options::generic::id].as<std::string>());
         }
 
         B3dForest forest = ReadB3d(registry);

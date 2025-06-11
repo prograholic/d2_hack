@@ -1,2 +1,3 @@
 d2_hack.resource.data.tool.b3d_reader.exe --mode analyze --with_trucks --with_common --use_single_player_registry --skip_face_info --skip_mesh_info --skip_vector_data --collect_entries_list_patterns
 d2_hack.resource.data.tool.b3d_reader.exe --mode analyze --with_trucks --with_common --use_single_player_registry --skip_optimization --skip_transformation  --skip_face_info --skip_mesh_info --skip_vector_data --collect_entries_list_patterns
+d2_hack.resource.data.tool.b3d_reader.exe --mode analyze --with_trucks --with_common --use_single_player_registry --skip_optimization  --skip_face_info --skip_mesh_info --skip_vector_data --collect_entries_list_patterns

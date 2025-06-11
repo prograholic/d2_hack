@@ -87,13 +87,23 @@ public:
     void SetParent(const WeakNodePtr& parent);
 
     template <typename VisitCallback>
-    void SimpleVisit(const VisitCallback & visitCallback)
+    void VisitPreOrder(const VisitCallback & visitCallback)
     {
         visitCallback(this);
         for (auto& child : m_childNodeList)
         {
-            child->SimpleVisit(visitCallback);
+            child->VisitPreOrder(visitCallback);
         }
+    }
+
+    template <typename VisitCallback>
+    void VisitPostOrder(const VisitCallback& visitCallback)
+    {
+        for (auto& child : m_childNodeList)
+        {
+            child->VisitPostOrder(visitCallback);
+        }
+        visitCallback(this);
     }
 
     static size_t GetNodeBaseCount();
