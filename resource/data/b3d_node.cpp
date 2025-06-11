@@ -76,24 +76,6 @@ B3dTreePtr B3dNode::GetOriginalRoot() const
 	return m_originalRoot.lock();
 }
 
-B3dNodePtr B3dNode::ExtractFirstNodeWithCategory(NodeCategory nodeCategory)
-{
-	auto& childNodeList = GetChildNodeList();
-	auto pos = childNodeList.begin();
-	while (pos != childNodeList.end())
-	{
-		B3dNodePtr b3dNode = std::static_pointer_cast<B3dNode>(*pos);
-		if (b3dNode->GetNodeCategory() == nodeCategory)
-		{
-			childNodeList.erase(pos);
-
-			return b3dNode;
-		}
-		++pos;
-	}
-
-	return B3dNodePtr{};
-}
 
 } // namespace b3d
 } // namespace data

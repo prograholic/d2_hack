@@ -39,7 +39,7 @@ std::uint32_t NodeBase::GetType() const
 }
 
 
-NodeList& NodeBase::GetChildNodeList()
+const NodeList& NodeBase::GetChildNodeList() const
 {
 	return m_childNodeList;
 }

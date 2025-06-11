@@ -261,74 +261,74 @@ void MatchTreeGeneratorMaterials(const TreeGeneratorMaterialsData& data, Matched
 }
 
 
-std::string ExtraPrintInfo(const std::string& /* data */)
+std::string ExtraPrintInfo(const std::string& /* data */, bool /* printExtraInfo */)
 {
     return std::string{};
 }
 
-std::string ExtraPrintInfo(std::uint32_t data)
+std::string ExtraPrintInfo(std::uint32_t data, bool printExtraInfo)
 {
-    return ": " + std::format("{:#010x}", data);
+    return printExtraInfo ? ": " + std::format("{:#010x}", data) : "";
 }
 
-std::string ExtraPrintInfo(size_t data)
+std::string ExtraPrintInfo(size_t data, bool printExtraInfo)
 {
-    return ": " + std::format("{:#020x}", data);
+    return printExtraInfo ? ": " + std::format("{:#020x}", data) : "";
 }
 
 
 template <typename T, typename P, typename A>
-void PrintData(const std::set<T, P, A>& data, int /* indent */, std::ostream& stream)
+void PrintData(const std::set<T, P, A>& data, int /* indent */, std::ostream& stream, bool printExtraInfo)
 {
     stream << "{";
     if (!data.empty())
     {
         auto pos = data.begin();
-        stream << "(" << *pos << ExtraPrintInfo(*pos) << ")";
+        stream << "(" << *pos << ExtraPrintInfo(*pos, printExtraInfo) << ")";
         ++pos;
 
         for (; pos != data.end(); ++pos)
         {
-            stream << ", (" << *pos << ExtraPrintInfo(*pos) << ")";
+            stream << ", (" << *pos << ExtraPrintInfo(*pos, printExtraInfo) << ")";
         }
     }
     stream << "}";
 }
 
-void PrintData(const TreeGeneratorMaterialsEntry& data, int indent, std::ostream& stream)
+void PrintData(const TreeGeneratorMaterialsEntry& data, int indent, std::ostream& stream, bool printExtraInfo)
 {
     auto& subStream = GetStream(indent, stream) << "[";
 
-    PrintData(data.first, indent + 1, subStream);
+    PrintData(data.first, indent + 1, subStream, printExtraInfo);
     subStream << ", ";
-    PrintData(data.second, indent + 1, subStream);
+    PrintData(data.second, indent + 1, subStream, printExtraInfo);
     subStream << "]" << std::endl;
 }
 
-void PrintData(const TreeGeneratorMaterialsData& data, int indent, std::ostream& stream)
+void PrintData(const TreeGeneratorMaterialsData& data, int indent, std::ostream& stream, bool printExtraInfo)
 {
     for (const auto& entry : data)
     {
         GetStream(indent, stream) << entry.first << ":" << std::endl;
         GetStream(indent, stream) << "{" << std::endl;
-        PrintData(entry.second, indent + 1, stream);
+        PrintData(entry.second, indent + 1, stream, printExtraInfo);
         GetStream(indent, stream) << "}" << std::endl;
     }
 }
 
 template <typename K, typename V, typename P, typename A>
-void PrintData(const std::map<K, V, P, A>& data, int indent, std::ostream& stream)
+void PrintData(const std::map<K, V, P, A>& data, int indent, std::ostream& stream, bool printExtraInfo)
 {
     for (const auto& entry : data)
     {
         auto& subStream = GetStream(indent, stream);
-        subStream << "(" << entry.first << ExtraPrintInfo(entry.first) << ")" << ": ";
-        PrintData(entry.second, indent + 1, subStream);
+        subStream << "(" << entry.first << ExtraPrintInfo(entry.first, printExtraInfo) << ")" << ": ";
+        PrintData(entry.second, indent + 1, subStream, printExtraInfo);
         subStream << std::endl;
     }
 }
 
-void MatchTreeGeneratorMaterials(const B3dForest& forest, std::ostream& stream)
+void MatchTreeGeneratorMaterials(const B3dForest& forest, std::ostream& stream, bool printExtraInfo = true)
 {
     TreeGeneratorMaterialsData data;
     MatchedTreeMaterials1 matchedMaterials1;
@@ -338,9 +338,9 @@ void MatchTreeGeneratorMaterials(const B3dForest& forest, std::ostream& stream)
     MatchTreeGeneratorMaterials(data, matchedMaterials1);
     MatchTreeGeneratorMaterials(data, matchedMaterials2);
 
-    PrintData(data, 0, stream);
-    PrintData(matchedMaterials1, 0, stream);
-    PrintData(matchedMaterials2, 0, stream);
+    PrintData(data, 0, stream, printExtraInfo);
+    PrintData(matchedMaterials1, 0, stream, printExtraInfo);
+    PrintData(matchedMaterials2, 0, stream, printExtraInfo);
 }
 
 
@@ -364,7 +364,7 @@ static void CountChildrenInNodes(const B3dTree& tree, NodeChildInfo& info)
     }
 }
 
-static void CountChildrenInNodes(const B3dForest& forest, std::ostream& stream)
+static void CountChildrenInNodes(const B3dForest& forest, std::ostream& stream, bool printExtraInfo = false)
 {
     NodeChildInfo info;
 
@@ -376,7 +376,40 @@ static void CountChildrenInNodes(const B3dForest& forest, std::ostream& stream)
     CountChildrenInNodes(*forest.common, info);
     CountChildrenInNodes(*forest.trucks, info);
 
-    PrintData(info, 0, stream);
+    PrintData(info, 0, stream, printExtraInfo);
+}
+
+typedef std::map <std::uint32_t, std::set<std::uint32_t>> ChildTypesInNodes;
+
+static void GetChildTypesInNodes(const B3dTree& tree, ChildTypesInNodes& info)
+{
+    for (auto& rootNode : tree.rootNodes)
+    {
+        rootNode->VisitPreOrder(
+            [&info](auto node)
+            {
+                for (auto& child : node->GetChildNodeList())
+                {
+                    info[node->GetType()].insert(child->GetType());
+                }
+            }
+        );
+    }
+}
+
+static void GetChildTypesInNodes(const B3dForest& forest, std::ostream& stream, bool printExtraInfo = false)
+{
+    ChildTypesInNodes info;
+
+    for (const auto& tree : forest.forest)
+    {
+        GetChildTypesInNodes(*tree, info);
+    }
+
+    GetChildTypesInNodes(*forest.common, info);
+    GetChildTypesInNodes(*forest.trucks, info);
+
+    PrintData(info, 0, stream, printExtraInfo);
 }
 
 } // namespace b3d
@@ -397,6 +430,7 @@ namespace analysis
 static const char collect_entries_list_patterns[] = "collect_entries_list_patterns";
 static const char match_tree_generator_materials[] = "match_tree_generator_materials";
 static const char count_children_in_nodes[] = "count_children_in_nodes";
+static const char get_child_types_in_nodes[] = "get_child_types_in_nodes";
 
 } // namespace analysis
 } // namespace options
@@ -410,7 +444,8 @@ boost::program_options::options_description get_analyze_options()
     analyze_options.add_options()
         (options::analysis::collect_entries_list_patterns, "Collect entries list patterns")
         (options::analysis::match_tree_generator_materials, "Match tree generator materials and parameters")
-        (options::analysis::count_children_in_nodes, "Count children in nodes");
+        (options::analysis::count_children_in_nodes, "Count children in nodes")
+        (options::analysis::get_child_types_in_nodes, "Get child types in nodes");
 
     return analyze_options;
 }
@@ -446,6 +481,7 @@ int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::
     const bool collect_entries_list_patterns = vm.contains(options::analysis::collect_entries_list_patterns);
     const bool match_tree_generator_materials = vm.contains(options::analysis::match_tree_generator_materials);
     const bool count_children_in_nodes = vm.contains(options::analysis::count_children_in_nodes);
+    const bool get_child_types_in_nodes = vm.contains(options::analysis::get_child_types_in_nodes);
 
     if (collect_entries_list_patterns)
     {
@@ -464,6 +500,12 @@ int analyze(const d2_hack::resource::data::b3d::B3dForest& forest, const boost::
         std::filesystem::path outputFile = ConstructOutputPathName(options::analysis::count_children_in_nodes, vm);
         std::ofstream stream{ outputFile };
         CountChildrenInNodes(forest, stream);
+    }
+    if (get_child_types_in_nodes)
+    {
+        std::filesystem::path outputFile = ConstructOutputPathName(options::analysis::get_child_types_in_nodes, vm);
+        std::ofstream stream{ outputFile };
+        GetChildTypesInNodes(forest, stream);
     }
 
     return 0;

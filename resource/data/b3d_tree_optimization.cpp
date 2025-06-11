@@ -185,9 +185,8 @@ static void RemoveLodFromTree(const B3dTree& tree)
                         assert(child->GetChildNodeList().size() == 2);
                         assert(child->GetChildNodeList().front()->GetType() == block_data::EventEntryBlockXxx);
 
-                        auto& subsubchilds = child->GetChildNodeList().front()->GetChildNodeList(); // got childs of EventEntry
-                        newChilds.insert(newChilds.end(), std::make_move_iterator(subsubchilds.begin()), std::make_move_iterator(subsubchilds.end()));
-                        subsubchilds.clear();
+                        const auto& subsubchilds = child->GetChildNodeList().front()->GetChildNodeList(); // got childs of EventEntry
+                        newChilds.insert(newChilds.end(), subsubchilds.begin(), subsubchilds.end());
                     }
                     else
                     {
@@ -220,9 +219,8 @@ static void Remove7_37FromTree(const B3dTree& tree)
                 {
                     if (std::any_of(std::begin(nodes7_37), std::end(nodes7_37), [&child](std::uint32_t value) {return child->GetType() == value; }))
                     {
-                        auto& subchilds = child->GetChildNodeList();
-                        newChilds.insert(newChilds.end(), std::make_move_iterator(subchilds.begin()), std::make_move_iterator(subchilds.end()));
-                        subchilds.clear();
+                        const auto& subchilds = child->GetChildNodeList();
+                        newChilds.insert(newChilds.end(), subchilds.begin(), subchilds.end());
                     }
                     else
                     {
@@ -247,7 +245,7 @@ static void RemoveTopLevelEmptyNodes(B3dTree& tree)
 
     for (const auto& node : tree.rootNodes)
     {
-        if (std::any_of(std::begin(topLevelNodesToDelete), std::end(topLevelNodesToDelete), [&node](std::uint32_t value) {return node->GetType() == value; }))
+        if (std::any_of(std::begin(topLevelNodesToDelete), std::end(topLevelNodesToDelete), [&node](auto value) {return node->GetType() == value; }))
         {
             if (node->GetChildNodeList().empty())
             {
@@ -260,6 +258,7 @@ static void RemoveTopLevelEmptyNodes(B3dTree& tree)
 
     tree.rootNodes = std::move(newRoots);
 }
+
 
 static void PrintOptStats(const char* pass)
 {

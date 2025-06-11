@@ -74,7 +74,7 @@ public:
         return nullptr;
     }
 
-    NodeList& GetChildNodeList();
+    const NodeList& GetChildNodeList() const;
 
     void SetChildNodes(NodeList&& childNodes);
 

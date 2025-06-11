@@ -59,8 +59,6 @@ public:
 
     B3dTreePtr GetOriginalRoot() const;
 
-    B3dNodePtr ExtractFirstNodeWithCategory(NodeCategory nodeCategory);
-
     virtual std::string GetTypeName() const = 0;
 
     virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
