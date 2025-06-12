@@ -212,7 +212,7 @@ void TxrImageCodec::decode(const Ogre::DataStreamPtr& input, const Ogre::Any& ou
     image->create(pixelFormat, width, height, 1, 1, desc.mipMapCount);
     if (image->getSize() != imageBuffer.size())
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "Expected: " + std::to_string(image->getSize()) + ", got: " + std::to_string(imageBuffer.size()) + "  image buffer size");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Incorrect image size, expected: {}, got: {}", image->getSize(), imageBuffer.size()));
     }
     memcpy(image->getData(), imageBuffer.data(), imageBuffer.size());
 }

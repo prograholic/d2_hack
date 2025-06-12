@@ -29,54 +29,49 @@ const char SoundFileExtNoDot[] = "d2_sound";
 } // namespace extensions
 
 
-std::string GetResourceName(const std::string& fileBaseName, const std::string& resourceName)
+std::string GetColorName(const std::string_view& resId, std::uint32_t colorIndex)
 {
-    return fileBaseName + "_" + resourceName;
+    return GetResourceName(resId, "COLOR", colorIndex, extensions::ColorExtNoDot);
 }
 
-std::string GetColorName(const std::string& resId, std::uint32_t colorIndex)
+std::string GetTextureFileName(const std::string_view& resId, std::uint32_t textureIndex)
 {
-    return GetResourceName(resId, "COLOR-" + std::to_string(colorIndex)) + extensions::ColorExt;
+    return GetResourceName(resId, "TEXTURE", textureIndex, extensions::TextureFileExtNoDot);
 }
 
-std::string GetTextureFileName(const std::string& resId, std::uint32_t textureIndex)
+std::string GetPaletteFileName(const std::string_view& resId, const std::string_view& paletteId)
 {
-    return GetResourceName(resId, "TEXTURE-" + std::to_string(textureIndex)) + extensions::TextureFileExt;
+    return GetResourceName(resId, "PALETTE", paletteId, extensions::PaletteFileExtNoDot);
 }
 
-std::string GetPaletteFileName(const std::string& resId, const std::string& paletteId)
+std::string GetBackFileName(const std::string_view& resId, std::uint32_t backFileIndex)
 {
-    return GetResourceName(resId, "PALETTE-" + paletteId) + extensions::PaletteFileExt;
+    return GetResourceName(resId, "BACKFILE", backFileIndex, extensions::BackFileExtNoDot);
 }
 
-std::string GetBackFileName(const std::string& resId, std::uint32_t backFileIndex)
+std::string GetMaskFileName(const std::string_view& resId, std::uint32_t maskFileIndex)
 {
-    return GetResourceName(resId, "BACKFILE-" + std::to_string(backFileIndex)) + extensions::BackFileExt;
+    return GetResourceName(resId, "MASKFILE", maskFileIndex, extensions::MaskFileExtNoDot);
 }
 
-std::string GetMaskFileName(const std::string& resId, std::uint32_t maskFileIndex)
+std::string GetSoundFileName(const std::string_view& resId, std::uint32_t soundFileIndex)
 {
-    return GetResourceName(resId, "MASKFILE-" + std::to_string(maskFileIndex)) + extensions::MaskFileExt;
+    return GetResourceName(resId, "SOUNDFILE", soundFileIndex, extensions::SoundFileExtNoDot);
 }
 
-std::string GetSoundFileName(const std::string& resId, std::uint32_t soundFileIndex)
+std::string GetMaterialFileName(const std::string_view& resId, const std::string_view& materialId)
 {
-    return GetResourceName(resId, "SOUNDFILE-" + std::to_string(soundFileIndex)) + extensions::SoundFileExt;
-}
-
-std::string GetMaterialFileName(const std::string& resId, const std::string& materialId)
-{
-    return GetResourceName(resId, "MATERIAL-" + materialId) + extensions::MaterialExt;
+    return GetResourceName(resId, "MATERIAL", materialId, extensions::MaterialExtNoDot);
 }
 
 
-void SplitResourceFileName(const std::string& resourceFileName, std::string* resId, std::string* resourceClass, std::string* resourceId, std::string* extension)
+void SplitResourceFileName(const std::string_view& resourceFileName, std::string* resId, std::string* resourceClass, std::string* resourceId, std::string* extension)
 {
     std::string::size_type start = 0;
     auto pos = resourceFileName.find('_');
     if (pos == resourceFileName.npos)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "resourceFileName: `" + resourceFileName + "` does not have _");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("resourceFileName: `{}` does not have _", resourceFileName));
     }
     if (resId)
     {
@@ -87,7 +82,7 @@ void SplitResourceFileName(const std::string& resourceFileName, std::string* res
     pos = resourceFileName.find('-');
     if (pos == resourceFileName.npos)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "resourceFileName: `" + resourceFileName + "` does not have -");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("resourceFileName: `{}` does not have -", resourceFileName));
     }
     if (resourceClass)
     {
@@ -98,7 +93,7 @@ void SplitResourceFileName(const std::string& resourceFileName, std::string* res
     pos = resourceFileName.find('.');
     if (pos == resourceFileName.npos)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "resourceFileName: `" + resourceFileName + "` does not have .");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("resourceFileName: `{}` does not have .", resourceFileName));
     }
     if (resourceId)
     {
