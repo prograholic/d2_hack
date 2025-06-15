@@ -104,6 +104,18 @@ MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content)
     return res;
 }
 
+MaterialDescriptorList ParseMaterialDescriptors(const Ogre::DataStreamList& resources)
+{
+    MaterialDescriptorList res;
+
+    for (const auto& stream : resources)
+    {
+        res.push_back(ParseMaterialDescriptor(stream->getAsString()));
+    }
+
+    return res;
+}
+
 } // namespace res
 } // namespace archive
 } // namespace resource

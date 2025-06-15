@@ -4,6 +4,7 @@
 #include <optional>
 
 #include <OgreVector.h>
+#include <OgreDataStream.h>
 
 namespace d2_hack
 {
@@ -47,8 +48,9 @@ struct MaterialDescriptor
     bool env3 = false;
 };
 
-MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content);
+typedef std::vector<MaterialDescriptor> MaterialDescriptorList;
 
+MaterialDescriptor ParseMaterialDescriptor(const std::string_view& content);
 
 } // namespace res
 } // namespace archive

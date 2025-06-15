@@ -3,6 +3,8 @@
 
 #include <d2_hack/app/base_application.h>
 
+#include <d2_hack/resource/archive/ogre_material_provider.h>
+
 namespace d2_hack
 {
 namespace app
@@ -14,7 +16,11 @@ public:
     SimpleTxrRenderer();
 
 private:
+    std::unique_ptr<resource::archive::res::OgreMaterialProvider> m_ogreMaterialProvider;
+
     virtual void CreateScene() override;
+
+    void CreateEntityForResource(Ogre::SceneNode* parent, const std::string_view& b3dId, const std::string_view& resource);
 };
 
 } // namespace app

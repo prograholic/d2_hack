@@ -12,12 +12,21 @@ namespace archive
 {
 namespace res
 {
-    
+
+class OgreMaterialProviderImpl;
+
 class OgreMaterialProvider
 {
 public:
 
+    OgreMaterialProvider();
+
+    ~OgreMaterialProvider() noexcept;
+
     Ogre::MaterialPtr CreateOrRetrieveMaterial(const std::string& materialName, const std::string& groupName);
+
+private:
+    std::unique_ptr<OgreMaterialProviderImpl> m_impl;
 };
 
 } // namespace res

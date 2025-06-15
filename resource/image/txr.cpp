@@ -87,7 +87,10 @@ static Ogre::PixelFormat DeducePixelFormatFromPfrm(const detail::PfrmData& pfrm)
     {
         return Ogre::PixelFormat::PF_R5G6B5;
     }
-
+    else if ((pfrm.redMask == 0x0000) && (pfrm.greenMask == 0x0000) && (pfrm.blueMask == 0x0000) && (pfrm.alphaMask == 0x0000))
+    {
+        return Ogre::PixelFormat::PF_A1R5G5B5;
+    }
 
     OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE,
                 std::format("Cannot deduce pixel format from Pfrm: {}, {}, {}, {}", pfrm.redMask, pfrm.greenMask, pfrm.blueMask, pfrm.alphaMask));
