@@ -26,13 +26,13 @@ class NodeBase : public std::enable_shared_from_this<NodeBase>
     NodeBase& operator=(const NodeBase&) = delete;
 
 protected:
-    NodeBase(const std::string& name, std::uint32_t type);
+    NodeBase(const std::string_view& name, std::uint32_t type);
 
 public:
 
     virtual ~NodeBase() noexcept;
 
-    const std::string& GetName() const;
+    std::string_view GetName() const;
 
     std::uint32_t GetType() const;
 

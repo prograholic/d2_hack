@@ -1,5 +1,8 @@
 #include <d2_hack/scene_node/generator_scene_nodes.h>
 
+#include <OgreMeshManager.h>
+#include <OgreEntity.h>
+
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/resource_mgmt.h>
 #include <d2_hack/common/log.h>
@@ -9,6 +12,8 @@ namespace d2_hack
 namespace scene_node
 {
 
+using namespace resource::data::b3d;
+
 const std::uint16_t TerrainSize = 257;
 const Ogre::Real TerrainWorldSize = 1000.0f;
 const Ogre::Vector3 TerrainOrigin{ 2548.0f, 425.0f, 5490.0 };
@@ -16,8 +21,8 @@ const char* HeightMap0Name = "terrain0.raw2";
 const char* HeightMap1Name = "terrain1.raw2";
 const char* HeightMap2Name = "terrain2.raw2";
 
-TerrainSceneNode::TerrainSceneNode(const std::string& name, Ogre::SceneNode* /* ogreSceneNode */, Ogre::SceneManager* sceneManager)
-    : OgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, nullptr)
+TerrainSceneNode::TerrainSceneNode(const std::string_view& name, Ogre::SceneNode* /* ogreSceneNode */, Ogre::SceneManager* sceneManager)
+    : OgreSceneNode<block_data::SimpleGeneratedObjectsBlock40>(name, nullptr)
     , m_terrainGlobalOptions(std::make_unique<Ogre::TerrainGlobalOptions>())
     , m_terrainGroup(std::make_unique<Ogre::TerrainGroup>(sceneManager, Ogre::Terrain::ALIGN_X_Z, TerrainSize, TerrainWorldSize))
 {
@@ -131,13 +136,13 @@ void TerrainSceneNode::DefineTerrains()
 
 
 TreeGeneratorSceneNode::TreeGeneratorSceneNode(
-    const std::string& name,
-    const resource::data::b3d::block_data::SimpleGeneratedObjects40& data,
-    const std::string& b3dId,
+    const std::string_view& name,
+    const block_data::SimpleGeneratedObjects40& data,
+    const std::string_view& b3dId,
     Ogre::SceneNode* ogreSceneNode,
     Ogre::SceneManager* sceneManager,
     resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
-    : OgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>(name, nullptr)
+    : OgreSceneNode<block_data::SimpleGeneratedObjectsBlock40>(name, nullptr)
 {
     TreeParams treeParams = DeduceTreeParams(data, b3dId);
 
@@ -282,7 +287,7 @@ static void CalculateMaterialName(std::uint32_t type, std::string& materialName,
 
 }
 
-TreeGeneratorSceneNode::TreeParams TreeGeneratorSceneNode::DeduceTreeParams(const resource::data::b3d::block_data::SimpleGeneratedObjects40& data, const std::string& b3dId)
+TreeGeneratorSceneNode::TreeParams TreeGeneratorSceneNode::DeduceTreeParams(const block_data::SimpleGeneratedObjects40& data, const std::string_view& b3dId)
 {
     TreeParams res;
 

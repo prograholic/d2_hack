@@ -40,7 +40,7 @@ VisitResult TransformVisitor::Visit(NodeGroupTransformMatrix24& node, VisitMode 
             transformList.push_back(transform);
         }
 
-        m_transformMap[node.GetName()] = transformList;
+        m_transformMap[std::move(std::string{node.GetName()})] = transformList;
         m_transformQueue.pop_back();
     }
 

@@ -8,7 +8,7 @@ namespace d2_hack
 namespace scene_node
 {
 
-EventEntrySceneNode::EventEntrySceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode)
+EventEntrySceneNode::EventEntrySceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode)
     : OgreSceneNode<resource::data::b3d::block_data::EventEntryBlockXxx>(name, ogreSceneNode)
 {
 }
@@ -17,7 +17,7 @@ EventEntrySceneNode::EventEntrySceneNode(const std::string& name, Ogre::SceneNod
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string& name, std::uint32_t type)
+SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type)
     : SceneNodeBase(name, type)
 {
 }
@@ -36,7 +36,7 @@ void SwitchableOgreSceneNode::OnCameraMoved(const WorldContext& worldContext, co
 
 
 GroupUnknown2::GroupUnknown2(
-    const std::string& name,
+    const std::string_view& name,
     Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupUnknown2& /* data */)
     : OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableOgreSceneNode>(name, ogreSceneNode)
@@ -67,7 +67,7 @@ SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& /* worldContext *
 
 
 GroupTrigger9::GroupTrigger9(
-    const std::string& name,
+    const std::string_view& name,
     Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupTrigger9& /* data */)
     : OgreSceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableOgreSceneNode>(name, ogreSceneNode)
@@ -96,7 +96,7 @@ SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& /* worldContext *
 
 
 SceneNodeEvent21::SceneNodeEvent21(
-    const std::string& name,
+    const std::string_view& name,
     Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupObjects21& /* data */)
     : OgreSceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableOgreSceneNode>(name, ogreSceneNode)
@@ -126,7 +126,7 @@ SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& /* worldContex
 
 
 GroupUnknown29::GroupUnknown29(
-    const std::string& name,
+    const std::string_view& name,
     Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupUnknown29& /* data */)
     : OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableOgreSceneNode>(name, ogreSceneNode)

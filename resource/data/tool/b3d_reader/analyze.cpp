@@ -348,7 +348,7 @@ typedef std::map<std::uint32_t, std::map < size_t, std::set<std::string>>> NodeC
 
 static void CountChildrenInNodes(common::NodeBase& node, NodeChildInfo& info)
 {
-    info[node.GetType()][node.GetChildNodeList().size()].insert(node.GetName());
+    info[node.GetType()][node.GetChildNodeList().size()].insert(std::move(std::string{ node.GetName() }));
 
     for (auto& child : node.GetChildNodeList())
     {

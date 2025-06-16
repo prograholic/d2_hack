@@ -14,7 +14,7 @@ std::string_view ResourceNameToStringView(const ResourceName& resName);
 
 std::string ResourceNameToString(const ResourceName& resName);
 
-ResourceName StringToResourceName(const std::string& name);
+ResourceName StringToResourceName(const std::string_view& name);
 
 std::uint32_t GetNextUnnamedObjectCounter();
 

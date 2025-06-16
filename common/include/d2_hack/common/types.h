@@ -7,10 +7,7 @@
 #include <array>
 #include <vector>
 
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-#include <Ogre.h>
-#include <OgreRenderOperation.h>
-D2_HACK_DISABLE_WARNING_END() // 4251
+#include <OgreVector.h>
 
 namespace d2_hack
 {

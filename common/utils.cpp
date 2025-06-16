@@ -1,6 +1,9 @@
 #include <d2_hack/common/utils.h>
 
 #include <atomic>
+#include <format>
+
+#include <OgreException.h>
 
 
 namespace d2_hack
@@ -19,12 +22,12 @@ std::string ResourceNameToString(const ResourceName& resName)
     return std::string{ResourceNameToStringView(resName)};
 }
 
-ResourceName StringToResourceName(const std::string& name)
+ResourceName StringToResourceName(const std::string_view& name)
 {
     ResourceName res{};
     if (name.size() > res.size())
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "Incorrect string: \"" + name + "\"", "StringToResourceName");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Incorrect string: \"{}\"", name), "StringToResourceName");
     }
 
     std::copy(name.begin(), name.end(), res.begin());

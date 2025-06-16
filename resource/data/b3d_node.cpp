@@ -20,7 +20,7 @@ const char* CarNodeNamePrefix = "car_";
 size_t B3dNode::m_b3dCount = 0;
 
 B3dNode::B3dNode(const B3dTreeWeakPtr& originalRoot, const block_data::BlockHeader& blockHeader)
-	: NodeBase(common::ResourceNameToString(blockHeader.name), blockHeader.type)
+	: NodeBase(common::ResourceNameToStringView(blockHeader.name), blockHeader.type)
 	, m_originalRoot(originalRoot)
 {
 	m_b3dCount += 1;

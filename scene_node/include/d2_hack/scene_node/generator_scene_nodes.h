@@ -19,7 +19,7 @@ namespace scene_node
 class TerrainSceneNode : public OgreSceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40>
 {
 public:
-    TerrainSceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode, Ogre::SceneManager* sceneManager);
+    TerrainSceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode, Ogre::SceneManager* sceneManager);
 
 private:
     std::unique_ptr<Ogre::TerrainGlobalOptions> m_terrainGlobalOptions;
@@ -45,9 +45,9 @@ public:
         Ogre::Vector3f location;
     };
 
-    TreeGeneratorSceneNode(const std::string& name,
+    TreeGeneratorSceneNode(const std::string_view& name,
                            const resource::data::b3d::block_data::SimpleGeneratedObjects40& data,
-                           const std::string& b3dId,
+                           const std::string_view& b3dId,
                            Ogre::SceneNode* ogreSceneNode,
                            Ogre::SceneManager* sceneManager,
                            resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
@@ -55,7 +55,7 @@ public:
 private:
     Ogre::MeshPtr CreateMesh(const TreeParams& treeParams, Ogre::SceneManager* sceneManager);
 
-    TreeParams DeduceTreeParams(const resource::data::b3d::block_data::SimpleGeneratedObjects40& data, const std::string& b3dId);
+    TreeParams DeduceTreeParams(const resource::data::b3d::block_data::SimpleGeneratedObjects40& data, const std::string_view& b3dId);
 };
 
 } // namespace scene_node

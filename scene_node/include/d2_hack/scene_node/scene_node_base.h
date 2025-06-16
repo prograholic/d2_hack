@@ -20,7 +20,7 @@ struct WorldContext
 class SceneNodeBase : public common::NodeBase
 {
 public:
-    SceneNodeBase(const std::string& name, std::uint32_t type);
+    SceneNodeBase(const std::string_view& name, std::uint32_t type);
 
     ~SceneNodeBase() noexcept;
 
@@ -60,7 +60,7 @@ public:
     static constexpr std::uint32_t Value = NodeTypeId;
 
     template<typename... Args>
-    SceneNode(const std::string& name, Args&&... args)
+    SceneNode(const std::string_view& name, Args&&... args)
         : SceneNodeBaseType(name, Value, std::forward<Args&&>(args)...)
     {
     }
@@ -72,7 +72,7 @@ class OgreSceneNode : public SceneNode<NodeTypeId, SceneNodeBaseType>
 public:
 
     template<typename... Args>
-    OgreSceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode, Args&&... args)
+    OgreSceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode, Args&&... args)
         : SceneNode<NodeTypeId, SceneNodeBaseType>(name, std::forward<Args&&>(args)...)
         , m_ogreSceneNode(ogreSceneNode)
     {

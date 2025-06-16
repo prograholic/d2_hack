@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include <OgreLogManager.h>
+#include <OgreArchiveManager.h>
 
 #include <boost/program_options.hpp>
 
@@ -69,7 +70,7 @@ public:
             }
             else
             {
-                ThrowError("Unknown ID " + std::string(entryName, PlmSignatureSize), "PlmReader::Read");
+                ThrowError(std::format("Unknown ID {}", std::string_view(entryName, PlmSignatureSize)), "PlmReader::Read");
             }
         }
     }
@@ -83,7 +84,7 @@ private:
 
         if (paletteEntriesCount * sizeof(PaletteEntry) != size)
         {
-            ThrowError("Incorrect palette size: " + std::to_string(size), "PlmReader::ReadPalette");
+            ThrowError(std::format("Incorrect palette size: {}", size), "PlmReader::ReadPalette");
         }
 
         palette.resize(paletteEntriesCount);
@@ -134,9 +135,10 @@ void ReadResourceFromArchive(ResArchive& archive, const std::string& mask)
     }
 }
 
-void ReadMaterialsAndColorsFromResFile(const std::string& resName)
+void ReadMaterialsAndColorsFromResFile(const std::filesystem::path& resName)
 {
-    ResArchive archive{D2_ROOT_DIR "/ENV/" + resName, "test"};
+    auto fullResName = D2_ROOT_DIR / ("ENV" / resName);
+    ResArchive archive{fullResName.string(), "test"};
 
     archive.load();
     ReadResourceFromArchive(archive, "*.d2colorinfo");
@@ -160,12 +162,12 @@ static const char print_all_resources[] = "print_all_resources";
 
 namespace po = boost::program_options;
 
-std::list<std::string> GetResFileList(const po::variables_map& vm)
+std::list<std::filesystem::path> GetResFileList(const po::variables_map& vm)
 {
-    std::list<std::string> res;
+    std::list<std::filesystem::path> res;
     if (vm.contains(options::res_name))
     {
-        res.push_back(vm[options::res_name].as<std::string>());
+        res.push_back(vm[options::res_name].as<std::filesystem::path>());
         return res;
     }
 
@@ -175,7 +177,7 @@ std::list<std::string> GetResFileList(const po::variables_map& vm)
         {
             if (path.path().extension() == ".res")
             {
-                res.push_back(path.path().filename().string());
+                res.push_back(path.path().filename());
             }
         }
     }

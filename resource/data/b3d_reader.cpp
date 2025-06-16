@@ -2,8 +2,9 @@
 
 #include <d2_hack/resource/data/b3d_reader.h>
 
-#include <cstring>
 #include <stack>
+#include <fstream>
+
 
 #include <d2_hack/common/reader.h>
 #include <d2_hack/common/utils.h>
@@ -57,7 +58,7 @@ public:
     {
     }
 
-    B3dTreePtr Read(const std::string& dir, const std::string& id)
+    B3dTreePtr Read(const std::string_view& dir, const std::string_view& id)
     {
         FileHeader fileHeader;
         ReadFileHeader(fileHeader);
@@ -313,7 +314,7 @@ private:
             return ReadBlockData40(parent, blockHeader);
         }
 
-        ThrowError("Unknown block id: " + std::to_string(blockHeader.type), "B3dReaderImpl::ReadBlock");
+        ThrowError(std::format("Unknown block id: `{}`", blockHeader.type), "B3dReaderImpl::ReadBlock");
     }
 
     B3dNodePtr MakeHierarhyBreaker(const WeakNodePtr& parent)
@@ -560,7 +561,7 @@ private:
             auto transformPos = m_originalRoot->transformations.find(spaceName);
             if (transformPos == m_originalRoot->transformations.end())
             {
-                ThrowError("Cannot find transformation by name `" + spaceName + "`", "ReadBlockData18");
+                ThrowError(std::format("Cannot find transformation by name `{}", spaceName), "ReadBlockData18");
             }
             block.transformation = transformPos->second;
         }
@@ -914,7 +915,7 @@ private:
         }
         else
         {
-            ThrowError("Unknown type " + std::to_string(block.type), "B3dReaderImpl::ReadBlockData36");
+            ThrowError(std::format("Unknown type `{}`", block.type), "B3dReaderImpl::ReadBlockData36");
         }
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
@@ -1020,16 +1021,16 @@ private:
 
         if (block.unknown0.unknown0 != 0)
         {
-            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, "SimpleGeneratedObjects40: unknown0.unknown0 is not zero: " + std::to_string(block.unknown0.unknown0));
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, std::format("SimpleGeneratedObjects40: unknown0.unknown0 is not zero: {}", block.unknown0.unknown0));
         }
 
         return MakeVisitableNode(m_originalRoot, parent, blockHeader, block);
     }
 };
 
-static B3dTreePtr ReadTree(const std::string& rootDir, const std::string& dir, const std::string& id)
+static B3dTreePtr ReadTree(const std::string_view& rootDir, const std::string_view& dir, const std::string_view& id)
 {
-    const std::string fullB3dName = rootDir + "/" + dir + "/" + id + ".b3d";
+    const std::string fullB3dName = std::format("{}/{}/{}.b3d", rootDir, dir, id);
     std::ifstream inputFile{ fullB3dName, std::ios_base::binary };
     if (!inputFile)
     {

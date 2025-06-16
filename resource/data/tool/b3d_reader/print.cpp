@@ -84,7 +84,7 @@ public:
     template <typename BlockType>
     std::string GetBlockNamePrefix(const BlockType& /* block */)
     {
-        return std::string(BlockType::Name) + ": ";
+        return std::format("{}: ", BlockType::Name);
     }
 
     template <typename NodeType>
@@ -562,7 +562,7 @@ private:
         GetStream(adjustOffset) << "unknown0: " << block.unknown0 << "," << std::endl;
         GetStream(adjustOffset) << "unknown1: " << block.unknown1 << "," << std::endl;
         GetStream(adjustOffset) << "unknown2: " << block.unknown2 << "," << std::endl;
-        GetStream(adjustOffset) << "soundname: \"" << common::ResourceNameToString(block.soundName) << "\"," << std::endl;
+        GetStream(adjustOffset) << "soundname: \"" << common::ResourceNameToStringView(block.soundName) << "\"," << std::endl;
         GetStream(adjustOffset) << "unknown3" << block.unknown3 << "\"," << std::endl;
         GetStream(adjustOffset) << "unknown4" << block.unknown4 << "\"," << std::endl;
         GetStream(adjustOffset) << "unknown5: {"
@@ -741,9 +741,9 @@ private:
         PrintData(block.unknown0, "unknown0", adjustOffset);
     }
 
-    std::string ToString(const std::string& data)
+    std::string ToString(const std::string_view& data)
     {
-        return "\"" + data + "\"";
+        return std::format("\"{}\"", data);
     }
 
     std::string ToString(const uint8_t* first, const uint8_t* last)
@@ -777,7 +777,7 @@ private:
 
     std::string ToString(const common::ResourceName& resourceName)
     {
-        std::string res = "\"" + common::ResourceNameToString(resourceName) + "\"";
+        std::string res = std::format("\"{}\"", common::ResourceNameToStringView(resourceName));
 
         if (m_print_resource_name_as_hex)
         {

@@ -1,5 +1,9 @@
 #include <d2_hack/resource/data/b3d_utils.h>
 
+#include <format>
+
+#include <OgreException.h>
+
 #include <d2_hack/common/utils.h>
 
 namespace d2_hack
@@ -416,7 +420,7 @@ block_data::BlockHeader MakeBlockHeader(const common::ResourceName& name, std::u
     if (blockHeader.type > block_data::MaxBlockId)
     {
         std::string msg = "Incorrect block id: " + std::to_string(blockHeader.type) + ", possible b3d corruption?";
-        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, msg, "MakeBlockHeader");
+        OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Incorrect block id: {}, possible b3d corruption?", blockHeader.type));
     }
 
     return blockHeader;

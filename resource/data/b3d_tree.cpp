@@ -68,7 +68,7 @@ const B3dRegistry SinglePlayerRegistry
 
 std::string B3dTree::GetMaterialNameByIndex(std::uint32_t materialIndex) const
 {
-	return common::GetMaterialFileName(id, common::ResourceNameToString(materials[materialIndex]));
+	return common::GetMaterialFileName(id, common::ResourceNameToStringView(materials[materialIndex]));
 }
 
 
@@ -111,7 +111,7 @@ void B3dTree::AddRootNode(const B3dNodePtr& root)
 		break;
 
 	default:
-		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "unsupported root node type: " + std::to_string(root->GetType()), "B3dTree::AddRootNode");
+		OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("unsupported root node type: `{}`", root->GetType()));
 	}
 }
 

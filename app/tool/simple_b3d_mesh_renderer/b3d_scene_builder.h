@@ -23,7 +23,7 @@ public:
     using VisitResult = resource::data::b3d::VisitResult;
     using VisitMode = resource::data::b3d::VisitMode;
 
-    B3dSceneBuilder(const std::string& b3dId,
+    B3dSceneBuilder(const std::string_view& b3dId,
                     Ogre::SceneManager* sceneManager,
                     Ogre::SceneNode* ogreRootNode,
                     Ogre::MeshManager* meshManager,
@@ -32,7 +32,7 @@ public:
 
     ~B3dSceneBuilder();
 
-    std::string GetB3dId() const;
+    std::string_view GetB3dId() const;
     
     Ogre::SceneManager* GetSceneManager() const;
     
@@ -48,9 +48,9 @@ public:
 
     void ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& node, VisitMode visitMode);
 
-    Ogre::SceneNode* ProcessOgreSceneNode(const std::string& name, resource::data::b3d::VisitMode visitMode);
+    Ogre::SceneNode* ProcessOgreSceneNode(const std::string_view& name, resource::data::b3d::VisitMode visitMode);
 
-    void CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName);
+    void CreateMesh(const std::string_view& blockName, const common::SimpleMeshInfo& meshInfo, const std::string_view& materialName);
 
     scene_node::SceneNodeBasePtr GetParentSceneNode();
 
@@ -67,12 +67,6 @@ private:
     scene_node::SceneNodeBaseList& m_rootSceneNodes;
     std::stack<Ogre::SceneNode*> m_ogreSceneNodes;
     std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
-
-    std::string GetB3dResourceId(const std::string& name) const;
-
-    std::string GetB3dResourceId(const common::ResourceName& name) const;
-
-    std::string GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const;
 
     Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const Ogre::MaterialPtr& material);
 

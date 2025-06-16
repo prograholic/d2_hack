@@ -23,7 +23,7 @@ public:
 
     ~OgreMaterialProvider() noexcept;
 
-    Ogre::MaterialPtr CreateOrRetrieveMaterial(const std::string& materialName, const std::string& groupName);
+    Ogre::MaterialPtr CreateOrRetrieveMaterial(const std::string_view& materialName, const std::string& groupName);
 
 private:
     std::unique_ptr<OgreMaterialProviderImpl> m_impl;

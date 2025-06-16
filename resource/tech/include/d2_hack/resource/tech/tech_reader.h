@@ -3,8 +3,6 @@
 
 #include <d2_hack/resource/tech/tech_types.h>
 
-#include <string>
-
 namespace d2_hack
 {
 namespace resource
@@ -12,7 +10,7 @@ namespace resource
 namespace tech
 {
 
-Tech ReadTech(const std::string& filename);
+Tech ReadTech(const char* filename);
 
 
 

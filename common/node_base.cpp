@@ -8,7 +8,7 @@ namespace common
 
 size_t NodeBase::m_count = 0;
 
-NodeBase::NodeBase(const std::string& name, std::uint32_t type)
+NodeBase::NodeBase(const std::string_view& name, std::uint32_t type)
 	: m_childNodeList()
 	, m_parent()
 	, m_name(name)
@@ -28,7 +28,7 @@ size_t NodeBase::GetNodeBaseCount()
 	return m_count;
 }
 
-const std::string& NodeBase::GetName() const
+std::string_view NodeBase::GetName() const
 {
 	return m_name;
 }

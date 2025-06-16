@@ -3892,7 +3892,7 @@ static const char* matNames[] = {
 static size_t matIdx = 0;
 
 SimpleFlatCollision20::SimpleFlatCollision20(
-    const std::string& name,
+    const std::string_view& name,
     const block_data::SimpleFlatCollision20& /* data */)
     : SceneNode<resource::data::b3d::block_data::SimpleFlatCollisionBlock20, SceneNodeBase>(name)
 {
@@ -3940,7 +3940,7 @@ Ogre::Quaternion SimpleFlatCollision20::GetAbsoluteOrientation() const
 
 
 SimpleVolumeCollision23::SimpleVolumeCollision23(
-    const std::string& name,
+    const std::string_view& name,
     const block_data::SimpleVolumeCollision23& /* data */)
     : SceneNode<resource::data::b3d::block_data::SimpleVolumeCollisionBlock23, SceneNodeBase>(name)
 {

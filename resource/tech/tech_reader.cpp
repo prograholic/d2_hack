@@ -39,12 +39,12 @@ private:
     }
 };
 
-Tech ReadTech(const std::string& filename)
+Tech ReadTech(const char* filename)
 {
     std::ifstream inputFile{ filename, std::ios_base::binary };
     if (!inputFile)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, "failed to open file: `" + filename + "`");
+        OGRE_EXCEPT(Ogre::Exception::ERR_FILE_NOT_FOUND, std::format("failed to open file: `{}`", filename));
     }
 
     Ogre::FileStreamDataStream dataStream(&inputFile, false);

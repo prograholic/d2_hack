@@ -11,9 +11,9 @@ Reader::Reader(Ogre::DataStream& input)
 {
 }
 
-void Reader::ThrowError(const Ogre::String & msg, const Ogre::String & where)
+void Reader::ThrowError(const std::string_view& msg, const char* where)
 {
-    OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, msg + ", offset: " + std::to_string(m_input.tell()), where);
+    OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("{}, offset: {}", msg, m_input.tell()), where);
 }
 
 void Reader::ReadBytes(void* buffer, size_t size)
@@ -21,8 +21,7 @@ void Reader::ReadBytes(void* buffer, size_t size)
     size_t actualSize = m_input.read(buffer, size);
     if (actualSize != size)
     {
-        ThrowError("Failed to read, expected " + std::to_string(size) + ", got " + std::to_string(actualSize),
-                   "B3dReaderImpl::ReadCount");
+        ThrowError(std::format("Failed to read, expected {}, got {}", size, actualSize), "B3dReaderImpl::ReadCount");
     }
 }
 

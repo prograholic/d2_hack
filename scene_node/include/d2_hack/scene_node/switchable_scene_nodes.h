@@ -14,7 +14,7 @@ namespace scene_node
 class EventEntrySceneNode : public OgreSceneNode<resource::data::b3d::block_data::EventEntryBlockXxx>
 {
 public:
-    EventEntrySceneNode(const std::string& name, Ogre::SceneNode* ogreSceneNode);
+    EventEntrySceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode);
 };
 
 
@@ -22,7 +22,7 @@ class SwitchableOgreSceneNode : public SceneNodeBase
 {
 public:
 
-    SwitchableOgreSceneNode(const std::string& name, std::uint32_t type);
+    SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type);
 
     virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
@@ -34,7 +34,7 @@ class GroupUnknown2 : public OgreSceneNode<resource::data::b3d::block_data::Grou
 {
 public:
     GroupUnknown2(
-        const std::string& name,
+        const std::string_view& name,
         Ogre::SceneNode* ogreSceneNode,
         const resource::data::b3d::block_data::GroupUnknown2& data);
 
@@ -46,7 +46,7 @@ class GroupTrigger9 : public OgreSceneNode<resource::data::b3d::block_data::Grou
 {
 public:
     GroupTrigger9(
-        const std::string& name,
+        const std::string_view& name,
         Ogre::SceneNode* ogreSceneNode,
         const resource::data::b3d::block_data::GroupTrigger9& data);
 
@@ -58,7 +58,7 @@ class SceneNodeEvent21 : public OgreSceneNode<resource::data::b3d::block_data::G
 {
 public:
     SceneNodeEvent21(
-        const std::string& name,
+        const std::string_view& name,
         Ogre::SceneNode* ogreSceneNode,
         const resource::data::b3d::block_data::GroupObjects21& data);
 
@@ -70,7 +70,7 @@ class GroupUnknown29 : public OgreSceneNode<resource::data::b3d::block_data::Gro
 {
 public:
     GroupUnknown29(
-        const std::string& name,
+        const std::string_view& name,
         Ogre::SceneNode* ogreSceneNode,
         const resource::data::b3d::block_data::GroupUnknown29& data);
 

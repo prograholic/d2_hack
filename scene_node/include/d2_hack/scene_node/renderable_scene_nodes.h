@@ -14,14 +14,14 @@ class GroupVertexData7 : public OgreSceneNode< resource::data::b3d::block_data::
 {
 public:
 
-    GroupVertexData7(const std::string& name, Ogre::SceneNode* ogreSceneNode);
+    GroupVertexData7(const std::string_view& name, Ogre::SceneNode* ogreSceneNode);
 };
 
 class GroupVertexData37 : public OgreSceneNode< resource::data::b3d::block_data::GroupVertexDataBlock37>
 {
 public:
 
-    GroupVertexData37(const std::string& name, Ogre::SceneNode* ogreSceneNode);
+    GroupVertexData37(const std::string_view& name, Ogre::SceneNode* ogreSceneNode);
 };
 
 

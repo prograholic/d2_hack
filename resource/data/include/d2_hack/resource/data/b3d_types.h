@@ -6,10 +6,7 @@
 #include <cstdint>
 #include <memory>
 
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-#include <Ogre.h>
 #include <OgreMatrix3.h>
-D2_HACK_DISABLE_WARNING_END() // 4251
 
 #include <d2_hack/common/types.h>
 
@@ -49,7 +46,7 @@ struct Transform
     Ogre::Vector3 position;
 };
 typedef std::vector<Transform> TransformList;
-typedef std::map<std::string, TransformList> TransformationMap;
+typedef std::map<std::string, TransformList, std::less<>> TransformationMap;
 
 namespace block_data
 {

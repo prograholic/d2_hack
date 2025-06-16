@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include <OgreLogManager.h>
+#include <OgreArchiveManager.h>
 
 #include <boost/program_options.hpp>
 
@@ -20,7 +21,7 @@ namespace archive
 namespace res
 {
 
-void ReadResourceFromArchiveToFile(ResArchive& archive, const std::string& outputDir)
+void ReadResourceFromArchiveToFile(ResArchive& archive, const std::filesystem::path& outputDir)
 {
     Ogre::StringVectorPtr resources = archive.list();
     if (!resources)
@@ -40,13 +41,13 @@ void ReadResourceFromArchiveToFile(ResArchive& archive, const std::string& outpu
             throw std::runtime_error("stream is NULL for " + resourceFileName);
         }
 
-        std::string outputFilename = outputDir + "/" + resourceFileName;
-        std::filesystem::create_directories(std::filesystem::path(outputFilename).parent_path());
+        std::filesystem::path outputFilename = outputDir / resourceFileName;
+        std::filesystem::create_directories(outputFilename.parent_path());
 
         std::ofstream outputStream{ outputFilename, std::ios_base::binary };
         if (!outputStream)
         {
-            throw std::runtime_error(std::format("cannot open {} for writing", outputFilename));
+            throw std::runtime_error(std::format("cannot open {} for writing", outputFilename.string()));
         }
 
         auto data = stream->getAsString();
@@ -56,13 +57,14 @@ void ReadResourceFromArchiveToFile(ResArchive& archive, const std::string& outpu
     }
 }
 
-void ReadMaterialsAndColorsFromResFile(const std::string& resName, const std::string& outputDir)
+void ReadMaterialsAndColorsFromResFile(const std::filesystem::path& resName, const std::filesystem::path& outputDir)
 {
-    ResArchive archive{resName, "test"};
+    ResArchive archive{resName.string(), "test"};
 
     archive.load();
-    std::filesystem::path p{ resName};
-    ReadResourceFromArchiveToFile(archive, outputDir + "/" + std::filesystem::relative(p, D2_ROOT_DIR).string());
+
+    auto outputSubDir = outputDir / std::filesystem::relative(resName, D2_ROOT_DIR);
+    ReadResourceFromArchiveToFile(archive, outputSubDir);
 }
 
 } // namespace res
@@ -83,12 +85,12 @@ static const char output_dir[] = "output_dir";
 
 namespace po = boost::program_options;
 
-std::list<std::string> GetResFileList(const po::variables_map& vm)
+std::list<std::filesystem::path> GetResFileList(const po::variables_map& vm)
 {
-    std::list<std::string> res;
+    std::list<std::filesystem::path> res;
     if (vm.contains(options::res_name))
     {
-        res.push_back(D2_ROOT_DIR "/" + vm[options::res_name].as<std::string>());
+        res.push_back(D2_ROOT_DIR / vm[options::res_name].as<std::filesystem::path>());
         return res;
     }
 
@@ -98,7 +100,7 @@ std::list<std::string> GetResFileList(const po::variables_map& vm)
         {
             if (path.path().extension() == ".res")
             {
-                res.push_back(path.path().string());
+                res.push_back(path.path());
             }
         }
     }
@@ -148,7 +150,7 @@ int main(int argc, char* argv[])
 
         auto resFileList = GetResFileList(vm);
 
-        std::string outputDir = vm[options::output_dir].as<std::string>();
+        auto outputDir = vm[options::output_dir].as<std::filesystem::path>();
 
         for (const auto& resFile : resFileList)
         {

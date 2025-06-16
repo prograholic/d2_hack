@@ -1,5 +1,11 @@
 #include "b3d_scene_builder.h"
 
+#include <OgreSceneManager.h>
+#include <OgreMeshManager.h>
+#include <OgreEntity.h>
+#include <OgreMesh.h>
+#include <OgreSubMesh.h>
+
 #include <d2_hack/common/log.h>
 #include <d2_hack/common/utils.h>
 #include <d2_hack/common/resource_mgmt.h>
@@ -18,7 +24,7 @@ using namespace resource::data::b3d;
 using namespace resource::archive::res;
 
 
-B3dSceneBuilder::B3dSceneBuilder(const std::string& b3dId,
+B3dSceneBuilder::B3dSceneBuilder(const std::string_view& b3dId,
                                  Ogre::SceneManager* sceneManager,
                                  Ogre::SceneNode* ogreRootNode,
                                  Ogre::MeshManager* meshManager,
@@ -40,7 +46,7 @@ B3dSceneBuilder::~B3dSceneBuilder()
     assert(m_sceneNodesStack.empty());
 }
 
-std::string B3dSceneBuilder::GetB3dId() const
+std::string_view B3dSceneBuilder::GetB3dId() const
 {
     return m_b3dId;
 }
@@ -71,10 +77,10 @@ void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingO
     Ogre::SceneNode* ogreSceneNode = ProcessOgreSceneNode(node.GetName(), visitMode);
     if (visitMode == VisitMode::PreOrder)
     {
-        std::string full_name = GetNameImpl(node.GetName(), "light", false);
+        std::string full_name = common::GetLightName(m_b3dId, node.GetName());
         if (m_sceneManager->hasLight(full_name))
         {
-            full_name = GetNameImpl(node.GetName(), "light", true);
+            full_name = common::GetLightName(m_b3dId, node.GetName(), common::ForceUnique::Yes);
         }
 
         Ogre::Light* light = m_sceneManager->createLight(full_name);
@@ -105,14 +111,14 @@ void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimp
     B3D_NOT_IMPLEMENTED();
 }
 
-Ogre::SceneNode* B3dSceneBuilder::ProcessOgreSceneNode(const std::string& name, VisitMode visitMode)
+Ogre::SceneNode* B3dSceneBuilder::ProcessOgreSceneNode(const std::string_view& name, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        std::string full_name = GetNameImpl(name, "scene_node", false);
+        std::string full_name = common::GetSceneNodeName(m_b3dId, name);
         if (m_sceneManager->hasSceneNode(full_name))
         {
-            full_name = GetNameImpl(name, "scene_node", true);
+            full_name = common::GetSceneNodeName(m_b3dId, name, common::ForceUnique::Yes);
         }
 
         Ogre::SceneNode* ogreSceneNode = m_sceneManager->createSceneNode(full_name);
@@ -134,10 +140,9 @@ Ogre::SceneNode* B3dSceneBuilder::ProcessOgreSceneNode(const std::string& name, 
     }
 }
 
-void B3dSceneBuilder::CreateMesh(const std::string& blockName, const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
+void B3dSceneBuilder::CreateMesh(const std::string_view& blockName, const common::SimpleMeshInfo& meshInfo, const std::string_view& materialName)
 {
-    const std::string meshName = GetNameImpl(blockName + "." + materialName, "mesh", false);
-    const std::string entityName = meshName + ".entity";
+    const std::string meshName = common::GetMeshName(m_b3dId, blockName, materialName);
 
     Ogre::MeshPtr mesh;
     if (m_meshManager->resourceExists(meshName, common::DefaultResourceGroup))
@@ -180,30 +185,6 @@ void B3dSceneBuilder::PopFromSceneNodeStack()
 
 
 /////////////////////////////////////////////////////////////
-
-
-std::string B3dSceneBuilder::GetB3dResourceId(const std::string& name) const
-{
-    return common::GetResourceName(m_b3dId, name);
-}
-
-std::string B3dSceneBuilder::GetB3dResourceId(const common::ResourceName& name) const
-{
-    return GetB3dResourceId(common::ResourceNameToString(name));
-}
-
-std::string B3dSceneBuilder::GetNameImpl(const std::string& blockName, const std::string& subName, bool forceUnique) const
-{
-    std::string name = GetB3dResourceId(blockName) + "_" + subName;
-
-    if (forceUnique)
-    {
-        auto counter = common::GetNextUnnamedObjectCounter();
-        name += ("_" + std::to_string(counter));
-    }
-
-    return name;
-}
 
 Ogre::SubMesh* B3dSceneBuilder::CreateSubMesh(const Ogre::MeshPtr& mesh, const Ogre::MaterialPtr& material)
 {

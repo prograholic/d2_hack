@@ -14,7 +14,7 @@ class SimpleFlatCollision20 : public SceneNode<resource::data::b3d::block_data::
 {
 public:
     SimpleFlatCollision20(
-        const std::string& name,
+        const std::string_view& name,
         const resource::data::b3d::block_data::SimpleFlatCollision20& data);
 
     virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
@@ -30,7 +30,7 @@ class SimpleVolumeCollision23 : public SceneNode<resource::data::b3d::block_data
 {
 public:
     SimpleVolumeCollision23(
-        const std::string& name,
+        const std::string_view& name,
         const resource::data::b3d::block_data::SimpleVolumeCollision23& data);
 
     virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;

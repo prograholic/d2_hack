@@ -314,7 +314,7 @@ struct RaiseExceptionAction
         return VisitResult::Stop;
     }
 
-    static void RaiseException(const char* name, std::uint32_t type);
+    static void RaiseException(const std::string_view& name, std::uint32_t type);
 };
 
 class RaiseExceptionVisitor : public GenericActionVisitor<RaiseExceptionVisitor, RaiseExceptionAction>

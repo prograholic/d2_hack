@@ -7,7 +7,7 @@ namespace scene_node
 
 size_t SceneNodeBase::m_scNodeCount = 0;
 
-SceneNodeBase::SceneNodeBase(const std::string& name, std::uint32_t type)
+SceneNodeBase::SceneNodeBase(const std::string_view& name, std::uint32_t type)
     : common::NodeBase(name, type)
 {
     m_scNodeCount += 1;

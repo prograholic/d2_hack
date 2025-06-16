@@ -5,6 +5,8 @@
 #include <string_view>
 #include <format>
 
+#include <d2_hack/common/utils.h>
+
 namespace d2_hack
 {
 namespace common
@@ -28,16 +30,49 @@ extern const char MaskFileExtNoDot[];
 extern const char SoundFileExtNoDot[];
 } //namespace extensions
 
-template <typename ResourceNameType>
-std::string GetResourceName(const std::string_view& fileBaseName, const ResourceNameType& resourceName)
+enum class ForceUnique
 {
-    return std::format("{}_{}", fileBaseName, resourceName);
+    No,
+    Yes
+};
+
+template <typename ResourceNameType>
+std::string GetResourceName(const std::string_view& fileBaseName, const ResourceNameType& resourceName, ForceUnique forceUnique = ForceUnique::No)
+{
+    if (forceUnique == ForceUnique::Yes)
+    {
+        return std::format("{}_{}@{}", fileBaseName, resourceName, GetNextUnnamedObjectCounter());
+    }
+    else
+    {
+        return std::format("{}_{}", fileBaseName, resourceName);
+    }
+}
+
+template <typename ResourceType, typename ResourceIdName>
+std::string GetResourceName(const std::string_view& fileBaseName, const ResourceType& resourceType, const ResourceIdName& resourceId, ForceUnique forceUnique = ForceUnique::No)
+{
+    if (forceUnique == ForceUnique::Yes)
+    {
+        return std::format("{}_{}-{}@{}", fileBaseName, resourceType, resourceId, GetNextUnnamedObjectCounter());
+    }
+    else
+    {
+        return std::format("{}_{}-{}", fileBaseName, resourceType, resourceId);
+    }
 }
 
 template <typename ResourceType, typename ResourceIdName, typename Extension>
-std::string GetResourceName(const std::string_view& fileBaseName, const ResourceType& resourceType, const ResourceIdName& resourceId, const Extension& extension)
+std::string GetResourceName(const std::string_view& fileBaseName, const ResourceType& resourceType, const ResourceIdName& resourceId, const Extension& extension, ForceUnique forceUnique = ForceUnique::No)
 {
-    return std::format("{}_{}-{}.{}", fileBaseName, resourceType, resourceId, extension);
+    if (forceUnique == ForceUnique::Yes)
+    {
+        return std::format("{}_{}-{}@{}.{}", fileBaseName, resourceType, resourceId, GetNextUnnamedObjectCounter(), extension);
+    }
+    else
+    {
+        return std::format("{}_{}-{}.{}", fileBaseName, resourceType, resourceId, extension);
+    }
 }
 
 std::string GetColorName(const std::string_view& resId, std::uint32_t colorIndex);
@@ -55,6 +90,12 @@ std::string GetSoundFileName(const std::string_view& resId, std::uint32_t soundF
 std::string GetMaterialFileName(const std::string_view& resId, const std::string_view& materialId);
 
 void SplitResourceFileName(const std::string_view& resourceFileName, std::string* resId = nullptr, std::string* resourceClass = nullptr, std::string* resourceId = nullptr, std::string* extension = nullptr);
+
+std::string GetLightName(const std::string_view& b3dId, const std::string_view& name, ForceUnique forceUnique = ForceUnique::No);
+
+std::string GetSceneNodeName(const std::string_view& b3dId, const std::string_view& name, ForceUnique forceUnique = ForceUnique::No);
+
+std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name, const std::string_view& materialName, ForceUnique forceUnique = ForceUnique::No);
 
 } // namespace common
 } // namespace d2_hack

@@ -61,7 +61,7 @@ class ResInfoWatcher : public common::Reader
 {
 public:
 
-    ResInfoWatcher(const std::string& resId, Ogre::DataStream& stream)
+    ResInfoWatcher(const std::string_view& resId, Ogre::DataStream& stream)
         : common::Reader(stream)
         , m_dispatcher()
         , m_resId(resId)
@@ -196,7 +196,7 @@ public:
 
 
 
-void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo)
+void ReadFileInfo(const std::string_view& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo)
 {
     ResInfoWatcher watcher(resId, stream);
 

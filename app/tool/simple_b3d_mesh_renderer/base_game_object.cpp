@@ -15,7 +15,7 @@ namespace app
 using namespace resource::data::b3d;
 
 BaseGameObject::BaseGameObject(const B3dNodePtr& b3dNode,
-                               const std::string& b3dId,
+                               const std::string_view& b3dId,
                                Ogre::SceneManager* sceneManager,
                                Ogre::SceneNode* rootNode,
                                Ogre::MeshManager* meshManager,

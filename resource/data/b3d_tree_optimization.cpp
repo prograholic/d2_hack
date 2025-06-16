@@ -267,7 +267,7 @@ static void PrintOptStats(const char* pass)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-static B3dNodePtr GetTopLevelNodeByName(const B3dNodeList& nodes, const std::string &name)
+static B3dNodePtr GetTopLevelNodeByName(const B3dNodeList& nodes, const std::string_view &name)
 {
     for (const auto& node : nodes)
     {
@@ -280,7 +280,7 @@ static B3dNodePtr GetTopLevelNodeByName(const B3dNodeList& nodes, const std::str
     return B3dNodePtr{};
 }
 
-static B3dNodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string& name)
+static B3dNodePtr FindTopLevelNodeByNameInTrees(const B3dTree& tree, const B3dTree& common, const B3dTree& trucks, const std::string_view& name)
 {
     B3dNodePtr res = GetTopLevelNodeByName(tree.rootNodes, name);
     if (!res)
@@ -301,13 +301,13 @@ static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const 
     if (node->GetType() == block_data::SimpleObjectConnectorBlock18)
     {
         NodeSimpleObjectConnector18* typedNode = node->NodeCast<NodeSimpleObjectConnector18>();
-        auto nodeName = common::ResourceNameToString(typedNode->GetBlockData().object);
+        auto nodeName = common::ResourceNameToStringView(typedNode->GetBlockData().object);
         if (!nodeName.empty())
         {
             NodePtr newChildNode = FindTopLevelNodeByNameInTrees(tree, common, trucks, nodeName);
             if (!newChildNode)
             {
-                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
+                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("cannot find node by name \"{}\"", nodeName));
             }
 
             NodeList newChildNodes;
@@ -320,13 +320,13 @@ static void ProcessObjectConnectors(B3dTree& tree, const B3dTree& common, const 
     else if (node->GetType() == block_data::GroupObjectsBlock5)
     {
         NodeGroupObjects5* typedNode = node->NodeCast<NodeGroupObjects5>();
-        auto nodeName = common::ResourceNameToString(typedNode->GetBlockData().name);
+        auto nodeName = common::ResourceNameToStringView(typedNode->GetBlockData().name);
         if (!nodeName.empty())
         {
             NodePtr newChildNode = FindTopLevelNodeByNameInTrees(tree, common, trucks, nodeName);
             if (!newChildNode)
             {
-                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, "cannot find node by name \"" + nodeName + "\"");
+                OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("cannot find node by name \"{}\"", nodeName));
             }
 
             typedNode->AddChildNode(newChildNode);

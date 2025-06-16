@@ -44,7 +44,7 @@ public:
     template <typename NodeType>
     scene_node::SceneNodeBasePtr CreateNode(const NodeType& node, const scene_node::SceneNodeBasePtr& /* parent */, Ogre::SceneNode* /* sceneNode */)
     {
-        resource::data::b3d::RaiseExceptionAction::RaiseException(node.GetName().c_str(), node.GetType());
+        resource::data::b3d::RaiseExceptionAction::RaiseException(node.GetName(), node.GetType());
 
         return scene_node::SceneNodeBasePtr{};
     }

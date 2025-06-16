@@ -1,10 +1,9 @@
 #ifndef D2_HACK_RESOURCE_ARCHIVE_RES_FILE_INFO_H
 #define D2_HACK_RESOURCE_ARCHIVE_RES_FILE_INFO_H
 
-#include <map>
+#include <vector>
 
 #include <OgreDataStream.h>
-#include <OgreString.h>
 
 namespace d2_hack
 {
@@ -40,7 +39,7 @@ struct ResFileInfo
     std::vector<ResEntry> info;
 };
 
-void ReadFileInfo(const std::string& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo);
+void ReadFileInfo(const std::string_view& resId, Ogre::DataStream& stream, ResFileInfo& fileInfo);
 
 } // namespace res
 } // namespace archive

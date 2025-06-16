@@ -4,9 +4,11 @@
 #include <d2_hack/common/platform.h>
 
 #include <memory>
+#include <format>
 #include <list>
-#include <string>
 #include <map>
+
+#include <OgreException.h>
 
 #include <d2_hack/common/node_base.h>
 
@@ -59,7 +61,7 @@ public:
 
     B3dTreePtr GetOriginalRoot() const;
 
-    virtual std::string GetTypeName() const = 0;
+    virtual std::string_view GetTypeName() const = 0;
 
     virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) = 0;
 
@@ -92,7 +94,7 @@ public:
         return m_block.boundingSphere;
     }
 
-    virtual std::string GetTypeName() const override
+    virtual std::string_view GetTypeName() const override
     {
         return BlockType::Name;
     }
@@ -121,7 +123,7 @@ protected:
         {
             OGRE_EXCEPT(
                 Ogre::Exception::ERR_INVALID_STATE,
-                "Inconsistent block header type (" + std::to_string(blockHeader.type) + ") and BlockType value (" + std::to_string(block.Value) + ")",
+                std::format("Inconsistent block header type ({}) and BlockType value ({})", blockHeader.type, block.Value),
                 "NodeWithData::NodeWithData"
             );
         }

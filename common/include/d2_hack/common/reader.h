@@ -4,15 +4,9 @@
 #include <d2_hack/common/platform.h>
 
 #include <vector>
+#include <format>
 
 #include <OgreDataStream.h>
-
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-
-#include <OgreString.h>
-#include <Ogre.h>
-
-D2_HACK_DISABLE_WARNING_END() //4251
 
 #include <d2_hack/common/numeric_conversion.h>
 #include <d2_hack/common/types.h>
@@ -28,7 +22,7 @@ class Reader
 public:
     explicit Reader(Ogre::DataStream& input);
 
-    [[noreturn]] void ThrowError(const Ogre::String & msg, const Ogre::String & where);
+    [[noreturn]] void ThrowError(const std::string_view & msg, const char* where);
 
     void ReadBytes(void* buffer, size_t size);
 
@@ -37,7 +31,7 @@ public:
     {
         if (count > 10000)
         {
-            ThrowError("Count too big: " + std::to_string(count), "ReadCount");
+            ThrowError(std::format("Count too big: {}", count), "ReadCount");
         }
         data.resize(count);
         ReadBytes(data.data(), count * sizeof(T));

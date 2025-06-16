@@ -64,9 +64,9 @@ VisitResult VisitTree(const B3dTree& tree, NodeVisitorInterface& visitor)
 }
 
 
-void RaiseExceptionAction::RaiseException(const char* name, std::uint32_t /* type */)
+void RaiseExceptionAction::RaiseException(const std::string_view& name, std::uint32_t /* type */)
 {
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "`Visit` method is not implemented for type " + std::string(name));
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, std::format("`Visit` method is not implemented for type `{}`", name));
 }
 
 } // namespace b3d

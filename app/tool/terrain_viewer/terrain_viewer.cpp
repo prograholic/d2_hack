@@ -57,7 +57,7 @@ void TerrainViewer::CreateTerrain()
     m_terrainGlobalOptions.reset(OGRE_NEW Ogre::TerrainGlobalOptions());
 
     m_terrainGroup.reset(OGRE_NEW Ogre::TerrainGroup(m_sceneManager, Ogre::Terrain::ALIGN_X_Z, 513, 1200.0f));
-    m_terrainGroup->setFilenameConvention(Ogre::String("BasicTutorial3Terrain"), Ogre::String("dat"));
+    m_terrainGroup->setFilenameConvention("BasicTutorial3Terrain", "dat");
     m_terrainGroup->setOrigin(Ogre::Vector3::ZERO);
 
     ConfigureTerrainDefaults(light);

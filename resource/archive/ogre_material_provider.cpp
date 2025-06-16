@@ -1,7 +1,13 @@
 #include <d2_hack/resource/archive/ogre_material_provider.h>
 
 #include <OgreException.h>
+#include <OgrePass.h>
+#include <OgreTextureUnitState.h>
+#include <OgreMaterial.h>
+#include <OgreTextureManager.h>
+#include <OgreTechnique.h>
 #include <OgreGpuProgramManager.h>
+#include <OgreMaterialManager.h>
 
 #include <boost/format.hpp>
 
@@ -151,7 +157,7 @@ static void SetTextureAlpha(const MaterialDescriptor& md, Ogre::Pass& pass)
     fragmentParams->setNamedConstant("MainTexture", 0);
 }
 
-static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::string& resId, Ogre::Pass& pass)
+static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::string_view& resId, Ogre::Pass& pass)
 {
     //pass->setSceneBlending(Ogre::SceneBlendType::SBT_TRANSPARENT_ALPHA); вроде работает на некоторых текстурах, но нужно смотреть в общем.
 
@@ -167,7 +173,7 @@ static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::str
 }
 
 
-static void FillMaterialWithContent(const MaterialDescriptor& md, const std::string& resId, Ogre::Pass& pass)
+static void FillMaterialWithContent(const MaterialDescriptor& md, const std::string_view& resId, Ogre::Pass& pass)
 {
     switch (md.type)
     {
@@ -190,7 +196,7 @@ class OgreMaterialProviderImpl
 {
 public:
 
-    void PopulateMaterial(const std::string& materialName, const std::string& groupName, Ogre::Material& material)
+    void PopulateMaterial(const std::string_view& materialName, const std::string& groupName, Ogre::Material& material)
     {
         std::string resId;
         common::SplitResourceFileName(materialName, &resId);
@@ -257,10 +263,10 @@ OgreMaterialProvider::~OgreMaterialProvider()
 {
 }
 
-Ogre::MaterialPtr OgreMaterialProvider::CreateOrRetrieveMaterial(const std::string& materialName, const std::string& groupName)
+Ogre::MaterialPtr OgreMaterialProvider::CreateOrRetrieveMaterial(const std::string_view& materialName, const std::string& groupName)
 {
     Ogre::MaterialManager& mgr = Ogre::MaterialManager::getSingleton();
-    auto res = mgr.createOrRetrieve(materialName, groupName, true);
+    auto res = mgr.createOrRetrieve(std::string{materialName}, groupName, true);
 
     auto material = std::static_pointer_cast<Ogre::Material>(res.first);
     if (res.second)
