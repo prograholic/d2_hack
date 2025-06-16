@@ -103,7 +103,7 @@ static void SetTextureAnimation(const MaterialDescriptor& md, Ogre::TextureUnitS
 {
     if (md.rot)
     {
-        textureUnitState->setRotateAnimation(*md.rot);
+        textureUnitState->setRotateAnimation(*md.rot * 0.001f);
         // TODO: RotPoint is 0.5, 0.5 for each rotation, so skip it
     }
 

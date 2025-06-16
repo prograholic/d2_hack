@@ -80,7 +80,7 @@ void SimpleTxrRenderer::CreateEntityForResource(Ogre::SceneNode* parent, const s
     static int id = 0;
     Ogre::Entity* plane = m_sceneManager->createEntity(std::format("Plane {}", id), Ogre::SceneManager::PT_PLANE);
 
-    auto childNode = parent->createChildSceneNode(std::string{materialId}, Ogre::Vector3f{220.0f * id, 0.0f, -3000.0f});
+    auto childNode = parent->createChildSceneNode(std::string{materialId}, Ogre::Vector3f{220.0f * id - 1000.0f, 0.0f, -2000.0f});
     id += 1;
 
     childNode->attachObject(plane);
