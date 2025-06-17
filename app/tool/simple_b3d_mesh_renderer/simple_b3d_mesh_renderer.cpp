@@ -1,18 +1,10 @@
 #include "simple_b3d_mesh_renderer.h"
 
-#include <d2_hack/common/log.h>
-#include <d2_hack/common/utils.h>
-
-#include <d2_hack/resource/data/b3d_visitor.h>
-#include <d2_hack/resource/data/b3d_reader.h>
-#include <d2_hack/resource/data/b3d_utils.h>
-#include <d2_hack/resource/data/b3d_tree_optimization.h>
-
 #include <OgreEntity.h>
 #include <OgreMesh.h>
 #include <OgreSubMesh.h>
 
-#include "b3d_tree_visitor.h"
+#include <d2_hack/common/log.h>
 
 namespace d2_hack
 {
@@ -23,150 +15,12 @@ using namespace common;
 using namespace resource::data::b3d;
 
 
-#if 0
-static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName, const Ogre::Vector3& pos)
-{
-    bool done = false;
-    for (auto& tree : forest.forest)
-    {
-        if (done)
-        {
-            break;
-        }
-        block_data::GroupObjects19 object19Data{};
-        auto object19 = MakeVisitableNode(tree, WeakNodePtr{}, MakeBlockHeader(common::StringToResourceName(CarNodeNamePrefix + truckName), block_data::GroupObjectsBlock19), object19Data);
-
-        block_data::GroupObjects5 object5data{};
-        auto object5 = MakeVisitableNode(tree, object19, MakeBlockHeader(common::ResourceName{}, block_data::GroupObjectsBlock5), object5data);
-
-        block_data::SimpleObjectConnector18 object18Data{};
-        object18Data.object = common::StringToResourceName(truckName);
-
-        Transform tf{ Ogre::Matrix3::IDENTITY, pos };
-
-        object18Data.transformation.push_back(tf);
-        auto object18 = MakeVisitableNode(tree, object5, MakeBlockHeader(common::ResourceName{}, block_data::SimpleObjectConnectorBlock18), object18Data);
-
-        tree->rootNodes.push_back(object19);
-
-        done = true;
-    }
-}
-
-#endif //0
-
-
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
-    : BaseApplication()
+    : BaseB3dApplication("SimpleB3dMeshRenderer")
 {
 }
-
-void SimpleB3dMeshRenderer::CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
-{
-    for (const auto& rootNode : tree.rootNodes)
-    {
-        if (rootNode->GetNodeCategory() == NodeCategory::RoomNode)
-        {
-            if (!rootNode->GetChildNodeList().empty())
-            {
-                m_rooms.emplace_back(std::make_unique<B3dRoom>(rootNode, tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get()));
-            }
-            else
-            {
-                D2_HACK_LOG(CreateRootNodes) << "Skipping empty room: `" << rootNode->GetName() << "`";
-            }
-        }
-        else
-        {
-            D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized root node: `" << rootNode->GetName() << "`";
-        }
-    }
-}
-
-void SimpleB3dMeshRenderer::CreateCarNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
-{
-    static const char* carNames[] =
-    {
-        "Zil",
-        "Kamaz",
-        "Freightliner",
-        "Scania",
-        "Renault",
-        "Kenworth",
-        "Mack",
-        "Peterbilt",
-        "Daf",
-        "Mercedes",
-        "Volvo",
-        "Storm",
-        "International",
-        "BmwM5police",
-        "BmwM5",
-        "Cayman",
-        "Offroad",
-        "Pickup",
-        "Patrol",
-        "Gazelle",
-        "Gazelle1C",
-        "Sobol",
-        "RenaultR",
-        "KamazR",
-        "ScaniaR",
-        "ZilR",
-        "MercedesR",
-        "VolvoR",
-        "DafR",
-        "StormR",
-        "STrailerP",
-        "STrailerT",
-        "STrailerM",
-        "STrailerStorm",
-        "k50",
-        "PBmwM5",
-        "POffroad",
-        "PPickup",
-        "PPatrol",
-        "PGazelle",
-        "PSobol",
-        "PMarera",
-        "PMegan",
-        "PMini",
-        "POka",
-        "PVan",
-        "PBus",
-        "PVolga",
-        "PFiat",
-        "PAvensis",
-        "Mini",
-        "Marera",
-        "Bus",
-        "Katok",
-        "Megan",
-        "Oka",
-        "Van",
-        "Avensis",
-        "Volga",
-        "Fiat",
-    };
-
-    for (size_t i = 0; i != sizeof(carNames) / sizeof(carNames[0]); ++i)
-    {
-        for (const auto& rootNode : tree.rootNodes)
-        {
-            if (rootNode->GetName() == carNames[i])
-            {
-                auto carSceneNode = b3dSceneNode->createChildSceneNode(Ogre::Vector3{ 3.5f * i, 0, 0 });
-                m_cars.emplace_back(std::make_unique<B3dCar>(rootNode, tree.id, m_sceneManager, carSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get()));
-                break;
-            }
-        }
-    }
-}
-
 void SimpleB3dMeshRenderer::CreateScene()
 {
-    PrintNodesStats("start");
-
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
     Ogre::Light* light = m_sceneManager->createLight("MainLight");
@@ -176,30 +30,11 @@ void SimpleB3dMeshRenderer::CreateScene()
     lightSceneNode->setPosition(20.0f, 80.0f, 150.0f);
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
-    {
-        B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
-        PrintNodesStats("after_ReadB3d");
 
-        transformation::Transform(b3dForest);
-        PrintNodesStats("after_Transform");
-
-        transformation::Optimize(b3dForest);
-        PrintNodesStats("after_Optimize");
-
-        for (auto& tree : b3dForest.forest)
-        {
-            CreateRoomNodes(*tree, b3dSceneNode);
-        }
-        PrintNodesStats("after_CreateRoomNodes");
-
-        CreateCarNodes(*b3dForest.trucks, b3dSceneNode);
-        PrintNodesStats("after_CreateCarNodes");
-    }
-    PrintNodesStats("end");
+    CreateB3dScene(SinglePlayerRegistry, AllCarNames, b3dSceneNode);
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
-
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
 {
@@ -321,7 +156,6 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 
 void SimpleB3dMeshRenderer::shutdown()
 {
-    m_rooms.clear(); // TODO: rework with RAII
     BaseApplication::shutdown();
 }
 
@@ -334,24 +168,8 @@ void SimpleB3dMeshRenderer::ProcessCameraMovement()
 
     if (movement != Ogre::Vector3f::ZERO)
     {
-        for (const auto& room : m_rooms)
-        {
-            room->OnCameraMoved(m_worldContext, movement);
-        }
-        for (const auto& car : m_cars)
-        {
-            car->OnCameraMoved(m_worldContext, movement);
-        }
+        OnCameraMoved(m_worldContext, movement);
     }
-}
-
-void SimpleB3dMeshRenderer::PrintNodesStats(const char* prefix)
-{
-    static int callCount = 0;
-    callCount += 1;
-    D2_HACK_LOG(PrintNodesStats) << "NodeBase(" << callCount << ", " << prefix << "): " << NodeBase::GetNodeBaseCount();
-    D2_HACK_LOG(PrintNodesStats) << "B3dNode(" << callCount << ", " << prefix << "): " << B3dNode::GetB3dNodeCount();
-    D2_HACK_LOG(PrintNodesStats) << "SceneNode(" << callCount << ", " << prefix << "): " << scene_node::SceneNodeBase::GetSceneNodeBaseCount();
 }
 
 } // namespace app

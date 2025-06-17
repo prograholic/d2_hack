@@ -1,4 +1,4 @@
-#include "b3d_car.h"
+#include <d2_hack/app/b3d_car.h>
 
 namespace d2_hack
 {
@@ -8,7 +8,7 @@ namespace app
 using namespace resource::data::b3d;
 
 
-B3dCar::B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
+B3dCar::B3dCar(const B3dNodePtr& b3dNode,
                const std::string_view& b3dId,
                Ogre::SceneManager* sceneManager,
                Ogre::SceneNode* rootNode,

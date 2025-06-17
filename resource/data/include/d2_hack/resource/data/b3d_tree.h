@@ -1,6 +1,8 @@
 #ifndef D2_HACK_RESOURCE_DATA_B3D_TREE_H
 #define D2_HACK_RESOURCE_DATA_B3D_TREE_H
 
+#include <span>
+
 #include <d2_hack/resource/data/b3d_node.h>
 
 namespace d2_hack
@@ -23,6 +25,10 @@ struct B3dRegistry
 };
 
 extern const B3dRegistry SinglePlayerRegistry;
+
+typedef std::span<const std::string_view> CarNameList;
+
+extern const CarNameList AllCarNames;
 
 struct B3dTree
 {

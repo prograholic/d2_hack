@@ -1,4 +1,4 @@
-#include "base_game_object.h"
+#include <d2_hack/app/base_game_object.h>
 
 #include <d2_hack/scene_node/switchable_scene_nodes.h>
 

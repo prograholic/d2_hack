@@ -1,31 +1,20 @@
 #ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_SIMPLE_B3D_MESH_RENDERER_H
 #define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_SIMPLE_B3D_MESH_RENDERER_H
 
-#include <d2_hack/app/base_application.h>
-
-#include <d2_hack/resource/data/b3d_tree.h>
-
-#include "b3d_room.h"
-#include "b3d_car.h"
+#include <d2_hack/app/base_b3d_application.h>
 
 namespace d2_hack
 {
 namespace app
 {
 
-class SimpleB3dMeshRenderer : public BaseApplication
+class SimpleB3dMeshRenderer : public BaseB3dApplication
 {
 public:
     SimpleB3dMeshRenderer();
 
 private:
-    std::vector<B3dRoomPtr> m_rooms;
-    std::vector<B3dCarPtr> m_cars;
     scene_node::WorldContext m_worldContext;
-
-    void CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
-
-    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
 
     virtual void CreateScene() override;
 
@@ -34,8 +23,6 @@ private:
     virtual void shutdown() override;
 
     void ProcessCameraMovement();
-
-    void PrintNodesStats(const char* prefix);
 };
 
 

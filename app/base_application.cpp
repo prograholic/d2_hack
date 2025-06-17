@@ -1,20 +1,19 @@
 #include <d2_hack/app/base_application.h>
 
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-
-#include <OgreTextureManager.h>
 #include <OgreArchiveManager.h>
-
-D2_HACK_DISABLE_WARNING_END() //4251
-
+#include <OgreTextureManager.h>
+#include <OgreRenderWindow.h>
+#include <OgreViewport.h>
 
 namespace d2_hack
 {
 namespace app
 {
 
-BaseApplication::BaseApplication()
-    : OgreBites::ApplicationContext("d2_hack")
+using namespace resource::data::b3d;
+
+BaseApplication::BaseApplication(const std::string& appName)
+    : OgreBites::ApplicationContext(appName)
     , m_sceneManager(nullptr)
     , m_cameraSceneNode(nullptr)
     , m_camera(nullptr)

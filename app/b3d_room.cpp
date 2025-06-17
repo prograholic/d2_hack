@@ -1,4 +1,4 @@
-#include "b3d_room.h"
+#include <d2_hack/app/b3d_room.h>
 
 namespace d2_hack
 {

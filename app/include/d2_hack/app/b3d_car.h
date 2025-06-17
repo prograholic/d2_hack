@@ -1,7 +1,7 @@
-#ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_CAR_H
-#define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_CAR_H
+#ifndef D2_HACK_APP_INCLUDE_D2_HACK_APP_B3D_CAR_H
+#define D2_HACK_APP_INCLUDE_D2_HACK_APP_B3D_CAR_H
 
-#include "base_game_object.h"
+#include <d2_hack/app/base_game_object.h>
 
 namespace d2_hack
 {
@@ -24,4 +24,4 @@ typedef std::unique_ptr<B3dCar> B3dCarPtr;
 } // namespace app
 } // namespace d2_hack
 
-#endif /* D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_CAR_H */
+#endif /* D2_HACK_APP_INCLUDE_D2_HACK_APP_B3D_CAR_H */

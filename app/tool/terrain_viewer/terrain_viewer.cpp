@@ -8,7 +8,7 @@ namespace app
 {
 
 TerrainViewer::TerrainViewer()
-    : BaseApplication()
+    : BaseApplication("TerrainViewer")
 {
 }
 

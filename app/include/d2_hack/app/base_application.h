@@ -1,30 +1,20 @@
 #ifndef D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_APPLICATION_H
 #define D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_APPLICATION_H
 
-#include <d2_hack/common/platform.h>
-
-#include <memory>
-
-D2_HACK_DISABLE_WARNING_BEGIN(4100)
-D2_HACK_DISABLE_WARNING_BEGIN(4275)
-D2_HACK_DISABLE_WARNING_BEGIN(4251)
-D2_HACK_DISABLE_WARNING_BEGIN(4996)
-
+#include <Bites/OgreInput.h>
 #include <Bites/OgreApplicationContext.h>
-#include <Bites/OgreTrays.h>
 #include <Bites/OgreCameraMan.h>
-#include <OgreSceneManager.h>
+#include <OgreRoot.h>
 
-D2_HACK_DISABLE_WARNING_END() // 4996
-D2_HACK_DISABLE_WARNING_END() // 4251
-D2_HACK_DISABLE_WARNING_END() // 4275
-D2_HACK_DISABLE_WARNING_END() // 4100
-
-#include <d2_hack/resource/archive/res_archive.h>
-#include <d2_hack/resource/image/raw.h>
-#include <d2_hack/resource/image/txr.h>
+#include <d2_hack/resource/data/b3d_tree.h>
 #include <d2_hack/resource/manager/manager.h>
+#include <d2_hack/resource/archive/res_archive.h>
+#include <d2_hack/resource/image/txr.h>
+#include <d2_hack/resource/image/raw.h>
 #include <d2_hack/resource/archive/ogre_material_provider.h>
+
+#include <d2_hack/app/b3d_car.h>
+#include <d2_hack/app/b3d_room.h>
 
 namespace d2_hack
 {
@@ -34,7 +24,8 @@ namespace app
 class BaseApplication : public OgreBites::ApplicationContext, public OgreBites::InputListener
 {
 public:
-    BaseApplication();
+    explicit BaseApplication(const std::string& appName);
+
 
 protected:
     std::unique_ptr<resource::manager::Manager> m_manager;

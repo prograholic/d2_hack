@@ -1,5 +1,5 @@
-#ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_BASE_GAME_OBJECT_H
-#define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_BASE_GAME_OBJECT_H
+#ifndef D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_GAME_OBJECT_H
+#define D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_GAME_OBJECT_H
 
 #include <d2_hack/common/platform.h>
 
@@ -37,4 +37,4 @@ typedef std::unique_ptr<BaseGameObject> BaseGameObjectPtr;
 } // namespace app
 } // namespace d2_hack
 
-#endif /* D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_BASE_GAME_OBJECT_H */
+#endif /* D2_HACK_APP_INCLUDE_D2_HACK_APP_BASE_GAME_OBJECT_H */

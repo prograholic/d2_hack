@@ -13,7 +13,7 @@ namespace app
 {
 
 SimpleTxrRenderer::SimpleTxrRenderer()
-    : BaseApplication()
+    : BaseApplication("SimpleTxrRenderer")
 {
 }
 
