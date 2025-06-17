@@ -277,7 +277,7 @@ static void CalculateMaterialName(std::uint32_t type, std::string& materialName,
 
     if ((type % 2) != 0)
     {
-        extraMaterialName = "tree" + std::to_string(subType);
+        extraMaterialName = std::format("tree{}", subType);
     }
     else
     {

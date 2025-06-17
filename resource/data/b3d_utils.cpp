@@ -419,7 +419,6 @@ block_data::BlockHeader MakeBlockHeader(const common::ResourceName& name, std::u
 
     if (blockHeader.type > block_data::MaxBlockId)
     {
-        std::string msg = "Incorrect block id: " + std::to_string(blockHeader.type) + ", possible b3d corruption?";
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Incorrect block id: {}, possible b3d corruption?", blockHeader.type));
     }
 

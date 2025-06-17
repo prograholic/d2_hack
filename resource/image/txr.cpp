@@ -134,11 +134,11 @@ void TxrImageCodec::decode(const Ogre::DataStreamPtr& input, const Ogre::Any& ou
 
     if (tgaHeader.bitsperpixel != 16)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "can`t decode bits per pixel other than 16: " + std::to_string(static_cast<int>(tgaHeader.bitsperpixel)));
+        OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, std::format("can`t decode bits per pixel other than 16: {}", static_cast<int>(tgaHeader.bitsperpixel)));
     }
     if (tgaHeader.imagedescriptor != 32)
     {
-        OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "can`t decode image format descriptor other than 32: " + std::to_string(static_cast<int>(tgaHeader.imagedescriptor)));
+        OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, std::format("can`t decode image format descriptor other than 32: {}", static_cast<int>(tgaHeader.imagedescriptor)));
     }
 
     detail::Loffdata loff;

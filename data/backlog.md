@@ -34,7 +34,7 @@
 - [ ] Linux support
 
 - [ ] Refactoring and improvements
-  - [ ] Use std::format instead of to_string and string stream
+  - [x] Use std::format instead of to_string and string stream
   - [x] Use std::string_view
   - [ ] OgreMaterialProvider - кажется, что это костыль, возможно, стоит переделать на некий общий контекст
 
