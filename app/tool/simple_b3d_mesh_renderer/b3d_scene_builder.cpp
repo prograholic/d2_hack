@@ -94,7 +94,6 @@ void B3dSceneBuilder::ProcessLight(const resource::data::b3d::NodeGroupLightingO
     }
 }
 
-
 void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector18& node)
 {
     Ogre::SceneNode* ogreSceneNode = m_ogreSceneNodes.empty() ? m_ogreRootNode : m_ogreSceneNodes.top();
@@ -104,11 +103,6 @@ void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimp
         ogreSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
         ogreSceneNode->translate(transform.position);
     }
-}
-
-void B3dSceneBuilder::ProcessObjectConnector(const resource::data::b3d::NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */)
-{
-    B3D_NOT_IMPLEMENTED();
 }
 
 Ogre::SceneNode* B3dSceneBuilder::ProcessOgreSceneNode(const std::string_view& name, VisitMode visitMode)

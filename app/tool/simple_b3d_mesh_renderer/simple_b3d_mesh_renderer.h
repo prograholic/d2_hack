@@ -23,7 +23,9 @@ private:
     std::vector<B3dCarPtr> m_cars;
     scene_node::WorldContext m_worldContext;
 
-    void CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+    void CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+
+    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
 
     virtual void CreateScene() override;
 

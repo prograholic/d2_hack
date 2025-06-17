@@ -95,7 +95,7 @@ std::string GetLightName(const std::string_view& b3dId, const std::string_view& 
 
 std::string GetSceneNodeName(const std::string_view& b3dId, const std::string_view& name, ForceUnique forceUnique = ForceUnique::No);
 
-std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name, const std::string_view& materialName, ForceUnique forceUnique = ForceUnique::No);
+std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name, const std::string_view& materialName);
 
 } // namespace common
 } // namespace d2_hack

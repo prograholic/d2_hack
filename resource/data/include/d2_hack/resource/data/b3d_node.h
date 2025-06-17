@@ -40,12 +40,6 @@ enum class NodeCategory
     RoadObjNode
 };
 
-extern const char* RoomNodeNamePrefix;
-extern const char* RoadNodeNamePrefix;
-extern const char* RoadHitNodeNamePrefix;
-extern const char* RoadObjNodeNamePrefix;
-extern const char* CarNodeNamePrefix;
-
 typedef std::shared_ptr<class B3dNode> B3dNodePtr;
 
 class B3dNode : public common::NodeBase

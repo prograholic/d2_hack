@@ -116,10 +116,10 @@ std::string GetSceneNodeName(const std::string_view& b3dId, const std::string_vi
     return GetResourceName(b3dId, "SCENE_NODE", name, forceUnique);
 }
 
-std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name, const std::string_view& materialName, ForceUnique forceUnique)
+std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name, const std::string_view& materialName)
 {
     auto newName = std::format("{}+{}", name, materialName);
-    return GetResourceName(b3dId, "MESH", newName, forceUnique);
+    return GetResourceName(b3dId, "MESH", newName, ForceUnique::No);
 }
 
 } // namespace common

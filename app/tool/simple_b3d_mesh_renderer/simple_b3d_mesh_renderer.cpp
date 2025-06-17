@@ -22,6 +22,8 @@ namespace app
 using namespace common;
 using namespace resource::data::b3d;
 
+
+#if 0
 static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName, const Ogre::Vector3& pos)
 {
     bool done = false;
@@ -51,13 +53,15 @@ static void ConnectTruckToScenes(B3dForest& forest, const std::string& truckName
     }
 }
 
+#endif //0
+
 
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseApplication()
 {
 }
 
-void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
+void SimpleB3dMeshRenderer::CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
 {
     for (const auto& rootNode : tree.rootNodes)
     {
@@ -72,13 +76,89 @@ void SimpleB3dMeshRenderer::CreateRootNodes(const resource::data::b3d::B3dTree& 
                 D2_HACK_LOG(CreateRootNodes) << "Skipping empty room: `" << rootNode->GetName() << "`";
             }
         }
-        else if (rootNode->GetNodeCategory() == NodeCategory::CarNode)
-        {
-            m_cars.emplace_back(std::make_unique<B3dCar>(rootNode, tree.id, m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get()));
-        }
         else
         {
             D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized root node: `" << rootNode->GetName() << "`";
+        }
+    }
+}
+
+void SimpleB3dMeshRenderer::CreateCarNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
+{
+    static const char* carNames[] =
+    {
+        "Zil",
+        "Kamaz",
+        "Freightliner",
+        "Scania",
+        "Renault",
+        "Kenworth",
+        "Mack",
+        "Peterbilt",
+        "Daf",
+        "Mercedes",
+        "Volvo",
+        "Storm",
+        "International",
+        "BmwM5police",
+        "BmwM5",
+        "Cayman",
+        "Offroad",
+        "Pickup",
+        "Patrol",
+        "Gazelle",
+        "Gazelle1C",
+        "Sobol",
+        "RenaultR",
+        "KamazR",
+        "ScaniaR",
+        "ZilR",
+        "MercedesR",
+        "VolvoR",
+        "DafR",
+        "StormR",
+        "STrailerP",
+        "STrailerT",
+        "STrailerM",
+        "STrailerStorm",
+        "k50",
+        "PBmwM5",
+        "POffroad",
+        "PPickup",
+        "PPatrol",
+        "PGazelle",
+        "PSobol",
+        "PMarera",
+        "PMegan",
+        "PMini",
+        "POka",
+        "PVan",
+        "PBus",
+        "PVolga",
+        "PFiat",
+        "PAvensis",
+        "Mini",
+        "Marera",
+        "Bus",
+        "Katok",
+        "Megan",
+        "Oka",
+        "Van",
+        "Avensis",
+        "Volga",
+        "Fiat",
+    };
+
+    for (size_t i = 0; i != sizeof(carNames) / sizeof(carNames[0]); ++i)
+    {
+        for (const auto& rootNode : tree.rootNodes)
+        {
+            if (rootNode->GetName() == carNames[i])
+            {
+                auto carSceneNode = b3dSceneNode->createChildSceneNode(Ogre::Vector3{ 3.5f * i, 0, 0 });
+                m_cars.emplace_back(std::make_unique<B3dCar>(rootNode, tree.id, m_sceneManager, carSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get()));
+                break;
+            }
         }
     }
 }
@@ -98,95 +178,24 @@ void SimpleB3dMeshRenderer::CreateScene()
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
     {
         B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
-
         PrintNodesStats("after_ReadB3d");
 
-        const char* names[] =
-        {
-            "Zil",
-            "Kamaz",
-            "Freightliner",
-            "Scania",
-            "Renault",
-            "Kenworth",
-            "Mack",
-            "Peterbilt",
-            "Daf",
-            "Mercedes",
-            "Volvo",
-            "Storm",
-            "International",
-            "BmwM5police",
-            "BmwM5",
-            "Cayman",
-            "Offroad",
-            "Pickup",
-            "Patrol",
-            "Gazelle",
-            "Gazelle1C",
-            "Sobol",
-            "RenaultR",
-            "KamazR",
-            "ScaniaR",
-            "ZilR",
-            "MercedesR",
-            "VolvoR",
-            "DafR",
-            "StormR",
-            "STrailerP",
-            "STrailerT",
-            "STrailerM",
-            "STrailerStorm",
-            "k50",
-            "PBmwM5",
-            "POffroad",
-            "PPickup",
-            "PPatrol",
-            "PGazelle",
-            "PSobol",
-            "PMarera",
-            "PMegan",
-            "PMini",
-            "POka",
-            "PVan",
-            "PBus",
-            "PVolga",
-            "PFiat",
-            "PAvensis",
-            "Mini",
-            "Marera",
-            "Bus",
-            "Katok",
-            "Megan",
-            "Oka",
-            "Van",
-            "Avensis",
-            "Volga",
-            "Fiat",
-        };
-
-        for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)
-        {
-            ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{ 3.5f * i, 0, 0 });
-        }
-
-        PrintNodesStats("after_ConnectTruckToScenes");
-
         transformation::Transform(b3dForest);
-
         PrintNodesStats("after_Transform");
 
         transformation::Optimize(b3dForest);
-
         PrintNodesStats("after_Optimize");
 
         for (auto& tree : b3dForest.forest)
         {
-            CreateRootNodes(*tree, b3dSceneNode);
+            CreateRoomNodes(*tree, b3dSceneNode);
         }
-    }
+        PrintNodesStats("after_CreateRoomNodes");
 
-    PrintNodesStats("after_CreateRootNodes");
+        CreateCarNodes(*b3dForest.trucks, b3dSceneNode);
+        PrintNodesStats("after_CreateCarNodes");
+    }
+    PrintNodesStats("end");
 
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
