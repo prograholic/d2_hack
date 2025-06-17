@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
         auto resFileList = GetResFileList(vm);
 
-        auto outputDir = vm[options::output_dir].as<std::filesystem::path>();
+        std::filesystem::path outputDir = vm[options::output_dir].as<std::string>();
 
         for (const auto& resFile : resFileList)
         {

@@ -124,17 +124,29 @@ static void SetTextureAnimation(const MaterialDescriptor& md, Ogre::TextureUnitS
     }
 }
 
-static void SetTextureAlpha(const MaterialDescriptor& md, Ogre::Pass& pass)
+static void FillVertexShaderParameters(const MaterialDescriptor& /* md */, Ogre::GpuProgramParameters& vertexParams)
 {
-    if (md.type != MaterialType::ttx)
-    {
-        return;
-    }
-    if (!md.col)
-    {
-        return;
-    }
+    vertexParams.setNamedAutoConstant("modelViewMatrix", Ogre::GpuProgramParameters::ACT_WORLDVIEW_MATRIX);
+    vertexParams.setNamedAutoConstant("projectionMatrix", Ogre::GpuProgramParameters::ACT_PROJECTION_MATRIX);
+}
 
+static void FillFragmentShaderParameters(const MaterialDescriptor& md, Ogre::GpuProgramParameters& fragmentParams)
+{
+    assert(md.type != MaterialType::col);
+
+    fragmentParams.setNamedConstant("MainTexture", 0);
+
+    if (md.col)
+    {
+        palette::PalettePtr plm = manager::Manager::getSingleton().Load(common::GetPaletteFileName("COMMON", "common"), common::DefaultResourceGroup);
+        auto alphaColor = plm->GetColor(*md.col - 1);
+        fragmentParams.setNamedConstant("AlphaColor", Ogre::Vector3f{ alphaColor.r, alphaColor.g, alphaColor.b });
+    }
+    fragmentParams.setNamedConstant("AlphaColorPresent", md.col ? 1 : 0);
+}
+
+static void SetupShaders(const MaterialDescriptor& md, Ogre::Pass& pass)
+{
     auto& gpuPm = Ogre::GpuProgramManager::getSingleton();
 
 
@@ -145,16 +157,10 @@ static void SetTextureAlpha(const MaterialDescriptor& md, Ogre::Pass& pass)
     pass.setGpuProgram(Ogre::GpuProgramType::GPT_FRAGMENT_PROGRAM, fragmentGpuProgram);
 
     auto vertexParams = pass.getVertexProgramParameters();
-    vertexParams->setNamedAutoConstant("modelViewMatrix", Ogre::GpuProgramParameters::ACT_WORLDVIEW_MATRIX);
-    vertexParams->setNamedAutoConstant("projectionMatrix", Ogre::GpuProgramParameters::ACT_PROJECTION_MATRIX);
-
+    FillVertexShaderParameters(md, *vertexParams);
 
     auto fragmentParams = pass.getFragmentProgramParameters();
-
-    palette::PalettePtr plm = manager::Manager::getSingleton().Load(common::GetPaletteFileName("COMMON", "common"), common::DefaultResourceGroup);
-    auto alphaColor = plm->GetColor(*md.col - 1);
-    fragmentParams->setNamedConstant("AlphaColor", Ogre::Vector3f{alphaColor.r, alphaColor.g, alphaColor.b});
-    fragmentParams->setNamedConstant("MainTexture", 0);
+    FillFragmentShaderParameters(md, *fragmentParams);
 }
 
 static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::string_view& resId, Ogre::Pass& pass)
@@ -169,7 +175,7 @@ static void FillMaterialWithTexture(const MaterialDescriptor& md, const std::str
     textureUnitState->setTexture(std::static_pointer_cast<Ogre::Texture>(textureRes.first));
 
     SetTextureAnimation(md, textureUnitState);
-    SetTextureAlpha(md, pass);
+    SetupShaders(md, pass);
 }
 
 

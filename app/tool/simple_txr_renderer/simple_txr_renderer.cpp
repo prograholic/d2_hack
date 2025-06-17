@@ -102,6 +102,10 @@ void SimpleTxrRenderer::CreateScene()
 
     Ogre::Light* light = m_sceneManager->createLight("MainLight");
 
+    light->setSpecularColour(Ogre::ColourValue::Red);
+    light->setDiffuseColour(Ogre::ColourValue::Green);
+
+
     auto rootNode = m_sceneManager->getRootSceneNode();
 
     Ogre::SceneNode* lightSceneNode = rootNode->createChildSceneNode();

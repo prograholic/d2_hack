@@ -97,93 +97,93 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
     {
-    B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
+        B3dForest b3dForest = ReadB3d(SinglePlayerRegistry);
 
-    PrintNodesStats("after_ReadB3d");
+        PrintNodesStats("after_ReadB3d");
 
-    const char* names[] =
-    {
-        "Zil",
-        "Kamaz",
-        "Freightliner",
-        "Scania",
-        "Renault",
-        "Kenworth",
-        "Mack",
-        "Peterbilt",
-        "Daf",
-        "Mercedes",
-        "Volvo",
-        "Storm",
-        "International",
-        "BmwM5police",
-        "BmwM5",
-        "Cayman",
-        "Offroad",
-        "Pickup",
-        "Patrol",
-        "Gazelle",
-        "Gazelle1C",
-        "Sobol",
-        "RenaultR",
-        "KamazR",
-        "ScaniaR",
-        "ZilR",
-        "MercedesR",
-        "VolvoR",
-        "DafR",
-        "StormR",
-        "STrailerP",
-        "STrailerT",
-        "STrailerM",
-        "STrailerStorm",
-        "k50",
-        "PBmwM5",
-        "POffroad",
-        "PPickup",
-        "PPatrol",
-        "PGazelle",
-        "PSobol",
-        "PMarera",
-        "PMegan",
-        "PMini",
-        "POka",
-        "PVan",
-        "PBus",
-        "PVolga",
-        "PFiat",
-        "PAvensis",
-        "Mini",
-        "Marera",
-        "Bus",
-        "Katok",
-        "Megan",
-        "Oka",
-        "Van",
-        "Avensis",
-        "Volga",
-        "Fiat",
-    };
+        const char* names[] =
+        {
+            "Zil",
+            "Kamaz",
+            "Freightliner",
+            "Scania",
+            "Renault",
+            "Kenworth",
+            "Mack",
+            "Peterbilt",
+            "Daf",
+            "Mercedes",
+            "Volvo",
+            "Storm",
+            "International",
+            "BmwM5police",
+            "BmwM5",
+            "Cayman",
+            "Offroad",
+            "Pickup",
+            "Patrol",
+            "Gazelle",
+            "Gazelle1C",
+            "Sobol",
+            "RenaultR",
+            "KamazR",
+            "ScaniaR",
+            "ZilR",
+            "MercedesR",
+            "VolvoR",
+            "DafR",
+            "StormR",
+            "STrailerP",
+            "STrailerT",
+            "STrailerM",
+            "STrailerStorm",
+            "k50",
+            "PBmwM5",
+            "POffroad",
+            "PPickup",
+            "PPatrol",
+            "PGazelle",
+            "PSobol",
+            "PMarera",
+            "PMegan",
+            "PMini",
+            "POka",
+            "PVan",
+            "PBus",
+            "PVolga",
+            "PFiat",
+            "PAvensis",
+            "Mini",
+            "Marera",
+            "Bus",
+            "Katok",
+            "Megan",
+            "Oka",
+            "Van",
+            "Avensis",
+            "Volga",
+            "Fiat",
+        };
 
-    for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)
-    {
-        ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{ 3.5f * i, 0, 0 });
-    }
+        for (size_t i = 0; i != sizeof(names) / sizeof(names[0]); ++i)
+        {
+            ConnectTruckToScenes(b3dForest, names[i], Ogre::Vector3{ 3.5f * i, 0, 0 });
+        }
 
-    PrintNodesStats("after_ConnectTruckToScenes");
+        PrintNodesStats("after_ConnectTruckToScenes");
 
-    transformation::Transform(b3dForest);
+        transformation::Transform(b3dForest);
 
-    PrintNodesStats("after_Transform");
+        PrintNodesStats("after_Transform");
 
-    transformation::Optimize(b3dForest);
+        transformation::Optimize(b3dForest);
 
-    PrintNodesStats("after_Optimize");
+        PrintNodesStats("after_Optimize");
 
-    for (auto& tree : b3dForest.forest)
-    {
-        CreateRootNodes(*tree, b3dSceneNode);
-    }
+        for (auto& tree : b3dForest.forest)
+        {
+            CreateRootNodes(*tree, b3dSceneNode);
+        }
     }
 
     PrintNodesStats("after_CreateRootNodes");
