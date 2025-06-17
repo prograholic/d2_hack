@@ -32,8 +32,6 @@ void SimpleB3dMeshRenderer::CreateScene()
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
     CreateB3dScene(SinglePlayerRegistry, AllCarNames, b3dSceneNode);
-
-    b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
@@ -80,8 +78,6 @@ const char* node_name = "b3d.scene_node";
 
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
-    ProcessCameraMovement();
-
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
     if (evt.keysym.sym == '1')
     {
@@ -142,16 +138,8 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         D2_HACK_LOG(BREAK) << "GOOD";
     }
-    else if (evt.keysym.sym == '=')
-    {
-        m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() * 2);
-    }
-    else if (evt.keysym.sym == '-')
-    {
-        m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() / 2);
-    }
 
-    return BaseApplication::keyPressed(evt);
+    return BaseB3dApplication::keyPressed(evt);
 }
 
 void SimpleB3dMeshRenderer::shutdown()
@@ -159,18 +147,6 @@ void SimpleB3dMeshRenderer::shutdown()
     BaseApplication::shutdown();
 }
 
-
-void SimpleB3dMeshRenderer::ProcessCameraMovement()
-{
-    Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->_getDerivedPosition();
-    Ogre::Vector3f movement = currentPlayerPosition - m_worldContext.playerPosition;
-    m_worldContext.playerPosition = currentPlayerPosition;
-
-    if (movement != Ogre::Vector3f::ZERO)
-    {
-        OnCameraMoved(m_worldContext, movement);
-    }
-}
 
 } // namespace app
 } // namespace d2_hack

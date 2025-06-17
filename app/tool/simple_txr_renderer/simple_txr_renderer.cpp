@@ -13,7 +13,7 @@ namespace app
 {
 
 SimpleTxrRenderer::SimpleTxrRenderer()
-    : BaseApplication("SimpleTxrRenderer")
+    : BaseB3dApplication("SimpleTxrRenderer")
 {
 }
 
@@ -74,6 +74,7 @@ const MaterialsInfoEntry materialInfoEntries[] =
 
 
 using resource::archive::res::OgreMaterialProvider;
+using namespace resource::data::b3d;
 
 void SimpleTxrRenderer::CreateEntityForResource(Ogre::SceneNode* parent, const std::string_view& resId, const std::string_view& materialId)
 {
@@ -95,9 +96,6 @@ void SimpleTxrRenderer::CreateEntityForResource(Ogre::SceneNode* parent, const s
 
 void SimpleTxrRenderer::CreateScene()
 {
-    m_ogreMaterialProvider.reset(new OgreMaterialProvider{});
-
-
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
     Ogre::Light* light = m_sceneManager->createLight("MainLight");
@@ -119,6 +117,22 @@ void SimpleTxrRenderer::CreateScene()
             CreateEntityForResource(rootNode, entry.resId, material);
         }
     }
+
+    auto b3dSceneNode = rootNode->createChildSceneNode();
+
+
+    B3dRegistry b3dRegistry
+    {
+        D2_ROOT_DIR,
+        "ENV"
+    };
+
+    const std::string_view cars[] = 
+    {
+        { "Zil" }
+    };
+
+    CreateB3dScene(b3dRegistry, cars, b3dSceneNode);
 }
 
 

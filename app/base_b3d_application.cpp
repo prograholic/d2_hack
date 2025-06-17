@@ -15,6 +15,7 @@ BaseB3dApplication::BaseB3dApplication(const std::string& appName)
     : BaseApplication(appName)
     , m_cars()
     , m_rooms()
+    , m_worldContext()
 {
 }
 
@@ -43,6 +44,45 @@ void BaseB3dApplication::CreateB3dScene(const B3dRegistry& b3dRegistry, const Ca
     }
 
     PrintNodesStats("end");
+
+    b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
+}
+
+void BaseB3dApplication::ProcessCameraMovement()
+{
+    Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->_getDerivedPosition();
+    Ogre::Vector3f movement = currentPlayerPosition - m_worldContext.playerPosition;
+    m_worldContext.playerPosition = currentPlayerPosition;
+
+    if (movement != Ogre::Vector3f::ZERO)
+    {
+        OnCameraMoved(m_worldContext, movement);
+    }
+}
+
+bool BaseB3dApplication::keyPressed(const OgreBites::KeyboardEvent& evt)
+{
+    ProcessCameraMovement();
+
+    if (evt.keysym.sym == '=')
+    {
+        m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() * 2);
+    }
+    else if (evt.keysym.sym == '-')
+    {
+        m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() / 2);
+    }
+
+    return BaseApplication::keyPressed(evt);
+}
+
+void BaseB3dApplication::PrintNodesStats(const char* prefix)
+{
+    static int callCount = 0;
+    callCount += 1;
+    D2_HACK_LOG(PrintNodesStats) << "NodeBase(" << callCount << ", " << prefix << "): " << common::NodeBase::GetNodeBaseCount();
+    D2_HACK_LOG(PrintNodesStats) << "B3dNode(" << callCount << ", " << prefix << "): " << B3dNode::GetB3dNodeCount();
+    D2_HACK_LOG(PrintNodesStats) << "SceneNode(" << callCount << ", " << prefix << "): " << scene_node::SceneNodeBase::GetSceneNodeBaseCount();
 }
 
 void BaseB3dApplication::CreateRoomNodes(const B3dTree& tree, Ogre::SceneNode* b3dSceneNode)
@@ -65,7 +105,7 @@ void BaseB3dApplication::CreateRoomNodes(const B3dTree& tree, Ogre::SceneNode* b
             D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized root node: `" << rootNode->GetName() << "`";
         }
     }
-    
+
 }
 
 void BaseB3dApplication::CreateCarNodes(const B3dTree& tree, const CarNameList& carNames, Ogre::SceneNode* b3dSceneNode)
@@ -87,15 +127,6 @@ void BaseB3dApplication::OnCameraMoved(const scene_node::WorldContext& worldCont
     {
         car->OnCameraMoved(worldContext, movement);
     }
-}
-
-void BaseB3dApplication::PrintNodesStats(const char* prefix)
-{
-    static int callCount = 0;
-    callCount += 1;
-    D2_HACK_LOG(PrintNodesStats) << "NodeBase(" << callCount << ", " << prefix << "): " << common::NodeBase::GetNodeBaseCount();
-    D2_HACK_LOG(PrintNodesStats) << "B3dNode(" << callCount << ", " << prefix << "): " << B3dNode::GetB3dNodeCount();
-    D2_HACK_LOG(PrintNodesStats) << "SceneNode(" << callCount << ", " << prefix << "): " << scene_node::SceneNodeBase::GetSceneNodeBaseCount();
 }
 
 void BaseB3dApplication::CreateCarNode(const B3dTree& tree, const std::string_view& carName, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode)

@@ -13,16 +13,11 @@ class SimpleB3dMeshRenderer : public BaseB3dApplication
 public:
     SimpleB3dMeshRenderer();
 
-private:
-    scene_node::WorldContext m_worldContext;
-
     virtual void CreateScene() override;
 
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 
     virtual void shutdown() override;
-
-    void ProcessCameraMovement();
 };
 
 

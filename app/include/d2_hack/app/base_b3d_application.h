@@ -20,19 +20,26 @@ public:
 
     void CreateB3dScene(const resource::data::b3d::B3dRegistry& b3dRegistry, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
 
-    void CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+    void ProcessCameraMovement();
 
-    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
-
-    void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
+    virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 
 private:
     std::vector<B3dCarPtr> m_cars;
     std::vector<B3dRoomPtr> m_rooms;
 
+    scene_node::WorldContext m_worldContext;
+
     void PrintNodesStats(const char* prefix);
 
+    void CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+
+    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
+
+
     void CreateCarNode(const resource::data::b3d::B3dTree& tree, const std::string_view& carName, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode);
+
+    void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
 };
 
 } // namespace app
