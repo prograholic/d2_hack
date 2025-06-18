@@ -141,7 +141,7 @@ void B3dSceneBuilder::CreateMesh(const std::string_view& blockName, const common
     Ogre::MeshPtr mesh;
     if (m_meshManager->resourceExists(meshName, common::DefaultResourceGroup))
     {
-        D2_HACK_LOG(B3dTreeVisitor::CreateMesh) << "Mesh `" << meshName << "` already exists, reuse it";
+        D2_HACK_LOG(B3dSceneBuilder::CreateMesh) << "Mesh `" << meshName << "` already exists, reuse it";
         mesh = m_meshManager->getByName(meshName, common::DefaultResourceGroup);
     }
     else
@@ -150,6 +150,8 @@ void B3dSceneBuilder::CreateMesh(const std::string_view& blockName, const common
 
         auto material = m_ogreMaterialProvider->CreateOrRetrieveMaterial(materialName, common::DefaultResourceGroup);
         SetMeshInfo(mesh, meshInfo, material);
+
+        D2_HACK_LOG(B3dSceneBuilder::CreateMesh) << "Mesh `" << meshName << "` has been created";
     }
 
     Ogre::Entity* entity = m_sceneManager->createEntity(mesh);

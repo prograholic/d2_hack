@@ -136,13 +136,15 @@ static void FillFragmentShaderParameters(const MaterialDescriptor& md, Ogre::Gpu
 
     fragmentParams.setNamedConstant("MainTexture", 0);
 
-    if (md.col)
+    bool alphaColorPresent = md.col || (md.type == MaterialType::ttx);
+    if (alphaColorPresent)
     {
+        size_t alphaColorIndex = md.col ? (*md.col - 1) : 0;
         palette::PalettePtr plm = manager::Manager::getSingleton().Load(common::GetPaletteFileName("COMMON", "common"), common::DefaultResourceGroup);
-        auto alphaColor = plm->GetColor(*md.col - 1);
+        auto alphaColor = plm->GetColor(alphaColorIndex);
         fragmentParams.setNamedConstant("AlphaColor", Ogre::Vector3f{ alphaColor.r, alphaColor.g, alphaColor.b });
     }
-    fragmentParams.setNamedConstant("AlphaColorPresent", md.col ? 1 : 0);
+    fragmentParams.setNamedConstant("AlphaColorPresent", alphaColorPresent ? 1 : 0);
 }
 
 static void SetupShaders(const MaterialDescriptor& md, Ogre::Pass& pass)
@@ -272,7 +274,7 @@ OgreMaterialProvider::~OgreMaterialProvider()
 Ogre::MaterialPtr OgreMaterialProvider::CreateOrRetrieveMaterial(const std::string_view& materialName, const std::string& groupName)
 {
     Ogre::MaterialManager& mgr = Ogre::MaterialManager::getSingleton();
-    auto res = mgr.createOrRetrieve(std::string{materialName}, groupName, true);
+    auto res = mgr.createOrRetrieve(std::string{materialName}, groupName);
 
     auto material = std::static_pointer_cast<Ogre::Material>(res.first);
     if (res.second)

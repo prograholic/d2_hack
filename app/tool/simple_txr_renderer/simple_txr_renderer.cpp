@@ -56,17 +56,21 @@ static const std::string_view materialsBG[] =
 
 static const std::string_view materialTrucks[] =
 {
-    "Ka50_vint1",// tex 510  RotPoint 0.5 0.5  rot 390  notile ",
-    "Ka50_vint2",// tex 510  RotPoint 0.5 0.5  rot -390  notile"
+    //"Ka50_vint1",// tex 510  RotPoint 0.5 0.5  rot 390  notile ",
+    //"Ka50_vint2",// tex 510  RotPoint 0.5 0.5  rot -390  notile"
+    "_wheelTIRE",
+    //"wheelPROT",
+    "_wheelQUARTER",
+    "wheelDISK"
 };
     
 
 const MaterialsInfoEntry materialInfoEntries[] =
 {
-    {"aa", materialsAA},
-    {"ak", materialsAK},
-    {"af", materialsAF},
-    {"bg", materialsBG},
+    //{"aa", materialsAA},
+    //{"ak", materialsAK},
+    //{"af", materialsAF},
+    //{"bg", materialsBG},
     {"TRUCKS", materialTrucks}
 };
 
@@ -118,8 +122,7 @@ void SimpleTxrRenderer::CreateScene()
         }
     }
 
-    auto b3dSceneNode = rootNode->createChildSceneNode();
-
+    //auto b3dSceneNode = rootNode->createChildSceneNode();
 
     B3dRegistry b3dRegistry
     {
@@ -132,7 +135,7 @@ void SimpleTxrRenderer::CreateScene()
         { "Zil" }
     };
 
-    CreateB3dScene(b3dRegistry, cars, b3dSceneNode);
+    //CreateB3dScene(b3dRegistry, cars, b3dSceneNode);
 }
 
 
