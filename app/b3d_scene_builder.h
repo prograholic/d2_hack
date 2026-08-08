@@ -8,7 +8,8 @@
 #include <d2_hack/scene_node/scene_node_base.h>
 
 #include <d2_hack/resource/data/b3d_node.h>
-#include <d2_hack/resource/archive/ogre_material_provider.h>
+
+#include <d2_hack/app/b3d_scene_builder_context.h>
 
 namespace d2_hack
 {
@@ -23,11 +24,8 @@ public:
     using VisitResult = resource::data::b3d::VisitResult;
     using VisitMode = resource::data::b3d::VisitMode;
 
-    B3dSceneBuilder(const std::string_view& b3dId,
-                    Ogre::SceneManager* sceneManager,
-                    Ogre::SceneNode* ogreRootNode,
-                    Ogre::MeshManager* meshManager,
-                    resource::archive::res::OgreMaterialProvider* ogreMaterialProvider,
+    B3dSceneBuilder(std::string_view b3dId,
+                    const B3dSceneBuilderContext& context,
                     scene_node::SceneNodeBaseList& rootSceneNodes);
 
     ~B3dSceneBuilder();

@@ -48,6 +48,8 @@ scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupRoadInfra
 
 scene_node::SceneNodeBasePtr B3dTreeVisitor::CreateNode(const NodeGroupObjects5& node, const scene_node::SceneNodeBasePtr& parent, Ogre::SceneNode* sceneNode)
 {
+    D2_HACK_LOG(B3dTreeVisitor) << node.GetName();
+
     return CreateSceneNode<scene_node::OgreSceneNode<NodeGroupObjects5::Value>>(parent, node.GetName(), sceneNode);
 }
 

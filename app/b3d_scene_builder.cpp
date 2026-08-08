@@ -24,17 +24,14 @@ using namespace resource::data::b3d;
 using namespace resource::archive::res;
 
 
-B3dSceneBuilder::B3dSceneBuilder(const std::string_view& b3dId,
-                                 Ogre::SceneManager* sceneManager,
-                                 Ogre::SceneNode* ogreRootNode,
-                                 Ogre::MeshManager* meshManager,
-                                 OgreMaterialProvider* ogreMaterialProvider,
+B3dSceneBuilder::B3dSceneBuilder(std::string_view b3dId,
+                                 const B3dSceneBuilderContext& context,
                                  scene_node::SceneNodeBaseList& rootSceneNodes)
     : m_b3dId(b3dId)
-    , m_sceneManager(sceneManager)
-    , m_ogreRootNode(ogreRootNode)
-    , m_meshManager(meshManager)
-    , m_ogreMaterialProvider(ogreMaterialProvider)
+    , m_sceneManager(context.sceneManager)
+    , m_ogreRootNode(context.ogreRootNode)
+    , m_meshManager(context.meshManager)
+    , m_ogreMaterialProvider(context.ogreMaterialProvider)
     , m_rootSceneNodes(rootSceneNodes)
 {
 }

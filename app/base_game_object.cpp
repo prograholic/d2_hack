@@ -1,31 +1,13 @@
 #include <d2_hack/app/base_game_object.h>
 
-#include <d2_hack/scene_node/switchable_scene_nodes.h>
-
-#include <d2_hack/scene_node/switchable_scene_nodes.h>
-
-#include "b3d_scene_builder.h"
-#include "b3d_tree_visitor.h"
-
 namespace d2_hack
 {
 namespace app
 {
 
-using namespace resource::data::b3d;
-
-BaseGameObject::BaseGameObject(const B3dNodePtr& b3dNode,
-                               const std::string_view& b3dId,
-                               Ogre::SceneManager* sceneManager,
-                               Ogre::SceneNode* rootNode,
-                               Ogre::MeshManager* meshManager,
-                               resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
-    : m_rootNodes()
+BaseGameObject::BaseGameObject(scene_node::SceneNodeBaseList rootNodes)
+    : m_rootNodes(std::move(rootNodes))
 {
-    B3dSceneBuilder sceneBuilder{b3dId, sceneManager, rootNode, meshManager, ogreMaterialProvider, m_rootNodes};
-    B3dTreeVisitor visitor{sceneBuilder};
-    auto visitResult = VisitNode(b3dNode, visitor);
-    (void)visitResult;
 }
 
 void BaseGameObject::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)

@@ -8,15 +8,134 @@ namespace d2_hack
 namespace app
 {
 
-class B3dCar : public BaseGameObject
+
+class Wheel
 {
 public:
-    B3dCar(const resource::data::b3d::B3dNodePtr& b3dNode,
-           const std::string_view& b3dId,
-           Ogre::SceneManager* sceneManager,
-           Ogre::SceneNode* rootNode,
-           Ogre::MeshManager* meshManager,
-           resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+    void Rotate(float angle);
+
+private:
+    scene_node::SceneNodeBasePtr m_wheelSceneNode;
+};
+
+class Light
+{
+public:
+    void Switch(bool on);
+};
+
+
+
+
+class MoveableObject : public BaseGameObject
+{
+public:
+    explicit MoveableObject(scene_node::SceneNodeBaseList rootNodes);
+
+    void SetPosition(const Ogre::Vector3& position);
+};
+
+typedef std::unique_ptr<MoveableObject> MoveableObjectPtr;
+
+class DamageableObject : public MoveableObject
+{
+public:
+    explicit DamageableObject(scene_node::SceneNodeBaseList rootNodes);
+
+    void SetDamage(bool on);
+};
+
+class WheelBasedMoveableObject: public DamageableObject
+{
+public:
+    WheelBasedMoveableObject(scene_node::SceneNodeBaseList rootNodes,
+                             std::vector<Wheel> rearWheels,
+                             Light leftStopLight,
+                             Light rightStopLight,
+                             Light leftBackLight,
+                             Light rightBackLight);
+
+    void SwitchStopLights(bool on);
+
+    virtual void SwitchLight(bool on);
+private:
+    std::vector<Wheel> m_rearWheels;
+    Light m_leftStopLight;
+    Light m_rightStopLight;
+    Light m_leftBackLight;
+    Light m_rightBackLight;
+};
+
+class CarBase : public WheelBasedMoveableObject
+{
+public:
+    CarBase(scene_node::SceneNodeBaseList rootNodes,
+            std::vector<Wheel> rearWheels,
+            Light leftStopLight,
+            Light rightStopLight,
+            Light leftBackLight,
+            Light rightBackLight,
+            Wheel leftFrontWheel,
+            Wheel rightFrontWheel,
+            Light leftFrontLight,
+            Light rightFrontLight);
+
+    virtual void SwitchLight(bool on) override;
+private:
+    Wheel m_leftFrontWheel;
+    Wheel m_rightFrontWheel;
+
+    Light m_leftFrontLight;
+    Light m_rightFrontLight;
+};
+
+
+class B3dSemiTrailer : public WheelBasedMoveableObject
+{
+};
+
+class B3dHelicopter : public MoveableObject
+{
+};
+
+class B3dKatok : public MoveableObject
+{
+};
+
+// Truck, should be connected with semitrailer
+class B3dTruck : public CarBase
+{
+public:
+    B3dTruck(scene_node::SceneNodeBaseList rootNodes,
+             std::vector<Wheel> rearWheels,
+             Light leftStopLight,
+             Light rightStopLight,
+             Light leftBackLight,
+             Light rightBackLight,
+             Wheel leftFrontWheel,
+             Wheel rightFrontWheel,
+             Light leftFrontLight,
+             Light rightFrontLight);
+
+    void ConnectSemiTrailer(bool on, B3dSemiTrailer* trailer);
+};
+
+typedef std::unique_ptr<B3dTruck> B3dTruckPtr;
+
+// Simple car
+class B3dCar : public CarBase
+{
+public:
+    B3dCar(scene_node::SceneNodeBaseList rootNodes,
+           std::vector<Wheel> rearWheels,
+           Light leftStopLight,
+           Light rightStopLight,
+           Light leftBackLight,
+           Light rightBackLight,
+           Wheel leftFrontWheel,
+           Wheel rightFrontWheel,
+           Light leftFrontLight,
+           Light rightFrontLight);
 };
 
 typedef std::unique_ptr<B3dCar> B3dCarPtr;

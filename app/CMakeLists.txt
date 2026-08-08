@@ -1,19 +1,21 @@
 d2_hack_add_library(d2_hack.app
     include/d2_hack/app/base_application.h
     base_application.cpp
-    
+
     include/d2_hack/app/base_b3d_application.h
     base_b3d_application.cpp
-    
+
     include/d2_hack/app/b3d_car.h
     b3d_car.cpp
-    
+
     include/d2_hack/app/b3d_room.h
     b3d_room.cpp
-    
+
     include/d2_hack/app/base_game_object.h
     base_game_object.cpp
-    
+
+    include/d2_hack/app/b3d_scene_builder_context.h
+
     b3d_tree_visitor.cpp
     b3d_tree_visitor.h
 

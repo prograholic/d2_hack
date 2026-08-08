@@ -138,6 +138,17 @@ void SimpleTxrRenderer::CreateScene()
     //CreateB3dScene(b3dRegistry, cars, b3dSceneNode);
 }
 
+void SimpleTxrRenderer::CreateRooms(const B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
+{
+}
+
+void SimpleTxrRenderer::CreateMoveableObjects(const B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
+{
+}
+void SimpleTxrRenderer::OnCameraMoved(const scene_node::WorldContext& /* worldContext */, const Ogre::Vector3f& /* movement */)
+{
+}
+
 
 
 } // namespace app

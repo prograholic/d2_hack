@@ -17,6 +17,7 @@ using namespace resource::data::b3d;
 
 SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     : BaseB3dApplication("SimpleB3dMeshRenderer")
+    , m_rooms()
 {
 }
 void SimpleB3dMeshRenderer::CreateScene()
@@ -31,7 +32,7 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-    CreateB3dScene(SinglePlayerRegistry, AllCarNames, b3dSceneNode);
+    CreateB3dScene(SinglePlayerRegistry, b3dSceneNode);
 }
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
@@ -145,6 +146,41 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 void SimpleB3dMeshRenderer::shutdown()
 {
     BaseApplication::shutdown();
+}
+
+void SimpleB3dMeshRenderer::CreateRooms(const B3dForest& forest, Ogre::SceneNode* b3dSceneNode)
+{
+    for (const auto& tree : forest.forest)
+    {
+        for (const auto& rootNode : tree->rootNodes)
+        {
+            if (rootNode->GetNodeCategory() == NodeCategory::RoomNode)
+            {
+                if (!rootNode->GetChildNodeList().empty())
+                {
+                    m_rooms.emplace_back(CreateRoom(forest, rootNode->GetName(), b3dSceneNode));
+                }
+                else
+                {
+                    D2_HACK_LOG(CreateRootNodes) << "Skipping empty room: `" << rootNode->GetName() << "`";
+                }
+            }
+            else
+            {
+                D2_HACK_LOG(CreateRootNodes) << "Skipping uncategorized root node: `" << rootNode->GetName() << "`";
+            }
+        }
+    }
+}
+void SimpleB3dMeshRenderer::CreateMoveableObjects(const B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
+{
+}
+void SimpleB3dMeshRenderer::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
+{
+    for (const auto& room : m_rooms)
+    {
+        room->OnCameraMoved(worldContext, movement);
+    }
 }
 
 

@@ -18,28 +18,30 @@ public:
 
 public:
 
-    void CreateB3dScene(const resource::data::b3d::B3dRegistry& b3dRegistry, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
+    void CreateB3dScene(const resource::data::b3d::B3dRegistry& b3dRegistry, Ogre::SceneNode* b3dSceneNode);
+
+    B3dRoomPtr CreateRoom(const resource::data::b3d::B3dForest& forest, const std::string_view& roomId, Ogre::SceneNode* b3dSceneNode);
+
+    MoveableObjectPtr CreateMoveableObject(const resource::data::b3d::B3dForest& forest, const std::string_view& movObjId, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode);
 
     void ProcessCameraMovement();
 
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 
 private:
-    std::vector<B3dCarPtr> m_cars;
-    std::vector<B3dRoomPtr> m_rooms;
-
     scene_node::WorldContext m_worldContext;
 
     void PrintNodesStats(const char* prefix);
 
-    void CreateRoomNodes(const resource::data::b3d::B3dTree& tree, Ogre::SceneNode* b3dSceneNode);
+    virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
+    virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
 
-    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
+//    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
 
+    virtual void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement) = 0;
 
-    void CreateCarNode(const resource::data::b3d::B3dTree& tree, const std::string_view& carName, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode);
-
-    void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
+    B3dCarPtr CreateCar(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+    B3dTruckPtr CreateTruck(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
 };
 
 } // namespace app

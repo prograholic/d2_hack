@@ -5,9 +5,8 @@
 
 #include <memory>
 
-#include <d2_hack/resource/data/b3d_node.h>
 #include <d2_hack/scene_node/scene_node_base.h>
-#include <d2_hack/resource/archive/ogre_material_provider.h>
+
 
 namespace d2_hack
 {
@@ -17,19 +16,14 @@ namespace app
 class BaseGameObject
 {
 public:
-    BaseGameObject(const resource::data::b3d::B3dNodePtr& b3dNode,
-                   const std::string_view& b3dId,
-                   Ogre::SceneManager* sceneManager,
-                   Ogre::SceneNode* rootNode,
-                   Ogre::MeshManager* meshManager,
-                   resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+    explicit BaseGameObject(scene_node::SceneNodeBaseList rootNodes);
 
     virtual ~BaseGameObject() = default;
 
 
     void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement);
 
-private:
+protected:
     scene_node::SceneNodeBaseList m_rootNodes;
 };
 typedef std::unique_ptr<BaseGameObject> BaseGameObjectPtr;
