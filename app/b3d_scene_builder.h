@@ -17,6 +17,14 @@ namespace app
 {
 
 
+class SceneNodeObserver
+{
+public:
+    virtual ~SceneNodeObserver() = default;
+
+    virtual void OnSceneNode(scene_node::SceneNodeBasePtr node) = 0;
+};
+
 class B3dSceneBuilder
 {
 public:
@@ -26,7 +34,8 @@ public:
 
     B3dSceneBuilder(std::string_view b3dId,
                     const B3dSceneBuilderContext& context,
-                    scene_node::SceneNodeBaseList& rootSceneNodes);
+                    scene_node::SceneNodeBaseList& rootSceneNodes,
+                    SceneNodeObserver* observer = nullptr);
 
     ~B3dSceneBuilder();
 
@@ -63,6 +72,7 @@ private:
     scene_node::SceneNodeBaseList& m_rootSceneNodes;
     std::stack<Ogre::SceneNode*> m_ogreSceneNodes;
     std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
+    SceneNodeObserver* m_observer;
 
     Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const Ogre::MaterialPtr& material);
 

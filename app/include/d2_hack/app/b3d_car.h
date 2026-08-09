@@ -12,16 +12,28 @@ namespace app
 class Wheel
 {
 public:
-    void Rotate(float angle);
+    Wheel() = default;
+
+    explicit Wheel(scene_node::SceneNodeBasePtr wheelSceneNode);
+
+    void Rotate(Ogre::Degree angle);
+
+    void Turn(Ogre::Degree angle);
 
 private:
     scene_node::SceneNodeBasePtr m_wheelSceneNode;
+
+    Ogre::SceneNode* GetRotationalSceneNode();
 };
 
 class Light
 {
 public:
+    explicit Light(scene_node::SceneNodeBasePtr lightSceneNode);
+
     void Switch(bool on);
+private:
+    scene_node::SceneNodeBasePtr m_lightSceneNode;
 };
 
 
@@ -45,11 +57,13 @@ public:
     void SetDamage(bool on);
 };
 
+typedef std::map <std::string, Wheel, std::less<>> Wheels;
+
 class WheelBasedMoveableObject: public DamageableObject
 {
 public:
     WheelBasedMoveableObject(scene_node::SceneNodeBaseList rootNodes,
-                             std::vector<Wheel> rearWheels,
+                             Wheels wheels,
                              Light leftStopLight,
                              Light rightStopLight,
                              Light leftBackLight,
@@ -58,8 +72,11 @@ public:
     void SwitchStopLights(bool on);
 
     virtual void SwitchLight(bool on);
+
+    void Rotate(Ogre::Degree angle, std::string_view wheelId);
+    void Turn(Ogre::Degree angle, std::string_view wheelId);
 private:
-    std::vector<Wheel> m_rearWheels;
+    Wheels m_wheels;
     Light m_leftStopLight;
     Light m_rightStopLight;
     Light m_leftBackLight;
@@ -70,21 +87,16 @@ class CarBase : public WheelBasedMoveableObject
 {
 public:
     CarBase(scene_node::SceneNodeBaseList rootNodes,
-            std::vector<Wheel> rearWheels,
+            Wheels wheels,
             Light leftStopLight,
             Light rightStopLight,
             Light leftBackLight,
             Light rightBackLight,
-            Wheel leftFrontWheel,
-            Wheel rightFrontWheel,
             Light leftFrontLight,
             Light rightFrontLight);
 
     virtual void SwitchLight(bool on) override;
 private:
-    Wheel m_leftFrontWheel;
-    Wheel m_rightFrontWheel;
-
     Light m_leftFrontLight;
     Light m_rightFrontLight;
 };
@@ -92,14 +104,27 @@ private:
 
 class B3dSemiTrailer : public WheelBasedMoveableObject
 {
+public:
+    B3dSemiTrailer(scene_node::SceneNodeBaseList rootNodes,
+                   Wheels wheels,
+                   Light leftStopLight,
+                   Light rightStopLight,
+                   Light leftBackLight,
+                   Light rightBackLight);
 };
+
+typedef std::unique_ptr<B3dSemiTrailer> B3dSemiTrailerPtr;
 
 class B3dHelicopter : public MoveableObject
 {
+public:
+    explicit B3dHelicopter(scene_node::SceneNodeBaseList rootNodes);
 };
 
 class B3dKatok : public MoveableObject
 {
+public:
+    explicit B3dKatok(scene_node::SceneNodeBaseList rootNodes);
 };
 
 // Truck, should be connected with semitrailer
@@ -107,13 +132,11 @@ class B3dTruck : public CarBase
 {
 public:
     B3dTruck(scene_node::SceneNodeBaseList rootNodes,
-             std::vector<Wheel> rearWheels,
+             Wheels wheels,
              Light leftStopLight,
              Light rightStopLight,
              Light leftBackLight,
              Light rightBackLight,
-             Wheel leftFrontWheel,
-             Wheel rightFrontWheel,
              Light leftFrontLight,
              Light rightFrontLight);
 
@@ -127,13 +150,11 @@ class B3dCar : public CarBase
 {
 public:
     B3dCar(scene_node::SceneNodeBaseList rootNodes,
-           std::vector<Wheel> rearWheels,
+           Wheels wheels,
            Light leftStopLight,
            Light rightStopLight,
            Light leftBackLight,
            Light rightBackLight,
-           Wheel leftFrontWheel,
-           Wheel rightFrontWheel,
            Light leftFrontLight,
            Light rightFrontLight);
 };

@@ -125,29 +125,6 @@ B3dRoomPtr BaseB3dApplication::CreateRoom(const B3dForest& forest, const std::st
     return std::make_unique<B3dRoom>(std::move(rootNodes));
 }
 
-#if 0
-void BaseB3dApplication::CreateCarNodes(const B3dTree& tree, const CarNameList& carNames, Ogre::SceneNode* b3dSceneNode)
-{
-    for (size_t i = 0; i != carNames.size(); ++i)
-    {
-        CreateCarNode(tree, carNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode);
-    }
-}
-
-void BaseB3dApplication::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
-{
-    for (const auto& room : m_rooms)
-    {
-        room->OnCameraMoved(worldContext, movement);
-    }
-
-    for (const auto& car : m_cars)
-    {
-        car->OnCameraMoved(worldContext, movement);
-    }
-}
-#endif // 0
-
 MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& forest, const std::string_view& movObjId, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode)
 {
     B3dNodePtr moveableObject;
@@ -164,20 +141,83 @@ MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& fore
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Cannot find node by name {}", movObjId));
     }
-
-    //if (moveableObject->GetNodeCategory() != NodeCategory::CarNode)
-    //{
-    //    OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Incorrect node category {} for {}", static_cast<int>(moveableObject->GetNodeCategory()), moveableObject->GetName()));
-    //}
     if (moveableObject->GetChildNodeList().empty())
     {
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Cannot create empty moveable object {}", moveableObject->GetName()));
     }
 
-    static std::set<std::string_view> cars{"Zil"};
-    static std::set<std::string_view> trucks{"FreightLiner"};
-    static std::set<std::string_view> semiTrailes{"STrailerP"};
-    static std::set<std::string_view> customMoveableObjects{ "k50", "Katok"};
+    static const std::set<std::string_view> cars
+    {
+        "BmwM5police",
+        "BmwM5",
+        "Cayman",
+        "Offroad",
+        "Pickup",
+        "Patrol",
+        "Gazelle",
+        "Gazelle1C",
+        "Sobol",
+        "RenaultR",
+        "KamazR",
+        "ScaniaR",
+        "ZilR",
+        "MercedesR",
+        "VolvoR",
+        "DafR",
+        "StormR",
+        "PBmwM5",
+        "POffroad",
+        "PPickup",
+        "PPatrol",
+        "PGazelle",
+        "PSobol",
+        "PMarera",
+        "PMegan",
+        "PMini",
+        "POka",
+        "PVan",
+        "PBus",
+        "PVolga",
+        "PFiat",
+        "PAvensis",
+        "Mini",
+        "Marera",
+        "Bus",
+        "Megan",
+        "Oka",
+        "Van",
+        "Avensis",
+        "Volga",
+        "Fiat",
+    };
+    static const std::set<std::string_view> trucks
+    {
+        "Zil",
+        "Kamaz",
+        "Freightliner",
+        "Scania",
+        "Renault",
+        "Kenworth",
+        "Mack",
+        "Peterbilt",
+        "Daf",
+        "Mercedes",
+        "Volvo",
+        "Storm",
+        "International"
+    };
+    static const std::set<std::string_view> semiTrailes
+    {
+        "STrailerP",
+        "STrailerT",
+        "STrailerM",
+        "STrailerStorm",
+    };
+    static const std::set<std::string_view> customMoveableObjects
+    {
+        "k50",
+        "Katok"
+    };
 
     auto moveableSceneNode = b3dSceneNode->createChildSceneNode(location);
 
@@ -185,50 +225,205 @@ MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& fore
     {
         return CreateCar(forest.trucks->id, moveableObject, moveableSceneNode);
     }
-    if (trucks.find(movObjId) != cars.end())
+    if (trucks.find(movObjId) != trucks.end())
     {
         return CreateTruck(forest.trucks->id, moveableObject, moveableSceneNode);
+    }
+    if (semiTrailes.find(movObjId) != semiTrailes.end())
+    {
+        return CreateSemiTrailer(forest.trucks->id, moveableObject, moveableSceneNode);
+    }
+    if (customMoveableObjects.find(movObjId) != customMoveableObjects.end())
+    {
+        return CreateCustomMoveableObject(forest.trucks->id, moveableObject, moveableSceneNode);
     }
 
     OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Cannot deduce moveable object type for {}", movObjId));
 }
 
+
+class WheelBasedMovableObjectObserver : public SceneNodeObserver
+{
+public:
+
+    virtual void OnSceneNode(scene_node::SceneNodeBasePtr node) override
+    {
+#define MANAGE_WHEEL(id) \
+        if (node->GetName().ends_with("wheel" #id))\
+        { \
+            m_wheels["wheel" #id] = GetWheel(node, "wheel" #id); \
+        }
+
+        MANAGE_WHEEL(0);
+        MANAGE_WHEEL(1);
+        MANAGE_WHEEL(2);
+        MANAGE_WHEEL(3);
+        MANAGE_WHEEL(4);
+        MANAGE_WHEEL(5);
+        MANAGE_WHEEL(6);
+        MANAGE_WHEEL(7);
+
+#undef MANAGE_WHEEL
+
+
+
+    }
+
+    Wheels GetWheels()
+    {
+        return m_wheels;
+    }
+
+    Light GetLeftStopLight()
+    {
+        return GetLight(m_leftStopLight, "left stop");
+    }
+
+    Light GetRightStopLight()
+    {
+        return GetLight(m_rightStopLight, "right stop");
+    }
+
+    Light GetLeftBackLight()
+    {
+        return GetLight(m_leftBackLight, "left back");
+    }
+
+    Light GetRightBackLight()
+    {
+        return GetLight(m_rightBackLight, "right back");
+    }
+
+    static Light GetLight(scene_node::SceneNodeBasePtr lightNode, const char* /* nodeName   */)
+    {
+        //if (!lightNode)
+        //{
+        //    OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Cannot get light for {}", nodeName));
+        //}
+
+        return Light{ lightNode };
+    }
+
+    static Wheel GetWheel(scene_node::SceneNodeBasePtr wheelNode, const char* nodeName)
+    {
+        if (!wheelNode)
+        {
+            OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Cannot get wheel for {}", nodeName));
+        }
+
+        return Wheel{ wheelNode };
+    }
+
+private:
+    Wheels m_wheels;
+    scene_node::SceneNodeBasePtr m_leftStopLight;
+    scene_node::SceneNodeBasePtr m_rightStopLight;
+    scene_node::SceneNodeBasePtr m_leftBackLight;
+    scene_node::SceneNodeBasePtr m_rightBackLight;
+
+
+};
+
+class CarBaseObserver : public WheelBasedMovableObjectObserver
+{
+public:
+    virtual void OnSceneNode(scene_node::SceneNodeBasePtr node) override
+    {
+        WheelBasedMovableObjectObserver::OnSceneNode(node);
+
+        if (node->GetName() == "refer_HeadLightKey")
+        {
+            m_leftFrontLight = node;
+            m_rightFrontLight = node;
+        }
+    }
+
+    Light GetLeftFrontLight()
+    {
+        return GetLight(m_leftFrontLight, "left front");
+    }
+        
+    Light GetRightFrontLight()
+    {
+        return GetLight(m_rightFrontLight, "right front");
+    }
+
+
+private:
+    scene_node::SceneNodeBasePtr m_leftFrontLight;
+    scene_node::SceneNodeBasePtr m_rightFrontLight;
+};
+
 B3dCarPtr BaseB3dApplication::CreateCar(std::string_view b3dId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
 {
     scene_node::SceneNodeBaseList rootNodes;
-    std::vector<Wheel> rearWheels;
-    Light leftStopLight;
-    Light rightStopLight;
-    Light leftBackLight;
-    Light rightBackLight;
-    Wheel leftFrontWheel;
-    Wheel rightFrontWheel;
-    Light leftFrontLight;
-    Light rightFrontLight;
 
     B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
-
-    B3dSceneBuilder builder{ b3dId, context, rootNodes };
+    CarBaseObserver observer;
+    B3dSceneBuilder builder{ b3dId, context, rootNodes, &observer };
     B3dTreeVisitor visitor{ builder };
 
     auto visitResult = VisitNode(moveableObject, visitor);
     (void)visitResult;
 
-    return std::make_unique<B3dCar>(std::move(rootNodes), std::move(rearWheels), leftStopLight, rightStopLight, leftBackLight, rightBackLight, leftFrontWheel, rightFrontWheel, leftFrontLight, rightFrontLight);
+    return std::make_unique<B3dCar>(
+        std::move(rootNodes),
+        std::move(observer.GetWheels()),
+        observer.GetLeftStopLight(),
+        observer.GetRightStopLight(),
+        observer.GetLeftBackLight(),
+        observer.GetRightBackLight(),
+        observer.GetLeftFrontLight(),
+        observer.GetRightFrontLight());
 }
 
 B3dTruckPtr BaseB3dApplication::CreateTruck(std::string_view b3dId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
 {
     scene_node::SceneNodeBaseList rootNodes;
-    std::vector<Wheel> rearWheels;
-    Light leftStopLight;
-    Light rightStopLight;
-    Light leftBackLight;
-    Light rightBackLight;
-    Wheel leftFrontWheel;
-    Wheel rightFrontWheel;
-    Light leftFrontLight;
-    Light rightFrontLight;
+
+    B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
+    CarBaseObserver observer;
+    B3dSceneBuilder builder{ b3dId, context, rootNodes, &observer };
+    B3dTreeVisitor visitor{ builder };
+
+    auto visitResult = VisitNode(moveableObject, visitor);
+    (void)visitResult;
+
+    return std::make_unique<B3dTruck>(
+        std::move(rootNodes),
+        std::move(observer.GetWheels()),
+        observer.GetLeftStopLight(),
+        observer.GetRightStopLight(),
+        observer.GetLeftBackLight(),
+        observer.GetRightBackLight(),
+        observer.GetLeftFrontLight(),
+        observer.GetRightFrontLight());
+}
+
+B3dSemiTrailerPtr BaseB3dApplication::CreateSemiTrailer(std::string_view b3dId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
+{
+    scene_node::SceneNodeBaseList rootNodes;
+
+    B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
+    WheelBasedMovableObjectObserver observer;
+    B3dSceneBuilder builder{ b3dId, context, rootNodes, &observer };
+    B3dTreeVisitor visitor{ builder };
+
+    auto visitResult = VisitNode(moveableObject, visitor);
+    (void)visitResult;
+
+    return std::make_unique<B3dSemiTrailer>(
+        std::move(rootNodes),
+        std::move(observer.GetWheels()),
+        observer.GetLeftStopLight(),
+        observer.GetRightStopLight(),
+        observer.GetLeftBackLight(),
+        observer.GetRightBackLight());
+}
+
+MoveableObjectPtr BaseB3dApplication::CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
+{
+    scene_node::SceneNodeBaseList rootNodes;
 
     B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
 
@@ -238,7 +433,15 @@ B3dTruckPtr BaseB3dApplication::CreateTruck(std::string_view b3dId, const B3dNod
     auto visitResult = VisitNode(moveableObject, visitor);
     (void)visitResult;
 
-    return std::make_unique<B3dTruck>(std::move(rootNodes), std::move(rearWheels), leftStopLight, rightStopLight, leftBackLight, rightBackLight, leftFrontWheel, rightFrontWheel, leftFrontLight, rightFrontLight);
+    if (moveableObject->GetName() == "k50")
+    {
+        return std::make_unique<B3dHelicopter>(std::move(rootNodes));
+    }
+    else
+    {
+        assert(moveableObject->GetName() == "Katok");
+        return std::make_unique<B3dKatok>(std::move(rootNodes));
+    }
 }
 
 } // namespace app

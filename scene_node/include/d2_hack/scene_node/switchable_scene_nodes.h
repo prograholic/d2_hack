@@ -18,11 +18,11 @@ public:
 };
 
 
-class SwitchableOgreSceneNode : public SceneNodeBase
+class SwitchableOgreSceneNode : public OgreSceneNodeBase
 {
 public:
 
-    SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type);
+    SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type, Ogre::SceneNode* ogreSceneNode);
 
     virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
@@ -61,6 +61,10 @@ public:
         const std::string_view& name,
         Ogre::SceneNode* ogreSceneNode,
         const resource::data::b3d::block_data::GroupObjects21& data);
+
+    size_t StateCount() const;
+
+    void SetActiveState(size_t stateId);
 
 private:
     virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;

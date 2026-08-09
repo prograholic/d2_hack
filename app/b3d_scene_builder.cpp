@@ -26,13 +26,15 @@ using namespace resource::archive::res;
 
 B3dSceneBuilder::B3dSceneBuilder(std::string_view b3dId,
                                  const B3dSceneBuilderContext& context,
-                                 scene_node::SceneNodeBaseList& rootSceneNodes)
+                                 scene_node::SceneNodeBaseList& rootSceneNodes,
+                                 SceneNodeObserver* observer)
     : m_b3dId(b3dId)
     , m_sceneManager(context.sceneManager)
     , m_ogreRootNode(context.ogreRootNode)
     , m_meshManager(context.meshManager)
     , m_ogreMaterialProvider(context.ogreMaterialProvider)
     , m_rootSceneNodes(rootSceneNodes)
+    , m_observer(observer)
 {
 }
 
@@ -173,6 +175,10 @@ void B3dSceneBuilder::PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& n
 
 void B3dSceneBuilder::PopFromSceneNodeStack()
 {
+    if (m_observer)
+    {
+        m_observer->OnSceneNode(m_sceneNodesStack.top());
+    }
     m_sceneNodesStack.pop();
 }
 

@@ -53,27 +53,11 @@ typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;
 typedef std::deque<SceneNodeBasePtr> SceneNodeBaseList;
 
 
-template <std::uint32_t NodeTypeId, typename SceneNodeBaseType>
-class SceneNode : public SceneNodeBaseType
+class OgreSceneNodeBase : public SceneNodeBase
 {
 public:
-    static constexpr std::uint32_t Value = NodeTypeId;
-
-    template<typename... Args>
-    SceneNode(const std::string_view& name, Args&&... args)
-        : SceneNodeBaseType(name, Value, std::forward<Args&&>(args)...)
-    {
-    }
-};
-
-template <std::uint32_t NodeTypeId, typename SceneNodeBaseType = SceneNodeBase>
-class OgreSceneNode : public SceneNode<NodeTypeId, SceneNodeBaseType>
-{
-public:
-
-    template<typename... Args>
-    OgreSceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode, Args&&... args)
-        : SceneNode<NodeTypeId, SceneNodeBaseType>(name, std::forward<Args&&>(args)...)
+    OgreSceneNodeBase(const std::string_view& name, std::uint32_t type, Ogre::SceneNode* ogreSceneNode)
+        : SceneNodeBase(name, type)
         , m_ogreSceneNode(ogreSceneNode)
     {
     }
@@ -93,8 +77,38 @@ public:
         return m_ogreSceneNode->_getDerivedOrientation();
     }
 
+    Ogre::SceneNode* GetOgreSceneNode()
+    {
+        return m_ogreSceneNode;
+    }
+
 private:
     Ogre::SceneNode* m_ogreSceneNode;
+};
+
+template <std::uint32_t NodeTypeId, typename SceneNodeBaseType>
+class SceneNode : public SceneNodeBaseType
+{
+public:
+    static constexpr std::uint32_t Value = NodeTypeId;
+
+    template<typename... Args>
+    SceneNode(const std::string_view& name, Args&&... args)
+        : SceneNodeBaseType(name, Value, std::forward<Args&&>(args)...)
+    {
+    }
+};
+
+template <std::uint32_t NodeTypeId, typename SceneNodeBaseType = OgreSceneNodeBase>
+class OgreSceneNode : public SceneNode<NodeTypeId, SceneNodeBaseType>
+{
+public:
+
+    template<typename... Args>
+    OgreSceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode, Args&&... args)
+        : SceneNode<NodeTypeId, SceneNodeBaseType>(name, ogreSceneNode, std::forward<Args&&>(args)...)
+    {
+    }
 };
 
 template <typename Node, typename... Args>

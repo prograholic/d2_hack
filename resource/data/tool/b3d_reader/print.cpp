@@ -986,7 +986,7 @@ static std::filesystem::path ConstructOutputPathName(const B3dTree& tree, const 
 
 static void PrintTree(const B3dTree& tree, const boost::program_options::variables_map& vm)
 {
-    const bool printBoundingSphere = (vm.count(options::printing::skip_bounding_sphere) > 0);
+    const bool printBoundingSphere = (vm.count(options::printing::skip_bounding_sphere) == 0);
     const bool printVectorData = (vm.count(options::printing::skip_vector_data) == 0);
     const bool printFaceInfo = (vm.count(options::printing::skip_face_info) == 0);
     const bool printMeshInfo = (vm.count(options::printing::skip_mesh_info) == 0);

@@ -17,8 +17,8 @@ EventEntrySceneNode::EventEntrySceneNode(const std::string_view& name, Ogre::Sce
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type)
-    : SceneNodeBase(name, type)
+SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type, Ogre::SceneNode* ogreSceneNode)
+    : OgreSceneNodeBase(name, type, ogreSceneNode)
 {
 }
 

@@ -2,14 +2,10 @@
 
 #include "simple_b3d_car_renderer.h"
 
-int main(int argc, char * argv [])
+int main(int /* argc */, char* /* argv */[])
 {
     try
     {
-        if (argc > 1)
-        {
-            d2_hack::app::node_name = argv[1];
-        }
         d2_hack::app::SimpleB3dCarRenderer app;
         
         app.initApp();

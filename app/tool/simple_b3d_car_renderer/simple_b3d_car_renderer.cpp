@@ -32,7 +32,10 @@ void SimpleB3dCarRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
-    CreateB3dScene(SinglePlayerRegistry, b3dSceneNode);
+    B3dRegistry reg = SinglePlayerRegistry;
+    reg.entries.resize(1);
+
+    CreateB3dScene(reg, b3dSceneNode);
 }
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
@@ -79,6 +82,182 @@ const char* node_name = "b3d.scene_node";
 
 bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
+    if (evt.keysym.sym == '1')
+    {
+        PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
+    }
+    else if (evt.keysym.sym == '2')
+    {
+        static int cnt = 0;
+
+        Ogre::SceneNode* node = m_sceneManager->getSceneNode(node_name, false);
+        if (node)
+        {
+            PrintSubMeshesForNode(node, cnt);
+        }
+    }
+    else if (evt.keysym.sym == '3')
+    {
+        static int cnt = 0;
+
+        const auto& children = m_sceneManager->getSceneNode(node_name)->getChildren();
+        if (!children.empty())
+        {
+            Ogre::Node* node = children[cnt % children.size()];
+
+            Ogre::SceneNode* sceneNode = static_cast<Ogre::SceneNode*>(node);
+            sceneNode->flipVisibility();
+            D2_HACK_LOG(YYY) << node->getName();
+            cnt += 1;
+        }
+    }
+    else if (evt.keysym.sym == '5')
+    {
+        static int cnt = 0;
+        cnt += 1;
+        int dir = ((cnt % 2) * 2) - 1; // [-1, 1]
+
+        auto children = m_sceneManager->getSceneNode(node_name)->getChildren();
+
+        int i = 0;
+        while (!children.empty())
+        {
+            auto child = children[0];
+            children.erase(children.begin());
+            children.insert(children.end(), child->getChildren().begin(), child->getChildren().end());
+
+            i += 2;
+            auto pos = child->getPosition();
+            pos.z += (i * dir);
+
+            child->setPosition(pos);
+        }
+    }
+    else if (evt.keysym.sym == '6')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        auto car = static_cast<B3dTruck*>(m_moveableObjects[0].get());
+        //car->SwitchLight(true);
+        
+        car->Rotate(Ogre::Degree{ angle }, "wheel5");
+    }
+    else if (evt.keysym.sym == 'b')
+    {
+        D2_HACK_LOG(BREAK) << "BAAD";
+    }
+    else if (evt.keysym.sym == 'g')
+    {
+        D2_HACK_LOG(BREAK) << "GOOD";
+    }
+
+#if 0
+    if (evt.keysym.sym == '0')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel0");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '1')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel1");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '2')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel2");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '3')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel3");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '4')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel4");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '5')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel5");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '6')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel6");
+            }
+        }
+    }
+    else if (evt.keysym.sym == '7')
+    {
+        static float angle = 0.0f;
+        angle -= 0.1f;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
+            if (wheelBased)
+            {
+                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel7");
+            }
+        }
+    }
+#endif //0
+
     return BaseB3dApplication::keyPressed(evt);
 }
 
@@ -94,8 +273,15 @@ void SimpleB3dCarRenderer::CreateRooms(const resource::data::b3d::B3dForest& /* 
 
 void SimpleB3dCarRenderer::CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode)
 {
-    for (size_t i = 0; i != AllCarNames.size(); ++i)
+    static const std::string_view Cars[] =
     {
+        "Storm",
+        "Zil"
+    };
+    for (size_t i = 0; i != AllCarNames.size(); ++i)
+    //for (size_t i = 0; i != _countof(Cars); ++i)
+    {
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
         m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
     }
 }

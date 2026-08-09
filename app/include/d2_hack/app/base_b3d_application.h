@@ -36,12 +36,12 @@ private:
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
     virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
 
-//    void CreateCarNodes(const resource::data::b3d::B3dTree& tree, const resource::data::b3d::CarNameList& carNames, Ogre::SceneNode* b3dSceneNode);
-
     virtual void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement) = 0;
 
     B3dCarPtr CreateCar(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     B3dTruckPtr CreateTruck(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+    B3dSemiTrailerPtr CreateSemiTrailer(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+    MoveableObjectPtr CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
 };
 
 } // namespace app
