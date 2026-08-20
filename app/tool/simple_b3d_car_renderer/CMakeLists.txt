@@ -8,4 +8,5 @@ d2_hack_add_executable(d2_hack.app.simple_b3d_car_renderer
 target_link_libraries(d2_hack.app.simple_b3d_car_renderer
     PRIVATE
         d2_hack.app
+        OgreBullet
 )

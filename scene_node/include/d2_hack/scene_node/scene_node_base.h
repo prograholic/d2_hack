@@ -26,19 +26,6 @@ public:
 
     static size_t GetSceneNodeBaseCount();
 
-    /**
-     * @param worldContext - stores actual player location
-     * @param movement - delta between previous player location and current
-     */
-    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
-    {
-        for (const auto& childNode : this->GetChildNodeList())
-        {
-            SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-            childSceneNode->OnCameraMoved(worldContext, movement);
-        }
-    }
-
     virtual void SetVisible(bool visible) = 0;
 
     virtual Ogre::Vector3f GetAbsolutePosition() const = 0;
@@ -62,7 +49,7 @@ public:
     {
     }
 
-    virtual void SetVisible(bool visible) override
+    void SetVisible(bool visible)
     {
         m_ogreSceneNode->setVisible(visible);
     }

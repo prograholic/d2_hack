@@ -172,17 +172,10 @@ void SimpleB3dMeshRenderer::CreateRooms(const B3dForest& forest, Ogre::SceneNode
         }
     }
 }
+
 void SimpleB3dMeshRenderer::CreateMoveableObjects(const B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
 {
 }
-void SimpleB3dMeshRenderer::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
-{
-    for (const auto& room : m_rooms)
-    {
-        room->OnCameraMoved(worldContext, movement);
-    }
-}
-
 
 } // namespace app
 } // namespace d2_hack

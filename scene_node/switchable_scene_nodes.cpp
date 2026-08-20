@@ -8,27 +8,48 @@ namespace d2_hack
 namespace scene_node
 {
 
-EventEntrySceneNode::EventEntrySceneNode(const std::string_view& name, Ogre::SceneNode* ogreSceneNode)
-    : OgreSceneNode<resource::data::b3d::block_data::EventEntryBlockXxx>(name, ogreSceneNode)
+EventEntrySceneNode::EventEntrySceneNode(const std::string_view& name)
+    : SceneNode<resource::data::b3d::block_data::EventEntryBlockXxx, SceneNodeBase>(name)
 {
+}
+
+Ogre::Vector3f EventEntrySceneNode::GetAbsolutePosition() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "EventEntrySceneNode::GetAbsolutePosition is not implemented");
+}
+
+Ogre::Quaternion EventEntrySceneNode::GetAbsoluteOrientation() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "EventEntrySceneNode::GetAbsoluteOrientation is not implemented");
+}
+
+void EventEntrySceneNode::SetVisible(bool /* visible */)
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "EventEntrySceneNode::SetVisible is not implemented");
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-SwitchableOgreSceneNode::SwitchableOgreSceneNode(const std::string_view& name, std::uint32_t type, Ogre::SceneNode* ogreSceneNode)
-    : OgreSceneNodeBase(name, type, ogreSceneNode)
+SwitchableSceneNode::SwitchableSceneNode(const std::string_view& name, std::uint32_t type)
+    : SceneNodeBase(name, type)
 {
 }
 
-void SwitchableOgreSceneNode::OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement)
+Ogre::Vector3f SwitchableSceneNode::GetAbsolutePosition() const
 {
-    SceneNodeBase* activeNode = ActivateItem(worldContext);
-    if (activeNode)
-    {
-        activeNode->OnCameraMoved(worldContext, movement);
-    }
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SwitchableSceneNode::GetAbsolutePosition is not implemented");
+}
+
+Ogre::Quaternion SwitchableSceneNode::GetAbsoluteOrientation() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SwitchableSceneNode::GetAbsoluteOrientation is not implemented");
+}
+
+void SwitchableSceneNode::SetVisible(bool /* visible */)
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SwitchableSceneNode::SetVisible is not implemented");
 }
 
 
@@ -37,9 +58,8 @@ void SwitchableOgreSceneNode::OnCameraMoved(const WorldContext& worldContext, co
 
 GroupUnknown2::GroupUnknown2(
     const std::string_view& name,
-    Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupUnknown2& /* data */)
-    : OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableOgreSceneNode>(name, ogreSceneNode)
+    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableSceneNode>(name)
 {
 }
 
@@ -68,9 +88,8 @@ SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& /* worldContext *
 
 GroupTrigger9::GroupTrigger9(
     const std::string_view& name,
-    Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupTrigger9& /* data */)
-    : OgreSceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableOgreSceneNode>(name, ogreSceneNode)
+    : SceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableSceneNode>(name)
 {
 }
 
@@ -97,9 +116,8 @@ SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& /* worldContext *
 
 SceneNodeEvent21::SceneNodeEvent21(
     const std::string_view& name,
-    Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupObjects21& /* data */)
-    : OgreSceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableOgreSceneNode>(name, ogreSceneNode)
+    : SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableSceneNode>(name)
 {
 }
 
@@ -114,7 +132,7 @@ SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& /* worldContex
         if (res == nullptr)
         {
             res = childSceneNode;
-            res->SetVisible(true);
+            childSceneNode->SetVisible(true);
         }
         else
         {
@@ -127,9 +145,8 @@ SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& /* worldContex
 
 GroupUnknown29::GroupUnknown29(
     const std::string_view& name,
-    Ogre::SceneNode* ogreSceneNode,
     const resource::data::b3d::block_data::GroupUnknown29& /* data */)
-    : OgreSceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableOgreSceneNode>(name, ogreSceneNode)
+    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableSceneNode>(name)
 {
 }
 

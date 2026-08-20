@@ -29,6 +29,8 @@ private:
 class Light
 {
 public:
+    Light() = default;
+
     explicit Light(scene_node::SceneNodeBasePtr lightSceneNode);
 
     void Switch(bool on);

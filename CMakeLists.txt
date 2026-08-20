@@ -42,6 +42,7 @@ copy_ogre_target_runtime(OgreOverlay)
 copy_ogre_target_runtime(OgreRTShaderSystem)
 copy_ogre_target_runtime(OgreTerrain)
 copy_ogre_target_runtime(OgrePaging)
+copy_ogre_target_runtime(OgreBullet)
 
 copy_ogre_runtime(RenderSystem_GL)
 

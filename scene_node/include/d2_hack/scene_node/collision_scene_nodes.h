@@ -17,8 +17,6 @@ public:
         const std::string_view& name,
         const resource::data::b3d::block_data::SimpleFlatCollision20& data);
 
-    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
-
     virtual void SetVisible(bool visible) override;
 
     virtual Ogre::Vector3f GetAbsolutePosition() const override;
@@ -32,8 +30,6 @@ public:
     SimpleVolumeCollision23(
         const std::string_view& name,
         const resource::data::b3d::block_data::SimpleVolumeCollision23& data);
-
-    virtual void OnCameraMoved(const WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 
     virtual void SetVisible(bool visible) override;
 

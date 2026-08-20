@@ -122,5 +122,10 @@ std::string GetMeshName(const std::string_view& b3dId, const std::string_view& n
     return GetResourceName(b3dId, "MESH", newName, ForceUnique::No);
 }
 
+std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name)
+{
+    return GetResourceName(b3dId, "MESH", name, ForceUnique::No);
+}
+
 } // namespace common
 } // namespace d2_hack

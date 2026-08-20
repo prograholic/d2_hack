@@ -20,6 +20,27 @@ SimpleB3dCarRenderer::SimpleB3dCarRenderer()
     , m_moveableObjects()
 {
 }
+
+
+static void AddEntityToBullet(Ogre::SceneNode* node, Ogre::Bullet::DynamicsWorld* dynWorld)
+{
+    const auto& objs = node->getAttachedObjects();
+    for (auto obj : objs)
+    {
+        Ogre::Entity* e = dynamic_cast<Ogre::Entity*>(obj);
+        if (e)
+        {
+            dynWorld->addRigidBody(100, e, Ogre::Bullet::CT_SPHERE);
+        }
+    }
+
+    const auto& children = node->getChildren();
+    for (auto child : children)
+    {
+        AddEntityToBullet(static_cast<Ogre::SceneNode*>(child), dynWorld);
+    }
+}
+
 void SimpleB3dCarRenderer::CreateScene()
 {
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
@@ -36,6 +57,26 @@ void SimpleB3dCarRenderer::CreateScene()
     reg.entries.resize(1);
 
     CreateB3dScene(reg, b3dSceneNode);
+
+    m_dynWorld.reset(new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0.0f, -9.8f, 0.0)));
+    m_dbgDraw.reset(new Ogre::Bullet::DebugDrawer(m_sceneManager->getRootSceneNode(), m_dynWorld->getBtWorld()));
+
+#if 0
+    
+    
+
+    for (auto& moveableObject : m_moveableObjects)
+    {
+        for (const auto& moveableRootNode : moveableObject->GetRootNodes())
+        {
+            Ogre::SceneNode* sceneNode = std::static_pointer_cast<scene_node::OgreSceneNodeBase>(moveableRootNode)->GetOgreSceneNode();
+            AddEntityToBullet(sceneNode, m_dynWorld.get());
+        }
+    }
+#endif //0
+
+    //m_dynWorld->addRigidBody(5, player, Bullet::CT_SPHERE);
+    //m_dynWorld->addRigidBody(0, level, Bullet::CT_TRIMESH);
 }
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
@@ -266,6 +307,14 @@ void SimpleB3dCarRenderer::shutdown()
     BaseApplication::shutdown();
 }
 
+bool SimpleB3dCarRenderer::frameStarted(const Ogre::FrameEvent& event)
+{
+    m_dynWorld->getBtWorld()->stepSimulation(event.timeSinceLastFrame, 10);
+    m_dbgDraw->update();
+
+    return BaseB3dApplication::frameStarted(event);
+}
+
 
 void SimpleB3dCarRenderer::CreateRooms(const resource::data::b3d::B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
 {
@@ -275,25 +324,17 @@ void SimpleB3dCarRenderer::CreateMoveableObjects(const resource::data::b3d::B3dF
 {
     static const std::string_view Cars[] =
     {
-        "Storm",
+        //"Storm",
         "Zil"
+        //"STrailerP"
     };
-    for (size_t i = 0; i != AllCarNames.size(); ++i)
-    //for (size_t i = 0; i != _countof(Cars); ++i)
+    //for (size_t i = 0; i != AllCarNames.size(); ++i)
+    for (size_t i = 0; i != _countof(Cars); ++i)
     {
-        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
-        m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
     }
 }
-
-void SimpleB3dCarRenderer::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
-{
-    for (const auto& moveableObject : m_moveableObjects)
-    {
-        moveableObject->OnCameraMoved(worldContext, movement);
-    }
-}
-
 
 } // namespace app
 } // namespace d2_hack

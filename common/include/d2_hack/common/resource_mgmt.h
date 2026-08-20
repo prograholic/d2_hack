@@ -97,6 +97,8 @@ std::string GetSceneNodeName(const std::string_view& b3dId, const std::string_vi
 
 std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name, const std::string_view& materialName);
 
+std::string GetMeshName(const std::string_view& b3dId, const std::string_view& name);
+
 } // namespace common
 } // namespace d2_hack
 

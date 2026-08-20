@@ -24,7 +24,6 @@ private:
 
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) override;
     virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) override;
-    virtual void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 };
 
 

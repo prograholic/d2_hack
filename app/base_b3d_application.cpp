@@ -1,8 +1,16 @@
 #include <d2_hack/app/base_b3d_application.h>
 
 #include <d2_hack/common/log.h>
+#include <d2_hack/common/resource_mgmt.h>
+#include <d2_hack/common/numeric_conversion.h>
 #include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
+#include <d2_hack/scene_node/switchable_scene_nodes.h>
+
+#include <OgreMesh.h>
+#include <OgreSubMesh.h>
+#include <OgreHardwareBufferManager.h>
+#include <OgreEntity.h>
 
 #include "b3d_scene_builder.h"
 #include "b3d_tree_visitor.h"
@@ -45,22 +53,8 @@ void BaseB3dApplication::CreateB3dScene(const B3dRegistry& b3dRegistry, Ogre::Sc
     b3dSceneNode->pitch(Ogre::Radian(Ogre::Degree(-90)), Ogre::Node::TransformSpace::TS_WORLD);
 }
 
-void BaseB3dApplication::ProcessCameraMovement()
-{
-    Ogre::Vector3f currentPlayerPosition = m_cameraSceneNode->_getDerivedPosition();
-    Ogre::Vector3f movement = currentPlayerPosition - m_worldContext.playerPosition;
-    m_worldContext.playerPosition = currentPlayerPosition;
-
-    if (movement != Ogre::Vector3f::ZERO)
-    {
-        OnCameraMoved(m_worldContext, movement);
-    }
-}
-
 bool BaseB3dApplication::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
-    ProcessCameraMovement();
-
     if (evt.keysym.sym == '=')
     {
         m_cameraManager->setTopSpeed(m_cameraManager->getTopSpeed() * 2);
@@ -227,7 +221,7 @@ MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& fore
     }
     if (trucks.find(movObjId) != trucks.end())
     {
-        return CreateTruck(forest.trucks->id, moveableObject, moveableSceneNode);
+        return CreateTruck(forest.trucks->id, movObjId, moveableObject, moveableSceneNode);
     }
     if (semiTrailes.find(movObjId) != semiTrailes.end())
     {
@@ -354,6 +348,291 @@ private:
     scene_node::SceneNodeBasePtr m_rightFrontLight;
 };
 
+
+class ZilTruck : public B3dTruck
+{
+public:
+    explicit ZilTruck(scene_node::SceneNodeBaseList rootNodes) :
+        B3dTruck(rootNodes, Wheels{}, Light{}, Light{}, Light{}, Light{}, Light{}, Light{})
+    {
+    }
+};
+
+
+class ZilVisitor : public RaiseExceptionVisitor
+{
+public:
+    ZilVisitor(std::string_view b3dId, std::string_view blockName, Ogre::MeshManager* meshManager, Ogre::SceneNode* parentSceneNode, Ogre::SceneManager* sceneManager, resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
+        : m_b3dId(b3dId)
+        , m_mesh(CreateMesh(b3dId, blockName, meshManager))
+        , m_sceneNode(parentSceneNode->createChildSceneNode(common::GetSceneNodeName(b3dId, blockName)))
+        , m_entity(sceneManager->createEntity(m_mesh))
+        , m_blockName(blockName)
+        , m_ogreMaterialProvider(ogreMaterialProvider)
+    {
+        m_sceneNode->attachObject(m_entity);
+    }
+
+    virtual VisitResult Visit(NodeEventEntry& node, VisitMode visitMode) override
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            auto parentB3dSceneNode = GetParentSceneNode();
+            auto b3dSceneNode = CreateSceneNode<scene_node::EventEntrySceneNode>(parentB3dSceneNode, node.GetName());
+            PushToSceneNodeStack(b3dSceneNode);
+        }
+        else
+        {
+            PopFromSceneNodeStack();
+        }
+
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            const auto& block = node.GetBlockData();
+            for (const auto& face : block.faces)
+            {
+                AddSimpleMeshInfo(m_mesh, face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
+            }
+        }
+
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeGroupObjects21& node, VisitMode visitMode) override
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            auto parentB3dSceneNode = GetParentSceneNode();
+            auto b3dSceneNode = CreateSceneNode<scene_node::SceneNodeEvent21>(parentB3dSceneNode, node.GetName(), node.GetBlockData());
+            PushToSceneNodeStack(b3dSceneNode);
+        }
+        else
+        {
+            PopFromSceneNodeStack();
+        }
+
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            const auto& block = node.GetBlockData();
+            for (const auto& face : block.faces)
+            {
+                AddSimpleMeshInfo(m_mesh, face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
+            }
+        }
+
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) override
+    {
+        D2_HACK_LOG(ZilVisitor::VisitNodeGroupLightingObjects33) << "not implemented";
+        
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            const auto& block = node.GetBlockData();
+            for (const auto& face : block.faces)
+            {
+                AddSimpleMeshInfo(m_mesh, face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
+            }
+        }
+
+        return VisitResult::Continue;
+    }
+
+    B3dTruckPtr CreateTruck()
+    {
+        return std::make_unique<ZilTruck>(m_rootSceneNodes);
+            /*std::move(rootNodes),
+            std::move(visitor.GetWheels()),
+            visitor.GetLeftStopLight(),
+            visitor.GetRightStopLight(),
+            visitor.GetLeftBackLight(),
+            visitor.GetRightBackLight(),
+            visitor.GetLeftFrontLight(),
+            visitor.GetRightFrontLight());*/
+    }
+
+private:
+    const std::string_view m_b3dId;
+    Ogre::MeshPtr m_mesh;
+    Ogre::SceneNode* m_sceneNode;
+    Ogre::Entity* m_entity;
+    const std::string_view m_blockName;
+    resource::archive::res::OgreMaterialProvider* m_ogreMaterialProvider;
+    scene_node::SceneNodeBaseList m_rootSceneNodes;
+    
+    std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
+
+    void PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& node)
+    {
+        if (m_sceneNodesStack.empty())
+        {
+            m_rootSceneNodes.push_back(node);
+        }
+
+        m_sceneNodesStack.push(node);
+    }
+
+    void PopFromSceneNodeStack()
+    {
+        m_sceneNodesStack.pop();
+    }
+
+    scene_node::SceneNodeBasePtr GetParentSceneNode()
+    {
+        return m_sceneNodesStack.empty() ? scene_node::SceneNodeBasePtr{} : m_sceneNodesStack.top();
+    }
+
+    static Ogre::MeshPtr CreateMesh(std::string_view b3dId, std::string_view blockName, Ogre::MeshManager* meshManager)
+    {
+        const std::string meshName = common::GetMeshName(b3dId, blockName);
+        return meshManager->createManual(meshName, common::DefaultResourceGroup);
+    }
+
+    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const Ogre::MaterialPtr& material)
+    {
+        Ogre::SubMesh* subMesh = mesh->createSubMesh();
+        subMesh->useSharedVertices = false;
+        subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
+
+        subMesh->setMaterial(material);
+
+        //D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
+
+        return subMesh;
+    }
+
+    void AddSimpleMeshInfo(Ogre::MeshPtr mesh, const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
+    {
+        auto material = m_ogreMaterialProvider->CreateOrRetrieveMaterial(materialName, common::DefaultResourceGroup);
+        Ogre::SubMesh* subMesh = CreateSubMesh(mesh, material);
+
+        subMesh->vertexData = new Ogre::VertexData{};
+
+        unsigned short bufferIndex = 0;
+        if (!meshInfo.positions.empty())
+        {
+            ManagePositions(subMesh->vertexData, meshInfo.positions, bufferIndex);
+            bufferIndex += 1;
+
+            Ogre::AxisAlignedBox bbox = mesh->getBounds();
+            for (const auto& position : meshInfo.positions)
+            {
+                bbox.merge(position);
+            }
+            mesh->_setBounds(bbox, true);
+        }
+
+        if (!meshInfo.texCoords.empty())
+        {
+            ManageTexCoords(subMesh->vertexData, meshInfo.texCoords, bufferIndex);
+            bufferIndex += 1;
+        }
+
+        if (!meshInfo.normals.empty())
+        {
+            ManageNormals(subMesh->vertexData, meshInfo.normals, bufferIndex);
+            bufferIndex += 1;
+        }
+    }
+
+    void ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex)
+    {
+        vertexData->vertexCount = common::NumericCast<std::uint32_t>(positions.size());
+        Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
+        Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
+
+        size_t offset = 0;
+        decl->addElement(bufferIndex, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+        offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+        Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+            offset,
+            vertexData->vertexCount,
+            Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+        vbuf->writeData(0, vbuf->getSizeInBytes(), positions.data(), true);
+
+        bind->setBinding(bufferIndex, vbuf);
+    }
+
+    void ManageTexCoords(Ogre::VertexData* vertexData, const common::TexCoordList& texCoords, unsigned short bufferIndex)
+    {
+        Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
+        Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
+
+        size_t offset = 0;
+        decl->addElement(bufferIndex, 0, Ogre::VET_FLOAT2, Ogre::VES_TEXTURE_COORDINATES);
+        offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT2);
+
+        Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+            offset,
+            vertexData->vertexCount,
+            Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+        vbuf->writeData(0, vbuf->getSizeInBytes(), texCoords.data(), true);
+
+        bind->setBinding(bufferIndex, vbuf);
+    }
+
+    void ManageNormals(Ogre::VertexData* vertexData, const common::NormalList& normals, unsigned short bufferIndex)
+    {
+        Ogre::VertexDeclaration* decl = vertexData->vertexDeclaration;
+        Ogre::VertexBufferBinding* bind = vertexData->vertexBufferBinding;
+
+        size_t offset = 0;
+        decl->addElement(bufferIndex, offset, Ogre::VET_FLOAT3, Ogre::VES_NORMAL);
+        offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+        Ogre::HardwareVertexBufferSharedPtr vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+            offset,
+            vertexData->vertexCount,
+            Ogre::HardwareBuffer::HBU_STATIC_WRITE_ONLY);
+
+        vbuf->writeData(0, vbuf->getSizeInBytes(), normals.data(), true);
+
+        bind->setBinding(bufferIndex, vbuf);
+    }
+};
+
+
+
+
 B3dCarPtr BaseB3dApplication::CreateCar(std::string_view b3dId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
 {
     scene_node::SceneNodeBaseList rootNodes;
@@ -377,27 +656,39 @@ B3dCarPtr BaseB3dApplication::CreateCar(std::string_view b3dId, const B3dNodePtr
         observer.GetRightFrontLight());
 }
 
-B3dTruckPtr BaseB3dApplication::CreateTruck(std::string_view b3dId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
+B3dTruckPtr BaseB3dApplication::CreateTruck(std::string_view b3dId, std::string_view truckId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
 {
     scene_node::SceneNodeBaseList rootNodes;
 
-    B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
-    CarBaseObserver observer;
-    B3dSceneBuilder builder{ b3dId, context, rootNodes, &observer };
-    B3dTreeVisitor visitor{ builder };
+    if (truckId == "Zil")
+    {
+        ZilVisitor zilVisitor{b3dId, truckId, mRoot->getMeshManager(), moveableSceneNode, m_sceneManager, m_ogreMaterialProvider.get()};
 
-    auto visitResult = VisitNode(moveableObject, visitor);
-    (void)visitResult;
+        auto visitResult = VisitNode(moveableObject, zilVisitor);
+        (void)visitResult;
 
-    return std::make_unique<B3dTruck>(
-        std::move(rootNodes),
-        std::move(observer.GetWheels()),
-        observer.GetLeftStopLight(),
-        observer.GetRightStopLight(),
-        observer.GetLeftBackLight(),
-        observer.GetRightBackLight(),
-        observer.GetLeftFrontLight(),
-        observer.GetRightFrontLight());
+        return zilVisitor.CreateTruck();
+    }
+    else
+    {
+        B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
+        CarBaseObserver observer;
+        B3dSceneBuilder builder{ b3dId, context, rootNodes, &observer };
+        B3dTreeVisitor visitor{ builder };
+
+        auto visitResult = VisitNode(moveableObject, visitor);
+        (void)visitResult;
+
+        return std::make_unique<B3dTruck>(
+            std::move(rootNodes),
+            std::move(observer.GetWheels()),
+            observer.GetLeftStopLight(),
+            observer.GetRightStopLight(),
+            observer.GetLeftBackLight(),
+            observer.GetRightBackLight(),
+            observer.GetLeftFrontLight(),
+            observer.GetRightFrontLight());
+    }
 }
 
 B3dSemiTrailerPtr BaseB3dApplication::CreateSemiTrailer(std::string_view b3dId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)

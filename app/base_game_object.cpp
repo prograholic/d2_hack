@@ -10,12 +10,9 @@ BaseGameObject::BaseGameObject(scene_node::SceneNodeBaseList rootNodes)
 {
 }
 
-void BaseGameObject::OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement)
+const scene_node::SceneNodeBaseList& BaseGameObject::GetRootNodes() const
 {
-    for (const auto& rootNode : m_rootNodes)
-    {
-        rootNode->OnCameraMoved(worldContext, movement);
-    }
+    return m_rootNodes;
 }
 
 

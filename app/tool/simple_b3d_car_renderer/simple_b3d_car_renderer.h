@@ -3,6 +3,8 @@
 
 #include <d2_hack/app/base_b3d_application.h>
 
+#include <OgreBullet.h>
+
 namespace d2_hack
 {
 namespace app
@@ -19,12 +21,16 @@ public:
 
     virtual void shutdown() override;
 
+    virtual bool frameStarted(const Ogre::FrameEvent& event) override;
+
 private:
     std::vector<MoveableObjectPtr> m_moveableObjects;
+    std::unique_ptr<Ogre::Bullet::DynamicsWorld> m_dynWorld;
+    std::unique_ptr<Ogre::Bullet::DebugDrawer> m_dbgDraw;
 
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) override;
+
     virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) override;
-    virtual void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement) override;
 };
 
 

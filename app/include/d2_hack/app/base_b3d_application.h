@@ -24,8 +24,6 @@ public:
 
     MoveableObjectPtr CreateMoveableObject(const resource::data::b3d::B3dForest& forest, const std::string_view& movObjId, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode);
 
-    void ProcessCameraMovement();
-
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 
 private:
@@ -36,10 +34,8 @@ private:
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
     virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
 
-    virtual void OnCameraMoved(const scene_node::WorldContext& worldContext, const Ogre::Vector3f& movement) = 0;
-
     B3dCarPtr CreateCar(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
-    B3dTruckPtr CreateTruck(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+    B3dTruckPtr CreateTruck(std::string_view b3dId, std::string_view truckId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     B3dSemiTrailerPtr CreateSemiTrailer(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     MoveableObjectPtr CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
 };
