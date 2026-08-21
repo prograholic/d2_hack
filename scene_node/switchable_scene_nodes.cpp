@@ -1,5 +1,7 @@
 #include <d2_hack/scene_node/switchable_scene_nodes.h>
 
+#include <OgreSubEntity.h>
+
 #include <d2_hack/common/log.h>
 
 
@@ -23,35 +25,34 @@ Ogre::Quaternion EventEntrySceneNode::GetAbsoluteOrientation() const
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "EventEntrySceneNode::GetAbsoluteOrientation is not implemented");
 }
 
-void EventEntrySceneNode::SetVisible(bool /* visible */)
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "EventEntrySceneNode::SetVisible is not implemented");
-}
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
-SwitchableSceneNode::SwitchableSceneNode(const std::string_view& name, std::uint32_t type)
-    : SceneNodeBase(name, type)
+SubEntitiesSceneNode::SubEntitiesSceneNode(
+    const std::string_view& name,
+    std::vector<size_t> subEntityIds)
+    : SceneNode<resource::data::b3d::block_data::SubMeshBlockXxx, SceneNodeBase>(name)
+    , m_subEntityIds(std::move(subEntityIds))
 {
 }
 
-Ogre::Vector3f SwitchableSceneNode::GetAbsolutePosition() const
+void SubEntitiesSceneNode::Activate(bool active)
 {
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SwitchableSceneNode::GetAbsolutePosition is not implemented");
+    for (const auto& subEntityId : m_subEntityIds)
+    {
+        m_entity->getSubEntity(subEntityId)->setVisible(active);
+    }
 }
 
-Ogre::Quaternion SwitchableSceneNode::GetAbsoluteOrientation() const
+Ogre::Vector3f SubEntitiesSceneNode::GetAbsolutePosition() const
 {
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SwitchableSceneNode::GetAbsoluteOrientation is not implemented");
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SubEntitiesSceneNode::GetAbsolutePosition not implemented");
 }
 
-void SwitchableSceneNode::SetVisible(bool /* visible */)
+Ogre::Quaternion SubEntitiesSceneNode::GetAbsoluteOrientation() const
 {
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SwitchableSceneNode::SetVisible is not implemented");
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SubEntitiesSceneNode::GetAbsoluteOrientation not implemented");
 }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,29 +60,18 @@ void SwitchableSceneNode::SetVisible(bool /* visible */)
 GroupUnknown2::GroupUnknown2(
     const std::string_view& name,
     const resource::data::b3d::block_data::GroupUnknown2& /* data */)
-    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableSceneNode>(name)
+    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SceneNodeBase>(name)
 {
 }
 
-SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& /* worldContext */)
+Ogre::Vector3f GroupUnknown2::GetAbsolutePosition() const
 {
-    // TODO: rework
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown2::GetAbsolutePosition not implemented");
+}
 
-    SceneNodeBase* res = nullptr;
-    for (const auto& childNode : this->GetChildNodeList())
-    {
-        SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-        if (res == nullptr)
-        {
-            res = childSceneNode;
-            res->SetVisible(true);
-        }
-        else
-        {
-            childSceneNode->SetVisible(false);
-        }
-    }
-    return res;
+Ogre::Quaternion GroupUnknown2::GetAbsoluteOrientation() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown2::GetAbsoluteOrientation not implemented");
 }
 
 
@@ -89,88 +79,85 @@ SceneNodeBase* GroupUnknown2::ActivateItem(const WorldContext& /* worldContext *
 GroupTrigger9::GroupTrigger9(
     const std::string_view& name,
     const resource::data::b3d::block_data::GroupTrigger9& /* data */)
-    : SceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableSceneNode>(name)
+    : SceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SceneNodeBase>(name)
 {
 }
 
-SceneNodeBase* GroupTrigger9::ActivateItem(const WorldContext& /* worldContext */)
+Ogre::Vector3f GroupTrigger9::GetAbsolutePosition() const
 {
-    SceneNodeBase* res = nullptr;
-    for (const auto& childNode : this->GetChildNodeList())
-    {
-        SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-        if (res == nullptr)
-        {
-            res = childSceneNode;
-            res->SetVisible(true);
-        }
-        else
-        {
-            childSceneNode->SetVisible(false);
-        }
-    }
-    return res;
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupTrigger9::GetAbsolutePosition not implemented");
 }
 
+Ogre::Quaternion GroupTrigger9::GetAbsoluteOrientation() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupTrigger9::GetAbsoluteOrientation not implemented");
+}
 
 
 SceneNodeEvent21::SceneNodeEvent21(
     const std::string_view& name,
-    const resource::data::b3d::block_data::GroupObjects21& /* data */)
-    : SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableSceneNode>(name)
+    const resource::data::b3d::block_data::GroupObjects21& data)
+    : SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SceneNodeBase>(name)
+    , m_activeEntry(nullptr)
+    , m_defaultEntryId(data.defaultValue)
 {
 }
 
-SceneNodeBase* SceneNodeEvent21::ActivateItem(const WorldContext& /* worldContext */)
+Ogre::Vector3f SceneNodeEvent21::GetAbsolutePosition() const
 {
-    // TODO: rework
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SceneNodeEvent21::GetAbsolutePosition not implemented");
+}
 
-    SceneNodeBase* res = nullptr;
-    for (const auto& childNode : this->GetChildNodeList())
+Ogre::Quaternion SceneNodeEvent21::GetAbsoluteOrientation() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "SceneNodeEvent21::GetAbsoluteOrientation not implemented");
+}
+
+void SceneNodeEvent21::Activate(bool active)
+{
+    m_activeEntry->Activate(active);
+}
+
+void SceneNodeEvent21::ApplyState(std::string_view stateName, size_t stateId)
+{
+    assert(stateId < GetChildNodeList().size());
+
+    if (stateName == GetName())
     {
-        SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-        if (res == nullptr)
+        for (size_t i = 0; i != GetChildNodeList().size(); ++i)
         {
-            res = childSceneNode;
-            childSceneNode->SetVisible(true);
+            EventEntrySceneNode* eventEntry = std::static_pointer_cast<EventEntrySceneNode>(GetChildNodeList()[i]).get();
+
+            eventEntry->Activate(i == stateId);
         }
-        else
-        {
-            childSceneNode->SetVisible(false);
-        }
+        m_activeEntry = std::static_pointer_cast<EventEntrySceneNode>(GetChildNodeList()[stateId]).get();
     }
-    return res;
+
+    m_activeEntry->ApplyState(stateName, stateId);
+}
+
+void SceneNodeEvent21::DoInit()
+{
+    ApplyState(GetName(), m_defaultEntryId);
 }
 
 
 GroupUnknown29::GroupUnknown29(
     const std::string_view& name,
     const resource::data::b3d::block_data::GroupUnknown29& /* data */)
-    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableSceneNode>(name)
+    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SceneNodeBase>(name)
 {
 }
 
-SceneNodeBase* GroupUnknown29::ActivateItem(const WorldContext& /* worldContext */)
+Ogre::Vector3f GroupUnknown29::GetAbsolutePosition() const
 {
-    // TODO: rework
-
-    SceneNodeBase* res = nullptr;
-    for (const auto& childNode : this->GetChildNodeList())
-    {
-        SceneNodeBase* childSceneNode = std::static_pointer_cast<SceneNodeBase>(childNode).get();
-        if (res == nullptr)
-        {
-            res = childSceneNode;
-            res->SetVisible(true);
-        }
-        else
-        {
-            childSceneNode->SetVisible(false);
-        }
-    }
-    return res;
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown29::GetAbsolutePosition not implemented");
 }
 
+Ogre::Quaternion GroupUnknown29::GetAbsoluteOrientation() const
+{
+    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown29::GetAbsoluteOrientation not implemented");
+}
 
 
 } // namespace scene_node

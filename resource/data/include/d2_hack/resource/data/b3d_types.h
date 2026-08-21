@@ -84,7 +84,8 @@ static const std::uint32_t SimpleGeneratedObjectsBlock40 = 40;
 // should not intersect with other block IDs
 static const std::uint32_t HierarchyBreakerBlockXxx = 41;
 static const std::uint32_t EventEntryBlockXxx = 42;
-static const std::uint32_t MaxBlockId = 42;
+static const std::uint32_t SubMeshBlockXxx = 43;
+static const std::uint32_t MaxBlockId = 43;
 
 
 struct BlockHeader

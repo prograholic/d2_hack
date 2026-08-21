@@ -3,6 +3,8 @@
 
 #include <d2_hack/scene_node/scene_node_base.h>
 
+#include <OgreEntity.h>
+
 #include <d2_hack/resource/data/b3d_types.h>
 
 namespace d2_hack
@@ -19,73 +21,80 @@ public:
     virtual Ogre::Vector3f GetAbsolutePosition() const override;
 
     virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
-
-    virtual void SetVisible(bool visible) override;
 };
 
-
-class SwitchableSceneNode : public SceneNodeBase
+class SubEntitiesSceneNode : public SceneNode< resource::data::b3d::block_data::SubMeshBlockXxx, SceneNodeBase>
 {
 public:
+    SubEntitiesSceneNode(const std::string_view& name, std::vector<size_t> subEntityIds);
 
-    SwitchableSceneNode(const std::string_view& name, std::uint32_t type);
+    virtual void Activate(bool active) override;
 
     virtual Ogre::Vector3f GetAbsolutePosition() const override;
 
     virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
 
-    virtual void SetVisible(bool visible) override;
-
 private:
-    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) = 0;
+    std::vector<size_t> m_subEntityIds;
 };
 
-class GroupUnknown2 : public SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SwitchableSceneNode>
+
+class GroupUnknown2 : public SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SceneNodeBase>
 {
 public:
     GroupUnknown2(
         const std::string_view& name,
         const resource::data::b3d::block_data::GroupUnknown2& data);
 
-private:
-    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
+    virtual Ogre::Vector3f GetAbsolutePosition() const override;
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
 };
 
-class GroupTrigger9 : public SceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SwitchableSceneNode>
+class GroupTrigger9 : public SceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SceneNodeBase>
 {
 public:
     GroupTrigger9(
         const std::string_view& name,
         const resource::data::b3d::block_data::GroupTrigger9& data);
 
-private:
-    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
+    virtual Ogre::Vector3f GetAbsolutePosition() const override;
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
 };
 
-class SceneNodeEvent21 : public SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SwitchableSceneNode>
+class SceneNodeEvent21 : public SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SceneNodeBase>
 {
 public:
     SceneNodeEvent21(
         const std::string_view& name,
         const resource::data::b3d::block_data::GroupObjects21& data);
 
-    size_t StateCount() const;
+    virtual Ogre::Vector3f GetAbsolutePosition() const override;
 
-    void SetActiveState(std::string_view stateName, size_t stateId);
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
+
+    virtual void Activate(bool active) override;
+
+    virtual void ApplyState(std::string_view stateName, size_t stateId) override;
 
 private:
-    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
+    EventEntrySceneNode* m_activeEntry;
+    const std::uint32_t m_defaultEntryId;
+
+    virtual void DoInit() override;
 };
 
-class GroupUnknown29 : public SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SwitchableSceneNode>
+class GroupUnknown29 : public SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SceneNodeBase>
 {
 public:
     GroupUnknown29(
         const std::string_view& name,
         const resource::data::b3d::block_data::GroupUnknown29& data);
 
-private:
-    virtual SceneNodeBase* ActivateItem(const WorldContext& worldContext) override;
+    virtual Ogre::Vector3f GetAbsolutePosition() const override;
+
+    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
 };
 
 

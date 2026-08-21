@@ -362,15 +362,12 @@ public:
 class ZilVisitor : public RaiseExceptionVisitor
 {
 public:
-    ZilVisitor(std::string_view b3dId, std::string_view blockName, Ogre::MeshManager* meshManager, Ogre::SceneNode* parentSceneNode, Ogre::SceneManager* sceneManager, resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
+    ZilVisitor(std::string_view b3dId, std::string_view blockName, Ogre::MeshManager* meshManager, resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
         : m_b3dId(b3dId)
         , m_mesh(CreateMesh(b3dId, blockName, meshManager))
-        , m_sceneNode(parentSceneNode->createChildSceneNode(common::GetSceneNodeName(b3dId, blockName)))
-        , m_entity(sceneManager->createEntity(m_mesh))
         , m_blockName(blockName)
         , m_ogreMaterialProvider(ogreMaterialProvider)
     {
-        m_sceneNode->attachObject(m_entity);
     }
 
     virtual VisitResult Visit(NodeEventEntry& node, VisitMode visitMode) override
@@ -396,16 +393,7 @@ public:
 
     virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
     {
-        if (visitMode == VisitMode::PreOrder)
-        {
-            const auto& block = node.GetBlockData();
-            for (const auto& face : block.faces)
-            {
-                AddSimpleMeshInfo(m_mesh, face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
-            }
-        }
-
-        return VisitResult::Continue;
+        return VisitFaces(node, visitMode);
     }
 
     virtual VisitResult Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */) override
@@ -413,8 +401,17 @@ public:
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode) override
     {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            m_transformEntries.push_back(node.GetBlockData().transformation);
+        }
+        else
+        {
+            assert(visitMode == VisitMode::PostOrder);
+            m_transformEntries.pop_back();
+        }
         return VisitResult::Continue;
     }
 
@@ -441,16 +438,7 @@ public:
 
     virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
     {
-        if (visitMode == VisitMode::PreOrder)
-        {
-            const auto& block = node.GetBlockData();
-            for (const auto& face : block.faces)
-            {
-                AddSimpleMeshInfo(m_mesh, face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
-            }
-        }
-
-        return VisitResult::Continue;
+        return VisitFaces(node, visitMode);
     }
 
     virtual VisitResult Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) override
@@ -462,21 +450,22 @@ public:
 
     virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
     {
-        if (visitMode == VisitMode::PreOrder)
-        {
-            const auto& block = node.GetBlockData();
-            for (const auto& face : block.faces)
-            {
-                AddSimpleMeshInfo(m_mesh, face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
-            }
-        }
-
-        return VisitResult::Continue;
+        return VisitFaces(node, visitMode);
     }
 
-    B3dTruckPtr CreateTruck()
+    B3dTruckPtr CreateTruck(Ogre::SceneManager* sceneManager, Ogre::SceneNode* moveableSceneNode)
     {
-        return std::make_unique<ZilTruck>(m_rootSceneNodes);
+        auto entity = sceneManager->createEntity(m_mesh);
+        moveableSceneNode->attachObject(entity);
+
+        for (auto& sceneNode : m_rootSceneNodes)
+        {
+            sceneNode->Initialize(entity);
+        }
+
+        auto res = std::make_unique<ZilTruck>(m_rootSceneNodes);
+
+        return res;
             /*std::move(rootNodes),
             std::move(visitor.GetWheels()),
             visitor.GetLeftStopLight(),
@@ -490,13 +479,12 @@ public:
 private:
     const std::string_view m_b3dId;
     Ogre::MeshPtr m_mesh;
-    Ogre::SceneNode* m_sceneNode;
-    Ogre::Entity* m_entity;
     const std::string_view m_blockName;
     resource::archive::res::OgreMaterialProvider* m_ogreMaterialProvider;
     scene_node::SceneNodeBaseList m_rootSceneNodes;
     
     std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
+    std::vector<TransformList> m_transformEntries;
 
     void PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& node)
     {
@@ -524,9 +512,10 @@ private:
         return meshManager->createManual(meshName, common::DefaultResourceGroup);
     }
 
-    Ogre::SubMesh* CreateSubMesh(const Ogre::MeshPtr& mesh, const Ogre::MaterialPtr& material)
+    size_t CreateSubMesh(const Ogre::MaterialPtr& material)
     {
-        Ogre::SubMesh* subMesh = mesh->createSubMesh();
+        size_t subMeshId = m_mesh->getNumSubMeshes();
+        Ogre::SubMesh* subMesh = m_mesh->createSubMesh();
         subMesh->useSharedVertices = false;
         subMesh->operationType = Ogre::RenderOperation::OT_TRIANGLE_LIST;
 
@@ -534,28 +523,32 @@ private:
 
         //D2_HACK_LOG(CreateSubmesh) << "New submesh for mesh " << mesh->getName() << ", material name: " << materialName;
 
-        return subMesh;
+        return subMeshId;
     }
 
-    void AddSimpleMeshInfo(Ogre::MeshPtr mesh, const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
+    size_t AddSimpleMeshInfo(const common::SimpleMeshInfo& meshInfo, const std::string& materialName)
     {
         auto material = m_ogreMaterialProvider->CreateOrRetrieveMaterial(materialName, common::DefaultResourceGroup);
-        Ogre::SubMesh* subMesh = CreateSubMesh(mesh, material);
+        size_t subMeshId = CreateSubMesh(material);
 
+        auto subMesh = m_mesh->getSubMesh(subMeshId);
         subMesh->vertexData = new Ogre::VertexData{};
 
         unsigned short bufferIndex = 0;
         if (!meshInfo.positions.empty())
         {
-            ManagePositions(subMesh->vertexData, meshInfo.positions, bufferIndex);
+            common::PositionList transformedPositions;
+            ApplyTransformations(meshInfo.positions, transformedPositions);
+
+            ManagePositions(subMesh->vertexData, transformedPositions, bufferIndex);
             bufferIndex += 1;
 
-            Ogre::AxisAlignedBox bbox = mesh->getBounds();
-            for (const auto& position : meshInfo.positions)
+            Ogre::AxisAlignedBox bbox = m_mesh->getBounds();
+            for (const auto& position : transformedPositions)
             {
                 bbox.merge(position);
             }
-            mesh->_setBounds(bbox, true);
+            m_mesh->_setBounds(bbox, true);
         }
 
         if (!meshInfo.texCoords.empty())
@@ -569,6 +562,8 @@ private:
             ManageNormals(subMesh->vertexData, meshInfo.normals, bufferIndex);
             bufferIndex += 1;
         }
+
+        return subMeshId;
     }
 
     void ManagePositions(Ogre::VertexData* vertexData, const common::PositionList& positions, unsigned short bufferIndex)
@@ -628,6 +623,50 @@ private:
 
         bind->setBinding(bufferIndex, vbuf);
     }
+
+    void ApplyTransformations(const common::PositionList& original, common::PositionList& transformed)
+    {
+        transformed = original;
+        for (auto& position : transformed)
+        {
+            for (const auto& transformList : m_transformEntries)
+            {
+                for (const auto& transformEntry : transformList)
+                {
+                    Ogre::Matrix4 fullTransform = Ogre::Matrix4::IDENTITY;
+                    fullTransform.set3x3Matrix(transformEntry.matrix);
+                    fullTransform.setTrans(transformEntry.position);
+                    position = fullTransform * position;
+                }
+            }
+        }
+    }
+
+    template <typename FacesType>
+    VisitResult VisitFaces(FacesType& node, VisitMode visitMode)
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            std::vector<size_t> subEntityIds;
+
+            const auto& block = node.GetBlockData();
+            for (const auto& face : block.faces)
+            {
+                auto subEntityId = AddSimpleMeshInfo(face.meshInfo, node.GetOriginalRoot()->GetMaterialNameByIndex(face.materialIndex));
+                subEntityIds.push_back(subEntityId);
+            }
+
+            auto parentB3dSceneNode = GetParentSceneNode();
+            auto b3dSceneNode = CreateSceneNode<scene_node::SubEntitiesSceneNode>(parentB3dSceneNode, node.GetName(), std::move(subEntityIds));
+            PushToSceneNodeStack(b3dSceneNode);
+        }
+        else
+        {
+            PopFromSceneNodeStack();
+        }
+
+        return VisitResult::Continue;
+    }
 };
 
 
@@ -662,12 +701,12 @@ B3dTruckPtr BaseB3dApplication::CreateTruck(std::string_view b3dId, std::string_
 
     if (truckId == "Zil")
     {
-        ZilVisitor zilVisitor{b3dId, truckId, mRoot->getMeshManager(), moveableSceneNode, m_sceneManager, m_ogreMaterialProvider.get()};
+        ZilVisitor zilVisitor{b3dId, truckId, mRoot->getMeshManager(), m_ogreMaterialProvider.get()};
 
         auto visitResult = VisitNode(moveableObject, zilVisitor);
         (void)visitResult;
 
-        return zilVisitor.CreateTruck();
+        return zilVisitor.CreateTruck(m_sceneManager, moveableSceneNode);
     }
     else
     {

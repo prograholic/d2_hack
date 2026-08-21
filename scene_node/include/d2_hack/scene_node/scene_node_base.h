@@ -26,7 +26,11 @@ public:
 
     static size_t GetSceneNodeBaseCount();
 
-    virtual void SetVisible(bool visible) = 0;
+    void Initialize(Ogre::Entity* entity);
+
+    virtual void ApplyState(std::string_view stateName, size_t stateId);
+
+    virtual void Activate(bool visible);
 
     virtual Ogre::Vector3f GetAbsolutePosition() const = 0;
 
@@ -34,6 +38,11 @@ public:
 
 private:
     static size_t m_scNodeCount;
+
+    virtual void DoInit();
+
+protected:
+    Ogre::Entity* m_entity;
 };
 
 typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;

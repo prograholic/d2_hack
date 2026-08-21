@@ -3918,7 +3918,7 @@ SimpleFlatCollision20::SimpleFlatCollision20(
 }
 
 
-void SimpleFlatCollision20::SetVisible(bool /* visible */)
+void SimpleFlatCollision20::Activate(bool /* visible */)
 {
 }
 
@@ -3964,7 +3964,7 @@ SimpleVolumeCollision23::SimpleVolumeCollision23(
 #endif //0
 }
 
-void SimpleVolumeCollision23::SetVisible(bool /* visible */)
+void SimpleVolumeCollision23::Activate(bool /* visible */)
 {
 }
 
