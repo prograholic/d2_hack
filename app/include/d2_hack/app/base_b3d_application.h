@@ -34,9 +34,15 @@ private:
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
     virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;
 
-    B3dCarPtr CreateCar(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+    template <typename ObjectType>
+    std::unique_ptr<ObjectType> CreateWheelBasedObject(std::string_view b3dId, 
+                                                       std::string_view objectId,
+                                                       const resource::data::b3d::B3dNodePtr& moveableObject,
+                                                       Ogre::SceneNode* moveableSceneNode);
+
+    B3dCarPtr CreateCar(std::string_view b3dId, std::string_view carId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     B3dTruckPtr CreateTruck(std::string_view b3dId, std::string_view truckId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
-    B3dSemiTrailerPtr CreateSemiTrailer(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+    B3dSemiTrailerPtr CreateSemiTrailer(std::string_view b3dId, std::string_view semiTrailerId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     MoveableObjectPtr CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
 };
 

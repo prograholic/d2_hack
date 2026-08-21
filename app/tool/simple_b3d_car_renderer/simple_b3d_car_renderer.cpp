@@ -328,11 +328,11 @@ void SimpleB3dCarRenderer::CreateMoveableObjects(const resource::data::b3d::B3dF
         "Zil"
         //"STrailerP"
     };
-    //for (size_t i = 0; i != AllCarNames.size(); ++i)
-    for (size_t i = 0; i != _countof(Cars); ++i)
+    for (size_t i = 0; i != AllCarNames.size(); ++i)
+    //for (size_t i = 0; i != _countof(Cars); ++i)
     {
-        m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
-        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
     }
 }
 

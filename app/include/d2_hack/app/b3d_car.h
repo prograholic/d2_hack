@@ -9,36 +9,6 @@ namespace app
 {
 
 
-class Wheel
-{
-public:
-    Wheel() = default;
-
-    explicit Wheel(scene_node::SceneNodeBasePtr wheelSceneNode);
-
-    void Rotate(Ogre::Degree angle);
-
-    void Turn(Ogre::Degree angle);
-
-private:
-    scene_node::SceneNodeBasePtr m_wheelSceneNode;
-
-    Ogre::SceneNode* GetRotationalSceneNode();
-};
-
-class Light
-{
-public:
-    Light() = default;
-
-    explicit Light(scene_node::SceneNodeBasePtr lightSceneNode);
-
-    void Switch(bool on);
-private:
-    scene_node::SceneNodeBasePtr m_lightSceneNode;
-};
-
-
 
 
 class MoveableObject : public BaseGameObject
@@ -51,68 +21,67 @@ public:
 
 typedef std::unique_ptr<MoveableObject> MoveableObjectPtr;
 
-class DamageableObject : public MoveableObject
+class MutableObject : public MoveableObject
 {
 public:
-    explicit DamageableObject(scene_node::SceneNodeBaseList rootNodes);
+    explicit MutableObject(scene_node::SceneNodeBaseList rootNodes);
 
-    void SetDamage(bool on);
+protected:
+    void ApplyState(std::string_view stateName, size_t stateId);
 };
+
+
+class Wheel : public MutableObject
+{
+public:
+    explicit Wheel(scene_node::SceneNodeBaseList rootNodes);
+
+    enum class Damage : std::size_t
+    {
+        No = 0,
+        Level1,
+        Level2,
+        Level3
+    };
+
+    void SetDamage(Damage damage);
+
+    void Rotate(Ogre::Degree angle);
+
+    void Turn(Ogre::Degree angle);
+};
+
 
 typedef std::map <std::string, Wheel, std::less<>> Wheels;
 
-class WheelBasedMoveableObject: public DamageableObject
+class WheelBasedMoveableObject: public MutableObject
 {
 public:
-    WheelBasedMoveableObject(scene_node::SceneNodeBaseList rootNodes,
-                             Wheels wheels,
-                             Light leftStopLight,
-                             Light rightStopLight,
-                             Light leftBackLight,
-                             Light rightBackLight);
+    WheelBasedMoveableObject(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 
     void SwitchStopLights(bool on);
-
-    virtual void SwitchLight(bool on);
+    void SwitchBackLights(bool on);
+    void SwitchSizeLights(bool on);
 
     void Rotate(Ogre::Degree angle, std::string_view wheelId);
     void Turn(Ogre::Degree angle, std::string_view wheelId);
 private:
     Wheels m_wheels;
-    Light m_leftStopLight;
-    Light m_rightStopLight;
-    Light m_leftBackLight;
-    Light m_rightBackLight;
 };
 
 class CarBase : public WheelBasedMoveableObject
 {
 public:
-    CarBase(scene_node::SceneNodeBaseList rootNodes,
-            Wheels wheels,
-            Light leftStopLight,
-            Light rightStopLight,
-            Light leftBackLight,
-            Light rightBackLight,
-            Light leftFrontLight,
-            Light rightFrontLight);
+    CarBase(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 
-    virtual void SwitchLight(bool on) override;
-private:
-    Light m_leftFrontLight;
-    Light m_rightFrontLight;
+    void SwitchFrontLight(bool on);
 };
 
 
 class B3dSemiTrailer : public WheelBasedMoveableObject
 {
 public:
-    B3dSemiTrailer(scene_node::SceneNodeBaseList rootNodes,
-                   Wheels wheels,
-                   Light leftStopLight,
-                   Light rightStopLight,
-                   Light leftBackLight,
-                   Light rightBackLight);
+    B3dSemiTrailer(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 };
 
 typedef std::unique_ptr<B3dSemiTrailer> B3dSemiTrailerPtr;
@@ -133,14 +102,7 @@ public:
 class B3dTruck : public CarBase
 {
 public:
-    B3dTruck(scene_node::SceneNodeBaseList rootNodes,
-             Wheels wheels,
-             Light leftStopLight,
-             Light rightStopLight,
-             Light leftBackLight,
-             Light rightBackLight,
-             Light leftFrontLight,
-             Light rightFrontLight);
+    B3dTruck(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 
     void ConnectSemiTrailer(bool on, B3dSemiTrailer* trailer);
 };
@@ -151,14 +113,7 @@ typedef std::unique_ptr<B3dTruck> B3dTruckPtr;
 class B3dCar : public CarBase
 {
 public:
-    B3dCar(scene_node::SceneNodeBaseList rootNodes,
-           Wheels wheels,
-           Light leftStopLight,
-           Light rightStopLight,
-           Light leftBackLight,
-           Light rightBackLight,
-           Light leftFrontLight,
-           Light rightFrontLight);
+    B3dCar(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 };
 
 typedef std::unique_ptr<B3dCar> B3dCarPtr;

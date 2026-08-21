@@ -90,228 +90,228 @@ public:
     template <typename NodeType>
     void ProcessBlock(const NodeType& node)
     {
-        GetStream() << GetBlockNamePrefix(node.GetBlockData()) << ToString(node.GetName()) << std::endl;
+        GetStream() << GetBlockNamePrefix(node->GetBlockData()) << ToString(node->GetName()) << std::endl;
         GetStream() << "{" << std::endl;
 
-        if (ShouldPrintBlockContent(node.GetType()))
+        if (ShouldPrintBlockContent(node->GetType()))
         {
-            GetStream(1) << "boundingSphere: " << ToString(node.GetBoundingSphere()) << "," << std::endl;
+            GetStream(1) << "boundingSphere: " << ToString(node->GetBoundingSphere()) << "," << std::endl;
 
-            PrintData(node.GetBlockData(), "", 1);
+            PrintData(node->GetBlockData(), "", 1);
         }
     }
 
-    virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeHierarchyBreaker>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeEventEntry& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeEventEntry>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeEmpty0& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeEmpty0>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector1& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleObjectConnector1>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown2& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown2>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupRoadInfraObjects4>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupObjects5& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects5>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData7>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces8>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupTrigger9& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupTrigger9>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupLodParameters10& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupLodParameters10>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown12& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown12>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleTrigger13& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleTrigger13>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleUnknown14& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown14>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleObjectConnector18>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects19>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleFlatCollision20& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFlatCollision20>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupObjects21& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects21>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleVolumeCollision23& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleVolumeCollision23>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupTransformMatrix24>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleUnknown25& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown25>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces28>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown29& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown29>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimplePortal30& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimplePortal30>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupLightingObjects33& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupLightingObjects33>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleUnknown34& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown34>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces35>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData36>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData37>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown39& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown39>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 
         return VisitResult::Continue;
     }
 
-    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode /* visitMode */) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleGeneratedObjects40>& node, VisitMode /* visitMode */) override
     {
         ProcessBlock(node);
 

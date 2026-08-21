@@ -21,11 +21,11 @@ TransformVisitor::~TransformVisitor()
     assert(m_transformQueue.empty());
 }
 
-VisitResult TransformVisitor::Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode)
+VisitResult TransformVisitor::Visit(const std::shared_ptr<NodeGroupTransformMatrix24>& node, VisitMode visitMode)
 {
     if (visitMode == VisitMode::PreOrder)
     {
-        m_transformQueue.push_back(node.GetBlockData());
+        m_transformQueue.push_back(node->GetBlockData());
     }
     else
     {
@@ -40,7 +40,7 @@ VisitResult TransformVisitor::Visit(NodeGroupTransformMatrix24& node, VisitMode 
             transformList.push_back(transform);
         }
 
-        m_transformMap[std::move(std::string{node.GetName()})] = transformList;
+        m_transformMap[std::move(std::string{node->GetName()})] = transformList;
         m_transformQueue.pop_back();
     }
 

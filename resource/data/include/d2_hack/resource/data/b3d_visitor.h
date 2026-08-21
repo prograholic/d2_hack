@@ -19,67 +19,67 @@ class NodeVisitorInterface
 public:
     virtual ~NodeVisitorInterface() = default;
 
-    virtual VisitResult Visit(NodeHierarchyBreaker& /*node */, VisitMode /* visidMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeHierarchyBreaker>& /*node */, VisitMode /* visidMode */) = 0;
 
-    virtual VisitResult Visit(NodeEventEntry& /*node */, VisitMode /* visidMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeEventEntry>& /*node */, VisitMode /* visidMode */) = 0;
 
-    virtual VisitResult Visit(NodeEmpty0& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeEmpty0>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector1& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleObjectConnector1>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupUnknown2& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown2>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupRoadInfraObjects4>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupObjects5& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects5>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupVertexData7& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData7>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleFaces8& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces8>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupTrigger9& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupTrigger9>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupLodParameters10& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupLodParameters10>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupUnknown12& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown12>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleTrigger13& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleTrigger13>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleUnknown14& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown14>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector18& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleObjectConnector18>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupObjects19& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects19>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleFlatCollision20& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFlatCollision20>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupObjects21& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects21>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleVolumeCollision23& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleVolumeCollision23>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupTransformMatrix24& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupTransformMatrix24>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleUnknown25& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown25>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleFaces28& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces28>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupUnknown29& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown29>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimplePortal30& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimplePortal30>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupLightingObjects33& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupLightingObjects33>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleUnknown34& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown34>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleFaces35& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces35>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupVertexData36& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData36>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupVertexData37& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData37>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeGroupUnknown39& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown39>& /* node */, VisitMode /* visitMode */) = 0;
 
-    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& /* node */, VisitMode /* visitMode */) = 0;
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleGeneratedObjects40>& /* node */, VisitMode /* visitMode */) = 0;
 };
 
 
@@ -113,7 +113,7 @@ public:
 
     virtual VisitResult Visit(NodeVisitorInterface& visitor, VisitMode visitMode) override
     {
-        return visitor.Visit(*this, visitMode);
+        return visitor.Visit(std::static_pointer_cast<VisitableNodeWithData<BlockType>>(this->shared_from_this()), visitMode);
     }
 };
 
@@ -136,157 +136,157 @@ class GenericActionVisitor: public NodeVisitorInterface
 {
 public:
 
-    virtual VisitResult Visit(NodeHierarchyBreaker& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeHierarchyBreaker>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeEventEntry& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeEventEntry>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeEmpty0& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeEmpty0>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector1& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleObjectConnector1>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
     
-    virtual VisitResult Visit(NodeGroupUnknown2& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown2>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupRoadInfraObjects4& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupRoadInfraObjects4>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupObjects5& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects5>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupVertexData7& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData7>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleFaces8& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces8>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupTrigger9& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupTrigger9>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupLodParameters10& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupLodParameters10>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown12& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown12>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleTrigger13& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleTrigger13>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleUnknown14& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown14>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleObjectConnector18& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleObjectConnector18>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupObjects19& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects19>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleFlatCollision20& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFlatCollision20>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupObjects21& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects21>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleVolumeCollision23& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleVolumeCollision23>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupTransformMatrix24& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupTransformMatrix24>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleUnknown25& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown25>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleFaces28& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces28>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown29& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown29>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimplePortal30& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimplePortal30>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupLightingObjects33& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupLightingObjects33>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleUnknown34& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown34>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleFaces35& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleFaces35>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupVertexData36& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData36>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupVertexData37& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupVertexData37>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeGroupUnknown39& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupUnknown39>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
 
-    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleGeneratedObjects40>& node, VisitMode visitMode) override
     {
         return GenericAction::Perform(static_cast<SelfType*>(this), node, visitMode);
     }
@@ -294,8 +294,8 @@ public:
 
 struct NoOpAction
 {
-    template <typename NodeType>
-    static VisitResult Perform(const void* /* self*/, NodeType& /* node */, VisitMode /* visitMode */)
+    template <typename NodePtrType>
+    static VisitResult Perform(const void* /* self*/, NodePtrType& /* node */, VisitMode /* visitMode */)
     {
         return VisitResult::Continue;
     }
@@ -307,9 +307,10 @@ class NoOpNodeVisitor : public GenericActionVisitor<NoOpNodeVisitor, NoOpAction>
 
 struct RaiseExceptionAction
 {
-    template <typename NodeType>
-    static VisitResult Perform(const void* /* self*/, NodeType& /* node */, VisitMode /* visitMode */)
+    template <typename NodePtrType>
+    static VisitResult Perform(const void* /* self*/, NodePtrType& /* node */, VisitMode /* visitMode */)
     {
+        using NodeType = NodePtrType::element_type;
         RaiseException(NodeType::Name, NodeType::Value);
         return VisitResult::Stop;
     }

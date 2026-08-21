@@ -154,11 +154,11 @@ public:
     {
     }
 
-    virtual VisitResult Visit(NodeSimpleGeneratedObjects40& node, VisitMode visitMode) override
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleGeneratedObjects40>& node, VisitMode visitMode) override
     {
         if (visitMode == VisitMode::PreOrder)
         {
-            const auto& blockData = node.GetBlockData();
+            const auto& blockData = node->GetBlockData();
             auto str = common::ResourceNameToStringView(blockData.name);
             if (str.find("$$TreeGenerator") != str.npos)
             {

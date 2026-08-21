@@ -14,15 +14,15 @@ namespace app
 
 struct SceneNodeGenericAction
 {
-    template <typename VisitorType, typename NodeType>
-    static resource::data::b3d::VisitResult Perform(VisitorType* self, NodeType& node, resource::data::b3d::VisitMode visitMode)
+    template <typename VisitorType, typename NodePtrType>
+    static resource::data::b3d::VisitResult Perform(VisitorType* self, NodePtrType& node, resource::data::b3d::VisitMode visitMode)
     {
-        auto ogreSceneNode = self->GetSceneBuilder().ProcessOgreSceneNode(node.GetName(), visitMode);
+        auto ogreSceneNode = self->GetSceneBuilder().ProcessOgreSceneNode(node->GetName(), visitMode);
 
         if (visitMode == resource::data::b3d::VisitMode::PreOrder)
         {
             auto parentB3dSceneNode = self->GetSceneBuilder().GetParentSceneNode();
-            auto b3dSceneNode = self->CreateNode(node, parentB3dSceneNode, ogreSceneNode);
+            auto b3dSceneNode = self->CreateNode(*node, parentB3dSceneNode, ogreSceneNode);
             self->GetSceneBuilder().PushToSceneNodeStack(b3dSceneNode);
         }
         else
