@@ -1,8 +1,12 @@
 #include <d2_hack/app/b3d_car.h>
 
+#include <format>
+
 #include <OgreException.h>
 
 #include <d2_hack/resource/data/b3d_types.h>
+
+#include <d2_hack/common/log.h>
 
 namespace d2_hack
 {
@@ -26,6 +30,44 @@ void Wheel::Turn(Ogre::Degree angle)
     sceneNode->roll(angle);
 }
 
+WheelId MapObjectIdToWheelId(std::string_view objectId)
+{
+    if (objectId.ends_with("wheel0"))
+    {
+        return WheelId::Wheel0;
+    }
+    else if (objectId.ends_with("wheel1"))
+    {
+        return WheelId::Wheel1;
+    }
+    else if (objectId.ends_with("wheel2"))
+    {
+        return WheelId::Wheel2;
+    }
+    else if (objectId.ends_with("wheel3"))
+    {
+        return WheelId::Wheel3;
+    }
+    else if (objectId.ends_with("wheel4"))
+    {
+        return WheelId::Wheel4;
+    }
+    else if (objectId.ends_with("wheel5"))
+    {
+        return WheelId::Wheel5;
+    }
+    else if (objectId.ends_with("wheel6"))
+    {
+        return WheelId::Wheel6;
+    }
+    else if (objectId.ends_with("wheel7"))
+    {
+        return WheelId::Wheel7;
+    }
+    
+    OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, std::format("Cannot map `{}` to WheelId", objectId));
+}
+
 MoveableObject::MoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
     : BaseGameObject(name, std::move(rootNodes))
 {
@@ -44,13 +86,48 @@ MutableObject::MutableObject(std::string_view name, scene_node::SceneNodeBaseLis
 
 void MutableObject::EnableShadow(bool enable)
 {
+    // TODO: add Shadow to root nodes!!!!
     std::string shadowKey = std::string(GetName()) + "ShadowKey";
 
     ApplyState(shadowKey, enable ? 1 : 0);
 }
 
+
+static std::string_view MapDamageKeyToString(DamageKey key)
+{
+    static constexpr std::string_view DamageKeyMapping[] =
+    {
+        "DamageBRKey",
+        "Damage1Key",
+        "DamageRKey",
+        "DamageFRKey",
+        "DamageFLKey",
+        "DamageLKey",
+        "DamageFCKey",
+        "DamageBCKey",
+        "DamageBLKey",
+        "DamageWheel0Key",
+        "DamageWheel1Key",
+        "DamageWheel2Key",
+        "DamageWheel3Key",
+        "DamageWheel4Key",
+        "DamageWheel5Key",
+        "DamageWheel6Key",
+        "DamageWheel7Key",
+        "DamageWheel7Key",
+    };
+
+    return DamageKeyMapping[static_cast<size_t>(key)];
+}
+
+void MutableObject::SetDamage(DamageKey key, DamageLevel damageLevel)
+{
+    ApplyState(MapDamageKeyToString(key), static_cast<size_t>(damageLevel));
+}
+
 void MutableObject::ApplyState(std::string_view stateName, size_t stateId)
 {
+    D2_HACK_LOG(MutableObject::ApplyState) << "firing event `" << stateName << "` with state " << stateId;
     for (const auto& rootNode : m_rootNodes)
     {
         std::static_pointer_cast<scene_node::SceneNodeBase>(rootNode)->ApplyState(stateName, stateId);
@@ -68,7 +145,28 @@ void WheelBasedMoveableObject::SwitchStopLights(bool /* on */)
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "WheelBasedMoveableObject::SwitchStopLights not implemented");
 }
 
-void WheelBasedMoveableObject::Rotate(Ogre::Degree angle, std::string_view wheelId)
+void WheelBasedMoveableObject::SetDamage(DamageKey key, DamageLevel damageLevel)
+{
+    switch (key)
+    {
+    case DamageKey::Wheel0:
+    case DamageKey::Wheel1:
+    case DamageKey::Wheel2:
+    case DamageKey::Wheel3:
+    case DamageKey::Wheel4:
+    case DamageKey::Wheel5:
+    case DamageKey::Wheel6:
+    case DamageKey::Wheel7:
+        SetWheelDamage(key, damageLevel);
+        break;
+
+    default:
+        MutableObject::SetDamage(key, damageLevel);
+    }
+
+}
+
+void WheelBasedMoveableObject::Rotate(Ogre::Degree angle, WheelId wheelId)
 {
     auto wheelIter = m_wheels.find(wheelId);
     if (wheelIter != m_wheels.end())
@@ -77,12 +175,45 @@ void WheelBasedMoveableObject::Rotate(Ogre::Degree angle, std::string_view wheel
     }
 }
 
-void WheelBasedMoveableObject::Turn(Ogre::Degree angle, std::string_view wheelId)
+void WheelBasedMoveableObject::Turn(Ogre::Degree angle, WheelId wheelId)
 {
     auto wheelIter = m_wheels.find(wheelId);
     if (wheelIter != m_wheels.end())
     {
         wheelIter->second.Turn(angle);
+    }
+}
+
+void WheelBasedMoveableObject::SetWheelDamage(DamageKey key, DamageLevel damageLevel)
+{
+    static constexpr WheelId DamageKeyToWheelIdMapping[] =
+    {
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+        WheelId::Wheel0,
+
+        WheelId::Wheel0,
+        WheelId::Wheel1,
+        WheelId::Wheel2,
+        WheelId::Wheel3,
+        WheelId::Wheel4,
+        WheelId::Wheel5,
+        WheelId::Wheel6,
+        WheelId::Wheel7
+    };
+
+    WheelId wheelId = DamageKeyToWheelIdMapping[static_cast<size_t>(key)];
+
+    auto wheelIter = m_wheels.find(wheelId);
+    if (wheelIter != m_wheels.end())
+    {
+        wheelIter->second.SetDamage(key, damageLevel);
     }
 }
 

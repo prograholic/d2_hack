@@ -21,12 +21,44 @@ public:
 
 typedef std::unique_ptr<MoveableObject> MoveableObjectPtr;
 
+enum class DamageLevel : std::size_t
+{
+    No = 0,
+    Level1,
+    Level2,
+    Level3
+};
+
+enum class DamageKey : std::size_t
+{
+    BR,
+    One,
+    R,
+    FR,
+    FL,
+    L,
+    FC,
+    BC,
+    BL,
+
+    Wheel0,
+    Wheel1,
+    Wheel2,
+    Wheel3,
+    Wheel4,
+    Wheel5,
+    Wheel6,
+    Wheel7
+};
+
 class MutableObject : public MoveableObject
 {
 public:
     MutableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 
     void EnableShadow(bool enable);
+
+    virtual void SetDamage(DamageKey key, DamageLevel damageLevel);
 
 protected:
     void ApplyState(std::string_view stateName, size_t stateId);
@@ -38,23 +70,26 @@ class Wheel : public MutableObject
 public:
     Wheel(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 
-    enum class Damage : std::size_t
-    {
-        No = 0,
-        Level1,
-        Level2,
-        Level3
-    };
-
-    void SetDamage(Damage damage);
-
     void Rotate(Ogre::Degree angle);
 
     void Turn(Ogre::Degree angle);
 };
 
+enum class WheelId : std::size_t
+{
+    Wheel0,
+    Wheel1,
+    Wheel2,
+    Wheel3,
+    Wheel4,
+    Wheel5,
+    Wheel6,
+    Wheel7,
+};
 
-typedef std::map <std::string, Wheel, std::less<>> Wheels;
+WheelId MapObjectIdToWheelId(std::string_view objectId);
+
+typedef std::map <WheelId, Wheel> Wheels;
 
 class WheelBasedMoveableObject: public MutableObject
 {
@@ -65,10 +100,14 @@ public:
     void SwitchBackLights(bool on);
     void SwitchSizeLights(bool on);
 
-    void Rotate(Ogre::Degree angle, std::string_view wheelId);
-    void Turn(Ogre::Degree angle, std::string_view wheelId);
+    virtual void SetDamage(DamageKey key, DamageLevel damageLevel) override;
+
+    void Rotate(Ogre::Degree angle, WheelId wheelId);
+    void Turn(Ogre::Degree angle, WheelId wheelId);
 private:
     Wheels m_wheels;
+
+    void SetWheelDamage(DamageKey key, DamageLevel damageLevel);
 };
 
 class CarBase : public WheelBasedMoveableObject

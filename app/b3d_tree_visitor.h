@@ -1,9 +1,10 @@
-#ifndef D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_TREE_VISITOR_H
-#define D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_TREE_VISITOR_H
+#ifndef D2_HACK_APP_B3D_TREE_VISITOR_H
+#define D2_HACK_APP_B3D_TREE_VISITOR_H
 
 #include <d2_hack/common/node_base.h>
 
 #include <d2_hack/resource/data/b3d_visitor.h>
+#include <d2_hack/app/b3d_car.h>
 
 #include "b3d_scene_builder.h"
 
@@ -106,13 +107,12 @@ private:
     void VisitFaces(FacesNode& block);
 };
 
-
 struct WheelData
 {
     scene_node::SceneNodeBaseList rootNodes;
     Ogre::MeshPtr mesh;
-    std::string fullName;
-    std::string id;
+    std::string name;
+    WheelId id;
     resource::data::b3d::TransformList transformations;
 };
 
@@ -211,7 +211,6 @@ public:
     using VisitMode = resource::data::b3d::VisitMode;
 
     WheelVisitor(std::string_view b3dId,
-                 std::string_view movObjId,
                  std::string_view blockName,
                  Ogre::MeshManager* meshManager,
                  resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
@@ -253,4 +252,4 @@ private:
 } // namespace app
 } // namespace d2_hack
 
-#endif /* D2_HACK_APP_TOOL_SIMPLE_B3D_MESH_RENDERER_B3D_TREE_VISITOR_H */
+#endif /* D2_HACK_APP_B3D_TREE_VISITOR_H */

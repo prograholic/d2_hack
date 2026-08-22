@@ -94,10 +94,20 @@ Ogre::Quaternion GroupTrigger9::GetAbsoluteOrientation() const
 }
 
 
+static std::string_view RemoveReferPrefix(std::string_view name)
+{
+    if (name.starts_with("refer_"))
+    {
+        return name.substr(6);
+    }
+
+    return name;
+}
+
 SceneNodeEvent21::SceneNodeEvent21(
     const std::string_view& name,
     const resource::data::b3d::block_data::GroupObjects21& data)
-    : SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SceneNodeBase>(name)
+    : SceneNode<resource::data::b3d::block_data::GroupObjectsBlock21, SceneNodeBase>(RemoveReferPrefix(name))
     , m_activeEntry(nullptr)
     , m_defaultEntryId(data.defaultValue)
 {
@@ -124,6 +134,7 @@ void SceneNodeEvent21::ApplyState(std::string_view stateName, size_t stateId)
 
     if (stateName == GetName())
     {
+        D2_HACK_LOG(SceneNodeEvent21::ApplyState) << "event " << stateName << " found. Apply state " << stateId;
         for (size_t i = 0; i != GetChildNodeList().size(); ++i)
         {
             EventEntrySceneNode* eventEntry = std::static_pointer_cast<EventEntrySceneNode>(GetChildNodeList()[i]).get();

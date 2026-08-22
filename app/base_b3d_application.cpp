@@ -271,7 +271,7 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
             sceneNode->Initialize(wheelSceneNode);
         }
 
-        wheels.insert(std::make_pair(wheelData.id, Wheel(wheelData.fullName, wheelData.rootNodes)));
+        wheels.insert(std::make_pair(wheelData.id, Wheel(wheelData.name, wheelData.rootNodes)));
     }
 
     return std::make_unique<ObjectType>(objectId, visitor.GetRootSceneNodes(), std::move(wheels));

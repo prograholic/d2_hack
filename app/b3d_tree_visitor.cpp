@@ -318,7 +318,7 @@ VisitResult GameObjectVisitorBase::Visit(const std::shared_ptr<NodeSimpleFaces28
 
 VisitResult GameObjectVisitorBase::Visit(const std::shared_ptr<NodeGroupLightingObjects33>& /* node */, VisitMode /* visitMode */)
 {
-    D2_HACK_LOG(ZilVisitor::VisitNodeGroupLightingObjects33) << "not implemented";
+    D2_HACK_LOG(GameObjectVisitorBase::Visit_NodeGroupLightingObjects33) << "not implemented";
 
     return VisitResult::Continue;
 }
@@ -545,7 +545,6 @@ VisitResult GameObjectVisitorBase::VisitFaces(FacesType& node, VisitMode visitMo
 /////////////////////////////////////////////////////////////////////////////////////
 
 WheelVisitor::WheelVisitor(std::string_view b3dId,
-                           std::string_view movObjId,
                            std::string_view blockName,
                            Ogre::MeshManager* meshManager,
                            resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
@@ -554,9 +553,9 @@ WheelVisitor::WheelVisitor(std::string_view b3dId,
     , m_topLevelBlockConnectorPreVisited(false)
     , m_topLevelBlockConnectorPostVisited(false)
 {
-    m_wheelData.id = blockName.substr(movObjId.length());
+    m_wheelData.id = MapObjectIdToWheelId(blockName);
     m_wheelData.mesh = GetMesh();
-    m_wheelData.fullName = blockName;
+    m_wheelData.name = blockName;
 }
 
 VisitResult WheelVisitor::Visit(const std::shared_ptr<NodeGroupObjects5>& /* node */, VisitMode /* visitMode */)
@@ -619,7 +618,7 @@ VisitResult WheelBasedMoveableObjectVisitor::Visit(const std::shared_ptr<NodeGro
         std::string wheelName = std::string{ GetBlockName() } + "wheel";
         if (node->GetName().starts_with(wheelName))
         {
-            WheelVisitor wheelVisitor{ GetB3dId(), GetBlockName(), node->GetName(), GetMeshManager(), GetMaterialProvider()};
+            WheelVisitor wheelVisitor{ GetB3dId(), node->GetName(), GetMeshManager(), GetMaterialProvider()};
 
             auto visitResult = VisitNode(node, wheelVisitor);
             (void)visitResult;

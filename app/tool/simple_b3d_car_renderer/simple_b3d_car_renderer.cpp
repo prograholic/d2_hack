@@ -203,7 +203,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel0");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel0);
             }
         }
     }
@@ -216,7 +216,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel1");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel1);
             }
         }
     }
@@ -229,7 +229,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel2");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel2);
             }
         }
     }
@@ -242,7 +242,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel3");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel3);
             }
         }
     }
@@ -255,7 +255,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel4");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel4);
             }
         }
     }
@@ -268,7 +268,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel5");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel5);
             }
         }
     }
@@ -281,7 +281,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel6");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel6);
             }
         }
     }
@@ -294,7 +294,20 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             auto wheelBased = dynamic_cast<WheelBasedMoveableObject*>(obj.get());
             if (wheelBased)
             {
-                wheelBased->Rotate(Ogre::Degree{ angle }, "wheel7");
+                wheelBased->Rotate(Ogre::Degree{ angle }, WheelId::Wheel7);
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'f')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::BR, static_cast<DamageLevel>(dmgLevel));
             }
         }
     }
