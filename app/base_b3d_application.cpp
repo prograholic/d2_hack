@@ -294,24 +294,27 @@ B3dSemiTrailerPtr BaseB3dApplication::CreateSemiTrailer(std::string_view b3dId, 
 
 MoveableObjectPtr BaseB3dApplication::CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
 {
-    scene_node::SceneNodeBaseList rootNodes;
-
-    B3dSceneBuilderContext context{ m_sceneManager, moveableSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
-
-    B3dSceneBuilder builder{ b3dId, context, rootNodes };
-    B3dTreeVisitor visitor{ builder };
+    GameObjectVisitorBase visitor{b3dId, moveableObject->GetName(), mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
 
     auto visitResult = VisitNode(moveableObject, visitor);
     (void)visitResult;
 
+    auto entity = m_sceneManager->createEntity(visitor.GetMesh());
+    moveableSceneNode->attachObject(entity);
+
+    for (auto& sceneNode : visitor.GetRootSceneNodes())
+    {
+        sceneNode->Initialize(moveableSceneNode);
+    }
+
     if (moveableObject->GetName() == "k50")
     {
-        return std::make_unique<B3dHelicopter>(std::move(rootNodes));
+        return std::make_unique<B3dHelicopter>(visitor.GetRootSceneNodes());
     }
     else
     {
         assert(moveableObject->GetName() == "Katok");
-        return std::make_unique<B3dKatok>(std::move(rootNodes));
+        return std::make_unique<B3dKatok>(visitor.GetRootSceneNodes());
     }
 }
 
