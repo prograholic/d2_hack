@@ -250,7 +250,7 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
 
     for (auto& sceneNode : visitor.GetRootSceneNodes())
     {
-        sceneNode->Initialize(entity);
+        sceneNode->Initialize(moveableSceneNode);
     }
 
     Wheels wheels;
@@ -260,9 +260,15 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
         auto wheelSceneNode = moveableSceneNode->createChildSceneNode();
         wheelSceneNode->attachObject(wheelEntity);
 
+        for (const auto& transform : wheelData.transformations)
+        {
+            wheelSceneNode->rotate(Ogre::Quaternion{ transform.matrix });
+            wheelSceneNode->translate(transform.position);
+        }
+
         for (auto& sceneNode : wheelData.rootNodes)
         {
-            sceneNode->Initialize(wheelEntity);
+            sceneNode->Initialize(wheelSceneNode);
         }
 
         wheels.insert(std::make_pair(wheelData.name, Wheel(wheelData.rootNodes)));

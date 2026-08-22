@@ -1,5 +1,7 @@
 #include <d2_hack/scene_node/scene_node_base.h>
 
+#include <OgreEntity.h>
+
 namespace d2_hack
 {
 namespace scene_node
@@ -9,7 +11,7 @@ size_t SceneNodeBase::m_scNodeCount = 0;
 
 SceneNodeBase::SceneNodeBase(const std::string_view& name, std::uint32_t type)
     : common::NodeBase(name, type)
-    , m_entity(nullptr)
+    , m_sceneNode(nullptr)
 {
     m_scNodeCount += 1;
 }
@@ -21,16 +23,21 @@ SceneNodeBase::~SceneNodeBase()
     m_scNodeCount -= 1;
 }
 
-void SceneNodeBase::Initialize(Ogre::Entity* entity)
+void SceneNodeBase::Initialize(Ogre::SceneNode* sceneNode)
 {
-    m_entity = entity;
+    m_sceneNode = sceneNode;
 
     for (auto& childNode : GetChildNodeList())
     {
-        std::static_pointer_cast<SceneNodeBase>(childNode)->Initialize(entity);
+        std::static_pointer_cast<SceneNodeBase>(childNode)->Initialize(sceneNode);
     }
 
     DoInit();
+}
+
+Ogre::SceneNode* SceneNodeBase::GetSceneNode()
+{
+    return m_sceneNode;
 }
 
 size_t SceneNodeBase::GetSceneNodeBaseCount()
@@ -57,6 +64,11 @@ void SceneNodeBase::Activate(bool active)
 void SceneNodeBase::DoInit()
 {
     // pass
+}
+
+Ogre::Entity* SceneNodeBase::GetEntity()
+{
+    return static_cast<Ogre::Entity*>(m_sceneNode->getAttachedObject(0));
 }
 
 } // namespace scene_node

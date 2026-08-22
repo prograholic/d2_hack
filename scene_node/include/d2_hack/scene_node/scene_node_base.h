@@ -26,7 +26,9 @@ public:
 
     static size_t GetSceneNodeBaseCount();
 
-    void Initialize(Ogre::Entity* entity);
+    void Initialize(Ogre::SceneNode* sceneNode);
+
+    Ogre::SceneNode* GetSceneNode();
 
     virtual void ApplyState(std::string_view stateName, size_t stateId);
 
@@ -42,7 +44,8 @@ private:
     virtual void DoInit();
 
 protected:
-    Ogre::Entity* m_entity;
+    Ogre::SceneNode* m_sceneNode;
+    Ogre::Entity* GetEntity();
 };
 
 typedef std::shared_ptr<SceneNodeBase> SceneNodeBasePtr;

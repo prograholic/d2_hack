@@ -40,7 +40,7 @@ void SubEntitiesSceneNode::Activate(bool active)
 {
     for (const auto& subEntityId : m_subEntityIds)
     {
-        m_entity->getSubEntity(subEntityId)->setVisible(active);
+        GetEntity()->getSubEntity(subEntityId)->setVisible(active);
     }
 }
 

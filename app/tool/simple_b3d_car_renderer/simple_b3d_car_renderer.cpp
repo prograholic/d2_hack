@@ -123,6 +123,7 @@ const char* node_name = "b3d.scene_node";
 
 bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
+#if 0
     if (evt.keysym.sym == '1')
     {
         PrintSceneNode(m_sceneManager->getRootSceneNode(), 0);
@@ -191,8 +192,8 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     {
         D2_HACK_LOG(BREAK) << "GOOD";
     }
-
-#if 0
+#endif //0
+#if 1
     if (evt.keysym.sym == '0')
     {
         static float angle = 0.0f;

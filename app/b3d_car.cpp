@@ -14,12 +14,16 @@ Wheel::Wheel(scene_node::SceneNodeBaseList rootNodes)
 {
 }
 
-void Wheel::Rotate(Ogre::Degree /* angle */)
+void Wheel::Rotate(Ogre::Degree angle)
 {
+    auto sceneNode = m_rootNodes[0]->GetSceneNode();
+    sceneNode->pitch(angle);
 }
 
-void Wheel::Turn(Ogre::Degree /* angle */)
+void Wheel::Turn(Ogre::Degree angle)
 {
+    auto sceneNode = m_rootNodes[0]->GetSceneNode();
+    sceneNode->roll(angle);
 }
 
 MoveableObject::MoveableObject(scene_node::SceneNodeBaseList rootNodes)

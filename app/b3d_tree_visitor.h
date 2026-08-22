@@ -107,29 +107,27 @@ private:
 };
 
 
-
-
-
 struct WheelData
 {
     scene_node::SceneNodeBaseList rootNodes;
     Ogre::MeshPtr mesh;
     std::string name;
+    resource::data::b3d::TransformList transformations;
 };
 
 
 
-class WheelBasedMoveableObjectVisitor : public resource::data::b3d::RaiseExceptionVisitor
+class GameObjectVisitorBase : public resource::data::b3d::RaiseExceptionVisitor
 {
 public:
 
     using VisitResult = resource::data::b3d::VisitResult;
     using VisitMode = resource::data::b3d::VisitMode;
 
-    WheelBasedMoveableObjectVisitor(std::string_view b3dId,
-                                    std::string_view blockName,
-                                    Ogre::MeshManager* meshManager,
-                                    resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+    GameObjectVisitorBase(std::string_view b3dId,
+                          std::string_view blockName,
+                          Ogre::MeshManager* meshManager,
+                          resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeEventEntry>& node, VisitMode visitMode) override;
 
@@ -155,13 +153,17 @@ public:
     
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleFaces35>& node, VisitMode visitMode) override;
 
+    std::string_view GetB3dId() const;
+    
+    std::string_view GetBlockName() const;
+
+    Ogre::MeshManager* GetMeshManager();
+
+    resource::archive::res::OgreMaterialProvider* GetMaterialProvider();
     
     const scene_node::SceneNodeBaseList& GetRootSceneNodes() const;
 
     Ogre::MeshPtr GetMesh() const;
-
-    const std::vector<WheelData>& GetWheelData() const;
-
 private:
     const std::string_view m_b3dId;
     const std::string_view m_blockName;
@@ -171,8 +173,6 @@ private:
 
     Ogre::MeshPtr m_mesh;
     scene_node::SceneNodeBaseList m_rootSceneNodes;
-
-    std::vector<WheelData> m_wheelRootSceneNodes;
 
     std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
     std::vector<resource::data::b3d::TransformList> m_transformEntries;
@@ -199,6 +199,53 @@ private:
 
     template <typename FacesType>
     VisitResult VisitFaces(FacesType& node, VisitMode visitMode);
+};
+
+
+class WheelVisitor : public GameObjectVisitorBase
+{
+public:
+
+    using VisitResult = resource::data::b3d::VisitResult;
+    using VisitMode = resource::data::b3d::VisitMode;
+
+    WheelVisitor(std::string_view b3dId,
+                 std::string_view movObjId,
+                 std::string_view blockName,
+                 Ogre::MeshManager* meshManager,
+                 resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupObjects5>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleObjectConnector18>& node, VisitMode visitMode) override;
+
+    const WheelData& GetWheelData();
+
+private:
+    WheelData m_wheelData;
+    bool m_topLevelBlockConnectorPreVisited;
+    bool m_topLevelBlockConnectorPostVisited;
+};
+
+
+class WheelBasedMoveableObjectVisitor : public GameObjectVisitorBase
+{
+public:
+
+    using VisitResult = resource::data::b3d::VisitResult;
+    using VisitMode = resource::data::b3d::VisitMode;
+
+    WheelBasedMoveableObjectVisitor(std::string_view b3dId,
+                                    std::string_view blockName,
+                                    Ogre::MeshManager* meshManager,
+                                    resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupObjects5>& node, VisitMode visitMode) override;
+
+    const std::vector<WheelData>& GetWheelData() const;
+
+private:
+    std::vector<WheelData> m_wheelRootSceneNodes;
 };
 
 
