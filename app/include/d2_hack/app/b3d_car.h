@@ -14,7 +14,7 @@ namespace app
 class MoveableObject : public BaseGameObject
 {
 public:
-    explicit MoveableObject(scene_node::SceneNodeBaseList rootNodes);
+    MoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 
     void SetPosition(const Ogre::Vector3& position);
 };
@@ -24,7 +24,9 @@ typedef std::unique_ptr<MoveableObject> MoveableObjectPtr;
 class MutableObject : public MoveableObject
 {
 public:
-    explicit MutableObject(scene_node::SceneNodeBaseList rootNodes);
+    MutableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
+
+    void EnableShadow(bool enable);
 
 protected:
     void ApplyState(std::string_view stateName, size_t stateId);
@@ -34,7 +36,7 @@ protected:
 class Wheel : public MutableObject
 {
 public:
-    explicit Wheel(scene_node::SceneNodeBaseList rootNodes);
+    Wheel(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 
     enum class Damage : std::size_t
     {
@@ -57,7 +59,7 @@ typedef std::map <std::string, Wheel, std::less<>> Wheels;
 class WheelBasedMoveableObject: public MutableObject
 {
 public:
-    WheelBasedMoveableObject(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
+    WheelBasedMoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 
     void SwitchStopLights(bool on);
     void SwitchBackLights(bool on);
@@ -72,7 +74,7 @@ private:
 class CarBase : public WheelBasedMoveableObject
 {
 public:
-    CarBase(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
+    CarBase(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 
     void SwitchFrontLight(bool on);
 };
@@ -81,7 +83,7 @@ public:
 class B3dSemiTrailer : public WheelBasedMoveableObject
 {
 public:
-    B3dSemiTrailer(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
+    B3dSemiTrailer(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 };
 
 typedef std::unique_ptr<B3dSemiTrailer> B3dSemiTrailerPtr;
@@ -89,20 +91,20 @@ typedef std::unique_ptr<B3dSemiTrailer> B3dSemiTrailerPtr;
 class B3dHelicopter : public MoveableObject
 {
 public:
-    explicit B3dHelicopter(scene_node::SceneNodeBaseList rootNodes);
+    B3dHelicopter(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 };
 
 class B3dKatok : public MoveableObject
 {
 public:
-    explicit B3dKatok(scene_node::SceneNodeBaseList rootNodes);
+    B3dKatok(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 };
 
 // Truck, should be connected with semitrailer
 class B3dTruck : public CarBase
 {
 public:
-    B3dTruck(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
+    B3dTruck(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 
     void ConnectSemiTrailer(bool on, B3dSemiTrailer* trailer);
 };
@@ -113,7 +115,7 @@ typedef std::unique_ptr<B3dTruck> B3dTruckPtr;
 class B3dCar : public CarBase
 {
 public:
-    B3dCar(scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
+    B3dCar(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels);
 };
 
 typedef std::unique_ptr<B3dCar> B3dCarPtr;

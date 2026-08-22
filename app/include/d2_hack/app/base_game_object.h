@@ -16,13 +16,16 @@ namespace app
 class BaseGameObject
 {
 public:
-    explicit BaseGameObject(scene_node::SceneNodeBaseList rootNodes);
+    BaseGameObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 
     virtual ~BaseGameObject() = default;
+
+    std::string_view GetName() const;
 
     const scene_node::SceneNodeBaseList& GetRootNodes() const;
 
 protected:
+    const std::string m_name;
     scene_node::SceneNodeBaseList m_rootNodes;
 };
 typedef std::unique_ptr<BaseGameObject> BaseGameObjectPtr;

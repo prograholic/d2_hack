@@ -111,7 +111,8 @@ struct WheelData
 {
     scene_node::SceneNodeBaseList rootNodes;
     Ogre::MeshPtr mesh;
-    std::string name;
+    std::string fullName;
+    std::string id;
     resource::data::b3d::TransformList transformations;
 };
 

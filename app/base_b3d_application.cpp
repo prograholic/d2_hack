@@ -111,7 +111,7 @@ B3dRoomPtr BaseB3dApplication::CreateRoom(const B3dForest& forest, const std::st
     auto visitResult = VisitNode(room, visitor);
     (void)visitResult;
 
-    return std::make_unique<B3dRoom>(std::move(rootNodes));
+    return std::make_unique<B3dRoom>(roomId, std::move(rootNodes));
 }
 
 MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& forest, const std::string_view& movObjId, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode)
@@ -271,10 +271,10 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
             sceneNode->Initialize(wheelSceneNode);
         }
 
-        wheels.insert(std::make_pair(wheelData.name, Wheel(wheelData.rootNodes)));
+        wheels.insert(std::make_pair(wheelData.id, Wheel(wheelData.fullName, wheelData.rootNodes)));
     }
 
-    return std::make_unique<ObjectType>(visitor.GetRootSceneNodes(), std::move(wheels));
+    return std::make_unique<ObjectType>(objectId, visitor.GetRootSceneNodes(), std::move(wheels));
 }
 
 B3dCarPtr BaseB3dApplication::CreateCar(std::string_view b3dId, std::string_view carId, const B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
@@ -309,12 +309,13 @@ MoveableObjectPtr BaseB3dApplication::CreateCustomMoveableObject(std::string_vie
 
     if (moveableObject->GetName() == "k50")
     {
-        return std::make_unique<B3dHelicopter>(visitor.GetRootSceneNodes());
+        // NOTE: all subnodes uses `Ka50` instead of `k50`
+        return std::make_unique<B3dHelicopter>("Ka50", visitor.GetRootSceneNodes());
     }
     else
     {
         assert(moveableObject->GetName() == "Katok");
-        return std::make_unique<B3dKatok>(visitor.GetRootSceneNodes());
+        return std::make_unique<B3dKatok>("Katok", visitor.GetRootSceneNodes());
     }
 }
 

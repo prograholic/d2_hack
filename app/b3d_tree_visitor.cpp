@@ -554,8 +554,9 @@ WheelVisitor::WheelVisitor(std::string_view b3dId,
     , m_topLevelBlockConnectorPreVisited(false)
     , m_topLevelBlockConnectorPostVisited(false)
 {
-    m_wheelData.name = blockName.substr(movObjId.length());
+    m_wheelData.id = blockName.substr(movObjId.length());
     m_wheelData.mesh = GetMesh();
+    m_wheelData.fullName = blockName;
 }
 
 VisitResult WheelVisitor::Visit(const std::shared_ptr<NodeGroupObjects5>& /* node */, VisitMode /* visitMode */)

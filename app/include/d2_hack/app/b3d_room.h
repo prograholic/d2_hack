@@ -11,7 +11,7 @@ namespace app
 class B3dRoom : public BaseGameObject
 {
 public:
-    explicit B3dRoom(scene_node::SceneNodeBaseList rootNodes);
+    B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
 };
 typedef std::unique_ptr<B3dRoom> B3dRoomPtr;
 

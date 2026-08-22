@@ -9,8 +9,8 @@ namespace d2_hack
 namespace app
 {
 
-Wheel::Wheel(scene_node::SceneNodeBaseList rootNodes)
-    : MutableObject(std::move(rootNodes))
+Wheel::Wheel(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+    : MutableObject(name, std::move(rootNodes))
 {
 }
 
@@ -26,8 +26,8 @@ void Wheel::Turn(Ogre::Degree angle)
     sceneNode->roll(angle);
 }
 
-MoveableObject::MoveableObject(scene_node::SceneNodeBaseList rootNodes)
-    : BaseGameObject(std::move(rootNodes))
+MoveableObject::MoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+    : BaseGameObject(name, std::move(rootNodes))
 {
 }
 
@@ -37,9 +37,16 @@ void MoveableObject::SetPosition(const Ogre::Vector3& /* position */)
 }
 
 
-MutableObject::MutableObject(scene_node::SceneNodeBaseList rootNodes)
-    : MoveableObject(std::move(rootNodes))
+MutableObject::MutableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+    : MoveableObject(name, std::move(rootNodes))
 {
+}
+
+void MutableObject::EnableShadow(bool enable)
+{
+    std::string shadowKey = std::string(GetName()) + "ShadowKey";
+
+    ApplyState(shadowKey, enable ? 1 : 0);
 }
 
 void MutableObject::ApplyState(std::string_view stateName, size_t stateId)
@@ -50,8 +57,8 @@ void MutableObject::ApplyState(std::string_view stateName, size_t stateId)
     }
 }
 
-WheelBasedMoveableObject::WheelBasedMoveableObject(scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
-    : MutableObject(std::move(rootNodes))
+WheelBasedMoveableObject::WheelBasedMoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
+    : MutableObject(name, std::move(rootNodes))
     , m_wheels(std::move(wheels))
 {
 }
@@ -79,29 +86,29 @@ void WheelBasedMoveableObject::Turn(Ogre::Degree angle, std::string_view wheelId
     }
 }
 
-CarBase::CarBase(scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
-    : WheelBasedMoveableObject(std::move(rootNodes), std::move(wheels))
+CarBase::CarBase(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
+    : WheelBasedMoveableObject(name, std::move(rootNodes), std::move(wheels))
 {
 }
 
-B3dSemiTrailer::B3dSemiTrailer(scene_node::SceneNodeBaseList rootNodes, Wheels rearWheels)
-    : WheelBasedMoveableObject(std::move(rootNodes), std::move(rearWheels))
+B3dSemiTrailer::B3dSemiTrailer(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels rearWheels)
+    : WheelBasedMoveableObject(name, std::move(rootNodes), std::move(rearWheels))
 {
 }
 
-B3dHelicopter::B3dHelicopter(scene_node::SceneNodeBaseList rootNodes)
-    : MoveableObject(std::move(rootNodes))
+B3dHelicopter::B3dHelicopter(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+    : MoveableObject(name, std::move(rootNodes))
 {
 }
 
-B3dKatok::B3dKatok(scene_node::SceneNodeBaseList rootNodes)
-    : MoveableObject(std::move(rootNodes))
+B3dKatok::B3dKatok(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+    : MoveableObject(name, std::move(rootNodes))
 {
 }
 
 
-B3dTruck::B3dTruck(scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
-    : CarBase(std::move(rootNodes), std::move(wheels))
+B3dTruck::B3dTruck(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
+    : CarBase(name, std::move(rootNodes), std::move(wheels))
 {
 }
 
@@ -112,8 +119,8 @@ void B3dTruck::ConnectSemiTrailer(bool /* on */, B3dSemiTrailer* /* trailer */)
 
 
 
-B3dCar::B3dCar(scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
-    : CarBase(std::move(rootNodes), std::move(wheels))
+B3dCar::B3dCar(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Wheels wheels)
+    : CarBase(name, std::move(rootNodes), std::move(wheels))
 {
 }
 
