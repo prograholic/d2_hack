@@ -311,6 +311,214 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             }
         }
     }
+    else if (evt.keysym.sym == 'g')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::One, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'h')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::R, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'j')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::FR, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'k')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::FL, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'l')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::L, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'z')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::FC, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'x')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::BC, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'c')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::BL, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'e')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel0, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'r')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel1, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 't')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel2, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'y')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel3, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'u')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel4, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'i')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel5, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'o')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel6, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
+    else if (evt.keysym.sym == 'p')
+    {
+        static size_t dmgLevel = 0;
+        dmgLevel = (dmgLevel + 1) % 4;
+        for (auto& obj : m_moveableObjects)
+        {
+            auto mutObj = dynamic_cast<MutableObject*>(obj.get());
+            if (mutObj)
+            {
+                mutObj->SetDamage(DamageKey::Wheel7, static_cast<DamageLevel>(dmgLevel));
+            }
+        }
+    }
 #endif //0
 
     return BaseB3dApplication::keyPressed(evt);

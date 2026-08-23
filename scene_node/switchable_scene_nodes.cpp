@@ -141,7 +141,15 @@ void SceneNodeEvent21::ApplyState(std::string_view stateName, size_t stateId)
 
             eventEntry->Activate(i == stateId);
         }
-        m_activeEntry = std::static_pointer_cast<EventEntrySceneNode>(GetChildNodeList()[stateId]).get();
+        if (stateId < GetChildNodeList().size())
+        {
+            m_activeEntry = std::static_pointer_cast<EventEntrySceneNode>(GetChildNodeList()[stateId]).get();
+        }
+        else
+        {
+            static std::shared_ptr<EventEntrySceneNode> s_EmptyEventEntry = std::make_shared<EventEntrySceneNode>("");
+            m_activeEntry = s_EmptyEventEntry.get();
+        }
     }
 
     m_activeEntry->ApplyState(stateName, stateId);
