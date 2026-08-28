@@ -68,6 +68,7 @@ void SceneNodeBase::DoInit()
 
 Ogre::Entity* SceneNodeBase::GetEntity()
 {
+    assert(m_sceneNode->getAttachedObjects().size() == 1);
     return static_cast<Ogre::Entity*>(m_sceneNode->getAttachedObject(0));
 }
 

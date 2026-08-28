@@ -158,13 +158,23 @@ public:
     
     std::string_view GetBlockName() const;
 
-    Ogre::MeshManager* GetMeshManager();
-
-    resource::archive::res::OgreMaterialProvider* GetMaterialProvider();
-    
     const scene_node::SceneNodeBaseList& GetRootSceneNodes() const;
 
     Ogre::MeshPtr GetMesh() const;
+
+protected:
+    void PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& node);
+
+    void PopFromSceneNodeStack();
+
+    Ogre::MeshManager* GetMeshManager();
+
+    Ogre::SceneManager* GetSceneManager();
+
+    resource::archive::res::OgreMaterialProvider* GetMaterialProvider();
+
+    scene_node::SceneNodeBasePtr GetParentSceneNode();
+
 private:
     const std::string_view m_b3dId;
     const std::string_view m_blockName;
@@ -177,12 +187,6 @@ private:
 
     std::stack<scene_node::SceneNodeBasePtr> m_sceneNodesStack;
     std::vector<resource::data::b3d::TransformList> m_transformEntries;
-
-    void PushToSceneNodeStack(const scene_node::SceneNodeBasePtr& node);
-
-    void PopFromSceneNodeStack();
-
-    scene_node::SceneNodeBasePtr GetParentSceneNode();
 
     static Ogre::MeshPtr CreateMesh(std::string_view b3dId, std::string_view blockName, Ogre::MeshManager* meshManager);
 
@@ -246,6 +250,43 @@ public:
 
 private:
     std::vector<WheelData> m_wheelRootSceneNodes;
+};
+
+class RoomVisitor : public GameObjectVisitorBase
+{
+public:
+    using VisitResult = resource::data::b3d::VisitResult;
+    using VisitMode = resource::data::b3d::VisitMode;
+
+    RoomVisitor(std::string_view b3dId,
+                std::string_view blockName,
+                Ogre::MeshManager* meshManager,
+                resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupRoadInfraObjects4>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupTrigger9>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupUnknown12>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleTrigger13>& node, VisitMode visitMode) override;
+    
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupObjects19>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleFlatCollision20>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupUnknown29>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimplePortal30>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleUnknown34>& node, VisitMode visitMode) override;
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleGeneratedObjects40>& node, VisitMode visitMode) override;
+
+private:
+    Ogre::SceneManager* m_sceneManager;
+
+    Ogre::SceneManager* GetSceneManager();
 };
 
 

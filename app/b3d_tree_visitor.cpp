@@ -643,6 +643,121 @@ const std::vector<WheelData>& WheelBasedMoveableObjectVisitor::GetWheelData() co
     return m_wheelRootSceneNodes;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
+
+RoomVisitor::RoomVisitor(std::string_view b3dId,
+                         std::string_view blockName,
+                         Ogre::MeshManager* meshManager,
+                         resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
+    : GameObjectVisitorBase(b3dId, blockName, meshManager, ogreMaterialProvider)
+{
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeGroupRoadInfraObjects4>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeGroupTrigger9>& node, VisitMode visitMode)
+{
+    if (visitMode == VisitMode::PreOrder)
+    {
+        auto parentB3dSceneNode = GetParentSceneNode();
+        auto b3dSceneNode = CreateSceneNode<scene_node::GroupTrigger9>(parentB3dSceneNode, node->GetName(), node->GetBlockData());
+        PushToSceneNodeStack(b3dSceneNode);
+    }
+    else
+    {
+        PopFromSceneNodeStack();
+    }
+
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeGroupUnknown12>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimpleTrigger13>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeGroupObjects19>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimpleFlatCollision20>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeGroupUnknown29>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimplePortal30>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimpleUnknown34>& /* node */, VisitMode /* visitMode */)
+{
+    return VisitResult::Continue;
+}
+
+VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimpleGeneratedObjects40>& /* node */, VisitMode /* visitMode */)
+{
+#if 0
+    auto generatorName = common::ResourceNameToStringView(node->GetBlockData().name);
+    if (visitMode == VisitMode::PreOrder)
+    {
+        auto ogreMaterialProvider = GetMaterialProvider();
+        
+        scene_node::SceneNodeBasePtr newNode;
+        if (generatorName == "$$GeneratorOfTerrain")
+        {
+            auto newName = std::format("terrain.{}", node->GetName());
+            newNode = CreateSceneNode<scene_node::TerrainSceneNode2>(GetParentSceneNode(), newName, GetSceneManager());
+        }
+        else if (generatorName == "$$TreeGenerator1")
+        {
+            Ogre::SceneManager* sceneManager = GetSceneManager();
+            auto newName = std::format("tree.{}", node->GetName());
+            newNode = CreateSceneNode<scene_node::TreeGeneratorSceneNode2>(GetParentSceneNode(), newName, node->GetBlockData(), GetB3dId(), sceneManager, ogreMaterialProvider);
+        }
+        else
+        {
+            D2_HACK_LOG(B3dTreeVisitor::CreateNode) << "skipping unsupported generator: " << generatorName;
+            //newNode = CreateSceneNode<scene_node::OgreSceneNode<NodeSimpleGeneratedObjects40::Value>>(GetParentSceneNode(), node->GetName());
+        }
+
+        if (newNode)
+        {
+            PushToSceneNodeStack(newNode);
+        }
+    }
+    else
+    {
+        if ((generatorName == "$$GeneratorOfTerrain") || (generatorName == "$$TreeGenerator1"))
+        {
+            PopFromSceneNodeStack();
+        }
+    }
+#endif //0
+
+    return VisitResult::Continue;
+}
+
+Ogre::SceneManager* RoomVisitor::GetSceneManager()
+{
+    return m_sceneManager;
+}
+
+
 
 } // namespace app
 } // namespace d2_hack

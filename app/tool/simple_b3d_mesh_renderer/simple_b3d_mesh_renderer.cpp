@@ -32,6 +32,16 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     Ogre::SceneNode* b3dSceneNode = rootNode->createChildSceneNode("b3d.scene_node");
 
+    const B3dRegistry registry
+    {
+        D2_ROOT_DIR,
+        "ENV",
+        {
+            "ad",
+        }
+    };
+
+    //CreateB3dScene(registry, b3dSceneNode);
     CreateB3dScene(SinglePlayerRegistry, b3dSceneNode);
 }
 
@@ -156,9 +166,10 @@ void SimpleB3dMeshRenderer::CreateRooms(const B3dForest& forest, Ogre::SceneNode
         {
             if (rootNode->GetNodeCategory() == NodeCategory::RoomNode)
             {
-                if (!rootNode->GetChildNodeList().empty())
+                if (!rootNode->GetChildNodeList().empty())// && (rootNode->GetName() == "room_ad_008"))
                 {
-                    m_rooms.emplace_back(CreateRoom(forest, rootNode->GetName(), b3dSceneNode));
+                    auto roomSceneNode = b3dSceneNode->createChildSceneNode();
+                    m_rooms.emplace_back(CreateRoom(forest, rootNode->GetName(), roomSceneNode));
                 }
                 else
                 {
