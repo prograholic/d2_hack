@@ -16,11 +16,14 @@ d2_hack_add_library(d2_hack.app
 
     include/d2_hack/app/b3d_scene_builder_context.h
 
-    b3d_tree_visitor.cpp
-    b3d_tree_visitor.h
-
-    b3d_scene_builder.cpp
-    b3d_scene_builder.h
+    base_game_object_visitor.cpp
+    base_game_object_visitor.h
+    
+    car_visitor.cpp
+    car_visitor.h
+    
+    room_visitor.cpp
+    room_visitor.h
 )
 
 target_link_libraries(d2_hack.app

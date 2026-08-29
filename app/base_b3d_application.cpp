@@ -7,8 +7,8 @@
 
 #include <d2_hack/common/log.h>
 
-#include "b3d_scene_builder.h"
-#include "b3d_tree_visitor.h"
+#include "room_visitor.h"
+#include "car_visitor.h"
 
 namespace d2_hack
 {
