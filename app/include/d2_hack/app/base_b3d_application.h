@@ -27,8 +27,6 @@ public:
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 
 private:
-    scene_node::WorldContext m_worldContext;
-
     void PrintNodesStats(const char* prefix);
 
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) = 0;

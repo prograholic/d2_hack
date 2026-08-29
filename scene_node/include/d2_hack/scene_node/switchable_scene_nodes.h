@@ -38,19 +38,6 @@ private:
     std::vector<size_t> m_subEntityIds;
 };
 
-
-class GroupUnknown2 : public SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SceneNodeBase>
-{
-public:
-    GroupUnknown2(
-        const std::string_view& name,
-        const resource::data::b3d::block_data::GroupUnknown2& data);
-
-    virtual Ogre::Vector3f GetAbsolutePosition() const override;
-
-    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
-};
-
 class GroupTrigger9 : public SceneNode<resource::data::b3d::block_data::GroupTriggerBlock9, SceneNodeBase>
 {
 public:
@@ -84,19 +71,6 @@ private:
 
     virtual void DoInit() override;
 };
-
-class GroupUnknown29 : public SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SceneNodeBase>
-{
-public:
-    GroupUnknown29(
-        const std::string_view& name,
-        const resource::data::b3d::block_data::GroupUnknown29& data);
-
-    virtual Ogre::Vector3f GetAbsolutePosition() const override;
-
-    virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
-};
-
 
 } // namespace scene_node
 } // namespace d2_hack

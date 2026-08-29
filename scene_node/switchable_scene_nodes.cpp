@@ -56,26 +56,6 @@ Ogre::Quaternion SubEntitiesSceneNode::GetAbsoluteOrientation() const
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-
-GroupUnknown2::GroupUnknown2(
-    const std::string_view& name,
-    const resource::data::b3d::block_data::GroupUnknown2& /* data */)
-    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock2, SceneNodeBase>(name)
-{
-}
-
-Ogre::Vector3f GroupUnknown2::GetAbsolutePosition() const
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown2::GetAbsolutePosition not implemented");
-}
-
-Ogre::Quaternion GroupUnknown2::GetAbsoluteOrientation() const
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown2::GetAbsoluteOrientation not implemented");
-}
-
-
-
 GroupTrigger9::GroupTrigger9(
     const std::string_view& name,
     const resource::data::b3d::block_data::GroupTrigger9& /* data */)
@@ -93,6 +73,7 @@ Ogre::Quaternion GroupTrigger9::GetAbsoluteOrientation() const
     OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupTrigger9::GetAbsoluteOrientation not implemented");
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 static std::string_view RemoveReferPrefix(std::string_view name)
 {
@@ -158,24 +139,6 @@ void SceneNodeEvent21::ApplyState(std::string_view stateName, size_t stateId)
 void SceneNodeEvent21::DoInit()
 {
     ApplyState(GetName(), m_defaultEntryId);
-}
-
-
-GroupUnknown29::GroupUnknown29(
-    const std::string_view& name,
-    const resource::data::b3d::block_data::GroupUnknown29& /* data */)
-    : SceneNode<resource::data::b3d::block_data::GroupUnknownBlock29, SceneNodeBase>(name)
-{
-}
-
-Ogre::Vector3f GroupUnknown29::GetAbsolutePosition() const
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown29::GetAbsolutePosition not implemented");
-}
-
-Ogre::Quaternion GroupUnknown29::GetAbsoluteOrientation() const
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "GroupUnknown29::GetAbsoluteOrientation not implemented");
 }
 
 

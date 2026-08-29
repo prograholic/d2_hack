@@ -19,7 +19,6 @@ using namespace resource::data::b3d;
 
 BaseB3dApplication::BaseB3dApplication(const std::string& appName)
     : BaseApplication(appName)
-    , m_worldContext()
 {
 }
 

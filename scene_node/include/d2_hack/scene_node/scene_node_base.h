@@ -12,11 +12,6 @@ namespace d2_hack
 namespace scene_node
 {
 
-struct WorldContext
-{
-    Ogre::Vector3f playerPosition;
-};
-
 class SceneNodeBase : public common::NodeBase
 {
 public:
