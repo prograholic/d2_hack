@@ -103,20 +103,6 @@ B3dRoomPtr BaseB3dApplication::CreateRoom(const B3dForest& forest, const std::st
         OGRE_EXCEPT(Ogre::Exception::ERR_INVALID_STATE, std::format("Cannot create empty room {}", room->GetName()));
     }
 
-#if 0
-
-    scene_node::SceneNodeBaseList rootNodes;
-
-    B3dSceneBuilderContext context{m_sceneManager, b3dSceneNode, mRoot->getMeshManager(), m_ogreMaterialProvider.get()};
-    B3dSceneBuilder sceneBuilder{b3dId, context, rootNodes};
-    B3dTreeVisitor visitor{sceneBuilder};
-    auto visitResult = VisitNode(room, visitor);
-    (void)visitResult;
-
-    return std::make_unique<B3dRoom>(roomId, std::move(rootNodes));
-
-#endif //0
-
     RoomVisitor visitor{ b3dId, roomId, mRoot->getMeshManager(), m_sceneManager, m_ogreMaterialProvider.get() };
     auto visitResult = VisitNode(room, visitor);
     (void)visitResult;

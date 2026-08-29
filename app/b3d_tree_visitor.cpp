@@ -727,7 +727,8 @@ VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimpleGeneratedObjects4
         if (generatorName == "$$GeneratorOfTerrain")
         {
             auto newName = std::format("terrain.{}", node->GetName());
-            //newNode = CreateSceneNode<scene_node::TerrainSceneNode2>(GetParentSceneNode(), newName, GetSceneManager());
+            newNode = CreateSceneNode<scene_node::TerrainSceneNode2>(GetParentSceneNode(), newName, m_sceneManager);
+            PushToSceneNodeStack(newNode);
         }
         else if (generatorName == "$$TreeGenerator1")
         {
@@ -745,6 +746,13 @@ VisitResult RoomVisitor::Visit(const std::shared_ptr<NodeSimpleGeneratedObjects4
         else
         {
             D2_HACK_LOG(B3dTreeVisitor::CreateNode) << "skipping unsupported generator: " << generatorName;
+        }
+    }
+    else
+    {
+        if (generatorName == "$$GeneratorOfTerrain")
+        {
+            PopFromSceneNodeStack();
         }
     }
 
