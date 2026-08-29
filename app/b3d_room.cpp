@@ -9,8 +9,14 @@ namespace app
 
 using namespace resource::data::b3d;
 
-B3dRoom::B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+Tree::Tree(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
+    : MoveableObject(name, std::move(rootNodes))
+{
+}
+
+B3dRoom::B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Trees trees)
     : BaseGameObject(name, std::move(rootNodes))
+    , m_trees(std::move(trees))
 {
 }
 

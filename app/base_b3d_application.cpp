@@ -117,7 +117,7 @@ B3dRoomPtr BaseB3dApplication::CreateRoom(const B3dForest& forest, const std::st
 
 #endif //0
 
-    RoomVisitor visitor{ b3dId, roomId, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
+    RoomVisitor visitor{ b3dId, roomId, mRoot->getMeshManager(), m_sceneManager, m_ogreMaterialProvider.get() };
     auto visitResult = VisitNode(room, visitor);
     (void)visitResult;
 
@@ -129,7 +129,26 @@ B3dRoomPtr BaseB3dApplication::CreateRoom(const B3dForest& forest, const std::st
         sceneNode->Initialize(b3dSceneNode);
     }
 
-    return std::make_unique<B3dRoom>(roomId, visitor.GetRootSceneNodes());
+    Trees trees;
+    for (const auto& treeData : visitor.GetTreeData())
+    {
+        auto treeEntity = m_sceneManager->createEntity(treeData.mesh);
+        treeEntity->setMaterial(m_ogreMaterialProvider->CreateOrRetrieveMaterial(treeData.materialName, common::DefaultResourceGroup));
+        auto treeSceneNode = b3dSceneNode->createChildSceneNode();
+        treeSceneNode->attachObject(treeEntity);
+
+        treeSceneNode->pitch(Ogre::Radian(Ogre::Degree(90)), Ogre::Node::TransformSpace::TS_WORLD);
+        treeSceneNode->translate(treeData.location);
+
+        for (auto& sceneNode : treeData.rootNodes)
+        {
+            sceneNode->Initialize(treeSceneNode);
+        }
+
+        trees.emplace_back(treeData.name, treeData.rootNodes);
+    }
+
+    return std::make_unique<B3dRoom>(roomId, visitor.GetRootSceneNodes(), trees);
 }
 
 MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& forest, const std::string_view& movObjId, const Ogre::Vector3& location, Ogre::SceneNode* b3dSceneNode)

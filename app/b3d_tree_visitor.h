@@ -116,6 +116,14 @@ struct WheelData
     resource::data::b3d::TransformList transformations;
 };
 
+struct TreeData
+{
+    scene_node::SceneNodeBaseList rootNodes;
+    Ogre::MeshPtr mesh;
+    std::string name;
+    std::string materialName;
+    Ogre::Vector3 location;
+};
 
 
 class GameObjectVisitorBase : public resource::data::b3d::RaiseExceptionVisitor
@@ -169,7 +177,7 @@ protected:
 
     Ogre::MeshManager* GetMeshManager();
 
-    Ogre::SceneManager* GetSceneManager();
+    //Ogre::SceneManager* GetSceneManager();
 
     resource::archive::res::OgreMaterialProvider* GetMaterialProvider();
 
@@ -261,6 +269,7 @@ public:
     RoomVisitor(std::string_view b3dId,
                 std::string_view blockName,
                 Ogre::MeshManager* meshManager,
+                Ogre::SceneManager* sceneManager,
                 resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupRoadInfraObjects4>& node, VisitMode visitMode) override;
@@ -283,10 +292,14 @@ public:
 
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleGeneratedObjects40>& node, VisitMode visitMode) override;
 
+    const std::vector<TreeData>& GetTreeData();
+
 private:
     Ogre::SceneManager* m_sceneManager;
 
-    Ogre::SceneManager* GetSceneManager();
+    std::vector<TreeData> m_trees;
+
+    void FillTreeDataMeshAndMaterial(std::string_view b3dId, const resource::data::b3d::block_data::SimpleGeneratedObjects40& data, TreeData& treeData);
 };
 
 

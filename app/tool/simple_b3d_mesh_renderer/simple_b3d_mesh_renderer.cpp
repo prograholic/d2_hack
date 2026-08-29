@@ -166,7 +166,7 @@ void SimpleB3dMeshRenderer::CreateRooms(const B3dForest& forest, Ogre::SceneNode
         {
             if (rootNode->GetNodeCategory() == NodeCategory::RoomNode)
             {
-                if (!rootNode->GetChildNodeList().empty())// && (rootNode->GetName() == "room_ad_008"))
+                if (!rootNode->GetChildNodeList().empty())
                 {
                     auto roomSceneNode = b3dSceneNode->createChildSceneNode();
                     m_rooms.emplace_back(CreateRoom(forest, rootNode->GetName(), roomSceneNode));

@@ -8,10 +8,21 @@ namespace d2_hack
 namespace app
 {
 
+class Tree : public MoveableObject
+{
+public:
+    Tree(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
+};
+
+typedef std::vector<Tree> Trees;
+
 class B3dRoom : public BaseGameObject
 {
 public:
-    B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
+    B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Trees trees);
+
+private:
+    Trees m_trees;
 };
 typedef std::unique_ptr<B3dRoom> B3dRoomPtr;
 

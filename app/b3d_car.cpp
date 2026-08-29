@@ -68,17 +68,6 @@ WheelId MapObjectIdToWheelId(std::string_view objectId)
     OGRE_EXCEPT(Ogre::Exception::ERR_INVALIDPARAMS, std::format("Cannot map `{}` to WheelId", objectId));
 }
 
-MoveableObject::MoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
-    : BaseGameObject(name, std::move(rootNodes))
-{
-}
-
-void MoveableObject::SetPosition(const Ogre::Vector3& /* position */)
-{
-    OGRE_EXCEPT(Ogre::Exception::ERR_NOT_IMPLEMENTED, "MoveableObject::SetPosition not implemented");
-}
-
-
 MutableObject::MutableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes)
     : MoveableObject(name, std::move(rootNodes))
 {

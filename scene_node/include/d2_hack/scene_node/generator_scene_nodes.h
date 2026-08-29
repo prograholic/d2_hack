@@ -79,31 +79,11 @@ private:
 class TreeGeneratorSceneNode2 : public SceneNode<resource::data::b3d::block_data::SimpleGeneratedObjectsBlock40, SceneNodeBase>
 {
 public:
-
-    struct TreeParams
-    {
-        std::string materialName;
-        std::string extraMaterialName;
-        std::string meshName;
-        float textureScale;
-        float scale;
-        Ogre::Vector3f location;
-    };
-
-    TreeGeneratorSceneNode2(const std::string_view& name,
-                           const resource::data::b3d::block_data::SimpleGeneratedObjects40& data,
-                           const std::string_view& b3dId,
-                           Ogre::SceneManager* sceneManager,
-                           resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+    explicit TreeGeneratorSceneNode2(const std::string_view& name);
 
     virtual Ogre::Vector3f GetAbsolutePosition() const override;
 
     virtual Ogre::Quaternion GetAbsoluteOrientation() const override;
-
-private:
-    Ogre::MeshPtr CreateMesh(const TreeParams& treeParams, Ogre::SceneManager* sceneManager);
-
-    TreeParams DeduceTreeParams(const resource::data::b3d::block_data::SimpleGeneratedObjects40& data, const std::string_view& b3dId);
 };
 
 } // namespace scene_node

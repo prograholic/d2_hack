@@ -30,6 +30,17 @@ protected:
 };
 typedef std::unique_ptr<BaseGameObject> BaseGameObjectPtr;
 
+
+class MoveableObject : public BaseGameObject
+{
+public:
+    MoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
+
+    void SetPosition(const Ogre::Vector3& position);
+};
+
+typedef std::unique_ptr<MoveableObject> MoveableObjectPtr;
+
 } // namespace app
 } // namespace d2_hack
 

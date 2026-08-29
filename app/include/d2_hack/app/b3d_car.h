@@ -8,19 +8,6 @@ namespace d2_hack
 namespace app
 {
 
-
-
-
-class MoveableObject : public BaseGameObject
-{
-public:
-    MoveableObject(std::string_view name, scene_node::SceneNodeBaseList rootNodes);
-
-    void SetPosition(const Ogre::Vector3& position);
-};
-
-typedef std::unique_ptr<MoveableObject> MoveableObjectPtr;
-
 enum class DamageLevel : std::size_t
 {
     No = 0,
