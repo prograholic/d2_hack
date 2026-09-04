@@ -218,7 +218,7 @@ size_t GameObjectVisitorBase::AddSimpleMeshInfo(const common::SimpleMeshInfo& me
         {
             bbox.merge(position);
         }
-        m_mesh->_setBounds(bbox, true);
+        m_mesh->_setBounds(bbox, false);
     }
 
     if (!meshInfo.texCoords.empty())

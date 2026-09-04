@@ -30,7 +30,7 @@ static void AddEntityToBullet(Ogre::SceneNode* node, Ogre::Bullet::DynamicsWorld
         Ogre::Entity* e = dynamic_cast<Ogre::Entity*>(obj);
         if (e)
         {
-            dynWorld->addRigidBody(100, e, Ogre::Bullet::CT_SPHERE);
+            dynWorld->addRigidBody(1, e, Ogre::Bullet::CT_BOX);
         }
     }
 
@@ -58,22 +58,17 @@ void SimpleB3dCarRenderer::CreateScene()
 
     CreateB3dScene(reg, b3dSceneNode);
 
-    m_dynWorld.reset(new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0.0f, -9.8f, 0.0)));
-    m_dbgDraw.reset(new Ogre::Bullet::DebugDrawer(m_sceneManager->getRootSceneNode(), m_dynWorld->getBtWorld()));
-
-#if 0
-    
-    
+    m_dynWorld.reset(new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0.0f, 0.0f, -0.8f)));
+    m_dbgDraw.reset(new Ogre::Bullet::DebugDrawer(b3dSceneNode, m_dynWorld->getBtWorld()));
 
     for (auto& moveableObject : m_moveableObjects)
     {
         for (const auto& moveableRootNode : moveableObject->GetRootNodes())
         {
-            Ogre::SceneNode* sceneNode = std::static_pointer_cast<scene_node::OgreSceneNodeBase>(moveableRootNode)->GetOgreSceneNode();
-            AddEntityToBullet(sceneNode, m_dynWorld.get());
+            //Ogre::SceneNode* sceneNode = std::static_pointer_cast<scene_node::OgreSceneNodeBase>(moveableRootNode)->GetOgreSceneNode();
+            AddEntityToBullet(moveableRootNode->GetSceneNode(), m_dynWorld.get());
         }
     }
-#endif //0
 
     //m_dynWorld->addRigidBody(5, player, Bullet::CT_SPHERE);
     //m_dynWorld->addRigidBody(0, level, Bullet::CT_TRIMESH);
@@ -526,6 +521,7 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 
 void SimpleB3dCarRenderer::shutdown()
 {
+    m_dbgDraw.reset();
     BaseApplication::shutdown();
 }
 
@@ -550,11 +546,11 @@ void SimpleB3dCarRenderer::CreateMoveableObjects(const resource::data::b3d::B3dF
         "Zil"
         //"STrailerP"
     };
-    for (size_t i = 0; i != AllCarNames.size(); ++i)
-    //for (size_t i = 0; i != _countof(Cars); ++i)
+    //for (size_t i = 0; i != AllCarNames.size(); ++i)
+    for (size_t i = 0; i != _countof(Cars); ++i)
     {
-        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
-        m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
     }
 }
 
