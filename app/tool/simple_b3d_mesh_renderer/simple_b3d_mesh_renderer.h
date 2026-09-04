@@ -24,6 +24,8 @@ private:
 
     virtual void CreateRooms(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) override;
     virtual void CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode) override;
+
+    void ApplyRoomEvent(const char* eventName, size_t eventId);
 };
 
 

@@ -87,6 +87,126 @@ void PrintSubMeshesForNode(Ogre::SceneNode* node, int& cnt)
 
 const char* node_name = "b3d.scene_node";
 
+static const char* room_events[] =
+{
+    "AP5_people_key",
+    "cows06",
+    "Benzo2Key",
+    "DC2_people_key",
+    "AT3_people_key",
+    "FallAB2Key",
+    "sheep01",
+    "BenzoKey",
+    "AR2_people_key",
+    "DC3_people_key",
+    "K_CLOSE_BB0",
+    "AD2_people_key",
+    "FallABDA1Key",
+    "AP7_people_key",
+    "AU1_people_key",
+    "DC4_people_key",
+    "AU3_people_key",
+    "MineKey",
+    "AS2_people_key",
+    "cows05",
+    "FallAC1Key",
+    "K_bb040_DR",
+    "sheep10",
+    "FallAC3Key",
+    "ILLUM_LEVEL_05",
+    "ILLUM_LEVEL_03",
+    "StartKey",
+    "ILLUM_LEVEL_13",
+    "AT2_people_key",
+    "AU6_people_key",
+    "DC1_people_key",
+    "FallDA1Key",
+    "sheep60",
+    "AD4_people_key",
+    "ILLUM_LEVEL_06",
+    "AR6_people_key",
+    "AP1_people_key",
+    "ILLUM_LEVEL_00",
+    "AP3_people_key",
+    "AT1_people_key",
+    "AM3_people_key",
+    "FloodAX1Key",
+    "ILLUM_LEVEL_01",
+    "ILLUM_LEVEL_15",
+    "sheep11",
+    "AD3_people_key",
+    "FallDA3Key",
+    "AS3_people_key",
+    "ILLUM_LEVEL_07",
+    "cows01",
+    "AJ1_people_key",
+    "CLOSE_BD_R",
+    "PinKey",
+    "TrafficLightKey0",
+    "sheep00",
+    "AJ2_people_key",
+    "FloodAQKey",
+    "AP8_people_key",
+    "AP6_people_key",
+    "AM2_people_key",
+    "ILLUM_LEVEL_02",
+    "sheep61",
+    "sheep71",
+    "K_bb040_DSR",
+    "ILLUM_LEVEL_12",
+    "AU2_people_key",
+    "AR1_people_key",
+    "TextureSizeKey",
+    "sheep70",
+    "RadarHeadOn",
+    "sheep100",
+    "RadarKey",
+    "FallAB1Key",
+    "TrafficLightKey1",
+    "AJ3_people_key",
+    "FloodAWKey",
+    "AR9_people_key",
+    "FallAB3Key",
+    "AR8_people_key",
+    "AJ4_people_key",
+    "TL_operative",
+    "cows04",
+    "FallDA2Key",
+    "ILLUM_LEVEL_04",
+    "Benzo1Key",
+    "AP2_people_key",
+    "AD1_people_key",
+    "GeometryKey",
+    "sheep90",
+    "K_bb041_DSR",
+    "Benzo0Key",
+    "GreenSvetKey",
+    "AU5_people_key",
+    "FallABDA2Key",
+    "Faza8Key",
+    "CLOSE_BD_L",
+    "cows00",
+    "RedSvetKey",
+    "cows03",
+    "AS1_people_key",
+    "CLOSE_BD_L_BE",
+    "FallAC2Key",
+    "AP4_people_key",
+    "FloodAX2Key",
+    "AR5_people_key",
+    "AM1_people_key",
+    "sheep12",
+    "FonarHeadOn",
+    "AU4_people_key",
+    "cows02",
+    "ILLUM_LEVEL_14",
+
+};
+
+static size_t room_events_pos = 0;
+static size_t event_index = 0;
+
+
 bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
 {
     //D2_HACK_LOG("SimpleB3dMeshRenderer::keyPressed") << evt.type << ", " << evt.keysym.sym << ", " << evt.keysym.mod;
@@ -141,6 +261,22 @@ bool SimpleB3dMeshRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
             child->setPosition(pos);
         }
     }
+    else if (evt.keysym.sym == 'e')
+    {
+        room_events_pos =  (room_events_pos + 1 ) % _countof(room_events);
+        event_index = 0;
+        ApplyRoomEvent(room_events[room_events_pos], event_index);
+    }
+    else if (evt.keysym.sym == 'r')
+    {
+        event_index += 1;
+        ApplyRoomEvent(room_events[room_events_pos], event_index);
+    }
+    else if (evt.keysym.sym == 't')
+    {
+        event_index = 0;
+        ApplyRoomEvent(room_events[room_events_pos], event_index);
+    }
     else if (evt.keysym.sym == 'b')
     {
         D2_HACK_LOG(BREAK) << "BAAD";
@@ -186,6 +322,14 @@ void SimpleB3dMeshRenderer::CreateRooms(const B3dForest& forest, Ogre::SceneNode
 
 void SimpleB3dMeshRenderer::CreateMoveableObjects(const B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
 {
+}
+
+void SimpleB3dMeshRenderer::ApplyRoomEvent(const char* eventName, size_t eventId)
+{
+    for (const auto& room : m_rooms)
+    {
+        room->ApplyEvent(eventName, eventId);
+    }
 }
 
 } // namespace app

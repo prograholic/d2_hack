@@ -16,5 +16,13 @@ B3dRoom::B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes,
 {
 }
 
+void B3dRoom::ApplyEvent(const char* eventName, size_t eventId)
+{
+    for (const auto& rootNode : m_rootNodes)
+    {
+        rootNode->ApplyState(eventName, eventId);
+    }
+}
+
 } // namespace app
 } // namespace d2_hack

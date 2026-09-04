@@ -21,6 +21,8 @@ class B3dRoom : public BaseGameObject
 public:
     B3dRoom(std::string_view name, scene_node::SceneNodeBaseList rootNodes, Trees trees);
 
+    void ApplyEvent(const char* eventName, size_t eventId);
+
 private:
     Trees m_trees;
 };
