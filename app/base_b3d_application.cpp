@@ -253,6 +253,76 @@ MoveableObjectPtr BaseB3dApplication::CreateMoveableObject(const B3dForest& fore
 }
 
 
+static Ogre::Vector3 GetCenterOffset(std::string_view name)
+{
+    static const std::map<std::string_view, Ogre::Vector3, std::less<>> OffsetForNames
+    {
+        {"Zil",  Ogre::Vector3(0, 0.205f, 0.955f)},
+        {"Kamaz",  Ogre::Vector3(0, 0.135f, 1.185f)},
+        {"Freightliner",  Ogre::Vector3(0, 0.105f, 0.865f)},
+        {"Scania",  Ogre::Vector3(0, -0.045f, 0.9f)},
+        {"Renault",  Ogre::Vector3(0, 0.0600001f, 1.2f)},
+        {"Kenworth",  Ogre::Vector3(0, -0.1f, 1.14f)},
+        {"Mack",  Ogre::Vector3(0, 0.18f, 1.11f)},
+        {"Peterbilt",  Ogre::Vector3(0, 0.03f, 1.33f)},
+        {"Daf",  Ogre::Vector3(0, 0.185f, 1.11f)},
+        {"Mercedes",  Ogre::Vector3(0, 0.195f, 1.21f)},
+        {"Volvo",  Ogre::Vector3(0, 0.1f, 1.13f)},
+        {"Storm",  Ogre::Vector3(0, 0, 0.75f)},
+        {"International",  Ogre::Vector3(0, 0.95f, 1.26f)},
+        {"BmwM5police",  Ogre::Vector3(0, 0.15f, 0.705f)},
+        {"BmwM5",  Ogre::Vector3(0, 0.15f, 0.705f)},
+        {"Cayman",  Ogre::Vector3(0, 0.02f, 0.38f)},
+        {"Offroad",  Ogre::Vector3(0, -0.11f, 0.23f)},
+        {"Pickup",  Ogre::Vector3(0, -0.11f, 0.23f)},
+        {"Patrol",  Ogre::Vector3(0, 0.1f, 0.735f)},
+        {"Gazelle",  Ogre::Vector3(0, -0.005f, 1.0f)},
+        {"Gazelle1C",  Ogre::Vector3(0, -0.005f, 1.0f)},
+        {"Sobol",  Ogre::Vector3(0, 0.105f, 1.14f)},
+        {"RenaultR",  Ogre::Vector3(0, -2.545f, 1.41f)},
+        {"KamazR",  Ogre::Vector3(0, -1.48f, 1.26f)},
+        {"ScaniaR",  Ogre::Vector3(0, -1.735f, 1.21f)},
+        {"ZilR",  Ogre::Vector3(0, -2.4f, 1.11f)},
+        {"MercedesR",  Ogre::Vector3(0, -2.2125f, 1.31f)},
+        {"VolvoR",  Ogre::Vector3(0, -2.271f, 1.268f)},
+        {"DafR",  Ogre::Vector3(0, -1.86f, 1.32f)},
+        {"StormR",  Ogre::Vector3(0, 0, 1.325f)},
+        {"STrailerP",  Ogre::Vector3(0, 0, 0.05f)},
+        {"STrailerT",  Ogre::Vector3(0, -0.92f, 1.15f)},
+        {"STrailerM",  Ogre::Vector3(0, 0, 1.31f)},
+        {"STrailerStorm",  Ogre::Vector3(0, 0.0250001f, 1.15f)},
+        {"Ka50",  Ogre::Vector3(0, -0.525f, 1.0f)},
+        {"PBmwM5",  Ogre::Vector3(0, 0.15f, 0.5147f)},
+        {"POffroad",  Ogre::Vector3(0, -0.11f, 0.1045f)},
+        {"PPickup",  Ogre::Vector3(0, -0.11f, 0.1045f)},
+        {"PPatrol",  Ogre::Vector3(0, 0.1f, 0.5745f)},
+        {"PGazelle",  Ogre::Vector3(0, -0.005f, 0.8849f)},
+        {"PSobol",  Ogre::Vector3(0, 0.105f, 1.0249f)},
+        {"PMarera",  Ogre::Vector3(0, 0, 0.6918f)},
+        {"PMegan",  Ogre::Vector3(0, -0.0599999f, 0.5922f)},
+        {"PMini",  Ogre::Vector3(0, -0.0455999f, 0.5033f)},
+        {"POka",  Ogre::Vector3(0, -0.08f, 0.51895f)},
+        {"PVan",  Ogre::Vector3(0, -0.00999999f, 0.72395f)},
+        {"PBus",  Ogre::Vector3(0, 0.19f, 1.5233f)},
+        {"PVolga",  Ogre::Vector3(0, -0.29f, 0.5872f)},
+        {"PFiat",  Ogre::Vector3(0, 0.09f, 0.54895f)},
+        {"PAvensis",  Ogre::Vector3(0, -0.0549999f, 0.5772f)},
+        {"Mini",  Ogre::Vector3(0, -0.0455999f, 0.5928f)},
+        {"Marera",  Ogre::Vector3(0, 0, 0.785f)},
+        {"Bus",  Ogre::Vector3(0, 0.19f, 1.56f)},
+        {"Katok",  Ogre::Vector3(0, -0.02f, 0.82f)},
+        {"Megan",  Ogre::Vector3(0, -0.0599999f, 0.67f)},
+        {"Oka",  Ogre::Vector3(0, -0.08f, 0.58f)},
+        {"Van",  Ogre::Vector3(0, -0.00999999f, 0.78f)},
+        {"Avensis",  Ogre::Vector3(0, -0.0549999f, 0.655f)},
+        {"Volga",  Ogre::Vector3(0, -0.29f, 0.685f)},
+        {"Fiat",  Ogre::Vector3(0, 0.09f, 0.61f)}
+    };
+
+    return OffsetForNames.at(name);
+}
+
+
 
 template <typename ObjectType>
 std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::string_view b3dId,
@@ -262,12 +332,12 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
 {
     scene_node::SceneNodeBaseList rootNodes;
 
-    WheelBasedMoveableObjectVisitor visitor{ b3dId, objectId, mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
+    WheelBasedMoveableObjectVisitor visitor{ b3dId, objectId, GetCenterOffset(objectId), mRoot->getMeshManager(), m_ogreMaterialProvider.get()};
 
     auto visitResult = VisitNode(moveableObject, visitor);
     (void)visitResult;
 
-    auto entity = m_sceneManager->createEntity(visitor.GetMesh());
+    auto entity = m_sceneManager->createEntity(std::string{objectId}, visitor.GetMesh());
     moveableSceneNode->attachObject(entity);
 
     for (auto& sceneNode : visitor.GetRootSceneNodes())
@@ -279,7 +349,7 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
     for (const auto& wheelData : visitor.GetWheelData())
     {
         auto wheelEntity = m_sceneManager->createEntity(wheelData.mesh);
-        auto wheelSceneNode = moveableSceneNode->createChildSceneNode();
+        auto wheelSceneNode = moveableSceneNode->getParentSceneNode()->createChildSceneNode();
         wheelSceneNode->attachObject(wheelEntity);
 
         for (const auto& transform : wheelData.transformations)
@@ -295,6 +365,8 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
 
         wheels.insert(std::make_pair(wheelData.id, Wheel(wheelData.name, wheelData.rootNodes)));
     }
+
+    AttachEntityToBullet(1000.0f, entity, visitor.GetHitBox());
 
     return std::make_unique<ObjectType>(objectId, visitor.GetRootSceneNodes(), std::move(wheels));
 }
@@ -316,29 +388,55 @@ B3dSemiTrailerPtr BaseB3dApplication::CreateSemiTrailer(std::string_view b3dId, 
 
 MoveableObjectPtr BaseB3dApplication::CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode)
 {
-    GameObjectVisitorBase visitor{b3dId, moveableObject->GetName(), mRoot->getMeshManager(), m_ogreMaterialProvider.get() };
+    static const std::string_view ka50 = "Ka50";
+    std::string_view name = moveableObject->GetName();
+    if (name == "k50")
+    {
+        // NOTE: all subnodes uses `Ka50` instead of `k50`
+        name = ka50;
+    }
+
+    MoveableObjectVisitor visitor{b3dId, name, GetCenterOffset(name), mRoot->getMeshManager(), m_ogreMaterialProvider.get()};
 
     auto visitResult = VisitNode(moveableObject, visitor);
     (void)visitResult;
 
-    auto entity = m_sceneManager->createEntity(visitor.GetMesh());
+    auto entity = m_sceneManager->createEntity(std::string{name}, visitor.GetMesh());
     moveableSceneNode->attachObject(entity);
+
 
     for (auto& sceneNode : visitor.GetRootSceneNodes())
     {
         sceneNode->Initialize(moveableSceneNode);
     }
 
-    if (moveableObject->GetName() == "k50")
+    AttachEntityToBullet(5000.0f, entity, visitor.GetHitBox());
+
+    if (name == ka50)
     {
-        // NOTE: all subnodes uses `Ka50` instead of `k50`
-        return std::make_unique<B3dHelicopter>("Ka50", visitor.GetRootSceneNodes());
+        return std::make_unique<B3dHelicopter>(name, visitor.GetRootSceneNodes());
     }
     else
     {
         assert(moveableObject->GetName() == "Katok");
         return std::make_unique<B3dKatok>("Katok", visitor.GetRootSceneNodes());
     }
+}
+
+void BaseB3dApplication::AttachEntityToBullet(float mass, Ogre::Entity* entity, const HitBox& hitBox)
+{
+    auto mesh = entity->getMesh();
+
+    auto oldBbox = mesh->getBounds();
+    auto newBbox = hitBox.GetBoundingBox();
+
+    D2_HACK_LOG(BaseB3dApplication::AttachEntityToBullet) << "\"" << entity->getName() << "\":  Ogre::" << newBbox.getCenter();// << ", old center: " << oldBbox.getCenter();
+
+    mesh->_setBounds(newBbox, false);
+
+    m_dynWorld->addRigidBody(mass, entity, Ogre::Bullet::CT_BOX);
+
+    mesh->_setBounds(oldBbox, false);
 }
 
 } // namespace app

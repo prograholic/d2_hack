@@ -6,6 +6,8 @@
 #include <Bites/OgreCameraMan.h>
 #include <OgreRoot.h>
 
+#include <OgreBullet.h>
+
 #include <d2_hack/resource/data/b3d_tree.h>
 #include <d2_hack/resource/manager/manager.h>
 #include <d2_hack/resource/archive/res_archive.h>
@@ -36,9 +38,13 @@ protected:
     std::unique_ptr<resource::image::RawImageCodec> m_rawImageCodec;
     Ogre::SceneManager* m_sceneManager;
     Ogre::SceneNode* m_cameraSceneNode;
+    Ogre::SceneNode* m_rootSceneNode;
     Ogre::Camera* m_camera;
     std::unique_ptr<OgreBites::CameraMan> m_cameraManager;
     std::unique_ptr<resource::archive::res::OgreMaterialProvider> m_ogreMaterialProvider;
+    std::unique_ptr<Ogre::Bullet::DynamicsWorld> m_dynWorld;
+    std::unique_ptr<Ogre::Bullet::DebugDrawer> m_dbgDraw;
+
 
     bool m_shutdown;
 
@@ -54,13 +60,15 @@ protected:
     virtual bool mouseWheelRolled(const OgreBites::MouseWheelEvent& evt) override;
 
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt) override;
+    virtual bool frameStarted(const Ogre::FrameEvent& event) override;
+
 
 
     void CreateCamera();
     void CreateViewports();
     void CreateResourceListener();
 
-    virtual void CreateScene() = 0;
+    virtual Ogre::SceneNode* CreateScene() = 0;
 };
 
 } // namespace app

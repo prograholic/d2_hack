@@ -21,27 +21,7 @@ SimpleB3dCarRenderer::SimpleB3dCarRenderer()
 {
 }
 
-
-static void AddEntityToBullet(Ogre::SceneNode* node, Ogre::Bullet::DynamicsWorld* dynWorld)
-{
-    const auto& objs = node->getAttachedObjects();
-    for (auto obj : objs)
-    {
-        Ogre::Entity* e = dynamic_cast<Ogre::Entity*>(obj);
-        if (e)
-        {
-            dynWorld->addRigidBody(1, e, Ogre::Bullet::CT_BOX);
-        }
-    }
-
-    const auto& children = node->getChildren();
-    for (auto child : children)
-    {
-        AddEntityToBullet(static_cast<Ogre::SceneNode*>(child), dynWorld);
-    }
-}
-
-void SimpleB3dCarRenderer::CreateScene()
+Ogre::SceneNode* SimpleB3dCarRenderer::CreateScene()
 {
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
@@ -58,20 +38,9 @@ void SimpleB3dCarRenderer::CreateScene()
 
     CreateB3dScene(reg, b3dSceneNode);
 
-    m_dynWorld.reset(new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0.0f, 0.0f, -0.8f)));
-    m_dbgDraw.reset(new Ogre::Bullet::DebugDrawer(b3dSceneNode, m_dynWorld->getBtWorld()));
+    CreatePlane(b3dSceneNode);
 
-    for (auto& moveableObject : m_moveableObjects)
-    {
-        for (const auto& moveableRootNode : moveableObject->GetRootNodes())
-        {
-            //Ogre::SceneNode* sceneNode = std::static_pointer_cast<scene_node::OgreSceneNodeBase>(moveableRootNode)->GetOgreSceneNode();
-            AddEntityToBullet(moveableRootNode->GetSceneNode(), m_dynWorld.get());
-        }
-    }
-
-    //m_dynWorld->addRigidBody(5, player, Bullet::CT_SPHERE);
-    //m_dynWorld->addRigidBody(0, level, Bullet::CT_TRIMESH);
+    return b3dSceneNode;
 }
 
 static void PrintSceneNode(Ogre::Node* node, int indent)
@@ -519,21 +488,6 @@ bool SimpleB3dCarRenderer::keyPressed(const OgreBites::KeyboardEvent& evt)
     return BaseB3dApplication::keyPressed(evt);
 }
 
-void SimpleB3dCarRenderer::shutdown()
-{
-    m_dbgDraw.reset();
-    BaseApplication::shutdown();
-}
-
-bool SimpleB3dCarRenderer::frameStarted(const Ogre::FrameEvent& event)
-{
-    m_dynWorld->getBtWorld()->stepSimulation(event.timeSinceLastFrame, 10);
-    m_dbgDraw->update();
-
-    return BaseB3dApplication::frameStarted(event);
-}
-
-
 void SimpleB3dCarRenderer::CreateRooms(const resource::data::b3d::B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)
 {
 }
@@ -546,12 +500,42 @@ void SimpleB3dCarRenderer::CreateMoveableObjects(const resource::data::b3d::B3dF
         "Zil"
         //"STrailerP"
     };
-    //for (size_t i = 0; i != AllCarNames.size(); ++i)
-    for (size_t i = 0; i != _countof(Cars); ++i)
+    for (size_t i = 0; i != AllCarNames.size(); ++i)
+    //for (size_t i = 0; i != _countof(Cars); ++i)
     {
-        m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
-        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{0.0f, 0.0f, 10.0f * i}, b3dSceneNode));
     }
+}
+
+void SimpleB3dCarRenderer::CreatePlane(Ogre::SceneNode* sceneNode)
+{
+    Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
+
+    // 2. Создаем меш плоскости в памяти
+    Ogre::MeshManager::getSingleton().createPlane(
+        "GroundPlaneMesh", // Имя меша
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        plane,             // Сама плоскость
+        1500, 1500,        // Ширина и высота плоскости
+        20, 20,            // Количество сегментов по X и Y
+        true,              // Учитывать ли нормали
+        1,                 // Количество текстурных слоев (наборов текстурных координат)
+        5, 5,              // Повторение текстуры (тайминг) по X и Y
+        Ogre::Vector3::UNIT_Y // Вектор «вверх» для текстур
+    );
+
+    Ogre::Entity* groundEntity = m_sceneManager->createEntity("GroundEntity", "GroundPlaneMesh");
+
+    Ogre::SceneNode* groundNode = sceneNode->createChildSceneNode("GroundNode");
+    groundNode->attachObject(groundEntity);
+    groundNode->setPosition(0, 0, -10.0f);
+
+    groundEntity->setMaterialName("Examples/GrassFloor");
+
+    auto rigidBody = m_dynWorld->addRigidBody(0.0f, groundEntity, Ogre::Bullet::CT_TRIMESH);
+    rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 }
 
 } // namespace app

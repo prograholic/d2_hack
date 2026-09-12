@@ -78,6 +78,17 @@ WheelId MapObjectIdToWheelId(std::string_view objectId);
 
 typedef std::map <WheelId, Wheel> Wheels;
 
+
+struct HitBox
+{
+    const Ogre::AxisAlignedBox& GetBoundingBox() const
+    {
+        return boundingBox;
+    }
+
+    Ogre::AxisAlignedBox boundingBox;
+};
+
 class WheelBasedMoveableObject: public MutableObject
 {
 public:

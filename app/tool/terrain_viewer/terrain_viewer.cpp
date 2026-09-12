@@ -12,7 +12,7 @@ TerrainViewer::TerrainViewer()
 {
 }
 
-void TerrainViewer::CreateScene()
+Ogre::SceneNode* TerrainViewer::CreateScene()
 {
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
@@ -22,6 +22,8 @@ void TerrainViewer::CreateScene()
     lightSceneNode->setPosition(20.0f, 80.0f, 150.0f);
 
     CreateTerrain();
+
+    return m_sceneManager->getRootSceneNode();
 }
 
 void TerrainViewer::shutdown()

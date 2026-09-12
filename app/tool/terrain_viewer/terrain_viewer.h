@@ -30,7 +30,7 @@ private:
     std::unique_ptr<Ogre::TerrainGlobalOptions, common::Deleter> m_terrainGlobalOptions;
     std::unique_ptr<Ogre::TerrainGroup, common::Deleter> m_terrainGroup;
 
-    virtual void CreateScene() override;
+    virtual Ogre::SceneNode* CreateScene() override;
 
     virtual void shutdown() override;
 

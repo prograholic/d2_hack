@@ -12,7 +12,7 @@ WheelVisitor::WheelVisitor(std::string_view b3dId,
                            std::string_view blockName,
                            Ogre::MeshManager* meshManager,
                            resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
-    : GameObjectVisitorBase(b3dId, blockName, meshManager, ogreMaterialProvider)
+    : GameObjectVisitorBase(b3dId, blockName, Ogre::Vector3::ZERO, meshManager, ogreMaterialProvider)
     , m_wheelData()
     , m_topLevelBlockConnectorPreVisited(false)
     , m_topLevelBlockConnectorPostVisited(false)
@@ -66,11 +66,97 @@ const WheelData& WheelVisitor::GetWheelData()
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+
+class HitBoxVisitor : public RaiseExceptionVisitor
+{
+public:
+
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects5>& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleUnknown14>& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(const std::shared_ptr<NodeGroupObjects21>& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(const std::shared_ptr<NodeSimpleVolumeCollision23>& node, VisitMode visitMode) override
+    {
+        if (visitMode == VisitMode::PreOrder)
+        {
+            for (const auto& polygon : node->GetBlockData().polygons)
+            {
+                for (const auto& vertex : polygon)
+                {
+                    m_hitBox.boundingBox.merge(vertex);
+                }
+            }
+        }
+
+        return VisitResult::Continue;
+    }
+
+    virtual VisitResult Visit(const std::shared_ptr<NodeEventEntry>& /* node */, VisitMode /* visitMode */) override
+    {
+        return VisitResult::Continue;
+    }
+
+    const HitBox& GetHitBox() const
+    {
+        return m_hitBox;
+    }
+private:
+    HitBox m_hitBox;
+};
+
+MoveableObjectVisitor::MoveableObjectVisitor(std::string_view b3dId,
+                                             std::string_view blockName,
+                                             const Ogre::Vector3& centerOffset,
+                                             Ogre::MeshManager* meshManager,
+                                             resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
+    : GameObjectVisitorBase(b3dId, blockName, centerOffset, meshManager, ogreMaterialProvider)
+    , m_hitBox()
+{
+}
+
+VisitResult MoveableObjectVisitor::Visit(const std::shared_ptr<NodeGroupObjects5>& node, VisitMode visitMode)
+{
+    if (visitMode == VisitMode::PreOrder)
+    {
+        if (node->GetName() == std::format("hit_{}", GetBlockName()))
+        {
+            HitBoxVisitor hitboxVisitor{};
+
+            auto visitResult = VisitNode(node, hitboxVisitor);
+            (void)visitResult;
+
+            m_hitBox = hitboxVisitor.GetHitBox();
+
+            return VisitResult::SkipChildren;
+        }
+    }
+
+    return GameObjectVisitorBase::Visit(node, visitMode);
+}
+
+const HitBox& MoveableObjectVisitor::GetHitBox() const
+{
+    return m_hitBox;
+}
+
+
 WheelBasedMoveableObjectVisitor::WheelBasedMoveableObjectVisitor(std::string_view b3dId,
                                                                  std::string_view blockName,
+                                                                 const Ogre::Vector3& centerOffset,
                                                                  Ogre::MeshManager* meshManager,
                                                                  resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
-    : GameObjectVisitorBase(b3dId, blockName, meshManager, ogreMaterialProvider)
+    : MoveableObjectVisitor(b3dId, blockName, centerOffset, meshManager, ogreMaterialProvider)
     , m_wheelRootSceneNodes()
 {
 }
@@ -82,7 +168,7 @@ VisitResult WheelBasedMoveableObjectVisitor::Visit(const std::shared_ptr<NodeGro
         std::string wheelName = std::string{ GetBlockName() } + "wheel";
         if (node->GetName().starts_with(wheelName))
         {
-            WheelVisitor wheelVisitor{ GetB3dId(), node->GetName(), GetMeshManager(), GetMaterialProvider()};
+            WheelVisitor wheelVisitor{ GetB3dId(), node->GetName(), GetMeshManager(), GetMaterialProvider() };
 
             auto visitResult = VisitNode(node, wheelVisitor);
             (void)visitResult;
@@ -91,15 +177,9 @@ VisitResult WheelBasedMoveableObjectVisitor::Visit(const std::shared_ptr<NodeGro
 
             return VisitResult::SkipChildren;
         }
-        else
-        {
-            return VisitResult::Continue;
-        }
     }
-    else
-    {
-        return VisitResult::Continue;
-    }
+
+    return MoveableObjectVisitor::Visit(node, visitMode);
 }
 
 const std::vector<WheelData>& WheelBasedMoveableObjectVisitor::GetWheelData() const

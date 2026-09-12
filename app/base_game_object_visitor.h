@@ -24,6 +24,7 @@ public:
 
     GameObjectVisitorBase(std::string_view b3dId,
                           std::string_view blockName,
+                          const Ogre::Vector3& centerOffset,
                           Ogre::MeshManager* meshManager,
                           resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
@@ -40,8 +41,6 @@ public:
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleObjectConnector18>& node, VisitMode visitMode) override;
 
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupObjects21>& node, VisitMode visitMode) override;
-
-    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleVolumeCollision23>& node, VisitMode visitMode) override;
 
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeSimpleUnknown25>& node, VisitMode visitMode) override;
 
@@ -73,6 +72,7 @@ protected:
 private:
     const std::string_view m_b3dId;
     const std::string_view m_blockName;
+    const Ogre::Vector3 m_centerOffset;
 
     resource::archive::res::OgreMaterialProvider* m_ogreMaterialProvider;
     Ogre::MeshManager* m_meshManager;

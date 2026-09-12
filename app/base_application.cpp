@@ -52,8 +52,11 @@ void BaseApplication::setup()
     // Create any resource listeners (for loading screens)
     CreateResourceListener();
 
+    m_dynWorld.reset(new Ogre::Bullet::DynamicsWorld(Ogre::Vector3(0.0f, 0.0f, -9.8f)));
+
     // Create the scene
-    CreateScene();
+    Ogre::SceneNode* rootSceneNode = CreateScene();
+    m_dbgDraw.reset(new Ogre::Bullet::DebugDrawer(rootSceneNode, m_dynWorld->getBtWorld()));
 
     //CreateFrameListener();
 }
@@ -61,6 +64,7 @@ void BaseApplication::setup()
 void BaseApplication::shutdown()
 {
     m_manager.reset();
+    m_dbgDraw.reset();
 
     OgreBites::ApplicationContext::shutdown();
 }
@@ -95,6 +99,20 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
     return OgreBites::ApplicationContext::frameRenderingQueued(evt);
 }
+
+bool BaseApplication::frameStarted(const Ogre::FrameEvent& event)
+{
+    if (m_shutdown)
+    {
+        return false;
+    }
+
+    m_dynWorld->getBtWorld()->stepSimulation(event.timeSinceLastFrame, 10);
+    m_dbgDraw->update();
+
+    return OgreBites::ApplicationContext::frameStarted(event);
+}
+
 
 bool BaseApplication::mouseMoved(const OgreBites::MouseMotionEvent& evt)
 {

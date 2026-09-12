@@ -98,7 +98,7 @@ void SimpleTxrRenderer::CreateEntityForResource(Ogre::SceneNode* parent, const s
     plane->setMaterial(material);
 }
 
-void SimpleTxrRenderer::CreateScene()
+Ogre::SceneNode* SimpleTxrRenderer::CreateScene()
 {
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
@@ -136,6 +136,8 @@ void SimpleTxrRenderer::CreateScene()
     };
 
     //CreateB3dScene(b3dRegistry, cars, b3dSceneNode);
+
+    return rootNode;
 }
 
 void SimpleTxrRenderer::CreateRooms(const B3dForest& /* forest */, Ogre::SceneNode* /* b3dSceneNode */)

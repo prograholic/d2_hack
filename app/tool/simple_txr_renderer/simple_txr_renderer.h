@@ -16,7 +16,7 @@ public:
     SimpleTxrRenderer();
 
 private:
-    virtual void CreateScene() override;
+    virtual Ogre::SceneNode* CreateScene() override;
 
     void CreateEntityForResource(Ogre::SceneNode* parent, const std::string_view& b3dId, const std::string_view& resource);
 

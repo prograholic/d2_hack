@@ -20,10 +20,12 @@ using namespace resource::data::b3d;
 
 GameObjectVisitorBase::GameObjectVisitorBase(std::string_view b3dId,
                                              std::string_view blockName,
+                                             const Ogre::Vector3& centerOffset,
                                              Ogre::MeshManager* meshManager,
                                              resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
     : m_b3dId(b3dId)
     , m_blockName(blockName)
+    , m_centerOffset(centerOffset)
     , m_ogreMaterialProvider(ogreMaterialProvider)
     , m_meshManager(meshManager)
     , m_mesh(CreateMesh(b3dId, blockName, meshManager))
@@ -96,11 +98,6 @@ VisitResult GameObjectVisitorBase::Visit(const std::shared_ptr<NodeGroupObjects2
         PopFromSceneNodeStack();
     }
 
-    return VisitResult::Continue;
-}
-
-VisitResult GameObjectVisitorBase::Visit(const std::shared_ptr<NodeSimpleVolumeCollision23>& /* node */, VisitMode /* visitMode */)
-{
     return VisitResult::Continue;
 }
 
@@ -296,9 +293,12 @@ void GameObjectVisitorBase::ManageNormals(Ogre::VertexData* vertexData, const co
 
 void GameObjectVisitorBase::ApplyTransformations(const common::PositionList& original, common::PositionList& transformed)
 {
-    transformed = original;
-    for (auto& position : transformed)
+    transformed.reserve(original.size());
+
+    for (auto& position : original)
     {
+        auto newPos = position - m_centerOffset;
+
         for (const auto& transformList : m_transformEntries)
         {
             for (const auto& transformEntry : transformList)
@@ -306,9 +306,11 @@ void GameObjectVisitorBase::ApplyTransformations(const common::PositionList& ori
                 Ogre::Matrix4 fullTransform = Ogre::Matrix4::IDENTITY;
                 fullTransform.set3x3Matrix(transformEntry.matrix);
                 fullTransform.setTrans(transformEntry.position);
-                position = fullTransform * position;
+                newPos = fullTransform * newPos;
             }
         }
+
+        transformed.push_back(newPos);
     }
 }
 

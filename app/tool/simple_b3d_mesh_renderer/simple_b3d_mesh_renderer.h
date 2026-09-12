@@ -13,7 +13,7 @@ class SimpleB3dMeshRenderer : public BaseB3dApplication
 public:
     SimpleB3dMeshRenderer();
 
-    virtual void CreateScene() override;
+    virtual Ogre::SceneNode* CreateScene() override;
 
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
 

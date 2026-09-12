@@ -20,7 +20,7 @@ SimpleB3dMeshRenderer::SimpleB3dMeshRenderer()
     , m_rooms()
 {
 }
-void SimpleB3dMeshRenderer::CreateScene()
+Ogre::SceneNode* SimpleB3dMeshRenderer::CreateScene()
 {
     m_sceneManager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
 
@@ -43,6 +43,8 @@ void SimpleB3dMeshRenderer::CreateScene()
 
     //CreateB3dScene(registry, b3dSceneNode);
     CreateB3dScene(SinglePlayerRegistry, b3dSceneNode);
+
+    return b3dSceneNode;
 }
 
 static void PrintSceneNode(Ogre::Node* node, int indent)

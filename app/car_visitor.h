@@ -45,8 +45,29 @@ private:
     bool m_topLevelBlockConnectorPostVisited;
 };
 
+class MoveableObjectVisitor : public GameObjectVisitorBase
+{
+public:
 
-class WheelBasedMoveableObjectVisitor : public GameObjectVisitorBase
+    using VisitResult = resource::data::b3d::VisitResult;
+    using VisitMode = resource::data::b3d::VisitMode;
+
+    MoveableObjectVisitor(std::string_view b3dId,
+                          std::string_view blockName,
+                          const Ogre::Vector3& centerOffset,
+                          Ogre::MeshManager* meshManager,
+                          resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
+
+    virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupObjects5>& node, VisitMode visitMode) override;
+
+    const HitBox& GetHitBox() const;
+
+private:
+    HitBox m_hitBox;
+};
+
+
+class WheelBasedMoveableObjectVisitor : public MoveableObjectVisitor
 {
 public:
 
@@ -55,13 +76,13 @@ public:
 
     WheelBasedMoveableObjectVisitor(std::string_view b3dId,
                                     std::string_view blockName,
+                                    const Ogre::Vector3& centerOffset,
                                     Ogre::MeshManager* meshManager,
                                     resource::archive::res::OgreMaterialProvider* ogreMaterialProvider);
 
     virtual VisitResult Visit(const std::shared_ptr<resource::data::b3d::NodeGroupObjects5>& node, VisitMode visitMode) override;
 
     const std::vector<WheelData>& GetWheelData() const;
-
 private:
     std::vector<WheelData> m_wheelRootSceneNodes;
 };

@@ -21,7 +21,7 @@ RoomVisitor::RoomVisitor(std::string_view b3dId,
                          Ogre::MeshManager* meshManager,
                          Ogre::SceneManager* sceneManager,
                          resource::archive::res::OgreMaterialProvider* ogreMaterialProvider)
-    : GameObjectVisitorBase(b3dId, blockName, meshManager, ogreMaterialProvider)
+    : GameObjectVisitorBase(b3dId, blockName, Ogre::Vector3::ZERO, meshManager, ogreMaterialProvider)
     , m_sceneManager(sceneManager)
 {
 }

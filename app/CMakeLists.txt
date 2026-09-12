@@ -30,6 +30,7 @@ target_link_libraries(d2_hack.app
     PUBLIC
         OgreBites
         OgreTerrain
+        OgreBullet
         d2_hack.resource
         d2_hack.scene_node
 )

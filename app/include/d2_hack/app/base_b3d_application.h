@@ -15,9 +15,6 @@ class BaseB3dApplication : public BaseApplication
 public:
     explicit BaseB3dApplication(const std::string& appName);
 
-
-public:
-
     void CreateB3dScene(const resource::data::b3d::B3dRegistry& b3dRegistry, Ogre::SceneNode* b3dSceneNode);
 
     B3dRoomPtr CreateRoom(const resource::data::b3d::B3dForest& forest, const std::string_view& roomId, Ogre::SceneNode* b3dSceneNode);
@@ -42,6 +39,8 @@ private:
     B3dTruckPtr CreateTruck(std::string_view b3dId, std::string_view truckId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     B3dSemiTrailerPtr CreateSemiTrailer(std::string_view b3dId, std::string_view semiTrailerId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     MoveableObjectPtr CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
+
+    void AttachEntityToBullet(float mass, Ogre::Entity* entity, const HitBox& hitBox);
 };
 
 } // namespace app
