@@ -494,18 +494,20 @@ void SimpleB3dCarRenderer::CreateRooms(const resource::data::b3d::B3dForest& /* 
 
 void SimpleB3dCarRenderer::CreateMoveableObjects(const resource::data::b3d::B3dForest& forest, Ogre::SceneNode* b3dSceneNode)
 {
-    static const std::string_view Cars[] =
+    static const std::string_view CarsForTest[] =
     {
         //"Storm",
         "Zil"
         //"STrailerP"
     };
-    for (size_t i = 0; i != AllCarNames.size(); ++i)
-    //for (size_t i = 0; i != _countof(Cars); ++i)
+
+    //std::span<const std::string_view> cars{CarsForTest};
+    std::span<const std::string_view> cars{AllCarNames};
+
+    for (size_t i = 0; i != cars.size(); ++i)
     {
-        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, Cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
-        m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
-        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, AllCarNames[i], Ogre::Vector3{0.0f, 0.0f, 10.0f * i}, b3dSceneNode));
+        m_moveableObjects.emplace_back(CreateMoveableObject(forest, cars[i], Ogre::Vector3{ 3.5f * i, 0, 0 }, b3dSceneNode));
+        //m_moveableObjects.emplace_back(CreateMoveableObject(forest, cars[i], Ogre::Vector3{0.0f, 0.0f, 10.0f * i}, b3dSceneNode));
     }
 }
 

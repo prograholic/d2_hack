@@ -40,7 +40,9 @@ private:
     B3dSemiTrailerPtr CreateSemiTrailer(std::string_view b3dId, std::string_view semiTrailerId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
     MoveableObjectPtr CreateCustomMoveableObject(std::string_view b3dId, const resource::data::b3d::B3dNodePtr& moveableObject, Ogre::SceneNode* moveableSceneNode);
 
-    void AttachEntityToBullet(float mass, Ogre::Entity* entity, const HitBox& hitBox);
+    btRigidBody* AttachEntityToBullet(float mass, Ogre::Entity* entity, const HitBox& hitBox);
+
+    void AddWheels(btRigidBody* chassisBody, const Wheels& wheels);
 };
 
 } // namespace app

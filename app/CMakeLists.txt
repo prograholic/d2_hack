@@ -35,4 +35,14 @@ target_link_libraries(d2_hack.app
         d2_hack.scene_node
 )
 
+target_include_directories(d2_hack.app
+    PUBLIC
+        ${BULLET_INCLUDE_DIR}
+)
+
+target_link_libraries(d2_hack.app
+    PUBLIC
+        ${BULLET_LIBRARIES}
+)
+
 add_subdirectory(tool)

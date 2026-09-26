@@ -46,9 +46,16 @@ copy_ogre_target_runtime(OgreBullet)
 
 copy_ogre_runtime(RenderSystem_GL)
 
-copy_runtime(zlib "1" "d1")
-copy_3rd_party_runtime(sdl2 "d")
-copy_3rd_party_runtime(freetype "d")
+find_package(ZLIB REQUIRED)
+#copy_runtime(zlib "1" "d1")
+
+find_package(SDL2 REQUIRED)
+#copy_3rd_party_runtime(sdl2 "d")
+
+find_package(Freetype REQUIRED)
+#copy_3rd_party_runtime(freetype "d")
+
+find_package(Bullet REQUIRED)
 
 
 enable_testing()

@@ -2,6 +2,8 @@
 
 #include <OgreEntity.h>
 
+#include <BulletDynamics/Vehicle/btRaycastVehicle.h>
+
 #include <d2_hack/resource/data/b3d_reader.h>
 #include <d2_hack/resource/data/b3d_tree_optimization.h>
 
@@ -366,7 +368,9 @@ std::unique_ptr<ObjectType> BaseB3dApplication::CreateWheelBasedObject(std::stri
         wheels.insert(std::make_pair(wheelData.id, Wheel(wheelData.name, wheelData.rootNodes)));
     }
 
-    AttachEntityToBullet(1000.0f, entity, visitor.GetHitBox());
+    auto rigidBody = AttachEntityToBullet(1000.0f, entity, visitor.GetHitBox());
+
+    AddWheels(rigidBody, wheels);
 
     return std::make_unique<ObjectType>(objectId, visitor.GetRootSceneNodes(), std::move(wheels));
 }
@@ -423,7 +427,7 @@ MoveableObjectPtr BaseB3dApplication::CreateCustomMoveableObject(std::string_vie
     }
 }
 
-void BaseB3dApplication::AttachEntityToBullet(float mass, Ogre::Entity* entity, const HitBox& hitBox)
+btRigidBody* BaseB3dApplication::AttachEntityToBullet(float mass, Ogre::Entity* entity, const HitBox& hitBox)
 {
     auto mesh = entity->getMesh();
 
@@ -434,9 +438,50 @@ void BaseB3dApplication::AttachEntityToBullet(float mass, Ogre::Entity* entity, 
 
     mesh->_setBounds(newBbox, false);
 
-    m_dynWorld->addRigidBody(mass, entity, Ogre::Bullet::CT_BOX);
+    auto res = m_dynWorld->addRigidBody(mass, entity, Ogre::Bullet::CT_BOX);
 
     mesh->_setBounds(oldBbox, false);
+
+    return res;
+}
+
+void BaseB3dApplication::AddWheels(btRigidBody* chassisBody, const Wheels& /* wheels */)
+{
+    btVehicleRaycaster* vehicleRaycaster = new btDefaultVehicleRaycaster(m_dynWorld->getBtWorld());
+    btRaycastVehicle::btVehicleTuning tuning;
+    btRaycastVehicle* vehicle = new btRaycastVehicle(tuning, chassisBody, vehicleRaycaster);
+
+    // Важно: отключаем деактивацию физики, чтобы машина не засыпала на светофорах
+    chassisBody->setActivationState(DISABLE_DEACTIVATION);
+    m_dynWorld->getBtWorld()->addVehicle(vehicle);
+
+
+
+    // Настройки векторов в осях Bullet
+    btVector3 wheelDirectionCS0(0, -1, 0); // Подвеска направлена вниз
+    btVector3 wheelAxleCS(-1, 0, 0);       // Ось вращения колеса
+
+    btScalar suspensionRestLength = 0.6f;  // Длина пружины подвески
+    btScalar wheelRadius = 0.4f;           // Радиус колеса меша
+    //bool isFrontWheel = true;
+
+    // Создаем 4 графические ноды колес в Ogre
+    //std::vector<Ogre::SceneNode*> wheelNodes(4);
+    //for (int i = 0; i < 4; ++i) {
+    //    wheelNodes[i] = scnMgr->getRootSceneNode()->createChildSceneNode("WheelNode_" + std::to_string(i));
+    //    Ogre::Entity* wheelEnt = scnMgr->createEntity("WheelMesh.mesh");
+    //    wheelNodes[i]->attachObject(wheelEnt);
+    //}
+
+    // Добавляем колеса в физику (координаты относительно центра кузова автомобиля)
+    // 0: Переднее левое
+    vehicle->addWheel(btVector3(1.1f, -0.2f, 1.5f), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+    // 1: Переднее правое
+    vehicle->addWheel(btVector3(-1.1f, -0.2f, 1.5f), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, true);
+    // 2: Заднее левое
+    vehicle->addWheel(btVector3(1.1f, -0.2f, -1.5f), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
+    // 3: Заднее правое
+    vehicle->addWheel(btVector3(-1.1f, -0.2f, -1.5f), wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, tuning, false);
 }
 
 } // namespace app
