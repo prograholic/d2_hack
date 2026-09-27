@@ -1,4 +1,4 @@
-function(copy_ogre_target_runtime target)
+function(copy_target_runtime target)
     set(should_copy_debug OFF)
     set(should_copy_release OFF)
     set(should_copy_release_with_debug OFF)
@@ -50,8 +50,7 @@ function(copy_ogre_target_runtime target)
 endfunction()
 
 
-function(copy_runtime dll_name suffix suffix2)
-    set(runtime_dir ${OGRE_MEDIA_DIR}/../bin)
+function(copy_runtime dll_name suffix suffix2 runtime_dir)
     set(runtime_path ${runtime_dir}/${dll_name}${suffix}${CMAKE_SHARED_LIBRARY_SUFFIX})
     if (NOT EXISTS ${runtime_path})
         set(runtime_path ${runtime_dir}/${dll_name}${suffix2}${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -64,10 +63,6 @@ function(copy_runtime dll_name suffix suffix2)
     configure_file(${runtime_path} ${APP_BIN_DIRECTORY} COPYONLY)
 endfunction()
 
-
-function(copy_3rd_party_runtime dll_name suffix_debug)
-    copy_runtime(${dll_name} "" "${suffix_debug}")
-endfunction()
 
 function(copy_ogre_runtime dll_name)
     set(should_copy_debug OFF)
@@ -82,11 +77,24 @@ function(copy_ogre_runtime dll_name)
     endif()
     
     if (should_copy_debug)
-        copy_runtime(${dll_name} "_d" "_d")
+        copy_runtime(${dll_name} "_d" "_d" "${OGRE_MEDIA_DIR}/../bin")
     endif()
     
     if (should_copy_release)
-        copy_runtime(${dll_name} "" "")
+        copy_runtime(${dll_name} "" "" "${OGRE_MEDIA_DIR}/../bin")
     endif()
     
+endfunction()
+
+function (copy_zlib_runtime)
+    copy_runtime("zlib" "1" "d1" "${ZLIB_ROOT}/bin")
+endfunction()
+
+function (copy_sdl2_runtime)
+    copy_target_runtime(SDL2::SDL2)
+endfunction()
+
+function (copy_freetype_runtime)
+    #copy_target_runtime(Freetype::Freetype) # does not work as expected (copies only implib)
+    copy_runtime("freetype" "" "d" "$ENV{FREETYPE_DIR}/bin")
 endfunction()

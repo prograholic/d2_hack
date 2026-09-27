@@ -36,24 +36,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${APP_BIN_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${APP_BIN_DIRECTORY})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${APP_BIN_DIRECTORY})
 
-copy_ogre_target_runtime(OgreBites)
-copy_ogre_target_runtime(OgreMain)
-copy_ogre_target_runtime(OgreOverlay)
-copy_ogre_target_runtime(OgreRTShaderSystem)
-copy_ogre_target_runtime(OgreTerrain)
-copy_ogre_target_runtime(OgrePaging)
-copy_ogre_target_runtime(OgreBullet)
+copy_target_runtime(OgreBites)
+copy_target_runtime(OgreMain)
+copy_target_runtime(OgreOverlay)
+copy_target_runtime(OgreRTShaderSystem)
+copy_target_runtime(OgreTerrain)
+copy_target_runtime(OgrePaging)
+copy_target_runtime(OgreBullet)
 
 copy_ogre_runtime(RenderSystem_GL)
 
 find_package(ZLIB REQUIRED)
-#copy_runtime(zlib "1" "d1")
+copy_zlib_runtime()
 
 find_package(SDL2 REQUIRED)
-#copy_3rd_party_runtime(sdl2 "d")
+copy_sdl2_runtime()
 
 find_package(Freetype REQUIRED)
-#copy_3rd_party_runtime(freetype "d")
+copy_freetype_runtime()
 
 find_package(Bullet REQUIRED)
 
